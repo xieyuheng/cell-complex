@@ -21,6 +21,7 @@ Features :
 We enforce C4 as collaboration protocol :
 - [The C4 RFC](https://rfc.zeromq.org/spec:42/C4)
 - [Style Guide](STYLE-GUIDE.md) -- observe the style of existing code and respect it
+- See [cicada-history](http://github.com/xieyuheng/cicada-history) for history of this project
 
 ## Code Of Conduct
 
