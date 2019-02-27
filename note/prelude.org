@@ -411,6 +411,44 @@
     }
     #+end_src
 
+*** [note] about the game of eqv-t
+
+    #+begin_src cicada
+    note {
+      to make it easier to prove eqv-t
+      I want to be able to reduce
+      1. the eqv-t to be proved
+      2. the eqv-c constructing
+
+      in `x case succ-t` of the above example
+
+      the eqv-t to be proved is
+      eqv-t (
+        nat-add (zero-c x) >= x
+        nat-add (x zero-c) >= succ-c (nat-add (x.prev zero-c))
+      )
+
+      the eqv-c constructing is
+      eqv-apply (succ-c nat-add-zero-commutative (x.prev)) :
+      eqv-t (
+        succ-c (nat-add (zero-c x.prev)) >= succ-c (x.prev) >= x
+        succ-c (nat-add (x.prev zero-c))
+      )
+
+      only after many `>=`s
+      do we explicitly see that eqv-c actually fulfill eqv-t
+
+      maybe we need let the verifier to explicitly choose
+      which reduction to perform
+
+      otherwise we would need to prove reductions converge to
+      unique normal form (or unifiable form)
+
+      maybe we'd better internalize eqv-t
+      instead of defining it as a type in our language
+    }
+    #+end_src
+
 *** nat-add-succ-commutative-1
 
     #+begin_src cicada
