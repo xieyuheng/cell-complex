@@ -16,6 +16,11 @@ Features :
 - logic programming interface
 - with nominal subtyping and inheriting
 
+Contains :
+- (todo) [cg] -- a generic library for combinatorial games
+- (todo) [go] -- the game of go
+- (todo) [fol] -- game semantics of first order logic
+
 ## Contributing
 
 We enforce C4 as collaboration protocol :
