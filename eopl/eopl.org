@@ -1,0 +1,12 @@
+#+property: tangle src/main/scala/eopl.scala
+#+title: eopl
+
+* main
+
+  #+begin_src scala
+  object main {
+    def main (args: Array [String]) = {
+      println ("eopl")
+    }
+  }
+  #+end_src

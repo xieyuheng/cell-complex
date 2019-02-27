@@ -1,0 +1,7 @@
+# for scala
+target
+
+# for emacs
+*~
+*#*
+.#*

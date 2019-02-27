@@ -1,0 +1,332 @@
+#+property: tangle prelude.cic
+#+title: prelude
+
+* bool-t
+
+  #+begin_src cicada
+  bool-t = disj {
+    [ true-t
+      false-t ]
+  }
+
+  true-t = conj {}
+
+  false-t = conj {}
+  #+end_src
+
+* nat-t
+
+  #+begin_src cicada
+  nat-t = disj {
+    [ zero-t
+      succ-t ]
+  }
+
+  zero-t = conj {}
+
+  succ-t = conj {
+    prev : nat-t
+  }
+  #+end_src
+
+* nat-add-t
+
+  #+begin_src cicada
+  nat-add-t = disj {
+    [ zero-add-t
+      succ-add-t ]
+    a : nat-t
+    b : nat-t
+    c : nat-t
+  }
+
+  zero-add-t = conj {
+    a : nat-t
+    b : nat-t
+    c : nat-t
+    a = zero-c
+    c = b
+  }
+
+  succ-add-t = conj {
+    a : nat-t
+    b : nat-t
+    c : nat-t
+    a = succ-c (:a)
+    c = succ-c (:c)
+    prev : nat-add-t (:a b :c)
+  }
+
+  assert! {
+    nat-add-t (zero-c zero-c zero-c)
+  }
+
+  assert! {
+    nat-add-t (zero-c succ-c (zero-c) succ-c (zero-c))
+  }
+
+  assert! {
+    nat-add-t (succ-c (zero-c) zero-c succ-c (zero-c))
+  }
+
+  // query! (10) {
+  //   nat-add-t (
+  //     zero-c
+  //     :zero
+  //     zero-c)
+  // }
+
+  // query! (10) {
+  //   nat-add-t (
+  //     :zero
+  //     zero-c
+  //     zero-c)
+  // }
+
+  // query! (10) {
+  //   nat-add-t (
+  //     zero-c
+  //     zero-c
+  //     :zero)
+  // }
+
+  // query! (10) {
+  //   nat-add-t (
+  //     :x
+  //     succ-c (zero-c)
+  //     succ-c (succ-c (succ-c (zero-c))))
+  // }
+
+  // search! (1) {
+  //   nat-add-t (
+  //     succ-c (zero-c)
+  //     :x
+  //     succ-c (succ-c (succ-c (succ-c (zero-c)))))
+  // }
+  //
+  // step! (1) {
+  //   nat-add-t (
+  //     succ-c (zero-c)
+  //     :x
+  //     succ-c (succ-c (succ-c (succ-c (zero-c)))))
+  // }
+
+  // search! (3) {
+  //   nat-add-t (
+  //     succ-c (zero-c)
+  //     :x
+  //     succ-c (succ-c (succ-c (succ-c (zero-c)))))
+  // }
+  //
+  // query! (10) {
+  //   nat-add-t (
+  //     succ-c (zero-c)
+  //     succ-c (:x)
+  //     succ-c (succ-c (succ-c (zero-c))))
+  // }
+
+  // query! (10) {
+  //   nat-add-t (
+  //     :y
+  //     :x
+  //     succ-c (succ-c (succ-c (zero-c))))
+  // }
+  #+end_src
+
+* nat-even-t
+
+  #+begin_src cicada
+  nat-even-t = disj {
+    [ zero-even-t
+      even-plus-two-even-t ]
+    nat : nat-t
+  }
+
+  zero-even-t = conj {
+    nat : nat-t
+    nat = zero-c
+  }
+
+  even-plus-two-even-t = conj {
+    nat : nat-t
+    prev : nat-even-t (:m)
+    nat = succ-c (succ-c (:m))
+  }
+
+  assert! {
+    nat-even-t (zero-c)
+  }
+
+  assert! {
+    nat-even-t (succ-c (succ-c (zero-c)))
+  }
+
+  assert-not! {
+    nat-even-t (succ-c (zero-c))
+  }
+  #+end_src
+
+* list-t
+
+  #+begin_src cicada
+  list-t = disj {
+    [ null-t
+      cons-t ]
+    t : type
+  }
+
+  null-t = conj {
+    t : type
+  }
+
+  cons-t = conj {
+    t : type
+    car : t
+    cdr : list-t (t)
+  }
+  #+end_src
+
+* list-length-t
+
+  #+begin_src cicada
+  list-length-t = disj {
+    [ zero-length-t
+      succ-length-t ]
+    list : list-t (:t)
+    length : nat-t
+  }
+
+  zero-length-t = conj {
+    list : list-t (:t)
+    length : nat-t
+    list = null-c
+    length = zero-c
+  }
+
+  succ-length-t = conj {
+    list : list-t (:t)
+    length : nat-t
+    prev : list-length-t (:cdr :n)
+    list = cons-c (:t :x :cdr)
+    length = succ-c (:n)
+  }
+
+  assert! {
+    list-length-t (
+      null-c
+      zero-c)
+  }
+
+  assert! {
+    list-length-t {
+      list = cons-c (nat-t zero-c null-c)
+      length = succ-c (zero-c)
+    }
+  }
+
+  assert! {
+    list-length-t {
+      list = cons-c (nat-t zero-c cons-c (zero-c null-c))
+      length = succ-c (succ-c (zero-c))
+    }
+  }
+
+  assert-not! {
+    list-length-t {
+      list = cons-c (nat-t zero-c null-c)
+      length = succ-c (succ-c (zero-c))
+    }
+  }
+
+  assert! {
+    list-length-t {
+      list = cons-c (nat-t zero-c cons-c (zero-c null-c))
+      length = :n
+    }
+  }
+
+  assert! {
+    list-length-t {
+      list = :l
+      length = :n
+    }
+  }
+  #+end_src
+
+* list-append-t
+
+  #+begin_src cicada
+  list-append-t = disj {
+    [ zero-append-t
+      succ-append-t ]
+    ante : list-t (:t)
+    succ : list-t (:t)
+    result : list-t (:t)
+  }
+
+  zero-append-t = conj {
+    ante : list-t (:t)
+    succ : list-t (:t)
+    result : list-t (:t)
+    ante = null-c
+    result = succ
+  }
+
+  succ-append-t = conj {
+    ante : list-t (:t)
+    succ : list-t (:t)
+    result : list-t (:t)
+    prev : list-append-t (:cdr succ :result-cdr)
+    ante = cons-c (:t :car :cdr)
+    result = cons-c (:t :car :result-cdr)
+  }
+
+  search! (2) {
+    list-append-t (:ante :succ :result)
+  }
+  #+end_src
+
+* vect-t
+
+  #+begin_src cicada
+  vect-t = disj {
+    [ null-vect-t
+      cons-vect-t ]
+    t : type
+    length : nat-t
+  }
+
+  null-vect-t = conj {
+    t : type
+    length : nat-t
+    length = zero-c
+  }
+
+  cons-vect-t = conj {
+    t : type
+    length : nat-t
+    car : t
+    cdr : vect-t (t :n)
+    length = succ-c (:n)
+  }
+  #+end_src
+
+* search!
+
+  #+begin_src cicada
+  // search! (2) {
+  //   bool-t
+  // }
+
+  // search! (3) {
+  //   nat-t
+  // }
+
+  // search! (3) {
+  //   list-t (nat-t)
+  // }
+
+  // search! (3) {
+  //   list-t (list-t (nat-t))
+  // }
+  #+end_src
