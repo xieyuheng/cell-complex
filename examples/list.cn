@@ -1,0 +1,13 @@
+union list-t (
+  t : type
+) (null-t cons-t)
+
+class null-t (
+  t : type
+)
+
+class cons-t (
+  t : type
+  car : t
+  cdr : list-t (t)
+)

@@ -1,0 +1,40 @@
+note {
+  preorder is a thin category
+  with at most one morphism from an object to another.
+}
+
+class preorder-t (
+  t : type
+
+  pre-t : (t t) -> type
+
+  reflexive : (a : t) -> pre-t (a a)
+
+  transitive : (
+    pre-t (:a :b)
+    pre-t (:b :c)
+  ) -> pre-t (:a :c)
+)
+
+class partial-order-t
+extends (super : preorder-t) (
+  eqv-t : (super.t super.t) -> type
+
+  anti-symmetric : (
+    super.pre-t (:a :b)
+    super.pre-t (:b :a)
+  ) -> eqv-t (:a :b)
+)
+
+class eqv-relation-t
+extends (super : preorder-t) (
+  symmetric : (super.pre-t (:a :b)) -> super.pre-t (:b :a)
+)
+
+class total-order-t
+extends (super : partial-order-t) (
+  connex : (
+    a : super.t
+    b : super.t
+  ) -> disj { super.pre-t (a b) super.pre-t (b a) }
+)

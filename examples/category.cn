@@ -1,0 +1,62 @@
+import { eqv-relation-t } from "order.cn"
+
+class category-t (
+  t : type
+
+  arrow-t : (t t) -> type
+
+  arrow-eqv-t : (
+    a : t
+    b : t
+  ) -> (
+    arrow-t (a b)
+    arrow-t (a b)
+  ) -> type
+
+  identity : (a : t) -> arrow-t (a a)
+
+  compose : (
+    a : t
+    b : t
+    c : t
+  ) -> (
+    arrow-t (a b)
+    arrow-t (b c)
+  ) -> arrow-t (a c)
+
+  identity-neutral-left : (
+    a : t
+    b : t
+  ) -> (
+    f : arrow-t (a b)
+  ) -> arrow-eqv-t (a b) (f compose (identity (a) f))
+
+  identity-neutral-right : (
+    a : t
+    b : t
+  ) -> (
+    f : arrow-t (a b)
+  ) -> arrow-eqv-t (a b) (f compose (f identity (b)))
+
+  compose-associative : (
+    a : t
+    b : t
+    c : t
+    d : t
+  ) -> (
+    f : arrow-t (a b)
+    g : arrow-t (b c)
+    h : arrow-t (c d)
+  ) -> arrow-eqv-t (a d) (
+    compose (f compose (g h))
+    compose (compose (f g) h)
+  )
+
+  arrow-eqv-relation : (
+    a : t
+    b : t
+  ) -> eqv-relation-t (
+    t = arrow-t (a b)
+    pre-t = arrow-eqv-t (a b)
+  )
+)
