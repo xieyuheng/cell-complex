@@ -1,6 +1,6 @@
 #+title: prelude
-- a module system to quit using org-mode
 - about levels
+  we do not handle levels, and see what paradox we will get
 * [todo-stack]
 
   - avoid the use of `...`

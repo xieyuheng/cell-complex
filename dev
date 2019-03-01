@@ -1,8 +1,6 @@
 #!/usr/bin/env bash
 
 build () {
-    # tangle cicada
-    # tangle eopl
     pushd cicada
     sbt run
     popd
@@ -11,26 +9,6 @@ build () {
 t () {
     build
 }
-
-# t () {
-#     build
-#     tangle docs/clause-and-effect/
-#     tangle docs/sicp/
-#     for FILE in $(find docs/clause-and-effect/ docs/sicp/ | grep "\.js")
-#     do
-#         echo "// > $FILE"
-#         if ! node $FILE
-#         then
-#             exit 1
-#         fi
-#     done
-# }
-
-# docs-up () {
-#     t
-#     npx vuepress build docs
-#     npx surge docs/.vuepress/dist logic-db.surge.sh
-# }
 
 main () {
     for TASK in $@
