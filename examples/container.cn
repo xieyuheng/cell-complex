@@ -1,20 +1,20 @@
 note {
-  endofunctor of set-category
+  endofunctor of set_category
 }
 
-container-t : type
-container-t = conj {
-  fun-t : (type) -> type
-  map : ((a) -> b fun-t (a)) -> fun-t (b)
+container_t : type
+container_t = conj {
+  fun_t : (type) -> type
+  map : ((a) -> b fun_t (a)) -> fun_t (b)
 }
 
-list-container : container-t
-list-container = container-c {
-  fun-t = list-t
+list_container : container_t
+list_container = container_c {
+  fun_t = list_t
   map (fun list) = {
     list case {
-      null-t => null-c
-      cons-t => cons-c (fun (list.car) map (fun list.cdr))
+      null_t => null_c
+      cons_t => cons_c (fun (list.car) map (fun list.cdr))
     }
   }
 }

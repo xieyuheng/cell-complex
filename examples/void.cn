@@ -1,42 +1,42 @@
-void-t : type
-void-t = disj { [] }
+void_t : type
+void_t = disj { [] }
 
-absurd : (void-t) -> t
+absurd : (void_t) -> t
 
-void-arrow-t : type
-void-arrow-t = conj {
-  (ante succ) : void-t
+void_arrow_t : type
+void_arrow_t = conj {
+  (ante succ) : void_t
 }
 
-void-arrow-eqv-t : type
-void-arrow-eqv-t = conj {
-  (lhs rhs) : void-arrow-t (a b)
+void_arrow_eqv_t : type
+void_arrow_eqv_t = conj {
+  (lhs rhs) : void_arrow_t (a b)
 }
 
-void-category : category-t
-void-category = category-c {
-  object-t = void-t
-  arrow-t = void-arrow-t
-  arrow-eqv-t = void-arrow-eqv-t
+void_category : category_t
+void_category = category_c {
+  object_t = void_t
+  arrow_t = void_arrow_t
+  arrow_eqv_t = void_arrow_eqv_t
 
-  identity : (a :: void-t)
-    -> void-arrow-t (a a)
-  identity (-) = void-arrow-c
+  identity : (a :: void_t)
+    -> void_arrow_t (a a)
+  identity (_) = void_arrow_c
 
-  compose (- -) = void-arrow-c
+  compose (_ _) = void_arrow_c
 
-  identity-neutral-left : (f : void-arrow-t (a b))
-    -> void-arrow-eqv-t (f void-arrow-c)
-  identity-neutral-left (-) = void-arrow-eqv-c
+  identity_neutral_left : (f : void_arrow_t (a b))
+    -> void_arrow_eqv_t (f void_arrow_c)
+  identity_neutral_left (_) = void_arrow_eqv_c
 
-  identity-neutral-right : (f : void-arrow-t (a b))
-    -> void-arrow-eqv-t (f void-arrow-c)
-  identity-neutral-right (-) = void-arrow-eqv-c
+  identity_neutral_right : (f : void_arrow_t (a b))
+    -> void_arrow_eqv_t (f void_arrow_c)
+  identity_neutral_right (_) = void_arrow_eqv_c
 
-  compose-associative : (
-    f : void-arrow-t (a b)
-    g : void-arrow-t (b c)
-    h : void-arrow-t (c d)
-  ) -> void-arrow-eqv-t (void-arrow-eqv-c void-arrow-eqv-c)
-  compose-associative (- - -) = void-arrow-eqv-c
+  compose_associative : (
+    f : void_arrow_t (a b)
+    g : void_arrow_t (b c)
+    h : void_arrow_t (c d)
+  ) -> void_arrow_eqv_t (void_arrow_eqv_c void_arrow_eqv_c)
+  compose_associative (_ _ _) = void_arrow_eqv_c
 }

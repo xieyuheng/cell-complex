@@ -1,46 +1,46 @@
-vect-t : type
-vect-t = disj {
-  [ null-vect-t
-    cons-vect-t ]
+vect_t : type
+vect_t = disj {
+  [ null_vect_t
+    cons_vect_t ]
   t : type
-  length : nat-t
+  length : nat_t
 }
 
-null-vect-t : type
-null-vect-t = conj {
+null_vect_t : type
+null_vect_t = conj {
   t : type
-  length : nat-t
-  length = zero-c
+  length : nat_t
+  length = zero_c
 }
 
-cons-vect-t : type
-cons-vect-t = conj {
+cons_vect_t : type
+cons_vect_t = conj {
   t : type
-  length : nat-t
+  length : nat_t
   car : t
-  cdr : vect-t (t n)
-  length = succ-c (n)
+  cdr : vect_t (t n)
+  length = succ_c (n)
 }
 
 
-vect-append : (
-  vect-t (t m)
-  vect-t (t n)
-) -> vect-t (t nat-add (m n))
-vect-append (ante succ) = {
+vect_append : (
+  vect_t (t m)
+  vect_t (t n)
+) -> vect_t (t nat_add (m n))
+vect_append (ante succ) = {
   ante case {
-    null-vect-t => succ
-    cons-vect-t => cons-vect-c (
-      ante.car vect-append (ante.cdr succ))
+    null_vect_t => succ
+    cons_vect_t => cons_vect_c (
+      ante.car vect_append (ante.cdr succ))
   }
 }
 
 
-vect-map : ((a) -> b vect-t (a n)) -> vect-t (a n)
-vect-map (fun list) = {
+vect_map : ((a) -> b vect_t (a n)) -> vect_t (a n)
+vect_map (fun list) = {
   list case {
-    null-vect-t => list
-    cons-vect-t => cons-vect-c (
-      fun (list.car) vect-map (fun list.cdr))
+    null_vect_t => list
+    cons_vect_t => cons_vect_c (
+      fun (list.car) vect_map (fun list.cdr))
   }
 }

@@ -1,12 +1,12 @@
-state-t : (type type) -> type
-state-t (s a) = (s) -> [s a]
+state_t : (type type) -> type
+state_t (s a) = (s) -> [s a]
 
-state-monad : (type) -> monad-t
-state-monad (s) = monad-c {
-  fun-t = state-t (s)
+state_monad : (type) -> monad_t
+state_monad (s) = monad_c {
+  fun_t = state_t (s)
 
-  map : ((a) -> b, state-t (s a))
-    -> state-t (s b)
+  map : ((a) -> b, state_t (s a))
+    -> state_t (s b)
   map : (
     (a) -> b
     (s) -> [s a]
@@ -16,14 +16,14 @@ state-monad (s) = monad-c {
      f (2nd (m (s)))]
   }
 
-  pure : (t) -> state-t (s t)
+  pure : (t) -> state_t (s t)
   pure : (t) -> (s) -> [s t]
   pure (v) = (s) => {
     [s v]
   }
 
-  bind : (fun-t (a) (a)) -> fun-t (b) -> fun-t (b)
-  bind : (state-t (s a) (a) -> state-t (s b)) -> state-t (s b)
+  bind : (fun_t (a) (a)) -> fun_t (b) -> fun_t (b)
+  bind : (state_t (s a) (a) -> state_t (s b)) -> state_t (s b)
   bind : (
     (s) -> [s a]
     (a) -> (s) -> [s b]

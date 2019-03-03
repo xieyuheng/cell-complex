@@ -1,29 +1,29 @@
-monad-t : type
-monad-t = heir {
-  [ container-t ]
-  pure : (t) -> fun-t (t)
-  bind : (fun-t (a), (a) -> fun-t (b)) -> fun-t (b)
+monad_t : type
+monad_t = heir {
+  [ container_t ]
+  pure : (t) -> fun_t (t)
+  bind : (fun_t (a), (a) -> fun_t (b)) -> fun_t (b)
 }
 
-monad-t.compose : (
-  (a) -> fun-t (b)
-  (b) -> fun-t (c)
-) -> (a) -> fun-t (c)
-monad-t.compose (f g) = (a) => {
+monad_t.compose : (
+  (a) -> fun_t (b)
+  (b) -> fun_t (c)
+) -> (a) -> fun_t (c)
+monad_t.compose (f g) = (a) => {
   bind (f (a) g)
 }
 
-monad-t.flatten : (fun-t (fun-t (a)))
-  -> fun-t (a)
-monad-t.flatten (m) = bind (m () => {})
+monad_t.flatten : (fun_t (fun_t (a)))
+  -> fun_t (a)
+monad_t.flatten (m) = bind (m () => {})
 
-list-monad : monad-t
-list-monad = monad-c {
-  pure (x) = cons-c (x null-c)
+list_monad : monad_t
+list_monad = monad_c {
+  pure (x) = cons_c (x null_c)
   bind (list fun) = {
     list case {
-      null-t => null-c
-      cons-t => list-append (fun (list.car) bind (list.cdr fun))
+      null_t => null_c
+      cons_t => list_append (fun (list.car) bind (list.cdr fun))
     }
   }
 }

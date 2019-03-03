@@ -1,5 +1,5 @@
-groupoid-t : type
-groupoid-t = heir {
-  [ category-t ]
-  inverse : (f : arrow-t (a b)) -> isomorphic-t (a b f)
+groupoid_t : type
+groupoid_t = heir {
+  [ category_t ]
+  inverse : (f : arrow_t (a b)) -> isomorphic_t (a b f)
 }

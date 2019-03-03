@@ -1,30 +1,30 @@
-tree-t : type
-tree-t = disj {
-  [ leaf-t
-    branch-t ]
+tree_t : type
+tree_t = disj {
+  [ leaf_t
+    branch_t ]
   t : type
 }
 
-leaf-t : type
-leaf-t = conj {
+leaf_t : type
+leaf_t = conj {
   t : type
   value : t
 }
 
-branch-t : type
-branch-t = conj {
+branch_t : type
+branch_t = conj {
   t : type
-  (left right) : tree-t (t)
+  (left right) : tree_t (t)
 }
 
 
-tree-container : container-t
-tree-container = container-c {
-  fun-t = tree-t
+tree_container : container_t
+tree_container = container_c {
+  fun_t = tree_t
   map (fun tree) = {
     tree case {
-      leaf-t => leaf-c (fun (tree.value))
-      branch-t => branch-c (
+      leaf_t => leaf_c (fun (tree.value))
+      branch_t => branch_c (
         map (fun tree.left)
         map (fun tree.right))
     }
@@ -32,33 +32,33 @@ tree-container = container-c {
 }
 
 
-tree-zip : (tree-t (a), tree-t (b))
-  -> maybe-t (tree-t ([a b]))
-tree-zip (x y) = {
+tree_zip : (tree_t (a), tree_t (b))
+  -> maybe_t (tree_t ([a b]))
+tree_zip (x y) = {
   [x y] case {
-    [leaf-t leaf-t] =>
-      pure (leaf-c ([x.value y.value]))
-    [branch-t branch-t] => do {
-      left <= tree-zip (x.left y.left)
-      right <= tree-zip (x.right y.right)
-      pure (branch-c (left right))
+    [leaf_t leaf_t] =>
+      pure (leaf_c ([x.value y.value]))
+    [branch_t branch_t] => do {
+      left <= tree_zip (x.left y.left)
+      right <= tree_zip (x.right y.right)
+      pure (branch_c (left right))
     }
-    [- -] => none-c
+    [_ _] => none_c
   }
 }
 
 
-tree-numbering : (tree-t (t))
-  -> state-t (nat-t tree-t (nat-t))
-tree-numbering (tree) = {
+tree_numbering : (tree_t (t))
+  -> state_t (nat_t tree_t (nat_t))
+tree_numbering (tree) = {
   tree case {
-    leaf-t => (n) => {
-      [nat-inc (n) leaf-c (n)]
+    leaf_t => (n) => {
+      [nat_inc (n) leaf_c (n)]
     }
-    branch-t => do {
-      left <= tree-numbering (tree.left)
-      right <= tree-numbering (tree.right)
-      pure (branch-c (left right))
+    branch_t => do {
+      left <= tree_numbering (tree.left)
+      right <= tree_numbering (tree.right)
+      pure (branch_c (left right))
     }
   }
 }

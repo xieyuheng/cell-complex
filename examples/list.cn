@@ -1,113 +1,113 @@
-union list-t (
+union list_t (
   t : type
-) [ null-t cons-t ]
+) [ null_t cons_t ]
 
-class null-t (
+class null_t (
   t : type
 )
 
-class cons-t (
+class cons_t (
   t : type
   car : t
-  cdr : list-t (t)
+  cdr : list_t (t)
 )
 
 
-list-length : (list-t (:t)) -> nat-t
-list-length (list) = {
+list_length : (list_t (:t)) -> nat_t
+list_length (list) = {
   list case {
-    null-t => zero-c
-    cons-t => succ-c (list-length (list.cdr))
+    null_t => zero_c
+    cons_t => succ_c (list_length (list.cdr))
   }
 }
 
 
-list-append : (list-t (t) list-t (t)) -> list-t (t)
-list-append (ante succ) = {
+list_append : (list_t (t) list_t (t)) -> list_t (t)
+list_append (ante succ) = {
   ante case {
-    null-t => succ
-    cons-t => cons-c (ante.car list-append (ante.cdr succ))
+    null_t => succ
+    cons_t => cons_c (ante.car list_append (ante.cdr succ))
   }
 }
 
 
-list-map : ((a) -> b list-t (a)) -> list-t (b)
-list-map (fun list) = {
+list_map : ((a) -> b list_t (a)) -> list_t (b)
+list_map (fun list) = {
   list case {
-    null-t => list
-    cons-t => cons-c (
+    null_t => list
+    cons_t => cons_c (
       fun (list.car)
-      list-map (fun list.cdr))
+      list_map (fun list.cdr))
   }
 }
 
 
-list-remove-first : (t list-t (t)) -> list-t (t)
-list-remove-first (x list) = {
+list_remove_first : (t list_t (t)) -> list_t (t)
+list_remove_first (x list) = {
   list case {
-    null-t => list
-    cons-t => eq-p (list.car x) case {
-      true-t => list.cdr
-      false-t => cons-c (
+    null_t => list
+    cons_t => eq_p (list.car x) case {
+      true_t => list.cdr
+      false_t => cons_c (
         list.car
-        list-remove-first (list.cdr x))
+        list_remove_first (list.cdr x))
     }
   }
 }
 
 
-list-length-t : type
-list-length-t = disj {
-  [ zero-length-t
-    succ-length-t ]
-  list : list-t (t)
-  length : nat-t
+list_length_t : type
+list_length_t = disj {
+  [ zero_length_t
+    succ_length_t ]
+  list : list_t (t)
+  length : nat_t
 }
 
-zero-length-t : type
-zero-length-t = conj {
-  list : list-t (t)
-  list = null-c
-  length : nat-t
-  length = zero-c
+zero_length_t : type
+zero_length_t = conj {
+  list : list_t (t)
+  list = null_c
+  length : nat_t
+  length = zero_c
 }
 
-succ-length-t : type
-succ-length-t = conj {
-  list : list-t (t)
-  list = cons-c (x l)
-  length : nat-t
-  length = succ-c (n)
-  prev : list-length-t (l n)
+succ_length_t : type
+succ_length_t = conj {
+  list : list_t (t)
+  list = cons_c (x l)
+  length : nat_t
+  length = succ_c (n)
+  prev : list_length_t (l n)
 }
 
 
 note {
   in prolog, we will have :
     append([], Succ, Succ).
-    append([Car | Cdr], Succ, [Car | ResultCdr]):-
+    append([Car | Cdr], Succ, [Car | ResultCdr]):_
       append(Cdr, Succ, ResultCdr).
 }
 
 
-list-append-t : type
-list-append-t = disj {
-  [ zero-append-t
-    succ-append-t ]
-  (ante succ result) : list-t (t)
+list_append_t : type
+list_append_t = disj {
+  [ zero_append_t
+    succ_append_t ]
+  (ante succ result) : list_t (t)
 }
 
-zero-append-t : type
-zero-append-t = conj {
-  (ante succ result) : list-t (t)
-  ante = null-c
+zero_append_t : type
+zero_append_t = conj {
+  (ante succ result) : list_t (t)
+  ante = null_c
   result = succ
 }
 
-succ-append-t : type
-succ-append-t = conj {
-  (ante succ result) : list-t (t)
-  prev : list-append-t (cdr succ result-cdr)
-  ante = cons-c (car cdr)
-  result = cons-c (car result-cdr)
+succ_append_t : type
+succ_append_t = conj {
+  (ante succ result) : list_t (t)
+  prev : list_append_t (cdr succ result_cdr)
+  ante = cons_c (car cdr)
+  result = cons_c (car result_cdr)
 }

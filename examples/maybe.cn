@@ -1,39 +1,39 @@
-maybe-t : type
-maybe-t = disj {
-  [ none-t
-    just-t ]
+maybe_t : type
+maybe_t = disj {
+  [ none_t
+    just_t ]
   t : type
 }
 
-none-t : type
-none-t = conj {
+none_t : type
+none_t = conj {
   t : type
 }
 
-just-t : type
-just-t = conj {
+just_t : type
+just_t = conj {
   t : type
   value : t
 }
 
-maybe-container : container-t
-maybe-container = container-c {
-  fun-t = maybe-t
+maybe_container : container_t
+maybe_container = container_c {
+  fun_t = maybe_t
   map (fun maybe) = {
     maybe case {
-      none-t => none-c
-      just-t => just-c (fun (maybe.value))
+      none_t => none_c
+      just_t => just_c (fun (maybe.value))
     }
   }
 }
 
-maybe-monad : monad-t
-maybe-monad = monad-c {
-  pure = just-c
+maybe_monad : monad_t
+maybe_monad = monad_c {
+  pure = just_c
   bind (maybe fun) = {
     maybe case {
-      none-t => none-c
-      just-t => fun (maybe.value)
+      none_t => none_c
+      just_t => fun (maybe.value)
     }
   }
 }

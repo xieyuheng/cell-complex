@@ -1,170 +1,170 @@
-import { eqv-relation-t } from "order.cn"
+import { eqv_relation_t } from "order.cn"
 
-class category-t (
+class category_t (
   t : type
 
-  arrow-t : (t t) -> type
+  arrow_t : (t t) -> type
 
-  arrow-eqv-t : (
+  arrow_eqv_t : (
     a : t
     b : t
   ) -> (
-    arrow-t (a b)
-    arrow-t (a b)
+    arrow_t (a b)
+    arrow_t (a b)
   ) -> type
 
-  identity : (a : t) -> arrow-t (a a)
+  identity : (a : t) -> arrow_t (a a)
 
   compose : (
     a : t
     b : t
     c : t
   ) -> (
-    arrow-t (a b)
-    arrow-t (b c)
-  ) -> arrow-t (a c)
+    arrow_t (a b)
+    arrow_t (b c)
+  ) -> arrow_t (a c)
 
-  identity-neutral-left : (
+  identity_neutral_left : (
     a : t
     b : t
   ) -> (
-    f : arrow-t (a b)
-  ) -> arrow-eqv-t (a b) (f compose (identity (a) f))
+    f : arrow_t (a b)
+  ) -> arrow_eqv_t (a b) (f compose (identity (a) f))
 
-  identity-neutral-right : (
+  identity_neutral_right : (
     a : t
     b : t
   ) -> (
-    f : arrow-t (a b)
-  ) -> arrow-eqv-t (a b) (f compose (f identity (b)))
+    f : arrow_t (a b)
+  ) -> arrow_eqv_t (a b) (f compose (f identity (b)))
 
-  compose-associative : (
+  compose_associative : (
     a : t
     b : t
     c : t
     d : t
   ) -> (
-    f : arrow-t (a b)
-    g : arrow-t (b c)
-    h : arrow-t (c d)
-  ) -> arrow-eqv-t (a d) (
+    f : arrow_t (a b)
+    g : arrow_t (b c)
+    h : arrow_t (c d)
+  ) -> arrow_eqv_t (a d) (
     compose (f compose (g h))
     compose (compose (f g) h)
   )
 
-  arrow-eqv-relation : (
+  arrow_eqv_relation : (
     a : t
     b : t
-  ) -> eqv-relation-t (
-    t = arrow-t (a b)
-    pre-t = arrow-eqv-t (a b)
+  ) -> eqv_relation_t (
+    t = arrow_t (a b)
+    pre_t = arrow_eqv_t (a b)
   )
 )
 
-unique-t : type
-unique-t = conj {
+unique_t : type
+unique_t = conj {
   t : type
   value : t
-  underlying-eqv-t : (t t) -> type
-  condition-t : (t) -> type
+  underlying_eqv_t : (t t) -> type
+  condition_t : (t) -> type
 
-  unique-proof :
-    [condition-t (value)
-     (another : t condition-t (another))
-       -> underlying-eqv-t (value another)]
+  unique_proof :
+    [condition_t (value)
+     (another : t condition_t (another))
+       -> underlying_eqv_t (value another)]
 }
 
 (unique <t>
  of <value>
- under <underlying-eqv-t>
- such-that <condition-t>) = macro {
-   unique-t
+ under <underlying_eqv_t>
+ such_that <condition_t>) = macro {
+   unique_t
      t = <t>
      value = <value>
-     underlying-eqv-t = <underlying-eqv-t>
-     condition-t = <condition-t>
+     underlying_eqv_t = <underlying_eqv_t>
+     condition_t = <condition_t>
 }
 
 
-category-t.isomorphic-t : type
-category-t.isomorphic-t = conj {
-  (lhs rhs) : object-t
-  iso : arrow-t (lhs rhs)
-  inv : arrow-t (rhs lhs)
-  iso-inv-identity :
-    arrow-eqv-t (compose (iso inv) identity)
-  inv-iso-identity :
-    arrow-eqv-t (compose (inv iso) identity)
+category_t.isomorphic_t : type
+category_t.isomorphic_t = conj {
+  (lhs rhs) : object_t
+  iso : arrow_t (lhs rhs)
+  inv : arrow_t (rhs lhs)
+  iso_inv_identity :
+    arrow_eqv_t (compose (iso inv) identity)
+  inv_iso_identity :
+    arrow_eqv_t (compose (inv iso) identity)
 }
 
 
-category-t.initial-t : type
-category-t.initial-t = conj {
-  initial : object-t
-  factorizer : (cand : object-t)
-    -> factor : arrow-t (initial cand)
+category_t.initial_t : type
+category_t.initial_t = conj {
+  initial : object_t
+  factorizer : (cand : object_t)
+    -> factor : arrow_t (initial cand)
 }
 
-category-t.terminal-t : type
-category-t.terminal-t = heir {
-  [ terminal-candidate-t ]
-  terminal : object-t
-  factorizer : (cand : object-t)
-    -> factor : arrow-t (cand terminal)
+category_t.terminal_t : type
+category_t.terminal_t = heir {
+  [ terminal_candidate_t ]
+  terminal : object_t
+  factorizer : (cand : object_t)
+    -> factor : arrow_t (cand terminal)
 }
 
-category-t.product-candidate-t : type
-category-t.product-candidate-t = conj {
-  fst : object-t
-  snd : object-t
-  product : object-t
-  fst-projection : arrow-t (product fst)
-  snd-projection : arrow-t (product snd)
+category_t.product_candidate_t : type
+category_t.product_candidate_t = conj {
+  fst : object_t
+  snd : object_t
+  product : object_t
+  fst_projection : arrow_t (product fst)
+  snd_projection : arrow_t (product snd)
 }
 
-category-t.product-t : type
-category-t.product-t = heir {
-  [ product-candidate-t ]
-  factorizer : (cand : product-candidate-t (fst snd))
-    -> factor : arrow-t (cand.product product)
-  unique-factor : (cand : product-candidate-t (fst snd))
+category_t.product_t : type
+category_t.product_t = heir {
+  [ product_candidate_t ]
+  factorizer : (cand : product_candidate_t (fst snd))
+    -> factor : arrow_t (cand.product product)
+  unique_factor : (cand : product_candidate_t (fst snd))
     -> unique factorizer (cand)
-       of arrow-t (cand.product product)
-       under arrow-eqv-t
-       such-that
-         arrow-eqv-t (
-           cand.fst-projection
-           compose (factor fst-projection))
-         arrow-eqv-t (
-           cand.snd-projection
-           compose (factor snd-projection))
+       of arrow_t (cand.product product)
+       under arrow_eqv_t
+       such_that
+         arrow_eqv_t (
+           cand.fst_projection
+           compose (factor fst_projection))
+         arrow_eqv_t (
+           cand.snd_projection
+           compose (factor snd_projection))
 }
 
-category-t.sum-candidate-t : type
-category-t.sum-candidate-t = conj {
-  fst : object-t
-  snd : object-t
-  sum : object-t
-  fst-injection : arrow-t (fst sum)
-  snd-injection : arrow-t (snd sum)
+category_t.sum_candidate_t : type
+category_t.sum_candidate_t = conj {
+  fst : object_t
+  snd : object_t
+  sum : object_t
+  fst_injection : arrow_t (fst sum)
+  snd_injection : arrow_t (snd sum)
 }
 
-category-t.sum-t : type
-category-t.sum-t = heir {
-  [ sum-candidate-t ]
-  factorizer : (cand : sum-candidate-t (fst snd))
-    -> factor : arrow-t (sum cand.sum)
-  unique-factor : (cand : sum-candidate-t (fst snd))
+category_t.sum_t : type
+category_t.sum_t = heir {
+  [ sum_candidate_t ]
+  factorizer : (cand : sum_candidate_t (fst snd))
+    -> factor : arrow_t (sum cand.sum)
+  unique_factor : (cand : sum_candidate_t (fst snd))
     -> unique factorizer (cand)
-       of arrow-t (sum cand.sum)
-       under arrow-eqv-t
-       such-that
-         arrow-eqv-t (
-           cand.fst-injection
-           compose (fst-injection factor))
-         arrow-eqv-t (
-           cand.snd-injection
-           compose (snd-injection factor))
+       of arrow_t (sum cand.sum)
+       under arrow_eqv_t
+       such_that
+         arrow_eqv_t (
+           cand.fst_injection
+           compose (fst_injection factor))
+         arrow_eqv_t (
+           cand.snd_injection
+           compose (snd_injection factor))
 }
 
 note {
@@ -172,77 +172,77 @@ note {
   we simple view all arrow of the same type as eqv
 }
 
-preorder.as-category : category-t
-preorder.as-category = category-c {
-  object-t = element-t
+preorder.as_category : category_t
+preorder.as_category = category_c {
+  object_t = element_t
 
-  arrow-t = pre-t
+  arrow_t = pre_t
 
-  arrow-eqv-t (- -) = unit-t
+  arrow_eqv_t (_ _) = unit_t
 
-  identity = pre-reflexive
+  identity = pre_reflexive
 
-  compose = pre-transitive
+  compose = pre_transitive
 
-  identity-neutral-left (-) = unit-c
+  identity_neutral_left (_) = unit_c
 
-  identity-neutral-right (-) = unit-c
+  identity_neutral_right (_) = unit_c
 
-  compose-associative (- - -) = unit-c
+  compose_associative (_ _ _) = unit_c
 }
 
-category-t.opposite : category-t
-category-t.opposite = category-c {
-  object-t = this.object-t
+category_t.opposite : category_t
+category_t.opposite = category_c {
+  object_t = this.object_t
 
-  arrow-t : (object-t object-t)
+  arrow_t : (object_t object_t)
     -> type
-  arrow-t (a b) = this.arrow-t (b a)
+  arrow_t (a b) = this.arrow_t (b a)
 
-  arrow-eqv-t : (this.arrow-t (b a) this.arrow-t (b a))
+  arrow_eqv_t : (this.arrow_t (b a) this.arrow_t (b a))
     -> type
-  arrow-eqv-t = this.arrow-eqv-t
+  arrow_eqv_t = this.arrow_eqv_t
 
-  identity : (a :: object-t)
-    -> arrow-t (a a)
+  identity : (a :: object_t)
+    -> arrow_t (a a)
   identity = this.identity
 
-  compose : (this.arrow-t (b a) this.arrow-t (c b))
-    -> this.arrow-t (c a)
+  compose : (this.arrow_t (b a) this.arrow_t (c b))
+    -> this.arrow_t (c a)
   compose (f g) = this.compose (g f)
 
-  identity-neutral-left : (f : this.arrow-t (b a))
-    -> arrow-eqv-t (f this.compose (f identity))
-  identity-neutral-left = this.identity-neutral-right
+  identity_neutral_left : (f : this.arrow_t (b a))
+    -> arrow_eqv_t (f this.compose (f identity))
+  identity_neutral_left = this.identity_neutral_right
 
-  identity-neutral-right : (f : this.arrow-t (b a))
-    -> arrow-eqv-t (f this.compose (identity f))
-  identity-neutral-right = this.identity-neutral-left
+  identity_neutral_right : (f : this.arrow_t (b a))
+    -> arrow_eqv_t (f this.compose (identity f))
+  identity_neutral_right = this.identity_neutral_left
 
-  compose-associative : (
-    f : this.arrow-t (b a)
-    g : this.arrow-t (c b)
-    h : this.arrow-t (d c)
-  ) -> arrow-eqv-t (
+  compose_associative : (
+    f : this.arrow_t (b a)
+    g : this.arrow_t (c b)
+    h : this.arrow_t (d c)
+  ) -> arrow_eqv_t (
     this.compose (this.compose (h g) f)
     this.compose (h this.compose (g f)))
-  compose-associative (f g h) = {
-    this.arrow-eqv-relation.pre-symmetric (
-      this.compose-associative (h g f))
+  compose_associative (f g h) = {
+    this.arrow_eqv_relation.pre_symmetric (
+      this.compose_associative (h g f))
   }
 }
 
-category-product : (category-t category-t) -> category-t
-category-product (#1 #2) = category-c {
-  object-t = [#1.object-t #2.object-t]
+category_product : (category_t category_t) -> category_t
+category_product (#1 #2) = category_c {
+  object_t = [#1.object_t #2.object_t]
 
-  arrow-t (a b) =
-    [#1.arrow-t (a.1 b.1)
-     #2.arrow-t (a.2 b.2)]
+  arrow_t (a b) =
+    [#1.arrow_t (a.1 b.1)
+     #2.arrow_t (a.2 b.2)]
 
-  arrow-eqv-t (lhs rhs) =
-    [#1.arrow-eqv-t (lhs.1 rhs.1)
-     #2.arrow-eqv-t (lhs.2 rhs.2)]
+  arrow_eqv_t (lhs rhs) =
+    [#1.arrow_eqv_t (lhs.1 rhs.1)
+     #2.arrow_eqv_t (lhs.2 rhs.2)]
 
   identity =
     [#1.identity
@@ -252,166 +252,166 @@ category-product (#1 #2) = category-c {
     [#1.compose (f.1 g.1)
      #2.compose (f.2 g.2)]
 
-  identity-neutral-left (f) =
-    [#1.identity-neutral-left (f.1)
-     #2.identity-neutral-left (f.2)]
+  identity_neutral_left (f) =
+    [#1.identity_neutral_left (f.1)
+     #2.identity_neutral_left (f.2)]
 
-  identity-neutral-right (f) =
-    [#1.identity-neutral-right (f.1)
-     #2.identity-neutral-right (f.2)]
+  identity_neutral_right (f) =
+    [#1.identity_neutral_right (f.1)
+     #2.identity_neutral_right (f.2)]
 
-  compose-associative (f g h) =
-    [#1.compose-associative (f.1 g.1 h.1)
-     #2.compose-associative (f.2 g.2 h.2)]
+  compose_associative (f g h) =
+    [#1.compose_associative (f.1 g.1 h.1)
+     #2.compose_associative (f.2 g.2 h.2)]
 }
 
-product-closed-category-t : type
-product-closed-category-t = heir {
-  [ category-t ]
-  product : ((a b) : object-t)
-    -> p : object-t
-       product-relation :: product-t (a b p)
+product_closed_category_t : type
+product_closed_category_t = heir {
+  [ category_t ]
+  product : ((a b) : object_t)
+    -> p : object_t
+       product_relation :: product_t (a b p)
 }
 
-product-closed-category-t.product-arrow : (
-  arrow-t (a b)
-  arrow-t (c d)
-) -> arrow-t (product (a c) product (b d))
-product-closed-category-t.product-arrow (f g) = {
-  with-details product (a c)
-    p <= product-relation
-  with-details product (b d)
-    q <= product-relation
+product_closed_category_t.product_arrow : (
+  arrow_t (a b)
+  arrow_t (c d)
+) -> arrow_t (product (a c) product (b d))
+product_closed_category_t.product_arrow (f g) = {
+  with_details product (a c)
+    p <= product_relation
+  with_details product (b d)
+    q <= product_relation
   q.factorizer (
-    product-candidate-c {
+    product_candidate_c {
       fst = b
       snd = d
       product = product (a c)
-      fst-projection = compose (p.fst-projection f)
-      snd-projection = compose (p.fst-projection g)
+      fst_projection = compose (p.fst_projection f)
+      snd_projection = compose (p.fst_projection g)
     })
 }
 
-product-closed-category-t.exponential-candidate-t : type
-product-closed-category-t.exponential-candidate-t = conj {
-  ante : object-t
-  succ : object-t
-  exponential : object-t
-  eval : arrow-t (product (exponential ante) succ)
+product_closed_category_t.exponential_candidate_t : type
+product_closed_category_t.exponential_candidate_t = conj {
+  ante : object_t
+  succ : object_t
+  exponential : object_t
+  eval : arrow_t (product (exponential ante) succ)
 }
 
-category-t.exponential-t : type
-category-t.exponential-t = heir {
-  [ exponential-candidate-t ]
-  factorizer : (cand : exponential-candidate-t (ante succ))
-    -> factor : arrow-t (cand.exponential exponential)
-  unique-factor : (cand : exponential-candidate-t (ante succ))
+category_t.exponential_t : type
+category_t.exponential_t = heir {
+  [ exponential_candidate_t ]
+  factorizer : (cand : exponential_candidate_t (ante succ))
+    -> factor : arrow_t (cand.exponential exponential)
+  unique_factor : (cand : exponential_candidate_t (ante succ))
     -> unique factorizer (cand)
-       of arrow-t (cand.exponential exponential)
-       under arrow-eqv-t
-       such-that
-         arrow-eqv-t (
+       of arrow_t (cand.exponential exponential)
+       under arrow_eqv_t
+       such_that
+         arrow_eqv_t (
            cand.eval
-           compose (eval product-arrow (factor identity)))
+           compose (eval product_arrow (factor identity)))
 }
 
-// - a functor between two categories is a natural-construction
-//   of the structure of [ante : category-t]
-//   in the structure of [succ : category-t]
+// _ a functor between two categories is a natural_construction
+//   of the structure of [ante : category_t]
+//   in the structure of [succ : category_t]
 
-functor-t : type
-functor-t = conj {
-  ante : category-t
-  succ : category-t
+functor_t : type
+functor_t = conj {
+  ante : category_t
+  succ : category_t
 
-  object-map : (ante.object-t)
-    -> succ.object-t
+  object_map : (ante.object_t)
+    -> succ.object_t
 
-  arrow-map : (ante.arrow-t (a b))
-    -> succ.arrow-t (object-map (a) object-map (b))
+  arrow_map : (ante.arrow_t (a b))
+    -> succ.arrow_t (object_map (a) object_map (b))
 
-  arrow-map-respect-compose : (
-    f : ante.arrow-t (a b)
-    g : ante.arrow-t (b c)
-  ) -> succ.arrow-eqv-t (
-    arrow-map (ante.compose (f g))
-    succ.compose (arrow-map (f) arrow-map (g)))
+  arrow_map_respect_compose : (
+    f : ante.arrow_t (a b)
+    g : ante.arrow_t (b c)
+  ) -> succ.arrow_eqv_t (
+    arrow_map (ante.compose (f g))
+    succ.compose (arrow_map (f) arrow_map (g)))
 
-  arrow-map-respect-identity : (a :: ante.object-t)
-    -> succ.arrow-eqv-t (
-         arrow-map (ante.identity (a))
-         succ.identity (object-map (a)))
+  arrow_map_respect_identity : (a :: ante.object_t)
+    -> succ.arrow_eqv_t (
+         arrow_map (ante.identity (a))
+         succ.identity (object_map (a)))
 }
 
-// - a natural-transformation is a level up map
+// _ a natural_transformation is a level up map
 //   which maps objects to arrows and arrows to squares.
 
-natural-transformation-t : type
-natural-transformation-t = conj {
-  lhs : functor-t (ante succ)
-  rhs : functor-t (ante succ)
+natural_transformation_t : type
+natural_transformation_t = conj {
+  lhs : functor_t (ante succ)
+  rhs : functor_t (ante succ)
 
-  ante succ :: object-t
+  ante succ :: object_t
 
-  component : (a : ante.object-t)
-    -> succ.arrow-t (lhs.object-map (a) rhs.object-map (a))
+  component : (a : ante.object_t)
+    -> succ.arrow_t (lhs.object_map (a) rhs.object_map (a))
 
-  transformation : (f : ante.arrow-t (a b))
-    -> succ.arrow-eqv-t (
-         succ.compose (component (a) rhs.arrow-map (f))
-         succ.compose (lhs.arrow-map (f) component (b)))
+  transformation : (f : ante.arrow_t (a b))
+    -> succ.arrow_eqv_t (
+         succ.compose (component (a) rhs.arrow_map (f))
+         succ.compose (lhs.arrow_map (f) component (b)))
 }
 
-natural-isomorphism-t : type
-natural-isomorphism-t = heir {
-  [ natural-transformation-t ]
-  isomorphic-component : (a : ante.object-t)
-    -> succ.isomorphic-t (iso = component (a))
+natural_isomorphism_t : type
+natural_isomorphism_t = heir {
+  [ natural_transformation_t ]
+  isomorphic_component : (a : ante.object_t)
+    -> succ.isomorphic_t (iso = component (a))
 }
 
-category-category : category-t
-category-category = category-c {
-  object-t : category-t
-  object-t = category-t
+category_category : category_t
+category_category = category_c {
+  object_t : category_t
+  object_t = category_t
 
-  arrow-t : (category-t category-t)
+  arrow_t : (category_t category_t)
     -> type
-  arrow-t (a b) = functor-t (a b)
+  arrow_t (a b) = functor_t (a b)
 
-  arrow-eqv-t : (functor-t (a b) functor-t (a b))
+  arrow_eqv_t : (functor_t (a b) functor_t (a b))
     -> type
-  arrow-eqv-t (lhs rhs) = natural-isomorphism-t (lhs rhs)
+  arrow_eqv_t (lhs rhs) = natural_isomorphism_t (lhs rhs)
 
-  identity : (a :: category-t) -> functor-t (a a)
-  identity = functor-c {
+  identity : (a :: category_t) -> functor_t (a a)
+  identity = functor_c {
     ante = a
     succ = a
     [todo]
   }
 
-  compose : (functor-t (a b) functor-t (b c))
-    -> functor-t (a c)
+  compose : (functor_t (a b) functor_t (b c))
+    -> functor_t (a c)
   compose =
     [todo]
 
 
-  identity-neutral-left : (f : functor-t (a b))
-    -> natural-isomorphism-t (f compose (identity f))
-  identity-neutral-left =
+  identity_neutral_left : (f : functor_t (a b))
+    -> natural_isomorphism_t (f compose (identity f))
+  identity_neutral_left =
     [todo]
 
-  identity-neutral-right : (f : functor-t (a b))
-    -> natural-isomorphism-t (f compose (f identity))
-  identity-neutral-right =
+  identity_neutral_right : (f : functor_t (a b))
+    -> natural_isomorphism_t (f compose (f identity))
+  identity_neutral_right =
     [todo]
 
-  compose-associative : (
-    f : functor-t (a b)
-    g : functor-t (b c)
-    h : functor-t (c d)
-  ) -> natural-isomorphism-t (
+  compose_associative : (
+    f : functor_t (a b)
+    g : functor_t (b c)
+    h : functor_t (c d)
+  ) -> natural_isomorphism_t (
     compose (f compose (g h))
     compose (compose (f g) h))
-  compose-associative =
+  compose_associative =
     [todo]
 }

@@ -3,110 +3,110 @@ note {
   composing [linking] two edges does not give you edge but path.
 }
 
-graph-t : type
-graph-t = conj {
-  node-t : type
-  edge-t : (node-t node-t) -> type
+graph_t : type
+graph_t = conj {
+  node_t : type
+  edge_t : (node_t node_t) -> type
 }
 
-graph-t.path-t : type
-graph-t.path-t = data
-  :> [node-path-t
-      edge-path-t
-      link-path-t] {
-  (start end) : node-t
+graph_t.path_t : type
+graph_t.path_t = data
+  :> [node_path_t
+      edge_path_t
+      link_path_t] {
+  (start end) : node_t
 }
 
-graph-t.node-path-t : type
-graph-t.node-path-t = conj {
-  (start end) : node-t
-  node : node-t
+graph_t.node_path_t : type
+graph_t.node_path_t = conj {
+  (start end) : node_t
+  node : node_t
   start = node
   end = node
 }
 
-graph-t.edge-path-t : type
-graph-t.edge-path-t = conj {
-  (start end) : node-t
-  edge : edge-t (start end)
+graph_t.edge_path_t : type
+graph_t.edge_path_t = conj {
+  (start end) : node_t
+  edge : edge_t (start end)
 }
 
-graph-t.link-path-t : type
-graph-t.link-path-t = conj {
-  (start end) : node-t
-  first : path-t (start middle)
-  next : path-t (middle end)
+graph_t.link_path_t : type
+graph_t.link_path_t = conj {
+  (start end) : node_t
+  first : path_t (start middle)
+  next : path_t (middle end)
 }
 
-graph-t.path-eqv-t : type
-graph-t.path-eqv-t = data
-  :> [refl-path-eqv-t
-      node-left-path-eqv-t
-      node-right-path-eqv-t
-      associative-path-eqv-t] {
-  (lhs rhs) : path-t (a b)
+graph_t.path_eqv_t : type
+graph_t.path_eqv_t = data
+  :> [refl_path_eqv_t
+      node_left_path_eqv_t
+      node_right_path_eqv_t
+      associative_path_eqv_t] {
+  (lhs rhs) : path_t (a b)
 }
 
-graph-t.refl-path-eqv-t : type
-graph-t.refl-path-eqv-t = conj {
-  (lhs rhs) : path-t (a b)
-  p : path-t (a b)
+graph_t.refl_path_eqv_t : type
+graph_t.refl_path_eqv_t = conj {
+  (lhs rhs) : path_t (a b)
+  p : path_t (a b)
   lhs = p
   lhs = p
 }
 
-graph-t.node-left-path-eqv-t : type
-graph-t.node-left-path-eqv-t = conj {
-  (lhs rhs) : path-t (a b)
-  p : path-t (a b)
+graph_t.node_left_path_eqv_t : type
+graph_t.node_left_path_eqv_t = conj {
+  (lhs rhs) : path_t (a b)
+  p : path_t (a b)
   lhs = p
-  rhs = link-path-c (node-path-c (a) p)
+  rhs = link_path_c (node_path_c (a) p)
 }
 
-graph-t.node-right-path-eqv-t : type
-graph-t.node-right-path-eqv-t = conj {
-  (lhs rhs) : path-t (a b)
-  p : path-t (a b)
+graph_t.node_right_path_eqv_t : type
+graph_t.node_right_path_eqv_t = conj {
+  (lhs rhs) : path_t (a b)
+  p : path_t (a b)
   lhs = p
-  rhs = link-path-c (p node-path-c (b))
+  rhs = link_path_c (p node_path_c (b))
 }
 
-graph-t.associative-path-eqv-t : type
-graph-t.associative-path-eqv-t = conj {
-  (lhs rhs) : path-t (a b)
-  p : path-t (a b)
-  q : path-t (b c)
-  r : path-t (c d)
-  lhs = link-path-c (p link-path-c (q r))
-  rhs = link-path-c (link-path-c (p q) r)
+graph_t.associative_path_eqv_t : type
+graph_t.associative_path_eqv_t = conj {
+  (lhs rhs) : path_t (a b)
+  p : path_t (a b)
+  q : path_t (b c)
+  r : path_t (c d)
+  lhs = link_path_c (p link_path_c (q r))
+  rhs = link_path_c (link_path_c (p q) r)
 }
 
-graph-t.as-free-category : category-t
-graph-t.as-free-category = category-c {
-  object-t = node-t
-  arrow-t = path-t
-  arrow-eqv-t = path-eqv-t
+graph_t.as_free_category : category_t
+graph_t.as_free_category = category_c {
+  object_t = node_t
+  arrow_t = path_t
+  arrow_eqv_t = path_eqv_t
 
-  identity : (a :: node-t)
-    -> path-t (a a)
-  identity = node-path-c (a)
+  identity : (a :: node_t)
+    -> path_t (a a)
+  identity = node_path_c (a)
 
-  compose = link-path-c
+  compose = link_path_c
 
-  identity-neutral-left : (f : path-t (a b))
-    -> path-eqv-t (f link-path-c (node-path-c (a) f))
-  identity-neutral-left = node-left-path-eqv-c
+  identity_neutral_left : (f : path_t (a b))
+    -> path_eqv_t (f link_path_c (node_path_c (a) f))
+  identity_neutral_left = node_left_path_eqv_c
 
-  identity-neutral-right : (f : path-t (a b))
-    -> path-eqv-t (f link-path-c (f node-path-c (b)))
-  identity-neutral-right = node-right-path-eqv-c
+  identity_neutral_right : (f : path_t (a b))
+    -> path_eqv_t (f link_path_c (f node_path_c (b)))
+  identity_neutral_right = node_right_path_eqv_c
 
-  compose-associative : (
-    f : path-t (a b)
-    g : path-t (b c)
-    h : path-t (c d)
-  ) -> path-eqv-t (
-    link-path-c (f link-path-c (g h))
-    link-path-c (link-path-c (f g) h))
-  compose-associative = associative-path-eqv-c
+  compose_associative : (
+    f : path_t (a b)
+    g : path_t (b c)
+    h : path_t (c d)
+  ) -> path_eqv_t (
+    link_path_c (f link_path_c (g h))
+    link_path_c (link_path_c (f g) h))
+  compose_associative = associative_path_eqv_c
 }

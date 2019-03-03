@@ -1,5 +1,5 @@
-union bool-t () [ true-t false-t ]
+union bool_t () [ true_t false_t ]
 
-class true-t ()
+class true_t ()
 
-class false-t ()
+class false_t ()
