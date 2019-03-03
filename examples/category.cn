@@ -175,50 +175,32 @@ note {
 preorder.as_category : category_t
 preorder.as_category = category_c {
   object_t = element_t
-
   arrow_t = pre_t
-
   arrow_eqv_t (_ _) = unit_t
-
   identity = pre_reflexive
-
   compose = pre_transitive
-
   identity_neutral_left (_) = unit_c
-
   identity_neutral_right (_) = unit_c
-
   compose_associative (_ _ _) = unit_c
 }
 
 category_t.opposite : category_t
 category_t.opposite = category_c {
   object_t = this.object_t
-
-  arrow_t : (object_t object_t)
-    -> type
+  arrow_t : (object_t object_t) -> type
   arrow_t (a b) = this.arrow_t (b a)
-
-  arrow_eqv_t : (this.arrow_t (b a) this.arrow_t (b a))
-    -> type
+  arrow_eqv_t : (this.arrow_t (b a) this.arrow_t (b a)) -> type
   arrow_eqv_t = this.arrow_eqv_t
-
-  identity : (a :: object_t)
-    -> arrow_t (a a)
+  identity : (a :: object_t) -> arrow_t (a a)
   identity = this.identity
-
-  compose : (this.arrow_t (b a) this.arrow_t (c b))
-    -> this.arrow_t (c a)
+  compose : (this.arrow_t (b a) this.arrow_t (c b)) -> this.arrow_t (c a)
   compose (f g) = this.compose (g f)
-
   identity_neutral_left : (f : this.arrow_t (b a))
     -> arrow_eqv_t (f this.compose (f identity))
   identity_neutral_left = this.identity_neutral_right
-
   identity_neutral_right : (f : this.arrow_t (b a))
     -> arrow_eqv_t (f this.compose (identity f))
   identity_neutral_right = this.identity_neutral_left
-
   compose_associative : (
     f : this.arrow_t (b a)
     g : this.arrow_t (c b)

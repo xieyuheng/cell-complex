@@ -1,6 +1,9 @@
 union list_t (
   t : type
-) [ null_t cons_t ]
+) [
+  null_t
+  cons_t
+]
 
 class null_t (
   t : type
@@ -55,31 +58,28 @@ list_remove_first (x list) = {
   }
 }
 
-
-list_length_t : type
-list_length_t = disj {
-  [ zero_length_t
-    succ_length_t ]
+union list_length_t (
   list : list_t (t)
   length : nat_t
-}
+) [
+  zero_length_t
+  succ_length_t
+]
 
-zero_length_t : type
-zero_length_t = conj {
+class zero_length_t (
   list : list_t (t)
   list = null_c
   length : nat_t
   length = zero_c
-}
+)
 
-succ_length_t : type
-succ_length_t = conj {
+class succ_length_t (
   list : list_t (t)
   list = cons_c (x l)
   length : nat_t
   length = succ_c (n)
   prev : list_length_t (l n)
-}
+)
 
 
 note {
@@ -89,25 +89,22 @@ note {
       append(Cdr, Succ, ResultCdr).
 }
 
-
-list_append_t : type
-list_append_t = disj {
-  [ zero_append_t
-    succ_append_t ]
+union list_append_t (
   (ante succ result) : list_t (t)
-}
+) [
+  zero_append_t
+  succ_append_t
+]
 
-zero_append_t : type
-zero_append_t = conj {
+class zero_append_t (
   (ante succ result) : list_t (t)
   ante = null_c
   result = succ
-}
+)
 
-succ_append_t : type
-succ_append_t = conj {
+class succ_append_t (
   (ante succ result) : list_t (t)
   prev : list_append_t (cdr succ result_cdr)
   ante = cons_c (car cdr)
   result = cons_c (car result_cdr)
-}
+)
