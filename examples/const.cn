@@ -1,0 +1,13 @@
+const-t : type
+const-t = conj {
+  (c a) : type
+  value : c
+}
+
+const-container : (type) -> container-t
+const-container (c) = container-c {
+  fun-t = const-t (c)
+
+  map : ((a) -> b const-t (c a)) -> const-t (c b)
+  map (- x) = x
+}

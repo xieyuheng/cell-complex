@@ -1,0 +1,112 @@
+note {
+  different between graph and category is that
+  composing [linking] two edges does not give you edge but path.
+}
+
+graph-t : type
+graph-t = conj {
+  node-t : type
+  edge-t : (node-t node-t) -> type
+}
+
+graph-t.path-t : type
+graph-t.path-t = data
+  :> [node-path-t
+      edge-path-t
+      link-path-t] {
+  (start end) : node-t
+}
+
+graph-t.node-path-t : type
+graph-t.node-path-t = conj {
+  (start end) : node-t
+  node : node-t
+  start = node
+  end = node
+}
+
+graph-t.edge-path-t : type
+graph-t.edge-path-t = conj {
+  (start end) : node-t
+  edge : edge-t (start end)
+}
+
+graph-t.link-path-t : type
+graph-t.link-path-t = conj {
+  (start end) : node-t
+  first : path-t (start middle)
+  next : path-t (middle end)
+}
+
+graph-t.path-eqv-t : type
+graph-t.path-eqv-t = data
+  :> [refl-path-eqv-t
+      node-left-path-eqv-t
+      node-right-path-eqv-t
+      associative-path-eqv-t] {
+  (lhs rhs) : path-t (a b)
+}
+
+graph-t.refl-path-eqv-t : type
+graph-t.refl-path-eqv-t = conj {
+  (lhs rhs) : path-t (a b)
+  p : path-t (a b)
+  lhs = p
+  lhs = p
+}
+
+graph-t.node-left-path-eqv-t : type
+graph-t.node-left-path-eqv-t = conj {
+  (lhs rhs) : path-t (a b)
+  p : path-t (a b)
+  lhs = p
+  rhs = link-path-c (node-path-c (a) p)
+}
+
+graph-t.node-right-path-eqv-t : type
+graph-t.node-right-path-eqv-t = conj {
+  (lhs rhs) : path-t (a b)
+  p : path-t (a b)
+  lhs = p
+  rhs = link-path-c (p node-path-c (b))
+}
+
+graph-t.associative-path-eqv-t : type
+graph-t.associative-path-eqv-t = conj {
+  (lhs rhs) : path-t (a b)
+  p : path-t (a b)
+  q : path-t (b c)
+  r : path-t (c d)
+  lhs = link-path-c (p link-path-c (q r))
+  rhs = link-path-c (link-path-c (p q) r)
+}
+
+graph-t.as-free-category : category-t
+graph-t.as-free-category = category-c {
+  object-t = node-t
+  arrow-t = path-t
+  arrow-eqv-t = path-eqv-t
+
+  identity : (a :: node-t)
+    -> path-t (a a)
+  identity = node-path-c (a)
+
+  compose = link-path-c
+
+  identity-neutral-left : (f : path-t (a b))
+    -> path-eqv-t (f link-path-c (node-path-c (a) f))
+  identity-neutral-left = node-left-path-eqv-c
+
+  identity-neutral-right : (f : path-t (a b))
+    -> path-eqv-t (f link-path-c (f node-path-c (b)))
+  identity-neutral-right = node-right-path-eqv-c
+
+  compose-associative : (
+    f : path-t (a b)
+    g : path-t (b c)
+    h : path-t (c d)
+  ) -> path-eqv-t (
+    link-path-c (f link-path-c (g h))
+    link-path-c (link-path-c (f g) h))
+  compose-associative = associative-path-eqv-c
+}

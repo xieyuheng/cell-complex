@@ -1,0 +1,39 @@
+monoid-t : type
+monoid-t = conj {
+  element-t : type
+
+  element-eqv-t : (element-t element-t)
+    -> type
+
+  unit : element-t
+
+  product : (element-t element-t)
+    -> element-t
+
+  unit-neutral-left : (a : element-t)
+    -> element-eqv-t (product (a unit) a)
+
+  unit-neutral-right : (a : element-t)
+    -> element-eqv-t (product (unit a) a)
+
+  product-associative : (
+    a : element-t
+    b : element-t
+    c : element-t
+  ) -> element-eqv-t (
+    product (a product (b c))
+    product (product (a b) c))
+}
+
+
+monoid-t.as-category : category-t
+monoid-t.as-category = category-c {
+  object-t = unit-t
+  arrow-t (- -) = element-t
+  arrow-eqv-t = element-eqv-t
+  identity = unit
+  compose = product
+  identity-neutral-left = unit-neutral-left
+  identity-neutral-right = unit-neutral-right
+  compose-associative = product-associative
+}

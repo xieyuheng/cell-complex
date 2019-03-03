@@ -1,0 +1,303 @@
+nat-t : type
+nat-t = disj {
+  [ zero-t
+    succ-t ]
+}
+
+zero-t : type
+zero-t = conj {}
+
+succ-t : type
+succ-t = conj {
+  prev : nat-t
+}
+
+
+nat-add : (nat-t nat-t) -> nat-t
+nat-add (x y) = {
+  x case {
+    zero-t => y
+    succ-t => succ-c (nat-add (x.prev y))
+  }
+}
+
+nat-mul : (nat-t nat-t) -> nat-t
+nat-mul (x y) = {
+  x case {
+    zero-t => zero-c
+    succ-t => nat-add (y nat-mul (x.prev y))
+  }
+}
+
+
+nat-factorial : (nat-t) -> nat-t
+nat-factorial (x) = {
+  x case {
+    zero-t => succ-c (zero-c)
+    succ-t => nat-mul (x nat-factorial (x.prev))
+  }
+}
+
+
+nat-even-p : (nat-t) -> bool-t
+nat-even-p (x) = {
+  x case {
+    zero-t => true-c
+    succ-t => x.prev case {
+      zero-t => false-c
+      succ-t => nat-even-p (x.prev.prev)
+    }
+  }
+}
+
+
+nat-even-t : type
+nat-even-t = disj {
+  [ zero-even-t
+    even-plus-two-even-t ]
+  nat : nat-t
+}
+
+zero-even-t : type
+zero-even-t = conj {
+  nat : nat-t
+  nat = zero-c
+}
+
+even-plus-two-even-t : type
+even-plus-two-even-t = conj {
+  nat : nat-t
+  prev : nat-even-t (m)
+  nat = succ-c (succ-c (m))
+}
+
+
+two-even : nat-even-t (succ-c (succ-c (zero-c)))
+two-even = even-plus-two-even-c (zero-even-c)
+
+
+nat-add-associative : ((x y z) : nat-t)
+  -> eqv-t (
+       nat-add (nat-add (x y) z)
+       nat-add (x nat-add (y z)))
+nat-add-associative (x y z) = {
+  x case {
+    zero-t => eqv-c
+    succ-t => eqv-apply (
+      succ-c nat-add-associative (x.prev y z))
+  }
+}
+
+
+nat-add-commutative : ((x y) : nat-t)
+  -> eqv-t (
+       nat-add (x y)
+       nat-add (y x))
+nat-add-commutative (x y) = x case {
+  zero-t => nat-add-zero-commutative (y)
+  succ-t => eqv-compose (
+    eqv-apply (succ-c nat-add-commutative (x.prev y))
+    nat-add-succ-commutative (y x.prev))
+}
+
+
+nat-add-zero-commutative : (x : nat-t)
+  -> eqv-t (
+       nat-add (zero-c x)
+       nat-add (x zero-c))
+nat-add-zero-commutative (x) = {
+  x case {
+    zero-t => eqv-c
+    succ-t => eqv-apply (
+      succ-c nat-add-zero-commutative (x.prev))
+  }
+}
+
+
+note {
+  to make it easier to prove eqv-t
+  I want to be able to reduce
+  1. the eqv-t to be proved
+  2. the eqv-c constructing
+
+  in `x case succ-t` of the above example
+
+  the eqv-t to be proved is
+  eqv-t (
+    nat-add (zero-c x) >= x
+    nat-add (x zero-c) >= succ-c (nat-add (x.prev zero-c))
+  )
+
+  the eqv-c constructing is
+  eqv-apply (succ-c nat-add-zero-commutative (x.prev)) :
+  eqv-t (
+    succ-c (nat-add (zero-c x.prev)) >= succ-c (x.prev) >= x
+    succ-c (nat-add (x.prev zero-c))
+  )
+
+  only after many `>=`s
+  do we explicitly see that eqv-c actually fulfill eqv-t
+
+  maybe we need let the verifier to explicitly choose
+  which reduction to perform
+
+  otherwise we would need to prove reductions converge to
+  unique normal form (or unifiable form)
+
+  maybe we'd better internalize eqv-t
+  instead of defining it as a type in our language
+
+  advantage of doing so is that it works
+  not only for the concrete class eqv-t
+  but also for any equivalent relations
+
+  it might be viewed as an example of
+  defining a little game of eqv-t in our language of games
+}
+
+
+nat-add-succ-commutative-1 : ((x y) : nat-t)
+  -> eqv-t (
+       nat-add (succ-c (x) y)
+       succ-c (nat-add (x y)))
+nat-add-succ-commutative-1 (x y) = {
+  x case {
+    zero-t => eqv-c
+    succ-t => eqv-apply (
+      succ-c nat-add-succ-commutative-1 (x.prev y))
+  }
+}
+
+
+nat-add-succ-commutative-2 : ((x y) : nat-t)
+  -> eqv-t (
+       nat-add (y succ-c (x))
+       succ-c (nat-add (x y)))
+nat-add-succ-commutative-2 (x y) = {
+  x case {
+    zero-t => eqv-c
+    succ-t => eqv-apply (
+      succ-c nat-add-succ-commutative-2 (x.prev y))
+  }
+}
+
+* nat-order-category
+
+*** nat-lteq-t
+
+    #+begin_src cicada
+    nat-lteq-t : type
+    nat-lteq-t = disj {
+      [ zero-lteq-t
+        succ-lteq-t ]
+      (l r) : nat-t
+    }
+
+
+    zero-lteq-t : type
+    zero-lteq-t = conj {
+      (l r) : nat-t
+      l = zero-c
+    }
+
+    succ-lteq-t : type
+    succ-lteq-t = conj {
+      (l r) : nat-t
+      prev : nat-lteq-t (x y)
+      l = succ-c (x)
+      r = succ-c (y)
+    }
+    #+end_src
+
+*** nat-non-negative
+
+    #+begin_src cicada
+    nat-non-negative : (n : nat-t) -> nat-lteq-t (zero-c n)
+    nat-non-negative = zero-lteq-c
+    #+end_src
+
+*** nat-lteq-reflexive
+
+    #+begin_src cicada
+    nat-lteq-reflexive : (n : nat-t) -> nat-lteq-t (n n)
+    nat-lteq-reflexive (n) = {
+      n case {
+        zero-t => zero-lteq-c
+        succ-t => succ-lteq-c (nat-lteq-reflexive (n.prev))
+      }
+    }
+    #+end_src
+
+*** nat-lteq-transitive
+
+    #+begin_src cicada
+    nat-lteq-transitive : (
+      nat-lteq-t (a b)
+      nat-lteq-t (b c)
+    ) -> nat-lteq-t (a c)
+    nat-lteq-transitive (x y) = {
+      x case {
+        zero-lteq-t => zero-lteq-c
+        succ-lteq-t => succ-lteq-c (nat-lteq-transitive (x.prev y.prev))
+      }
+    }
+    #+end_src
+
+*** nat-lt-t
+
+    #+begin_src cicada
+    nat-lt-t : (nat-t nat-t) -> type
+    nat-lt-t (l r) = nat-lteq-t (succ-c (l) r)
+    #+end_src
+
+*** nat-archimedean-property
+
+    #+begin_src cicada
+    nat-archimedean-property : (x : nat-t)
+      -> [y : nat-t, nat-lt-t (x y)]
+    nat-archimedean-property x =
+      [succ-c (x) nat-lteq-reflexive (succ-c (x))]
+    #+end_src
+
+*** nat-order-category
+
+    #+begin_src cicada
+    nat-order-category : category-t
+    nat-order-category = category-c {
+      object-t = nat-t
+      arrow-t = nat-lteq-t
+      arrow-eqv-t = eqv-t
+
+      identity : (a :: nat-t)
+        -> nat-lteq-t (a a)
+      identity = nat-lteq-reflexive (a)
+
+      compose = nat-lteq-transitive
+
+      identity-neutral-left (x) = {
+        x case {
+          zero-lteq-t => eqv-c
+          succ-lteq-t => eqv-apply (
+            succ-lteq-c identity-neutral-left (x.prev))
+        }
+      }
+
+      identity-neutral-righ (x) = {
+        x case {
+          zero-lteq-t => eqv-c
+          succ-lteq-t => eqv-apply (
+            succ-lteq-c identity-neutral-righ (x.prev))
+        }
+      }
+
+      compose-associative (f g h) = {
+        [f g h] case {
+          [zero-lteq-t - -] => eqv-c
+          [succ-lteq-t succ-lteq-t succ-lteq-t] =>
+            eqv-apply (
+              succ-lteq-c
+              compose-associative (f.prev g.prev h.prev))
+        }
+      }
+    }
+    #+end_src

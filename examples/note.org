@@ -1,0 +1,96 @@
+#+title: note
+
+* [todo-stack]
+
+  - avoid the use of `...`
+  - no with-details -- to simplify expression syntax
+
+* about levels
+
+  - we do not handle levels, and see what paradox we will get
+
+* product-type and sum-type
+
+  |              | literal syntax | inhabit             |
+  |--------------+----------------+---------------------|
+  | product-type | [<type> ...]   | [<data> ...]        |
+  | sum-type     | + (<type> ...) | <data> : <type> ... |
+
+* conj-type, disj-type and heir-type
+
+  |           | definition syntax                |
+  |-----------+----------------------------------|
+  | conj-type | conj { ... }                     |
+  | disj-type | disj { [<sub-type> ...] ... }    |
+  | heir-type | heir { [<super-type> ...>] ... } |
+
+*** conj-type
+
+    - it bound to a named type-constructor for the conj-type
+      and specify a record with named and typed fields
+
+    - a conj-type is a partly inhabited record
+
+    - for example :
+      cons-t (t)
+      cons-c (car cdr)
+
+*** constructor call syntax
+
+    - call-with-order :
+      <name>-c (<data> ...)
+
+    - call-with-field-name :
+      <name>-c {<field> = <data> ...}
+
+*** disj-type
+
+    - it bound to a named type-constructor for the disj-type
+      and specify a list of fields
+
+    - sub-type-relation
+      <disj-type> :> <sub-type>
+
+    - type-constructor of each sub-types
+      must include these fields and types
+
+    - each data of any of its sub-types
+      will inhabit the disj-type
+
+*** heir-type
+
+    - it bound to a named type-constructor for the heir-type
+      and specify a list of fields
+
+    - sub-type-relation
+      <heir-type> <: <super-type>
+
+    - an heir-type includes its super-types records
+
+    - each data of the heir-type
+      will also inhabit all its super-types
+
+*** sub-type-relation
+
+    - `c1 <: c2` means c1 inherit c2 's fields,
+      thus c1 is more special then c2,
+      because c1 has more interface functions than c2.
+
+    - whatever data inhabits c1 also inhabits c2.
+
+* :: -- implicit arguments
+
+  - in arguments :
+    - the value of the argument will be inferred.
+    - use call-with-field-name syntax to give explicit value.
+
+  - in return values :
+    - the value must be constructed by the function.
+      but normal function call syntax will not return the value.
+    - use explicit `with-details` to get all details.
+
+* eqv-relation-t of eqv-t
+
+  - eqv-relation-t of eqv-t
+    is proved by the rules of unification
+    or the rules of substitution

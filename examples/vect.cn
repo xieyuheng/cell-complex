@@ -1,0 +1,46 @@
+vect-t : type
+vect-t = disj {
+  [ null-vect-t
+    cons-vect-t ]
+  t : type
+  length : nat-t
+}
+
+null-vect-t : type
+null-vect-t = conj {
+  t : type
+  length : nat-t
+  length = zero-c
+}
+
+cons-vect-t : type
+cons-vect-t = conj {
+  t : type
+  length : nat-t
+  car : t
+  cdr : vect-t (t n)
+  length = succ-c (n)
+}
+
+
+vect-append : (
+  vect-t (t m)
+  vect-t (t n)
+) -> vect-t (t nat-add (m n))
+vect-append (ante succ) = {
+  ante case {
+    null-vect-t => succ
+    cons-vect-t => cons-vect-c (
+      ante.car vect-append (ante.cdr succ))
+  }
+}
+
+
+vect-map : ((a) -> b vect-t (a n)) -> vect-t (a n)
+vect-map (fun list) = {
+  list case {
+    null-vect-t => list
+    cons-vect-t => cons-vect-c (
+      fun (list.car) vect-map (fun list.cdr))
+  }
+}

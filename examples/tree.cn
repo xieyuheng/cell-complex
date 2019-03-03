@@ -1,0 +1,64 @@
+tree-t : type
+tree-t = disj {
+  [ leaf-t
+    branch-t ]
+  t : type
+}
+
+leaf-t : type
+leaf-t = conj {
+  t : type
+  value : t
+}
+
+branch-t : type
+branch-t = conj {
+  t : type
+  (left right) : tree-t (t)
+}
+
+
+tree-container : container-t
+tree-container = container-c {
+  fun-t = tree-t
+  map (fun tree) = {
+    tree case {
+      leaf-t => leaf-c (fun (tree.value))
+      branch-t => branch-c (
+        map (fun tree.left)
+        map (fun tree.right))
+    }
+  }
+}
+
+
+tree-zip : (tree-t (a), tree-t (b))
+  -> maybe-t (tree-t ([a b]))
+tree-zip (x y) = {
+  [x y] case {
+    [leaf-t leaf-t] =>
+      pure (leaf-c ([x.value y.value]))
+    [branch-t branch-t] => do {
+      left <= tree-zip (x.left y.left)
+      right <= tree-zip (x.right y.right)
+      pure (branch-c (left right))
+    }
+    [- -] => none-c
+  }
+}
+
+
+tree-numbering : (tree-t (t))
+  -> state-t (nat-t tree-t (nat-t))
+tree-numbering (tree) = {
+  tree case {
+    leaf-t => (n) => {
+      [nat-inc (n) leaf-c (n)]
+    }
+    branch-t => do {
+      left <= tree-numbering (tree.left)
+      right <= tree-numbering (tree.right)
+      pure (branch-c (left right))
+    }
+  }
+}

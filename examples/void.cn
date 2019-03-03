@@ -1,0 +1,42 @@
+void-t : type
+void-t = disj { [] }
+
+absurd : (void-t) -> t
+
+void-arrow-t : type
+void-arrow-t = conj {
+  (ante succ) : void-t
+}
+
+void-arrow-eqv-t : type
+void-arrow-eqv-t = conj {
+  (lhs rhs) : void-arrow-t (a b)
+}
+
+void-category : category-t
+void-category = category-c {
+  object-t = void-t
+  arrow-t = void-arrow-t
+  arrow-eqv-t = void-arrow-eqv-t
+
+  identity : (a :: void-t)
+    -> void-arrow-t (a a)
+  identity (-) = void-arrow-c
+
+  compose (- -) = void-arrow-c
+
+  identity-neutral-left : (f : void-arrow-t (a b))
+    -> void-arrow-eqv-t (f void-arrow-c)
+  identity-neutral-left (-) = void-arrow-eqv-c
+
+  identity-neutral-right : (f : void-arrow-t (a b))
+    -> void-arrow-eqv-t (f void-arrow-c)
+  identity-neutral-right (-) = void-arrow-eqv-c
+
+  compose-associative : (
+    f : void-arrow-t (a b)
+    g : void-arrow-t (b c)
+    h : void-arrow-t (c d)
+  ) -> void-arrow-eqv-t (void-arrow-eqv-c void-arrow-eqv-c)
+  compose-associative (- - -) = void-arrow-eqv-c
+}

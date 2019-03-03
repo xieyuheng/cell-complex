@@ -1,0 +1,20 @@
+gcd-t : type
+gcd-t = disj {
+  [ zero-gcd-t
+    mod-gcd-t ]
+  (x y d) : int-t
+}
+
+zero-gcd-t : type
+zero-gcd-t = conj {
+  (x y d) : int-t
+  y = zero-c
+  x = d
+}
+
+mod-gcd-t : type
+mod-gcd-t = conj {
+  (x y d) : int-t
+  gcd : gcd-t (z x d)
+  mod : mod-t (z x y)
+}

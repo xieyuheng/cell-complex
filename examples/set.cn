@@ -1,0 +1,55 @@
+note {
+  The set theory of Errett Bishop.
+}
+
+set-t : type
+set-t = conj {
+  element-t : type
+  eqv-t : -> element-t element-t -> type
+}
+
+set-morphism-t : type
+set-morphism-t = conj {
+  ante : type
+  succ : type
+
+  morphism : (ante) -> succ
+}
+
+set-morphism-eqv-t : type
+set-morphism-eqv-t = conj {
+  lhs : set-morphism-t (a b)
+  rhs : set-morphism-t (a b)
+
+  morphism-eqv : (x) : a
+    -> eqv-t (lhs.morphism (x) rhs.morphism (x))
+}
+
+set-category : category-t
+set-category = category-c {
+  object-t = type
+
+  arrow-t (a b) = set-morphism-t (a b)
+
+  arrow-eqv-t (lhs rhs) = set-morphism-eqv-t (lhs rhs)
+
+  identity = set-morphism-c {
+    morphism = nop
+  }
+
+  compose (f g) = set-morphism-c {
+    morphism = function-compose (f.morphism g.morphism)
+  }
+
+  identity-neutral-left (-) = set-morphism-eqv-c {
+    morphism-eqv (-) = eqv-c
+  }
+
+  identity-neutral-right (-) = set-morphism-eqv-c {
+    morphism-eqv (-) = eqv-c
+  }
+
+  compose-associative (- - -) = set-morphism-eqv-c {
+    morphism-eqv (-) = eqv-c
+  }
+}

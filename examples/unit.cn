@@ -1,0 +1,5 @@
+unit-t : type
+unit-t = conj {}
+
+unit : (a) -> unit-t
+unit (a) = unit-c

@@ -1,6 +1,6 @@
 union list-t (
   t : type
-) (null-t cons-t)
+) [ null-t cons-t ]
 
 class null-t (
   t : type
@@ -11,3 +11,103 @@ class cons-t (
   car : t
   cdr : list-t (t)
 )
+
+
+list-length : (list-t (:t)) -> nat-t
+list-length (list) = {
+  list case {
+    null-t => zero-c
+    cons-t => succ-c (list-length (list.cdr))
+  }
+}
+
+
+list-append : (list-t (t) list-t (t)) -> list-t (t)
+list-append (ante succ) = {
+  ante case {
+    null-t => succ
+    cons-t => cons-c (ante.car list-append (ante.cdr succ))
+  }
+}
+
+
+list-map : ((a) -> b list-t (a)) -> list-t (b)
+list-map (fun list) = {
+  list case {
+    null-t => list
+    cons-t => cons-c (
+      fun (list.car)
+      list-map (fun list.cdr))
+  }
+}
+
+
+list-remove-first : (t list-t (t)) -> list-t (t)
+list-remove-first (x list) = {
+  list case {
+    null-t => list
+    cons-t => eq-p (list.car x) case {
+      true-t => list.cdr
+      false-t => cons-c (
+        list.car
+        list-remove-first (list.cdr x))
+    }
+  }
+}
+
+
+list-length-t : type
+list-length-t = disj {
+  [ zero-length-t
+    succ-length-t ]
+  list : list-t (t)
+  length : nat-t
+}
+
+zero-length-t : type
+zero-length-t = conj {
+  list : list-t (t)
+  list = null-c
+  length : nat-t
+  length = zero-c
+}
+
+succ-length-t : type
+succ-length-t = conj {
+  list : list-t (t)
+  list = cons-c (x l)
+  length : nat-t
+  length = succ-c (n)
+  prev : list-length-t (l n)
+}
+
+
+note {
+  in prolog, we will have :
+    append([], Succ, Succ).
+    append([Car | Cdr], Succ, [Car | ResultCdr]):-
+      append(Cdr, Succ, ResultCdr).
+}
+
+
+list-append-t : type
+list-append-t = disj {
+  [ zero-append-t
+    succ-append-t ]
+  (ante succ result) : list-t (t)
+}
+
+zero-append-t : type
+zero-append-t = conj {
+  (ante succ result) : list-t (t)
+  ante = null-c
+  result = succ
+}
+
+succ-append-t : type
+succ-append-t = conj {
+  (ante succ result) : list-t (t)
+  prev : list-append-t (cdr succ result-cdr)
+  ante = cons-c (car cdr)
+  result = cons-c (car result-cdr)
+}

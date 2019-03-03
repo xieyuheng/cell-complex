@@ -3,38 +3,120 @@ note {
   with at most one morphism from an object to another.
 }
 
-class preorder-t (
+class preorder_t (
   t : type
 
-  pre-t : (t t) -> type
+  pre_t : (t t) -> type
 
-  reflexive : (a : t) -> pre-t (a a)
+  reflexive : (a : t) -> pre_t (a a)
 
   transitive : (
-    pre-t (:a :b)
-    pre-t (:b :c)
-  ) -> pre-t (:a :c)
+    pre_t (:a :b)
+    pre_t (:b :c)
+  ) -> pre_t (:a :c)
 )
 
-class partial-order-t
-extends (super : preorder-t) (
-  eqv-t : (super.t super.t) -> type
+class partial_order_t
+extends (super : preorder_t) (
+  eqv_t : (super.t super.t) -> type
 
-  anti-symmetric : (
-    super.pre-t (:a :b)
-    super.pre-t (:b :a)
-  ) -> eqv-t (:a :b)
+  anti_symmetric : (
+    super.pre_t (:a :b)
+    super.pre_t (:b :a)
+  ) -> eqv_t (:a :b)
 )
 
-class eqv-relation-t
-extends (super : preorder-t) (
-  symmetric : (super.pre-t (:a :b)) -> super.pre-t (:b :a)
+class eqv_relation_t
+extends (super : preorder_t) (
+  symmetric : (super.pre_t (:a :b)) -> super.pre_t (:b :a)
 )
 
-class total-order-t
-extends (super : partial-order-t) (
+class total_order_t
+extends (super : partial_order_t) (
   connex : (
     a : super.t
     b : super.t
-  ) -> disj { super.pre-t (a b) super.pre-t (b a) }
+  ) -> disj { super.pre_t (a b) super.pre_t (b a) }
 )
+
+
+* preorder-category
+
+*** preorder-morphism-t
+
+    #+begin_src cicada
+    preorder-morphism-t : type
+    preorder-morphism-t = conj {
+      ante : preorder-t
+      succ : preorder-t
+
+      morphism : (ante.element-t) -> succ.element-t
+
+      morphism-respect-pre-relation : (ante.pre-t (x y))
+        -> succ.pre-t (morphism (x) morphism (y))
+    }
+    #+end_src
+
+*** preorder-morphism-eqv-t
+
+    #+begin_src cicada
+    preorder-morphism-eqv-t : type
+    preorder-morphism-eqv-t = conj {
+      lhs : preorder-morphism-t (a b)
+      rhs : preorder-morphism-t (a b)
+
+      morphism-eqv : (x : a.element-t)
+        -> eqv-t (lhs.morphism (x) rhs.morphism (x))
+    }
+    #+end_src
+
+*** preorder-category
+
+    #+begin_src cicada
+    preorder-category : category-t
+    preorder-category = category-c {
+      object-t : type
+      object-t = preorder-t
+
+      arrow-t : (preorder-t preorder-t) -> type
+      arrow-t (a b) = preorder-morphism-t (a b)
+
+      arrow-eqv-t : (
+        preorder-morphism-t (a b)
+        preorder-morphism-t (a b)
+      ) -> type
+      arrow-eqv-t (lhs rhs) = preorder-morphism-eqv-t (lhs rhs)
+
+      identity : (a :: preorder-t)
+        -> preorder-morphism-t (a a)
+      identity = preorder-morphism-c {
+        morphism = nop
+        morphism-respect-pre-relation = nop
+      }
+
+      compose : (
+        preorder-morphism-t (a b)
+        preorder-morphism-t (b c)
+      ) -> preorder-morphism-t (a c)
+      compose (f g) = preorder-morphism-c {
+        morphism = function-compose (f.morphism g.morphism)
+        morphism-respect-pre-relation = {
+          function-compose (
+            f.morphism-respect-pre-relation
+            g.morphism-respect-pre-relation)
+        }
+      }
+
+      identity-neutral-left (f) = preorder-morphism-eqv-c {
+        morphism-eqv (-) = eqv-c
+      }
+
+      identity-neutral-right (f) = preorder-morphism-eqv-c {
+        morphism-eqv (-) = eqv-c
+      }
+
+      compose-associative (f g h) = preorder-morphism-eqv-c {
+        morphism-eqv (-) = eqv-c
+      }
+    }
+    #+end_src

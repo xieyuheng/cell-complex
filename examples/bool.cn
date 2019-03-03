@@ -1,0 +1,5 @@
+union bool-t () [ true-t false-t ]
+
+class true-t ()
+
+class false-t ()

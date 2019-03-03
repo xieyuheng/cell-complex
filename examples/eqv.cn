@@ -1,0 +1,17 @@
+eqv-t : type
+eqv-t = conj {
+  (lhs rhs) : t
+  lhs = rhs
+}
+
+eqv-apply : (
+  fun : (a) -> b
+  eqv-t (x y)
+) -> eqv-t (fun (x) fun (y))
+eqv-apply (- -) = eqv-c
+
+eqv-swap : (eqv-t (x y)) -> eqv-t (y x)
+eqv-swap (-) = eqv-c
+
+eqv-compose : (eqv-t (x y) eqv-t (y z)) -> eqv-t (x z)
+eqv-compose (- -) = eqv-c
