@@ -1,8 +1,7 @@
-eqv_t : type
-eqv_t = conj {
-  (lhs rhs) : t
+class eqv_t (
+  (lhs rhs) : :t
   lhs = rhs
-}
+)
 
 eqv_apply : (
   fun : (a) -> b

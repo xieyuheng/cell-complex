@@ -1,4 +1,4 @@
-import { eqv_relation_t } from "order.cn"
+import eqv_relation_t  from "order.cn"
 
 class category_t (
   t : type

@@ -1,5 +1,6 @@
-groupoid_t : type
-groupoid_t = heir {
-  [ category_t ]
-  inverse : (f : arrow_t (a b)) -> isomorphic_t (a b f)
-}
+import category_t from "category.cn"
+
+class groupoid_t
+extends (super : category_t) (
+  inverse : (f : super.arrow_t (a b)) -> super.isomorphic_t (a b f)
+)

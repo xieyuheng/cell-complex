@@ -2,11 +2,10 @@ note {
   endofunctor of set_category
 }
 
-container_t : type
-container_t = conj {
+class container_t (
   fun_t : (type) -> type
   map : ((a) -> b fun_t (a)) -> fun_t (b)
-}
+)
 
 list_container : container_t
 list_container = container_c {
