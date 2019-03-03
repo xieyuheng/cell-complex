@@ -181,123 +181,94 @@ nat-add-succ-commutative-2 (x y) = {
   }
 }
 
-* nat-order-category
 
-*** nat-lteq-t
+nat-lteq-t : type
+nat-lteq-t = disj {
+  [ zero-lteq-t
+    succ-lteq-t ]
+  (l r) : nat-t
+}
 
-    #+begin_src cicada
-    nat-lteq-t : type
-    nat-lteq-t = disj {
-      [ zero-lteq-t
-        succ-lteq-t ]
-      (l r) : nat-t
+
+zero-lteq-t : type
+zero-lteq-t = conj {
+  (l r) : nat-t
+  l = zero-c
+}
+
+succ-lteq-t : type
+succ-lteq-t = conj {
+  (l r) : nat-t
+  prev : nat-lteq-t (x y)
+  l = succ-c (x)
+  r = succ-c (y)
+}
+
+nat-non-negative : (n : nat-t) -> nat-lteq-t (zero-c n)
+nat-non-negative = zero-lteq-c
+
+nat-lteq-reflexive : (n : nat-t) -> nat-lteq-t (n n)
+nat-lteq-reflexive (n) = {
+  n case {
+    zero-t => zero-lteq-c
+    succ-t => succ-lteq-c (nat-lteq-reflexive (n.prev))
+  }
+}
+
+nat-lteq-transitive : (
+  nat-lteq-t (a b)
+  nat-lteq-t (b c)
+) -> nat-lteq-t (a c)
+nat-lteq-transitive (x y) = {
+  x case {
+    zero-lteq-t => zero-lteq-c
+    succ-lteq-t => succ-lteq-c (nat-lteq-transitive (x.prev y.prev))
+  }
+}
+
+nat-lt-t : (nat-t nat-t) -> type
+nat-lt-t (l r) = nat-lteq-t (succ-c (l) r)
+
+nat-archimedean-property : (x : nat-t)
+  -> [y : nat-t, nat-lt-t (x y)]
+nat-archimedean-property x =
+  [succ-c (x) nat-lteq-reflexive (succ-c (x))]
+
+nat-order-category : category-t
+nat-order-category = category-c {
+  object-t = nat-t
+  arrow-t = nat-lteq-t
+  arrow-eqv-t = eqv-t
+
+  identity : (a :: nat-t)
+    -> nat-lteq-t (a a)
+  identity = nat-lteq-reflexive (a)
+
+  compose = nat-lteq-transitive
+
+  identity-neutral-left (x) = {
+    x case {
+      zero-lteq-t => eqv-c
+      succ-lteq-t => eqv-apply (
+        succ-lteq-c identity-neutral-left (x.prev))
     }
+  }
 
-
-    zero-lteq-t : type
-    zero-lteq-t = conj {
-      (l r) : nat-t
-      l = zero-c
+  identity-neutral-righ (x) = {
+    x case {
+      zero-lteq-t => eqv-c
+      succ-lteq-t => eqv-apply (
+        succ-lteq-c identity-neutral-righ (x.prev))
     }
+  }
 
-    succ-lteq-t : type
-    succ-lteq-t = conj {
-      (l r) : nat-t
-      prev : nat-lteq-t (x y)
-      l = succ-c (x)
-      r = succ-c (y)
+  compose-associative (f g h) = {
+    [f g h] case {
+      [zero-lteq-t - -] => eqv-c
+      [succ-lteq-t succ-lteq-t succ-lteq-t] =>
+        eqv-apply (
+          succ-lteq-c
+          compose-associative (f.prev g.prev h.prev))
     }
-    #+end_src
-
-*** nat-non-negative
-
-    #+begin_src cicada
-    nat-non-negative : (n : nat-t) -> nat-lteq-t (zero-c n)
-    nat-non-negative = zero-lteq-c
-    #+end_src
-
-*** nat-lteq-reflexive
-
-    #+begin_src cicada
-    nat-lteq-reflexive : (n : nat-t) -> nat-lteq-t (n n)
-    nat-lteq-reflexive (n) = {
-      n case {
-        zero-t => zero-lteq-c
-        succ-t => succ-lteq-c (nat-lteq-reflexive (n.prev))
-      }
-    }
-    #+end_src
-
-*** nat-lteq-transitive
-
-    #+begin_src cicada
-    nat-lteq-transitive : (
-      nat-lteq-t (a b)
-      nat-lteq-t (b c)
-    ) -> nat-lteq-t (a c)
-    nat-lteq-transitive (x y) = {
-      x case {
-        zero-lteq-t => zero-lteq-c
-        succ-lteq-t => succ-lteq-c (nat-lteq-transitive (x.prev y.prev))
-      }
-    }
-    #+end_src
-
-*** nat-lt-t
-
-    #+begin_src cicada
-    nat-lt-t : (nat-t nat-t) -> type
-    nat-lt-t (l r) = nat-lteq-t (succ-c (l) r)
-    #+end_src
-
-*** nat-archimedean-property
-
-    #+begin_src cicada
-    nat-archimedean-property : (x : nat-t)
-      -> [y : nat-t, nat-lt-t (x y)]
-    nat-archimedean-property x =
-      [succ-c (x) nat-lteq-reflexive (succ-c (x))]
-    #+end_src
-
-*** nat-order-category
-
-    #+begin_src cicada
-    nat-order-category : category-t
-    nat-order-category = category-c {
-      object-t = nat-t
-      arrow-t = nat-lteq-t
-      arrow-eqv-t = eqv-t
-
-      identity : (a :: nat-t)
-        -> nat-lteq-t (a a)
-      identity = nat-lteq-reflexive (a)
-
-      compose = nat-lteq-transitive
-
-      identity-neutral-left (x) = {
-        x case {
-          zero-lteq-t => eqv-c
-          succ-lteq-t => eqv-apply (
-            succ-lteq-c identity-neutral-left (x.prev))
-        }
-      }
-
-      identity-neutral-righ (x) = {
-        x case {
-          zero-lteq-t => eqv-c
-          succ-lteq-t => eqv-apply (
-            succ-lteq-c identity-neutral-righ (x.prev))
-        }
-      }
-
-      compose-associative (f g h) = {
-        [f g h] case {
-          [zero-lteq-t - -] => eqv-c
-          [succ-lteq-t succ-lteq-t succ-lteq-t] =>
-            eqv-apply (
-              succ-lteq-c
-              compose-associative (f.prev g.prev h.prev))
-        }
-      }
-    }
-    #+end_src
+  }
+}

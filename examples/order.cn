@@ -40,83 +40,69 @@ extends (super : partial_order_t) (
 )
 
 
-* preorder-category
+preorder-morphism-t : type
+preorder-morphism-t = conj {
+  ante : preorder-t
+  succ : preorder-t
 
-*** preorder-morphism-t
+  morphism : (ante.element-t) -> succ.element-t
 
-    #+begin_src cicada
-    preorder-morphism-t : type
-    preorder-morphism-t = conj {
-      ante : preorder-t
-      succ : preorder-t
+  morphism-respect-pre-relation : (ante.pre-t (x y))
+    -> succ.pre-t (morphism (x) morphism (y))
+}
 
-      morphism : (ante.element-t) -> succ.element-t
+preorder-morphism-eqv-t : type
+preorder-morphism-eqv-t = conj {
+  lhs : preorder-morphism-t (a b)
+  rhs : preorder-morphism-t (a b)
 
-      morphism-respect-pre-relation : (ante.pre-t (x y))
-        -> succ.pre-t (morphism (x) morphism (y))
+  morphism-eqv : (x : a.element-t)
+    -> eqv-t (lhs.morphism (x) rhs.morphism (x))
+}
+
+preorder-category : category-t
+preorder-category = category-c {
+  object-t : type
+  object-t = preorder-t
+
+  arrow-t : (preorder-t preorder-t) -> type
+  arrow-t (a b) = preorder-morphism-t (a b)
+
+  arrow-eqv-t : (
+    preorder-morphism-t (a b)
+    preorder-morphism-t (a b)
+  ) -> type
+  arrow-eqv-t (lhs rhs) = preorder-morphism-eqv-t (lhs rhs)
+
+  identity : (a :: preorder-t)
+    -> preorder-morphism-t (a a)
+  identity = preorder-morphism-c {
+    morphism = nop
+    morphism-respect-pre-relation = nop
+  }
+
+  compose : (
+    preorder-morphism-t (a b)
+    preorder-morphism-t (b c)
+  ) -> preorder-morphism-t (a c)
+  compose (f g) = preorder-morphism-c {
+    morphism = function-compose (f.morphism g.morphism)
+    morphism-respect-pre-relation = {
+      function-compose (
+        f.morphism-respect-pre-relation
+        g.morphism-respect-pre-relation)
     }
-    #+end_src
+  }
 
-*** preorder-morphism-eqv-t
+  identity-neutral-left (f) = preorder-morphism-eqv-c {
+    morphism-eqv (-) = eqv-c
+  }
 
-    #+begin_src cicada
-    preorder-morphism-eqv-t : type
-    preorder-morphism-eqv-t = conj {
-      lhs : preorder-morphism-t (a b)
-      rhs : preorder-morphism-t (a b)
+  identity-neutral-right (f) = preorder-morphism-eqv-c {
+    morphism-eqv (-) = eqv-c
+  }
 
-      morphism-eqv : (x : a.element-t)
-        -> eqv-t (lhs.morphism (x) rhs.morphism (x))
-    }
-    #+end_src
-
-*** preorder-category
-
-    #+begin_src cicada
-    preorder-category : category-t
-    preorder-category = category-c {
-      object-t : type
-      object-t = preorder-t
-
-      arrow-t : (preorder-t preorder-t) -> type
-      arrow-t (a b) = preorder-morphism-t (a b)
-
-      arrow-eqv-t : (
-        preorder-morphism-t (a b)
-        preorder-morphism-t (a b)
-      ) -> type
-      arrow-eqv-t (lhs rhs) = preorder-morphism-eqv-t (lhs rhs)
-
-      identity : (a :: preorder-t)
-        -> preorder-morphism-t (a a)
-      identity = preorder-morphism-c {
-        morphism = nop
-        morphism-respect-pre-relation = nop
-      }
-
-      compose : (
-        preorder-morphism-t (a b)
-        preorder-morphism-t (b c)
-      ) -> preorder-morphism-t (a c)
-      compose (f g) = preorder-morphism-c {
-        morphism = function-compose (f.morphism g.morphism)
-        morphism-respect-pre-relation = {
-          function-compose (
-            f.morphism-respect-pre-relation
-            g.morphism-respect-pre-relation)
-        }
-      }
-
-      identity-neutral-left (f) = preorder-morphism-eqv-c {
-        morphism-eqv (-) = eqv-c
-      }
-
-      identity-neutral-right (f) = preorder-morphism-eqv-c {
-        morphism-eqv (-) = eqv-c
-      }
-
-      compose-associative (f g h) = preorder-morphism-eqv-c {
-        morphism-eqv (-) = eqv-c
-      }
-    }
-    #+end_src
+  compose-associative (f g h) = preorder-morphism-eqv-c {
+    morphism-eqv (-) = eqv-c
+  }
+}
