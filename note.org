@@ -5,7 +5,33 @@
   - avoid the use of `...`
   - no with-details -- to simplify expression syntax
 
-* about levels
+* explicit type conversion
+
+  - method such as `.as_random_variable_t`
+
+  - subtype is implicit type conversion
+
+  - we also a way to make explicit thing implicit in some context
+    (just like type class of scala)
+
+* about model theory and category theory
+
+  - with a language in which we can define class and function
+    we can formalize both model theory and category theory
+
+  - mathematical
+
+  - API of class and object
+
+    - be able to generate (enumerate) all objects of any (first order) class
+      - first order -- can not generate elements of `type`
+      - include function type -- this requires proof [todo]
+
+    - unification with logic variable
+
+  - API of function [todo]
+
+* levels
 
   - we do not handle levels, and see what paradox we will get
 
