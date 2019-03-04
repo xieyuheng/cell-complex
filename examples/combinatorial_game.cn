@@ -1,0 +1,65 @@
+class pair_t (
+  this_t : type
+  that_t : type
+  this : this_t
+  that : that_t
+)
+
+union either_t (
+  this_t : type
+  that_t : type
+) [
+  either_this_t
+  either_that_t
+]
+
+class either_this_t (
+  this_t : type
+  that_t : type
+  value : this_t
+)
+
+class either_that_t (
+  this_t : type
+  that_t : type
+  value : that_t
+)
+
+class game_t (
+  position_t : type
+  choice_t : type
+  init_position : position_t
+  left_choices  : (position_t) -> list_t (choice_t)
+  right_choices : (position_t) -> list_t (choice_t)
+  left_move  : (choice_t position_t) -> position_t
+  right_move : (choice_t position_t) -> position_t
+) {
+  .sum : (game_t) -> game_t
+  .sum = (that) => game_c {
+    position_t = pair_t (this.position_t, that.position_t)
+    choice_t = either_t (this.choice_t, that.choice_t)
+    init_position = pair_c (this.init_position, that.init_position)
+    left_choices = (position) => list_append (
+      either_this_c (this.left_choices (position.this))
+      either_that_c (that.left_choices (position.that)))
+    right_choices = (position) => list_append (
+      either_this_c (this.right_choices (position.this))
+      either_that_c (that.right_choices (position.that)))
+    left_move = (choice, position) => choice case {
+      either_this_t => pair_c (
+        this.left_move (choice.value, position.this)
+        position.that)
+      either_that_t => pair_c (
+        position.this
+        that.left_move (choice.value, position.that))
+    }
+    right_move = (choice, position) => choice case {
+      either_this_t => pair_c (
+        this.right_move (choice.value, position.this)
+        position.that)
+      either_that_t => pair_c (
+        position.this
+        that.right_move (choice.value, position.that))
+    }
+  }
+}

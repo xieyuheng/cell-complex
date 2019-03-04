@@ -1,0 +1,63 @@
+class probability-space-t (
+  sample-t : type
+  event-t = set-t (sample-t)
+  P : (event-t) -> unit-interval-t
+  prob = P
+  nonnegative : (A : event-t) -> P (A) >= 0
+  normalization : P (sample-t) == 1
+  additivity : (
+    A : event-t
+    B : event-t
+    A ^ B == empty-set
+  ) -> P (A + B) == P (A) + P (B)
+  countable-additivity : (
+    f : (nat-t -> event-t)
+    [todo]
+  ) -> [todo]
+)
+
+class random-variable-t (
+  space : probability-space-t
+  state-t : type
+  var : (space.sample-t) -> state-t
+) {
+  .mass : (state-t) -> unit-interval-t
+  .mass = (state) => space.prob (var.reverse (state))
+
+  .mean : () -> state-t
+  .mean = () => state-t.sum-up ((x) => x * this.mass (x))
+
+  // it assumed that state-t has `sum-up` API
+  //   and element in state-t
+  //   can be product with number in unit-interval-t
+
+  .variance : () -> state-t
+  .variance = this.sub (this.mean ()) .power (2) .mean
+
+  // it assumed that
+  //   one can product two elements in state-t
+
+  // .sub
+  // .power
+}
+
+class random-field-t (
+  space : probability-space-t
+  state-t : type
+  index-t : type
+  idx : (index-t) -> random-variable-t (space, state-t)
+) {
+  .law : (state-t) -> unit-interval-t
+  .law = this.as (random-variable-t) .mass
+}
+
+random-field-t as random-variable-t (
+  space = this.space
+  state-t = (this.index-t) -> this.state-t
+  var : (this.space.sample-t) -> (this.index-t) -> this.state-t
+  var = (sample) => (index) => this.idx (index) .var (sample)
+)
+
+// note the use of function type here
+//   we might need yoneda embedding
+//   to develop measure of function space
