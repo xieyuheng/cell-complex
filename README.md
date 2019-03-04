@@ -7,14 +7,16 @@
 # Cicada Language // 蟬語
 
 Aims :
-- intuitive to formalize mathematics theories
-- approachable for both mathematicians and programmers
+- formalizing mathematical structures
+- design formal languages to formalize mathematical structures
+  - intuitive to use
+  - approachable for both mathematicians and programmers
 
 Features :
 - game semantics
 - dependently-typed
 - logic programming interface
-- with nominal subtyping and inheriting
+- with nominal subtyping
 
 Contains :
 - (todo) [cg] -- a generic library for combinatorial games

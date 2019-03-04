@@ -5,6 +5,16 @@
   - avoid the use of `...`
   - no with-details -- to simplify expression syntax
 
+* model theory
+
+  - model theory might be more than just classes in oo
+
+    because we are not only interested in
+    whether a sentence applied in a model is true or not
+
+    we are more interested in
+    deduction from true sentence to true sentence
+
 * about levels
 
   - we do not handle levels, and see what paradox we will get
