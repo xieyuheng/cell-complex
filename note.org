@@ -1,10 +1,6 @@
 #+title: note
-
-* [todo-stack]
-
-  - avoid the use of `...`
-  - no with-details -- to simplify expression syntax
-
+- fix `with_details`
+- fix `unique`
 * explicit type conversion
 
   - method such as `.as_random_variable_t`
