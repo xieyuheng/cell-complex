@@ -1,3 +1,8 @@
+// game classification
+// - two players
+// - complete information
+// - partizan game
+
 trait game_t {
   type position_t
   type choice_t
