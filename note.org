@@ -1,6 +1,7 @@
 #+title: note
 - fix `with_details`
 - fix `unique`
+- unification with function
 * explicit type conversion
 
   - method such as `.as_random_variable_t`
@@ -46,70 +47,59 @@
   | disj-type | disj { [<sub-type> ...] ... }    |
   | heir-type | heir { [<super-type> ...>] ... } |
 
-*** conj-type
+* conj-type
 
-    - it bound to a named type-constructor for the conj-type
-      and specify a record with named and typed fields
+  - it bound to a named type-constructor for the conj-type
+    and specify a record with named and typed fields
 
-    - a conj-type is a partly inhabited record
+  - a conj-type is a partly inhabited record
 
-    - for example :
-      cons-t (t)
-      cons-c (car cdr)
+  - for example :
+    cons-t (t)
+    cons-c (car cdr)
 
-*** constructor call syntax
+* constructor call syntax
 
-    - call-with-order :
-      <name>-c (<data> ...)
+  - call-with-order :
+    <name>-c (<data> ...)
 
-    - call-with-field-name :
-      <name>-c {<field> = <data> ...}
+  - call-with-field-name :
+    <name>-c {<field> = <data> ...}
 
-*** disj-type
+* disj-type
 
-    - it bound to a named type-constructor for the disj-type
-      and specify a list of fields
+  - it bound to a named type-constructor for the disj-type
+    and specify a list of fields
 
-    - sub-type-relation
-      <disj-type> :> <sub-type>
+  - sub-type-relation
+    <disj-type> :> <sub-type>
 
-    - type-constructor of each sub-types
-      must include these fields and types
+  - type-constructor of each sub-types
+    must include these fields and types
 
-    - each data of any of its sub-types
-      will inhabit the disj-type
+  - each data of any of its sub-types
+    will inhabit the disj-type
 
-*** heir-type
+* heir-type
 
-    - it bound to a named type-constructor for the heir-type
-      and specify a list of fields
+  - it bound to a named type-constructor for the heir-type
+    and specify a list of fields
 
-    - sub-type-relation
-      <heir-type> <: <super-type>
+  - sub-type-relation
+    <heir-type> <: <super-type>
 
-    - an heir-type includes its super-types records
+  - an heir-type includes its super-types records
 
-    - each data of the heir-type
-      will also inhabit all its super-types
+  - each data of the heir-type
+    will also inhabit all its super-types
 
-*** sub-type-relation
+* sub-type-relation
 
-    - `c1 <: c2` means c1 inherit c2 's fields,
-      thus c1 is more special then c2,
-      because c1 has more interface functions than c2.
+  - `c1 <: c2` means c1 inherit c2 's fields,
+    thus c1 is more special then c2,
+    because c1 has more interface functions than c2.
 
-    - whatever data inhabits c1 also inhabits c2.
-
-* :: -- implicit arguments
-
-  - in arguments :
-    - the value of the argument will be inferred.
-    - use call-with-field-name syntax to give explicit value.
-
-  - in return values :
-    - the value must be constructed by the function.
-      but normal function call syntax will not return the value.
-    - use explicit `with-details` to get all details.
+  - whatever data inhabits c1 also inhabits c2.
 
 * eqv-relation-t of eqv-t
 
