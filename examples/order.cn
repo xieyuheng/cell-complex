@@ -36,7 +36,7 @@ extends (super : partial_order_t) (
   connex : (
     a : super.t
     b : super.t
-  ) -> disj { super.pre_t (a b) super.pre_t (b a) }
+  ) -> super.pre_t (a b) or super.pre_t (b a)
 )
 
 

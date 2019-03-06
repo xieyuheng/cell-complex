@@ -2,6 +2,7 @@
 - fix `with_details`
 - fix `unique`
 - unification with function
+  make the game of equivalent relation constructive
 * explicit type conversion
 
   - method such as `.as_random_variable_t`
