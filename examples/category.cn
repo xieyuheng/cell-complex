@@ -1,144 +1,177 @@
 import eqv_relation_t  from "order.cn"
 
-// category_t is a useful class.
+// category_t is a useful class
+
 // - for a class S uesd to model a mathematical structure,
 //   there corresponds a category C,
 //   with C.t = S, and C.arrow_t is morphisms
 /    respect (preserve) the structure of S.
 
 class category_t (
-  t : type
+  o : type
 
-  arrow_t : (t t) -> type
+  arrow_t : (o o) -> type
 
   arrow_eqv_t : (
-    a : t
-    b : t
-    arrow_t (a b)
-    arrow_t (a b)
+    x : o
+    y : o
+    arrow_t (x y)
+    arrow_t (x y)
   ) -> type
 
   identity : (
-    a : t
-  ) -> arrow_t (a a)
+    x : o
+  ) -> arrow_t (x x)
 
   compose : (
-    a : t
-    b : t
-    c : t
-    arrow_t (a b)
-    arrow_t (b c)
-  ) -> arrow_t (a c)
+    x : o
+    y : o
+    z : o
+    arrow_t (x y)
+    arrow_t (y z)
+  ) -> arrow_t (x z)
 
   identity_neutral_left : (
-    a : t
-    b : t
-    f : arrow_t (a b)
-  ) -> arrow_eqv_t (a b) (
-    f, compose (a a b) (identity (a) f))
+    x : o
+    y : o
+    f : arrow_t (x y)
+  ) -> arrow_eqv_t (x y) (
+    f, compose (x x y) (identity (x) f))
 
   identity_neutral_right : (
-    a : t
-    b : t
-    f : arrow_t (a b)
-  ) -> arrow_eqv_t (a b) (
-    f, compose (a b b) (f identity (b)))
+    x : o
+    y : o
+    f : arrow_t (x y)
+  ) -> arrow_eqv_t (x y) (
+    f, compose (x y y) (f identity (y)))
 
   compose_associative : (
-    a : t
-    b : t
-    c : t
-    d : t
-    f : arrow_t (a b)
-    g : arrow_t (b c)
-    h : arrow_t (c d)
-  ) -> arrow_eqv_t (a d) (
-    compose (a b d) (f compose (b c d) (g h))
-    compose (a c d) (compose (a b c) (f g) h)
+    x : o
+    y : o
+    z : o
+    w : o
+    f : arrow_t (x y)
+    g : arrow_t (y z)
+    h : arrow_t (z w)
+  ) -> arrow_eqv_t (x w) (
+    compose (x y w) (f compose (y z w) (g h))
+    compose (x z w) (compose (x y z) (f g) h)
   )
 
   arrow_eqv_relation : (
-    a : t
-    b : t
+    x : o
+    y : o
   ) -> eqv_relation_t (
-    t = arrow_t (a b)
-    pre_t = arrow_eqv_t (a b)
+    t = arrow_t (x y)
+    pre_t = arrow_eqv_t (x y)
   )
-)
+) {
+  // - two objects have the same structure
+  //   iff they are isomorphic.
+  // - an "abstract object" is
+  //   an isomorphism class of objects.
 
-// - two objects have the same structure
-//   iff they are isomorphic.
-// - an 'abstract object' is
-//   an isomorphism class of objects.
+  class isomorphic_t (
+    a : o
+    b : o
 
-in category_t
-class isomorphic_t (
-  l : t
-  r : t
-  iso : arrow_t (l r)
-  inv : arrow_t (r l)
-  iso_inv_identity : arrow_eqv_t (l l) (
-    compose (l r l) (iso inv)
-    identity (l)
+    iso : arrow_t (a b)
+    inv : arrow_t (b a)
+
+    iso_inv_identity : arrow_eqv_t (a a) (
+      compose (a b a) (iso inv)
+      identity (a)
+    )
+
+    inv_iso_identity : arrow_eqv_t (b b) (
+      compose (b a b) (inv iso)
+      identity (b)
+    )
   )
-  inv_iso_identity : arrow_eqv_t (r r) (
-    compose (r l r) (inv iso)
-    identity (r)
-  )
-)
+}
 
-// - a functor between two categories is a natural_construction
-//   of the structure of [ante : category_t]
-//   in the structure of [succ : category_t]
+// - a functor represents one structure in another
+// - a functor between two categories -- c and d
+//   is a natural construction of the structure of c
+//   in the structure of d
 
-in category_t
 class functor_t (
-  ante : category_t
-  succ : category_t
+  c : category_t
+  d : category_t
 
-  object_map : (ante.t)
-    -> succ.t
+  map : (c.o) -> d.o
 
-  arrow_map : (ante.arrow_t (a b))
-    -> succ.arrow_t (object_map (a) object_map (b))
+  arrow_map : (
+    x : c.o
+    y : c.o
+    c.arrow_t (x y)
+  ) -> d.arrow_t (map (x) map (y))
 
   arrow_map_respect_compose : (
-    f : ante.arrow_t (a b)
-    g : ante.arrow_t (b c)
-  ) -> succ.arrow_eqv_t (
-    arrow_map (ante.compose (f g))
-    succ.compose (arrow_map (f) arrow_map (g)))
+    x : c.o
+    y : c.o
+    z : c.o
+    f : c.arrow_t (x y)
+    g : c.arrow_t (y z)
+  ) -> d.arrow_eqv_t (
+    arrow_map (x z) (c.compose (x y z) (f g))
+    d.compose (map (x) map (y) map (z)) (
+      arrow_map (x y) (f)
+      arrow_map (y z) (g)
+    )
+  )
 
-  arrow_map_respect_identity : (a :: ante.t)
-    -> succ.arrow_eqv_t (
-         arrow_map (ante.identity (a))
-         succ.identity (object_map (a)))
+  arrow_map_respect_identity : (
+    x : c.o
+  ) -> d.arrow_eqv_t (map (x) map (x)) (
+    arrow_map (x x) (c.identity (x))
+    d.identity (map (x))
+  )
 )
 
-// - a natural_transformation is a level up map
+// - a natural transformation represents one functor by another
+// - a natural transformation is a level up map
 //   which maps objects to arrows and arrows to squares.
 
-in category_t
 class natural_transformation_t (
-  lhs : functor_t (ante succ)
-  rhs : functor_t (ante succ)
+  c : category_t
+  d : category_t
 
-  ante succ :: t
+  f : functor_t (c d)
+  g : functor_t (c d)
 
-  component : (a : ante.t)
-    -> succ.arrow_t (lhs.object_map (a) rhs.object_map (a))
+  component : (
+    x : c.o
+  ) -> d.arrow_t (
+    f.map (x)
+    g.map (x)
+  )
 
-  transformation : (f : ante.arrow_t (a b))
-    -> succ.arrow_eqv_t (
-         succ.compose (component (a) rhs.arrow_map (f))
-         succ.compose (lhs.arrow_map (f) component (b)))
+  transformation : (
+    x : c.o
+    y : c.o
+    u : c.arrow_t (x y)
+  ) -> d.arrow_eqv_t (f.map (x) g.map (y)) (
+    d.compose (f.map (x) g.map (x) g.map (y)) (
+      component (x)
+      g.arrow_map (x y) (u)
+    )
+    d.compose (f.map (x) f.map (y) g.map (y)) (
+      f.arrow_map (x y) (u)
+      component (y)
+    )
+  )
 )
 
-in category_t
 class natural_isomorphism_t
-extends natural_transformation_t (
-  isomorphic_component : (a : ante.t)
-    -> succ.isomorphic_t (iso = component (a))
+extends (super : natural_transformation_t) (
+  isomorphic_component : (
+    x : super.c.o
+  ) -> super.d.isomorphic_t (
+    a = super.f.map (x)
+    b = super.g.map (x)
+    iso = super.component (x)
+  )
 )
 
 //////

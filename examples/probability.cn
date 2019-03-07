@@ -1,15 +1,14 @@
 class probability_space_t (
   sample_t : type
   event_t = set_t (sample_t)
-  P : (event_t) -> unit_interval_t
-  prob = P
-  nonnegative : (A : event_t) -> P (A) >= 0
-  normalization : P (sample_t) == 1
+  prob : (event_t) -> unit_interval_t
+  nonnegative : (x : event_t) -> prob (x) >= 0
+  normalization : prob (sample_t) == 1
   additivity : (
-    A : event_t
-    B : event_t
-    A ^ B == empty_set
-  ) -> P (A + B) == P (A) + P (B)
+    x : event_t
+    y : event_t
+    x ^ y == empty_set
+  ) -> prob (x + y) == prob (x) + prob (y)
   countable_additivity : (
     f : (nat_t -> event_t)
     [todo]
@@ -58,7 +57,6 @@ class random_field_t (
   .law : (state_t) -> unit_interval_t
   .law = this.as_random_variable_t .mass
 }
-
 
 // note the use of function type here
 //   we might need yoneda embedding
