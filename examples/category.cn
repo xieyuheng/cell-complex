@@ -1,5 +1,11 @@
 import eqv_relation_t  from "order.cn"
 
+// category_t is a useful class.
+// - for a class S uesd to model a mathematical structure,
+//   there corresponds a category C,
+//   with C.t = S, and C.arrow_t is morphisms
+/    respect (preserve) the structure of S.
+
 class category_t (
   t : type
 
@@ -8,18 +14,18 @@ class category_t (
   arrow_eqv_t : (
     a : t
     b : t
-  ) -> (
     arrow_t (a b)
     arrow_t (a b)
   ) -> type
 
-  identity : (a : t) -> arrow_t (a a)
+  identity : (
+    a : t
+  ) -> arrow_t (a a)
 
   compose : (
     a : t
     b : t
     c : t
-  ) -> (
     arrow_t (a b)
     arrow_t (b c)
   ) -> arrow_t (a c)
@@ -27,29 +33,28 @@ class category_t (
   identity_neutral_left : (
     a : t
     b : t
-  ) -> (
     f : arrow_t (a b)
-  ) -> arrow_eqv_t (a b) (f compose (identity (a) f))
+  ) -> arrow_eqv_t (a b) (
+    f, compose (a a b) (identity (a) f))
 
   identity_neutral_right : (
     a : t
     b : t
-  ) -> (
     f : arrow_t (a b)
-  ) -> arrow_eqv_t (a b) (f compose (f identity (b)))
+  ) -> arrow_eqv_t (a b) (
+    f, compose (a b b) (f identity (b)))
 
   compose_associative : (
     a : t
     b : t
     c : t
     d : t
-  ) -> (
     f : arrow_t (a b)
     g : arrow_t (b c)
     h : arrow_t (c d)
   ) -> arrow_eqv_t (a d) (
-    compose (f compose (g h))
-    compose (compose (f g) h)
+    compose (a b d) (f compose (b c d) (g h))
+    compose (a c d) (compose (a b c) (f g) h)
   )
 
   arrow_eqv_relation : (
@@ -60,6 +65,83 @@ class category_t (
     pre_t = arrow_eqv_t (a b)
   )
 )
+
+// - two objects have the same structure
+//   iff they are isomorphic.
+// - an 'abstract object' is
+//   an isomorphism class of objects.
+
+in category_t
+class isomorphic_t (
+  l : t
+  r : t
+  iso : arrow_t (l r)
+  inv : arrow_t (r l)
+  iso_inv_identity : arrow_eqv_t (l l) (
+    compose (l r l) (iso inv)
+    identity (l)
+  )
+  inv_iso_identity : arrow_eqv_t (r r) (
+    compose (r l r) (inv iso)
+    identity (r)
+  )
+)
+
+// - a functor between two categories is a natural_construction
+//   of the structure of [ante : category_t]
+//   in the structure of [succ : category_t]
+
+in category_t
+class functor_t (
+  ante : category_t
+  succ : category_t
+
+  object_map : (ante.t)
+    -> succ.t
+
+  arrow_map : (ante.arrow_t (a b))
+    -> succ.arrow_t (object_map (a) object_map (b))
+
+  arrow_map_respect_compose : (
+    f : ante.arrow_t (a b)
+    g : ante.arrow_t (b c)
+  ) -> succ.arrow_eqv_t (
+    arrow_map (ante.compose (f g))
+    succ.compose (arrow_map (f) arrow_map (g)))
+
+  arrow_map_respect_identity : (a :: ante.t)
+    -> succ.arrow_eqv_t (
+         arrow_map (ante.identity (a))
+         succ.identity (object_map (a)))
+)
+
+// - a natural_transformation is a level up map
+//   which maps objects to arrows and arrows to squares.
+
+in category_t
+class natural_transformation_t (
+  lhs : functor_t (ante succ)
+  rhs : functor_t (ante succ)
+
+  ante succ :: t
+
+  component : (a : ante.t)
+    -> succ.arrow_t (lhs.object_map (a) rhs.object_map (a))
+
+  transformation : (f : ante.arrow_t (a b))
+    -> succ.arrow_eqv_t (
+         succ.compose (component (a) rhs.arrow_map (f))
+         succ.compose (lhs.arrow_map (f) component (b)))
+)
+
+in category_t
+class natural_isomorphism_t
+extends natural_transformation_t (
+  isomorphic_component : (a : ante.t)
+    -> succ.isomorphic_t (iso = component (a))
+)
+
+//////
 
 unique_t : type
 unique_t = conj {
@@ -85,39 +167,26 @@ unique_t = conj {
      condition_t = <condition_t>
 }
 
-
-category_t.isomorphic_t : type
-category_t.isomorphic_t = conj {
-  (lhs rhs) : object_t
-  iso : arrow_t (lhs rhs)
-  inv : arrow_t (rhs lhs)
-  iso_inv_identity :
-    arrow_eqv_t (compose (iso inv) identity)
-  inv_iso_identity :
-    arrow_eqv_t (compose (inv iso) identity)
-}
-
-
 category_t.initial_t : type
 category_t.initial_t = conj {
-  initial : object_t
-  factorizer : (cand : object_t)
+  initial : t
+  factorizer : (cand : t)
     -> factor : arrow_t (initial cand)
 }
 
 category_t.terminal_t : type
 category_t.terminal_t = heir {
   [ terminal_candidate_t ]
-  terminal : object_t
-  factorizer : (cand : object_t)
+  terminal : t
+  factorizer : (cand : t)
     -> factor : arrow_t (cand terminal)
 }
 
 category_t.product_candidate_t : type
 category_t.product_candidate_t = conj {
-  fst : object_t
-  snd : object_t
-  product : object_t
+  fst : t
+  snd : t
+  product : t
   fst_projection : arrow_t (product fst)
   snd_projection : arrow_t (product snd)
 }
@@ -142,9 +211,9 @@ category_t.product_t = heir {
 
 category_t.sum_candidate_t : type
 category_t.sum_candidate_t = conj {
-  fst : object_t
-  snd : object_t
-  sum : object_t
+  fst : t
+  snd : t
+  sum : t
   fst_injection : arrow_t (fst sum)
   snd_injection : arrow_t (snd sum)
 }
@@ -174,7 +243,7 @@ note {
 
 preorder.as_category : category_t
 preorder.as_category = category_c {
-  object_t = element_t
+  t = element_t
   arrow_t = pre_t
   arrow_eqv_t (_ _) = unit_t
   identity = pre_reflexive
@@ -186,12 +255,12 @@ preorder.as_category = category_c {
 
 category_t.opposite : category_t
 category_t.opposite = category_c {
-  object_t = this.object_t
-  arrow_t : (object_t object_t) -> type
+  t = this.t
+  arrow_t : (t t) -> type
   arrow_t (a b) = this.arrow_t (b a)
   arrow_eqv_t : (this.arrow_t (b a) this.arrow_t (b a)) -> type
   arrow_eqv_t = this.arrow_eqv_t
-  identity : (a :: object_t) -> arrow_t (a a)
+  identity : (a :: t) -> arrow_t (a a)
   identity = this.identity
   compose : (this.arrow_t (b a) this.arrow_t (c b)) -> this.arrow_t (c a)
   compose (f g) = this.compose (g f)
@@ -216,7 +285,7 @@ category_t.opposite = category_c {
 
 category_product : (category_t category_t) -> category_t
 category_product (#1 #2) = category_c {
-  object_t = [#1.object_t #2.object_t]
+  t = [#1.t #2.t]
 
   arrow_t (a b) =
     [#1.arrow_t (a.1 b.1)
@@ -250,8 +319,8 @@ category_product (#1 #2) = category_c {
 product_closed_category_t : type
 product_closed_category_t = heir {
   [ category_t ]
-  product : ((a b) : object_t)
-    -> p : object_t
+  product : ((a b) : t)
+    -> p : t
        product_relation :: product_t (a b p)
 }
 
@@ -276,9 +345,9 @@ product_closed_category_t.product_arrow (f g) = {
 
 product_closed_category_t.exponential_candidate_t : type
 product_closed_category_t.exponential_candidate_t = conj {
-  ante : object_t
-  succ : object_t
-  exponential : object_t
+  ante : t
+  succ : t
+  exponential : t
   eval : arrow_t (product (exponential ante) succ)
 }
 
@@ -297,64 +366,11 @@ category_t.exponential_t = heir {
            compose (eval product_arrow (factor identity)))
 }
 
-// _ a functor between two categories is a natural_construction
-//   of the structure of [ante : category_t]
-//   in the structure of [succ : category_t]
-
-functor_t : type
-functor_t = conj {
-  ante : category_t
-  succ : category_t
-
-  object_map : (ante.object_t)
-    -> succ.object_t
-
-  arrow_map : (ante.arrow_t (a b))
-    -> succ.arrow_t (object_map (a) object_map (b))
-
-  arrow_map_respect_compose : (
-    f : ante.arrow_t (a b)
-    g : ante.arrow_t (b c)
-  ) -> succ.arrow_eqv_t (
-    arrow_map (ante.compose (f g))
-    succ.compose (arrow_map (f) arrow_map (g)))
-
-  arrow_map_respect_identity : (a :: ante.object_t)
-    -> succ.arrow_eqv_t (
-         arrow_map (ante.identity (a))
-         succ.identity (object_map (a)))
-}
-
-// _ a natural_transformation is a level up map
-//   which maps objects to arrows and arrows to squares.
-
-natural_transformation_t : type
-natural_transformation_t = conj {
-  lhs : functor_t (ante succ)
-  rhs : functor_t (ante succ)
-
-  ante succ :: object_t
-
-  component : (a : ante.object_t)
-    -> succ.arrow_t (lhs.object_map (a) rhs.object_map (a))
-
-  transformation : (f : ante.arrow_t (a b))
-    -> succ.arrow_eqv_t (
-         succ.compose (component (a) rhs.arrow_map (f))
-         succ.compose (lhs.arrow_map (f) component (b)))
-}
-
-natural_isomorphism_t : type
-natural_isomorphism_t = heir {
-  [ natural_transformation_t ]
-  isomorphic_component : (a : ante.object_t)
-    -> succ.isomorphic_t (iso = component (a))
-}
 
 category_category : category_t
 category_category = category_c {
-  object_t : category_t
-  object_t = category_t
+  t : category_t
+  t = category_t
 
   arrow_t : (category_t category_t)
     -> type
