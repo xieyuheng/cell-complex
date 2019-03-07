@@ -28,38 +28,36 @@ class either_that_t (
 class game_t (
   position_t : type
   choice_t : type
-  init_position : position_t
-  left_choices  : (position_t) -> list_t (choice_t)
-  right_choices : (position_t) -> list_t (choice_t)
-  left_move  : (choice_t position_t) -> position_t
-  right_move : (choice_t position_t) -> position_t
+  L_choices : (position_t) -> list_t (choice_t)
+  R_choices : (position_t) -> list_t (choice_t)
+  L_move : (choice_t position_t) -> position_t
+  R_move : (choice_t position_t) -> position_t
 ) {
   .sum : (game_t) -> game_t
   .sum = (that) => game_c {
     position_t = pair_t (this.position_t, that.position_t)
     choice_t = either_t (this.choice_t, that.choice_t)
-    init_position = pair_c (this.init_position, that.init_position)
-    left_choices = (position) => list_append (
-      either_this_c (this.left_choices (position.this))
-      either_that_c (that.left_choices (position.that)))
-    right_choices = (position) => list_append (
-      either_this_c (this.right_choices (position.this))
-      either_that_c (that.right_choices (position.that)))
-    left_move = (choice, position) => choice case {
+    L_choices = (position) => list_append (
+      either_this_c (this.L_choices (position.this))
+      either_that_c (that.L_choices (position.that)))
+    R_choices = (position) => list_append (
+      either_this_c (this.R_choices (position.this))
+      either_that_c (that.R_choices (position.that)))
+    L_move = (choice, position) => choice case {
       either_this_t => pair_c (
-        this.left_move (choice.value, position.this)
+        this.L_move (choice.value, position.this)
         position.that)
       either_that_t => pair_c (
         position.this
-        that.left_move (choice.value, position.that))
+        that.L_move (choice.value, position.that))
     }
-    right_move = (choice, position) => choice case {
+    R_move = (choice, position) => choice case {
       either_this_t => pair_c (
-        this.right_move (choice.value, position.this)
+        this.R_move (choice.value, position.this)
         position.that)
       either_that_t => pair_c (
         position.this
-        that.right_move (choice.value, position.that))
+        that.R_move (choice.value, position.that))
     }
   }
 }
