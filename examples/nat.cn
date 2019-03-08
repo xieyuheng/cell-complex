@@ -59,46 +59,48 @@ two_even : nat_even_t (succ_c (succ_c (zero_c)))
 two_even = even_plus_two_even_c (
   n = succ_c (succ_c (zero_c))
   m = zero_c
-  prev = zero_even_c (m))
+  prev = zero_even_c (m)
+)
 
 // [todo]
 
-nat_add_associative : (
+add_associative : (
   (x y z) : nat_t
 ) -> eqv_t (
-  nat_add (nat_add (x y) z)
-  nat_add (x nat_add (y z))
+  x.add (y) .add (z)
+  x.add (y.add (z))
 )
-nat_add_associative (x y z) = {
-  x case {
-    zero_t => eqv_c
-    succ_t => eqv_apply (
-      succ_c nat_add_associative (x.prev y z))
-  }
+add_associative (x y z) = x case {
+  zero_t => eqv_c
+  succ_t => eqv_apply (
+    succ_c add_associative (x.prev y z))
 }
 
-nat_add_commutative : ((x y) : nat_t)
-  -> eqv_t (
-       nat_add (x y)
-       nat_add (y x))
-nat_add_commutative (x y) = x case {
-  zero_t => nat_add_zero_commutative (y)
+add_commutative : (
+  (x y) : nat_t
+) -> eqv_t (
+  x.add (y)
+  y.add (x)
+)
+add_commutative (x y) = x case {
+  zero_t => add_zero_commutative (y)
   succ_t => eqv_compose (
-    eqv_apply (succ_c nat_add_commutative (x.prev y))
-    nat_add_succ_commutative (y x.prev))
+    eqv_apply (succ_c add_commutative (x.prev y))
+    add_succ_commutative (y x.prev))
 }
 
-nat_add_zero_commutative : (x : nat_t)
-  -> eqv_t (
-       nat_add (zero_c x)
-       nat_add (x zero_c))
-nat_add_zero_commutative (x) = {
-  x case {
-    zero_t => eqv_c
-    succ_t => eqv_apply (
-      succ_c nat_add_zero_commutative (x.prev))
-  }
+add_zero_commutative : (
+  x : nat_t
+) -> eqv_t (
+  add (zero_c x)
+  add (x zero_c)
+)
+add_zero_commutative (x) = x case {
+  zero_t => eqv_c
+  succ_t => eqv_apply (
+    succ_c add_zero_commutative (x.prev))
 }
+
 
 note {
   to make it easier to prove eqv_t
@@ -110,15 +112,15 @@ note {
 
   the eqv_t to be proved is
   eqv_t (
-    nat_add (zero_c x) >= x
-    nat_add (x zero_c) >= succ_c (nat_add (x.prev zero_c))
+    add (zero_c x) >= x
+    add (x zero_c) >= succ_c (add (x.prev zero_c))
   )
 
   the eqv_c constructing is
-  eqv_apply (succ_c nat_add_zero_commutative (x.prev)) :
+  eqv_apply (succ_c add_zero_commutative (x.prev)) :
   eqv_t (
-    succ_c (nat_add (zero_c x.prev)) >= succ_c (x.prev) >= x
-    succ_c (nat_add (x.prev zero_c))
+    succ_c (add (zero_c x.prev)) >= succ_c (x.prev) >= x
+    succ_c (add (x.prev zero_c))
   )
 
   only after many `>=`s
@@ -142,28 +144,28 @@ note {
 }
 
 
-nat_add_succ_commutative_1 : ((x y) : nat_t)
+add_succ_commutative_1 : ((x y) : nat_t)
   -> eqv_t (
-       nat_add (succ_c (x) y)
-       succ_c (nat_add (x y)))
-nat_add_succ_commutative_1 (x y) = {
+       add (succ_c (x) y)
+       succ_c (add (x y)))
+add_succ_commutative_1 (x y) = {
   x case {
     zero_t => eqv_c
     succ_t => eqv_apply (
-      succ_c nat_add_succ_commutative_1 (x.prev y))
+      succ_c add_succ_commutative_1 (x.prev y))
   }
 }
 
 
-nat_add_succ_commutative_2 : ((x y) : nat_t)
+add_succ_commutative_2 : ((x y) : nat_t)
   -> eqv_t (
-       nat_add (y succ_c (x))
-       succ_c (nat_add (x y)))
-nat_add_succ_commutative_2 (x y) = {
+       add (y succ_c (x))
+       succ_c (add (x y)))
+add_succ_commutative_2 (x y) = {
   x case {
     zero_t => eqv_c
     succ_t => eqv_apply (
-      succ_c nat_add_succ_commutative_2 (x.prev y))
+      succ_c add_succ_commutative_2 (x.prev y))
   }
 }
 

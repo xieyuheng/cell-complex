@@ -6,17 +6,6 @@
 // - syntax for game plays
 // - example games about nat list vect
 
-nat_t = disj (
-    zero_t
-    succ_t
-) {}
-
-zero_t = conj {}
-
-succ_t = conj {
-    prev : nat_t
-}
-
 nat_add_t = disj (
     zero_add_t
     succ_add_t
