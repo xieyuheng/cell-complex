@@ -4,302 +4,302 @@
 // - specify the game of disj and conj
 //   -- to see if it agree with hintikka
 
-bool-t = disj (
-    true-t
-    false-t
+bool_t = disj (
+    true_t
+    false_t
 ) {}
 
-true-t = conj {}
+true_t = conj {}
 
-false-t = conj {}
+false_t = conj {}
 
-nat-t = disj (
-    zero-t
-    succ-t
+nat_t = disj (
+    zero_t
+    succ_t
 ) {}
 
-zero-t = conj {}
+zero_t = conj {}
 
-succ-t = conj {
-    prev : nat-t
+succ_t = conj {
+    prev : nat_t
 }
 
-nat-add-t = disj (
-    zero-add-t
-    succ-add-t
+nat_add_t = disj (
+    zero_add_t
+    succ_add_t
 ) {
-    a : nat-t
-    b : nat-t
-    c : nat-t
+    a : nat_t
+    b : nat_t
+    c : nat_t
 }
 
-zero-add-t = conj {
-    a : nat-t
-    b : nat-t
-    c : nat-t
-    a = zero-c
+zero_add_t = conj {
+    a : nat_t
+    b : nat_t
+    c : nat_t
+    a = zero_c
     c = b
 }
 
-succ-add-t = conj {
-    a : nat-t
-    b : nat-t
-    c : nat-t
-    a = succ-c (:a)
-    c = succ-c (:c)
-    prev : nat-add-t (:a b :c)
+succ_add_t = conj {
+    a : nat_t
+    b : nat_t
+    c : nat_t
+    a = succ_c (:a)
+    c = succ_c (:c)
+    prev : nat_add_t (:a b :c)
 }
 
 assert! {
-    nat-add-t (zero-c zero-c zero-c)
+    nat_add_t (zero_c zero_c zero_c)
 }
 
 assert! {
-    nat-add-t (zero-c succ-c (zero-c) succ-c (zero-c))
+    nat_add_t (zero_c succ_c (zero_c) succ_c (zero_c))
 }
 
 assert! {
-    nat-add-t (succ-c (zero-c) zero-c succ-c (zero-c))
+    nat_add_t (succ_c (zero_c) zero_c succ_c (zero_c))
 }
 
 // query! (10) {
-//     nat-add-t (
-//         zero-c
+//     nat_add_t (
+//         zero_c
 //         :zero
-//         zero-c)
+//         zero_c)
 // }
 
 // query! (10) {
-//     nat-add-t (
+//     nat_add_t (
 //         :zero
-//         zero-c
-//         zero-c)
+//         zero_c
+//         zero_c)
 // }
 
 // query! (10) {
-//     nat-add-t (
-//         zero-c
-//         zero-c
+//     nat_add_t (
+//         zero_c
+//         zero_c
 //         :zero)
 // }
 
 // query! (10) {
-//     nat-add-t (
+//     nat_add_t (
 //         :x
-//         succ-c (zero-c)
-//         succ-c (succ-c (succ-c (zero-c))))
+//         succ_c (zero_c)
+//         succ_c (succ_c (succ_c (zero_c))))
 // }
 
 // search! (1) {
-//     nat-add-t (
-//         succ-c (zero-c)
+//     nat_add_t (
+//         succ_c (zero_c)
 //         :x
-//         succ-c (succ-c (succ-c (succ-c (zero-c)))))
+//         succ_c (succ_c (succ_c (succ_c (zero_c)))))
 // }
 //
 // step! (1) {
-//     nat-add-t (
-//         succ-c (zero-c)
+//     nat_add_t (
+//         succ_c (zero_c)
 //         :x
-//         succ-c (succ-c (succ-c (succ-c (zero-c)))))
+//         succ_c (succ_c (succ_c (succ_c (zero_c)))))
 // }
 
 // search! (3) {
-//     nat-add-t (
-//         succ-c (zero-c)
+//     nat_add_t (
+//         succ_c (zero_c)
 //         :x
-//         succ-c (succ-c (succ-c (succ-c (zero-c)))))
+//         succ_c (succ_c (succ_c (succ_c (zero_c)))))
 // }
 //
 // query! (10) {
-//     nat-add-t (
-//         succ-c (zero-c)
-//         succ-c (:x)
-//         succ-c (succ-c (succ-c (zero-c))))
+//     nat_add_t (
+//         succ_c (zero_c)
+//         succ_c (:x)
+//         succ_c (succ_c (succ_c (zero_c))))
 // }
 
 // query! (10) {
-//     nat-add-t (
+//     nat_add_t (
 //         :y
 //         :x
-//         succ-c (succ-c (succ-c (zero-c))))
+//         succ_c (succ_c (succ_c (zero_c))))
 // }
 
-nat-even-t = disj (
-    zero-even-t
-    even-plus-two-even-t
+nat_even_t = disj (
+    zero_even_t
+    even_plus_two_even_t
 ) {
-    nat : nat-t
+    nat : nat_t
 }
 
-zero-even-t = conj {
-    nat : nat-t
-    nat = zero-c
+zero_even_t = conj {
+    nat : nat_t
+    nat = zero_c
 }
 
-even-plus-two-even-t = conj {
-    nat : nat-t
-    prev : nat-even-t (:m)
-    nat = succ-c (succ-c (:m))
-}
-
-assert! {
-    nat-even-t (zero-c)
+even_plus_two_even_t = conj {
+    nat : nat_t
+    prev : nat_even_t (:m)
+    nat = succ_c (succ_c (:m))
 }
 
 assert! {
-    nat-even-t (succ-c (succ-c (zero-c)))
+    nat_even_t (zero_c)
 }
 
-assert-not! {
-    nat-even-t (succ-c (zero-c))
+assert! {
+    nat_even_t (succ_c (succ_c (zero_c)))
 }
 
-list-t = disj (
-    null-t
-    cons-t
+assert_not! {
+    nat_even_t (succ_c (zero_c))
+}
+
+list_t = disj (
+    null_t
+    cons_t
 ) {
     t : type
 }
 
-null-t = conj {
+null_t = conj {
     t : type
 }
 
-cons-t = conj {
+cons_t = conj {
     t : type
     car : t
-    cdr : list-t (t)
+    cdr : list_t (t)
 }
 
-list-length-t = disj (
-    zero-length-t
-    succ-length-t
+list_length_t = disj (
+    zero_length_t
+    succ_length_t
 ) {
-    list : list-t (:t)
-    length : nat-t
+    list : list_t (:t)
+    length : nat_t
 }
 
-zero-length-t = conj {
-    list : list-t (:t)
-    length : nat-t
-    list = null-c
-    length = zero-c
+zero_length_t = conj {
+    list : list_t (:t)
+    length : nat_t
+    list = null_c
+    length = zero_c
 }
 
-succ-length-t = conj {
-    list : list-t (:t)
-    length : nat-t
-    prev : list-length-t (:cdr :n)
-    list = cons-c (:t :x :cdr)
-    length = succ-c (:n)
-}
-
-assert! {
-    list-length-t (
-        null-c
-        zero-c)
+succ_length_t = conj {
+    list : list_t (:t)
+    length : nat_t
+    prev : list_length_t (:cdr :n)
+    list = cons_c (:t :x :cdr)
+    length = succ_c (:n)
 }
 
 assert! {
-    list-length-t {
-        list = cons-c (nat-t zero-c null-c)
-        length = succ-c (zero-c)
+    list_length_t (
+        null_c
+        zero_c)
+}
+
+assert! {
+    list_length_t {
+        list = cons_c (nat_t zero_c null_c)
+        length = succ_c (zero_c)
     }
 }
 
 assert! {
-    list-length-t {
-        list = cons-c (nat-t zero-c cons-c (zero-c null-c))
-        length = succ-c (succ-c (zero-c))
+    list_length_t {
+        list = cons_c (nat_t zero_c cons_c (zero_c null_c))
+        length = succ_c (succ_c (zero_c))
     }
 }
 
-assert-not! {
-    list-length-t {
-        list = cons-c (nat-t zero-c null-c)
-        length = succ-c (succ-c (zero-c))
+assert_not! {
+    list_length_t {
+        list = cons_c (nat_t zero_c null_c)
+        length = succ_c (succ_c (zero_c))
     }
 }
 
 assert! {
-    list-length-t {
-        list = cons-c (nat-t zero-c cons-c (zero-c null-c))
+    list_length_t {
+        list = cons_c (nat_t zero_c cons_c (zero_c null_c))
         length = :n
     }
 }
 
 assert! {
-    list-length-t {
+    list_length_t {
         list = :l
         length = :n
     }
 }
 
-list-append-t = disj (
-    zero-append-t
-    succ-append-t
+list_append_t = disj (
+    zero_append_t
+    succ_append_t
 ) {
-    ante : list-t (:t)
-    succ : list-t (:t)
-    result : list-t (:t)
+    ante : list_t (:t)
+    succ : list_t (:t)
+    result : list_t (:t)
 }
 
-zero-append-t = conj {
-    ante : list-t (:t)
-    succ : list-t (:t)
-    result : list-t (:t)
-    ante = null-c
+zero_append_t = conj {
+    ante : list_t (:t)
+    succ : list_t (:t)
+    result : list_t (:t)
+    ante = null_c
     result = succ
 }
 
-succ-append-t = conj {
-    ante : list-t (:t)
-    succ : list-t (:t)
-    result : list-t (:t)
-    prev : list-append-t (:cdr succ :result-cdr)
-    ante = cons-c (:t :car :cdr)
-    result = cons-c (:t :car :result-cdr)
+succ_append_t = conj {
+    ante : list_t (:t)
+    succ : list_t (:t)
+    result : list_t (:t)
+    prev : list_append_t (:cdr succ :result_cdr)
+    ante = cons_c (:t :car :cdr)
+    result = cons_c (:t :car :result_cdr)
 }
 
 search! (2) {
-    list-append-t (:ante :succ :result)
+    list_append_t (:ante :succ :result)
 }
 
-vect-t = disj (
-    null-vect-t
-    cons-vect-t
+vect_t = disj (
+    null_vect_t
+    cons_vect_t
 ) {
     t : type
-    length : nat-t
+    length : nat_t
 }
 
-null-vect-t = conj {
+null_vect_t = conj {
     t : type
-    length : nat-t
-    length = zero-c
+    length : nat_t
+    length = zero_c
 }
 
-cons-vect-t = conj {
+cons_vect_t = conj {
     t : type
-    length : nat-t
+    length : nat_t
     car : t
-    cdr : vect-t (t :n)
-    length = succ-c (:n)
+    cdr : vect_t (t :n)
+    length = succ_c (:n)
 }
 
 // search! (2) {
-//     bool-t
+//     bool_t
 // }
 
 // search! (3) {
-//     nat-t
+//     nat_t
 // }
 
 // search! (3) {
-//     list-t (nat-t)
+//     list_t (nat_t)
 // }
 
 // search! (3) {
-//     list-t (list-t (nat-t))
+//     list_t (list_t (nat_t))
 // }

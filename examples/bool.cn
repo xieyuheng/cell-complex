@@ -1,4 +1,8 @@
-union bool_t () [ true_t false_t ]
+union bool_t (
+) [
+  true_t
+  false_t
+]
 
 class true_t ()
 
