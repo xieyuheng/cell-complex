@@ -1,5 +1,0 @@
-- cg -- for combinatorial game theory
-- the game of go
-- a formal language for hackenbush
-- surreal number
-- game semantic of FOL -- jaakko hintikka

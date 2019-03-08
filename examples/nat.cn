@@ -1,85 +1,74 @@
-nat_t : type
-nat_t = disj {
-  [ zero_t
-    succ_t ]
-}
+class zero_t ()
 
-zero_t : type
-zero_t = conj {}
-
-succ_t : type
-succ_t = conj {
+class succ_t (
   prev : nat_t
-}
+)
 
-
-nat_add : (nat_t nat_t) -> nat_t
-nat_add (x y) = {
-  x case {
-    zero_t => y
-    succ_t => succ_c (nat_add (x.prev y))
+union nat_t () [
+  zero_t
+  succ_t
+] {
+  .add : (nat_t) -> nat_t
+  .add (that) = this case {
+    zero_t => that
+    succ_t => succ_c (this.prev.add (that))
   }
-}
 
-nat_mul : (nat_t nat_t) -> nat_t
-nat_mul (x y) = {
-  x case {
+  .mul : (nat_t) -> nat_t
+  .mul (that) = this case {
     zero_t => zero_c
-    succ_t => nat_add (y nat_mul (x.prev y))
+    succ_t => that.add (this.prev.mul (y))
   }
-}
 
-
-nat_factorial : (nat_t) -> nat_t
-nat_factorial (x) = {
-  x case {
+  .factorial : () -> nat_t
+  .factorial () = this case {
     zero_t => succ_c (zero_c)
-    succ_t => nat_mul (x nat_factorial (x.prev))
+    succ_t => this.mul (this.prev.factorial ())
   }
-}
 
-
-nat_even_p : (nat_t) -> bool_t
-nat_even_p (x) = {
-  x case {
+  .even_p : () -> bool_t
+  .even_p () = this case {
     zero_t => true_c
-    succ_t => x.prev case {
+    succ_t => this case {
       zero_t => false_c
-      succ_t => nat_even_p (x.prev.prev)
+      succ_t => this.prev.prev.even_p ()
     }
   }
 }
 
+union nat_even_t (
+  n : nat_t
+) [
+  zero_even_t
+  even_plus_two_even_t
+]
 
-nat_even_t : type
-nat_even_t = disj {
-  [ zero_even_t
-    even_plus_two_even_t ]
-  nat : nat_t
-}
+class zero_even_t (
+  n : nat_t
+  n = zero_c
+)
 
-zero_even_t : type
-zero_even_t = conj {
-  nat : nat_t
-  nat = zero_c
-}
-
-even_plus_two_even_t : type
-even_plus_two_even_t = conj {
-  nat : nat_t
+class even_plus_two_even_t (
+  n : nat_t
+  m : nat_t
   prev : nat_even_t (m)
-  nat = succ_c (succ_c (m))
-}
-
+  n = succ_c (succ_c (m))
+)
 
 two_even : nat_even_t (succ_c (succ_c (zero_c)))
-two_even = even_plus_two_even_c (zero_even_c)
+two_even = even_plus_two_even_c (
+  n = succ_c (succ_c (zero_c))
+  m = zero_c
+  prev = zero_even_c (m))
 
+// [todo]
 
-nat_add_associative : ((x y z) : nat_t)
-  -> eqv_t (
-       nat_add (nat_add (x y) z)
-       nat_add (x nat_add (y z)))
+nat_add_associative : (
+  (x y z) : nat_t
+) -> eqv_t (
+  nat_add (nat_add (x y) z)
+  nat_add (x nat_add (y z))
+)
 nat_add_associative (x y z) = {
   x case {
     zero_t => eqv_c
@@ -87,7 +76,6 @@ nat_add_associative (x y z) = {
       succ_c nat_add_associative (x.prev y z))
   }
 }
-
 
 nat_add_commutative : ((x y) : nat_t)
   -> eqv_t (
@@ -100,7 +88,6 @@ nat_add_commutative (x y) = x case {
     nat_add_succ_commutative (y x.prev))
 }
 
-
 nat_add_zero_commutative : (x : nat_t)
   -> eqv_t (
        nat_add (zero_c x)
@@ -112,7 +99,6 @@ nat_add_zero_commutative (x) = {
       succ_c nat_add_zero_commutative (x.prev))
   }
 }
-
 
 note {
   to make it easier to prove eqv_t

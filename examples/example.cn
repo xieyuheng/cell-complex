@@ -1,17 +1,10 @@
 // [todo]
-// - merge to stdlib
 // - use explicit argument instead of logic variables
 // - specify the game of disj and conj
 //   -- to see if it agree with hintikka
 
-bool_t = disj (
-    true_t
-    false_t
-) {}
-
-true_t = conj {}
-
-false_t = conj {}
+// - syntax for game plays
+// - example games about nat list vect
 
 nat_t = disj (
     zero_t
