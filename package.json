@@ -1,5 +1,5 @@
 {
-  "name": "cicada-lang",
+  "name": "@cicada-lang/cicada",
   "version": "0.0.1",
   "author": "Xie Yuheng",
   "main": "dist/index.js",
