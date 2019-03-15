@@ -1,0 +1,17 @@
+{
+  "name": "cicada-lang",
+  "version": "0.0.1",
+  "author": "Xie Yuheng",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc --watch"
+  },
+  "devDependencies": {
+    "typescript": "^3.2.2"
+  },
+  "dependencies": {
+    "@types/lodash": "^4.14.122",
+    "lodash": "^4.17.11"
+  }
+}

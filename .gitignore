@@ -1,5 +1,6 @@
-# for scala
-target
+# for js
+dist
+node_modules
 
 # for emacs
 *~

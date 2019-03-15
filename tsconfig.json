@@ -1,0 +1,24 @@
+{
+  "compilerOptions": {
+    "target": "esnext",
+    // "target": "es6",
+    // "module": "umd",
+    "module": "commonjs",
+    // "moduleResolution": "node",
+    "sourceMap": true,
+    "declaration": true,
+    "esModuleInterop": true,
+    "strict": true,
+    "outDir": "dist",
+    "baseUrl": ".",
+    "paths": {
+      "*": [
+        "node_modules/*",
+        // "src/types/*",
+      ]
+    }
+  },
+  "include": [
+    "src",
+  ],
+}
