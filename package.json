@@ -12,6 +12,8 @@
   },
   "dependencies": {
     "@types/lodash": "^4.14.122",
+    "cell-complex": "0.0.3",
+    "combinatorial-game": "0.0.1",
     "lodash": "^4.17.11"
   }
 }
