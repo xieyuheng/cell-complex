@@ -2,6 +2,11 @@
   "name": "@cicada-lang/cicada",
   "version": "0.0.1",
   "author": "Xie Yuheng",
+  "license": "GPL-3.0-or-later",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:xieyuheng/cicada.git"
+  },  
   "main": "dist/index.js",
   "scripts": {
     "build": "tsc",
