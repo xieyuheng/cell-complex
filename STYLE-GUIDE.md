@@ -2,7 +2,7 @@
 
 ## General rules
 
-- Maximal line length is limited to 80 characters.
+- Maximal line length is limited to 66 characters.
 
 ## Easy to read Function calls
 
