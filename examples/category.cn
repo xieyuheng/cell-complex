@@ -31,14 +31,14 @@ class category_t (
     arrow_t (y z)
   ) -> arrow_t (x z)
 
-  identity_neutral_left : (
+  identity_left : (
     x : o
     y : o
     f : arrow_t (x y)
   ) -> arrow_eqv_t (x y) (
     f, compose (x x y) (identity (x) f))
 
-  identity_neutral_right : (
+  identity_right : (
     x : o
     y : o
     f : arrow_t (x y)
@@ -281,8 +281,8 @@ preorder.as_category = category_c {
   arrow_eqv_t (_ _) = unit_t
   identity = pre_reflexive
   compose = pre_transitive
-  identity_neutral_left (_) = unit_c
-  identity_neutral_right (_) = unit_c
+  identity_left (_) = unit_c
+  identity_right (_) = unit_c
   compose_associative (_ _ _) = unit_c
 }
 
@@ -297,12 +297,12 @@ category_t.opposite = category_c {
   identity = this.identity
   compose : (this.arrow_t (b a) this.arrow_t (c b)) -> this.arrow_t (c a)
   compose (f g) = this.compose (g f)
-  identity_neutral_left : (f : this.arrow_t (b a))
+  identity_left : (f : this.arrow_t (b a))
     -> arrow_eqv_t (f this.compose (f identity))
-  identity_neutral_left = this.identity_neutral_right
-  identity_neutral_right : (f : this.arrow_t (b a))
+  identity_left = this.identity_right
+  identity_right : (f : this.arrow_t (b a))
     -> arrow_eqv_t (f this.compose (identity f))
-  identity_neutral_right = this.identity_neutral_left
+  identity_right = this.identity_left
   compose_associative : (
     f : this.arrow_t (b a)
     g : this.arrow_t (c b)
@@ -336,13 +336,13 @@ category_product (#1 #2) = category_c {
     [#1.compose (f.1 g.1)
      #2.compose (f.2 g.2)]
 
-  identity_neutral_left (f) =
-    [#1.identity_neutral_left (f.1)
-     #2.identity_neutral_left (f.2)]
+  identity_left (f) =
+    [#1.identity_left (f.1)
+     #2.identity_left (f.2)]
 
-  identity_neutral_right (f) =
-    [#1.identity_neutral_right (f.1)
-     #2.identity_neutral_right (f.2)]
+  identity_right (f) =
+    [#1.identity_right (f.1)
+     #2.identity_right (f.2)]
 
   compose_associative (f g h) =
     [#1.compose_associative (f.1 g.1 h.1)
@@ -426,14 +426,14 @@ category_category = category_c {
     [todo]
 
 
-  identity_neutral_left : (f : functor_t (a b))
+  identity_left : (f : functor_t (a b))
     -> natural_isomorphism_t (f compose (identity f))
-  identity_neutral_left =
+  identity_left =
     [todo]
 
-  identity_neutral_right : (f : functor_t (a b))
+  identity_right : (f : functor_t (a b))
     -> natural_isomorphism_t (f compose (f identity))
-  identity_neutral_right =
+  identity_right =
     [todo]
 
   compose_associative : (

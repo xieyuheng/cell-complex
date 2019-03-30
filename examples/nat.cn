@@ -7,32 +7,32 @@ class succ_t (
 union nat_t () [
   zero_t
   succ_t
-] {
-  .add : (nat_t) -> nat_t
-  .add (that) = this case {
-    zero_t => that
-    succ_t => succ_c (this.prev.add (that))
-  }
+] {}
 
-  .mul : (nat_t) -> nat_t
-  .mul (that) = this case {
-    zero_t => zero_c
-    succ_t => that.add (this.prev.mul (y))
-  }
+add (nat_t nat_t) : nat_t
+add (x y) = x case {
+  zero_t => y
+  succ_t => succ_c (add (x.prev y))
+}
 
-  .factorial : () -> nat_t
-  .factorial () = this case {
-    zero_t => succ_c (zero_c)
-    succ_t => this.mul (this.prev.factorial ())
-  }
+mul (nat_t nat_t) : nat_t
+mul (x y) = x case {
+  zero_t => zero_c
+  succ_t => add (y (mul (x.prev y)))
+}
 
-  .even_p : () -> bool_t
-  .even_p () = this case {
-    zero_t => true_c
-    succ_t => this case {
-      zero_t => false_c
-      succ_t => this.prev.prev.even_p ()
-    }
+factorial (nat_t) : nat_t
+factorial (x) = x case {
+  zero_t => succ_c (zero_c)
+  succ_t => mul (x (factorial (x.prev)))
+}
+
+even_p (x) : bool_t
+even_p (x) = x case {
+  zero_t => true_c
+  succ_t => x case {
+    zero_t => false_c
+    succ_t => even_p (x.prev.prev)
   }
 }
 
@@ -64,41 +64,29 @@ two_even = even_plus_two_even_c (
 
 // [todo]
 
-add_associative : (
-  (x y z) : nat_t
-) -> eqv_t (
-  x.add (y) .add (z)
-  x.add (y.add (z))
-)
-add_associative (x y z) = x case {
+add_assoc : (x : nat_t, y : nat_t, z : nat_t) ->
+  add (add (x y) z) == add (x add (y z))
+
+add_assoc (x y z) = x case {
   zero_t => eqv_c
   succ_t => eqv_apply (
-    succ_c add_associative (x.prev y z))
+    succ_c add_assoc (x.prev y z))
 }
 
-add_commutative : (
-  (x y) : nat_t
-) -> eqv_t (
-  x.add (y)
-  y.add (x)
-)
-add_commutative (x y) = x case {
-  zero_t => add_zero_commutative (y)
+add_commu : (x : nat_t, y : nat_t) -> add (x y) == add (y x)
+add_commu (x y) = x case {
+  zero_t => add_zero_commu (y)
   succ_t => eqv_compose (
-    eqv_apply (succ_c add_commutative (x.prev y))
-    add_succ_commutative (y x.prev))
+    eqv_apply (succ_c add_commu (x.prev y))
+    add_succ_commu (y x.prev))
 }
 
-add_zero_commutative : (
-  x : nat_t
-) -> eqv_t (
-  add (zero_c x)
-  add (x zero_c)
-)
-add_zero_commutative (x) = x case {
+add_zero_commu : (x : nat_t) ->
+  add (zero_c x) == add (x zero_c)
+add_zero_commu (x) = x case {
   zero_t => eqv_c
   succ_t => eqv_apply (
-    succ_c add_zero_commutative (x.prev))
+    succ_c add_zero_commu (x.prev))
 }
 
 
@@ -117,7 +105,7 @@ note {
   )
 
   the eqv_c constructing is
-  eqv_apply (succ_c add_zero_commutative (x.prev)) :
+  eqv_apply (succ_c add_zero_commu (x.prev)) :
   eqv_t (
     succ_c (add (zero_c x.prev)) >= succ_c (x.prev) >= x
     succ_c (add (x.prev zero_c))
@@ -144,28 +132,28 @@ note {
 }
 
 
-add_succ_commutative_1 : ((x y) : nat_t)
+add_succ_commu_1 : ((x y) : nat_t)
   -> eqv_t (
        add (succ_c (x) y)
        succ_c (add (x y)))
-add_succ_commutative_1 (x y) = {
+add_succ_commu_1 (x y) = {
   x case {
     zero_t => eqv_c
     succ_t => eqv_apply (
-      succ_c add_succ_commutative_1 (x.prev y))
+      succ_c add_succ_commu_1 (x.prev y))
   }
 }
 
 
-add_succ_commutative_2 : ((x y) : nat_t)
+add_succ_commu_2 : ((x y) : nat_t)
   -> eqv_t (
        add (y succ_c (x))
        succ_c (add (x y)))
-add_succ_commutative_2 (x y) = {
+add_succ_commu_2 (x y) = {
   x case {
     zero_t => eqv_c
     succ_t => eqv_apply (
-      succ_c add_succ_commutative_2 (x.prev y))
+      succ_c add_succ_commu_2 (x.prev y))
   }
 }
 
@@ -250,13 +238,13 @@ nat_order_category = category_c {
     }
   }
 
-  compose_associative (f g h) = {
+  compose_assoc (f g h) = {
     [f g h] case {
       [zero_lteq_t _ _] => eqv_c
       [succ_lteq_t succ_lteq_t succ_lteq_t] =>
         eqv_apply (
           succ_lteq_c
-          compose_associative (f.prev g.prev h.prev))
+          compose_assoc (f.prev g.prev h.prev))
     }
   }
 }

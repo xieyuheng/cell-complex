@@ -1,39 +1,22 @@
-monoid_t : type
-monoid_t = conj {
-  element_t : type
-
-  element_eqv_t : (element_t element_t)
-    -> type
-
-  unit : element_t
-
-  product : (element_t element_t)
-    -> element_t
-
-  unit_neutral_left : (a : element_t)
-    -> element_eqv_t (product (a unit) a)
-
-  unit_neutral_right : (a : element_t)
-    -> element_eqv_t (product (unit a) a)
-
-  product_associative : (
-    a : element_t
-    b : element_t
-    c : element_t
-  ) -> element_eqv_t (
+class monoid_t (
+  t : type
+  eqv_t : (t t) -> type
+  unit : t
+  product : (t t) -> t
+  unit_left : (a : t) -> eqv_t (product (a unit) a)
+  unit_right : (a : t) -> eqv_t (product (unit a) a)
+  product_associative : ([a b c] : t) -> eqv_t (
     product (a product (b c))
     product (product (a b) c))
-}
-
-
-monoid_t.as_category : category_t
-monoid_t.as_category = category_c {
-  object_t = unit_t
-  arrow_t (_ _) = element_t
-  arrow_eqv_t = element_eqv_t
-  identity = unit
-  compose = product
-  identity_neutral_left = unit_neutral_left
-  identity_neutral_right = unit_neutral_right
-  compose_associative = product_associative
+) {
+  as_category () : category_c (
+    object_t = unit_t
+    arrow_t (_ _) = this.t
+    arrow_eqv_t = this.eqv_t
+    identity = this.unit
+    compose = this.product
+    identity_left = this.unit_left
+    identity_right = this.unit_right
+    compose_associative = this.product_associative
+  )
 }

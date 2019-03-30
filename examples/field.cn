@@ -1,0 +1,17 @@
+class field_t (
+  t : type
+
+  add_unit : t
+  add (t t) : t
+  neg (t) : t
+
+  mul_unit : t
+  mul (t t) : t
+  inv (t) : t
+) {
+  sub (t t) : t
+  sub (x y) = add (x neg (y))
+
+  div (t t) : t
+  div (x y) = mul (x inv (y))
+}
