@@ -1,40 +1,19 @@
-// TODO
-// basic interface for eq
+import { set_t } from "./set"
+import { eqv_t } from "./eqv"
 
 export
-class eqv_t <T> {
-  lhs: T
-  rhs: T
-
-  constructor (lhs: T, rhs: T) {
-    this.lhs = lhs
-    this.rhs = rhs
-  }
-
-  check (): boolean {
-    // TODO
-    // this.lhs.eq (this.rhs)
-    return this.lhs === this.rhs
-  }
-}
-
-export
-function eqv <T> (lhs: T, rhs: T): eqv_t <T> {
-  return new eqv_t (lhs, rhs)
-}
-
-export
-abstract class group_t <G> {
-  abstract eq (x: G, y: G): boolean
-
+abstract class group_t <G> extends set_t <G> {
   abstract id: G
   abstract mul (x: G, y: G): G
   abstract inv (x: G): G
 
-  mul_assoc = (x: G, y: G, z: G) => eqv (
-    this.mul (this.mul (x, y), z),
-    this.mul (x, this.mul (y, z)),
-  )
+  mul_assoc (x: G, y: G, z: G): eqv_t <G> {
+    return new eqv_t (
+      this,
+      this.mul (this.mul (x, y), z),
+      this.mul (x, this.mul (y, z)),
+    )
+  }
 
   div (x: G, y: G): G {
     return this.mul (x, this.inv (y))
@@ -68,6 +47,5 @@ class number_mul_group_t extends group_t <number> {
   }
 }
 
-let num = new number_mul_group_t ()
-
-num.mul_assoc_evident ()
+// let num = new number_mul_group_t ()
+// num.mul_assoc_evident () .map (evident => evident.check ())

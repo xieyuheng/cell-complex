@@ -1,3 +1,6 @@
+* cicada
+- game semantics
+- babel api
 * cell-complex
 - bounfold_check
 - manifold_check

@@ -1,5 +1,8 @@
+import { set_t } from "./set"
+import { eqv_t } from "./eqv"
+
 export
-abstract class field_t <F> {
+abstract class field_t <F> extends set_t <F> {
   abstract add_id: F
   abstract add (x: F, y: F): F
   abstract neg (x: F): F
@@ -20,6 +23,10 @@ abstract class field_t <F> {
 class number_field_t extends field_t <number> {
   constructor () {
     super ()
+  }
+
+  eq (x: number, y: number): boolean {
+    return x === y
   }
 
   add_id = 0
