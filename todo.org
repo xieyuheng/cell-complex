@@ -1,3 +1,4 @@
+* cell-complex
 - bounfold_check
 - manifold_check
 - ??? cell_check
@@ -23,3 +24,10 @@
 - boundary operator
   - the boundary of the boundary of a cell_complex_t should be zero
     even if the cell_complex_t is not a bounfold_t
+* combinatorial-game
+- fol
+- cl
+- aristotle (lukasiewicz) -> de morgan -> peirce
+- dots-and-boxes
+- martin-gardner
+- (paper) investigations into game semantics of logic
