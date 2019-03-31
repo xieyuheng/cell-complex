@@ -6,18 +6,6 @@
 
 # Cicada Language // 蟬語
 
-Aims :
-- formalizing mathematical structures
-- design formal languages to formalize mathematical structures
-  - intuitive to use
-  - approachable for both mathematicians and programmers
-
-Features :
-- game semantics
-- dependently-typed
-- logic programming interface
-- with nominal subtyping
-
 ## Contributing
 
 We enforce C4 as collaboration protocol :

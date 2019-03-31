@@ -1,0 +1,25 @@
+- bounfold_check
+- manifold_check
+- ??? cell_check
+- product_complex_t
+- quotient_complex_t -- self-gluing
+- cell_complex_t.eq ()
+- cell_complex_iso_t
+  - we can use combinatorial-game to solve this
+  - graph_iso_t is a sub-problem of cell_complex_iso_t
+  - same cell_complex has many different isomorphic representations
+    we can not avoid this
+  - when generating the new cell_complex
+    - such as vertex_figure_t and product_complex_t
+    it does not matter how we specify the dic
+  - we need to use cell_complex_iso_t to handle the non unique representation problem
+- vertex_figure_t -- 3 dim
+- pure_complex_t
+  an n-dimensional complex is said to be pure
+  if each k cell (k < n) is a face of at least one n-dimensional cell
+- by the boundary of a pure n-dimensional cell
+  we mean the totality of (n - 1)-cell
+  which are incident with an odd number n-cells
+- boundary operator
+  - the boundary of the boundary of a cell_complex_t should be zero
+    even if the cell_complex_t is not a bounfold_t

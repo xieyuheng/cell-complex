@@ -1,25 +1,37 @@
 {
   "name": "@cicada-lang/cicada",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "author": "Xie Yuheng",
   "license": "GPL-3.0-or-later",
   "repository": {
     "type": "git",
     "url": "git@github.com:xieyuheng/cicada.git"
   },
-  "main": "dist/index.js",
+  "main": "dist/cicada.js",
   "scripts": {
     "build": "tsc",
-    "watch": "tsc --watch"
+    "watch": "tsc --watch",
+    "web-build": "parcel build web/index.html -d web/dist",
+    "web-watch": "parcel web/index.html -d web/dist",
+    "web-up": "surge web/dist cicada.surge.sh",
+    "web": "npm run web-local; npm run web-up",
+    "api-local": "typedoc src --out docs/api --mode modules --readme none",
+    "api-up": "surge docs/api api.cicada.surge.sh",
+    "api": "npm run api-local; npm run api-up",
+    "up": "git commit -m 'up'; npm run build; npm run api; npm version patch; git push; npm publish"
   },
   "devDependencies": {
-    "ava": "^1.3.1",
-    "typescript": "^3.2.2"
+    "@babel/core": "^7.4.0",
+    "@babel/plugin-transform-runtime": "^7.4.0",
+    "ava": "^1.4.1",
+    "parcel-bundler": "^1.12.3",
+    "surge": "^0.20.3",
+    "typedoc": "^0.14.2",
+    "typescript": "^3.4.1"
   },
   "dependencies": {
-    "@types/lodash": "^4.14.122",
-    "cell-complex": "0.0.3",
-    "combinatorial-game": "0.0.1",
+    "@babel/runtime-corejs2": "^7.4.2",
+    "@types/lodash": "^4.14.123",
     "lodash": "^4.17.11"
   }
 }
