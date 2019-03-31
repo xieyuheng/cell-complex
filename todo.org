@@ -31,3 +31,14 @@
 - dots-and-boxes
 - martin-gardner
 - (paper) investigations into game semantics of logic
+* motion-picture
+- field
+- vector-space
+- affine-space
+- matrix
+- quaternion
+- clifford-algebra
+- polytope
+  - a set of n >= 0 points is affinely independent
+    if its affine hull has dimension n − 1,
+    that is, if every proper subset has a smaller affine hull.
