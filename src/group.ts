@@ -7,6 +7,10 @@ abstract class group_t <G> extends set_t <G> {
   abstract mul (x: G, y: G): G
   abstract inv (x: G): G
 
+  div (x: G, y: G): G {
+    return this.mul (x, this.inv (y))
+  }
+
   mul_assoc (x: G, y: G, z: G): eqv_t <G> {
     return new eqv_t (
       this,
@@ -15,10 +19,20 @@ abstract class group_t <G> extends set_t <G> {
     )
   }
 
-  div (x: G, y: G): G {
-    return this.mul (x, this.inv (y))
+  id_left (x: G): eqv_t <G> {
+    return new eqv_t (
+      this, this.mul (this.id, x), x,
+    )
+  }
+
+  id_right (x: G): eqv_t <G> {
+    return new eqv_t (
+      this, this.mul (x, this.id), x,
+    )
   }
 }
+
+//// example
 
 class number_mul_group_t extends group_t <number> {
   constructor () {
@@ -39,13 +53,10 @@ class number_mul_group_t extends group_t <number> {
     return 1 / x
   }
 
-  mul_assoc_evident () {
-    return [
-      this.mul_assoc (1, 2, 3),
-      this.mul_assoc (3, 2, 1),
-    ]
+  mul_assoc_check () {
+    this.mul_assoc (1, 2, 3) .check ()
+    this.mul_assoc (3, 2, 1) .check ()
   }
 }
 
-// let num = new number_mul_group_t ()
-// num.mul_assoc_evident () .map (evident => evident.check ())
+new number_mul_group_t () .mul_assoc_check ()

@@ -32,6 +32,7 @@
   "dependencies": {
     "@babel/runtime-corejs2": "^7.4.2",
     "@types/lodash": "^4.14.123",
-    "lodash": "^4.17.11"
+    "lodash": "^4.17.11",
+    "power-assert": "^1.6.1"
   }
 }

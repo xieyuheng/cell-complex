@@ -1,12 +1,4 @@
-* cicada
-- game semantics
-- babel api
 * cell-complex
-- bounfold_check
-- manifold_check
-- ??? cell_check
-- product_complex_t
-- quotient_complex_t -- self-gluing
 - cell_complex_t.eq ()
 - cell_complex_iso_t
   - we can use combinatorial-game to solve this
@@ -17,6 +9,11 @@
     - such as vertex_figure_t and product_complex_t
     it does not matter how we specify the dic
   - we need to use cell_complex_iso_t to handle the non unique representation problem
+- bounfold_check
+- manifold_check
+- cell_check
+- product_complex_t
+- quotient_complex_t -- self-gluing
 - vertex_figure_t -- 3 dim
 - pure_complex_t
   an n-dimensional complex is said to be pure
@@ -27,6 +24,9 @@
 - boundary operator
   - the boundary of the boundary of a cell_complex_t should be zero
     even if the cell_complex_t is not a bounfold_t
+* cicada
+- game semantics
+- babel api
 * combinatorial-game
 - fol
 - cl

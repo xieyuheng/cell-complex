@@ -1,3 +1,5 @@
+import assert from "assert"
+
 import { set_t } from "./set"
 
 export
@@ -12,7 +14,7 @@ class eqv_t <T> {
     this.rhs = rhs
   }
 
-  check (): boolean {
-    return this.set.eq (this.lhs, this.rhs)
+  check () {
+    assert (this.set.eq (this.lhs, this.rhs))
   }
 }
