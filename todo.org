@@ -1,3 +1,15 @@
+- vector_t
+- use vector_t to imp hackenbush
+- use combinatorial-game to solve the problem of iso
+  - iso is hard because total classification is hard
+    how about classification of manifold
+- learn more about group iso
+  - cell-complex iso is generalized group iso
+    maybe new ideas
+- classification of games
+  - the games of logic seem like two-player game
+    but they are actually one-player game
+    -- like sudoku
 * cell-complex
 - cell_complex_t.eq ()
 - cell_complex_iso_t
