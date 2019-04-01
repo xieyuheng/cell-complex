@@ -43,3 +43,27 @@ abstract class group_t <G> extends set_t <G> {
     )
   }
 }
+
+export
+abstract class abelian_group_t <A> extends group_t <A> {
+  abstract add (x: A, y: A): A
+  abstract neg (x: A): A
+
+  sub (x: A, y: A): A {
+    return this.add (x, this.neg (y))
+  }
+
+  commu (x: A, y: A) {
+    return eqv (
+      this,
+      this.add (x, y),
+      this.add (y, x),
+    )
+  }
+
+  // changing name
+
+  id_neg = this.id_inv
+  mul = this.add
+  inv = this.neg
+}

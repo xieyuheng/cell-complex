@@ -1,7 +1,4 @@
-import {
-  ndarray_t,
-  Array1d, Array2d, Array3d,
-} from "./ndarray"
+import { ndarray_t } from "./ndarray"
 
 // We can not define matrix_t as subclass of ndarray_t,
 // because methods such as `proj` and `slice` on ndarray_t
