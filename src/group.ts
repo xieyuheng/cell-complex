@@ -12,7 +12,7 @@ abstract class group_t <G> extends set_t <G> {
   }
 
   assoc (x: G, y: G, z: G) {
-    return eqv (
+    eqv (
       this,
       this.mul (this.mul (x, y), z),
       this.mul (x, this.mul (y, z)),
@@ -20,7 +20,7 @@ abstract class group_t <G> extends set_t <G> {
   }
 
   id_left (x: G) {
-    return eqv (
+    eqv (
       this,
       this.mul (this.id, x),
       x,
@@ -28,7 +28,7 @@ abstract class group_t <G> extends set_t <G> {
   }
 
   id_right (x: G) {
-    return eqv (
+    eqv (
       this,
       this.mul (x, this.id),
       x,
@@ -36,7 +36,7 @@ abstract class group_t <G> extends set_t <G> {
   }
 
   id_inv (x: G) {
-    return eqv (
+    eqv (
       this,
       this.mul (x, this.inv (x)),
       this.id,
@@ -54,7 +54,7 @@ abstract class abelian_group_t <A> extends group_t <A> {
   }
 
   commu (x: A, y: A) {
-    return eqv (
+    eqv (
       this,
       this.add (x, y),
       this.add (y, x),

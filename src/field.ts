@@ -14,7 +14,7 @@ abstract class field_t <F> extends set_t <F> {
   }
 
   add_assoc (x: F, y: F, z: F) {
-    return eqv (
+    eqv (
       this,
       this.add (this.add (x, y), z),
       this.add (x, this.add (y, z)),
@@ -22,7 +22,7 @@ abstract class field_t <F> extends set_t <F> {
   }
 
   add_commu (x: F, y: F) {
-    return eqv (
+    eqv (
       this,
       this.add (x, y),
       this.add (y, x),
@@ -30,7 +30,7 @@ abstract class field_t <F> extends set_t <F> {
   }
 
   add_id_left (x: F) {
-    return eqv (
+    eqv (
       this,
       this.add (this.add_id, x),
       x,
@@ -38,7 +38,7 @@ abstract class field_t <F> extends set_t <F> {
   }
 
   add_id_right (x: F) {
-    return eqv (
+    eqv (
       this,
       this.add (x, this.add_id),
       x,
@@ -46,7 +46,7 @@ abstract class field_t <F> extends set_t <F> {
   }
 
   add_id_neg (x: F) {
-    return eqv (
+    eqv (
       this,
       this.add (x, this.neg (x)),
       this.add_id,
@@ -67,7 +67,7 @@ abstract class field_t <F> extends set_t <F> {
   }
 
   mul_assoc (x: F, y: F, z: F) {
-    return eqv (
+    eqv (
       this,
       this.mul (this.mul (x, y), z),
       this.mul (x, this.mul (y, z)),
@@ -75,7 +75,7 @@ abstract class field_t <F> extends set_t <F> {
   }
 
   mul_commu (x: F, y: F) {
-    return eqv (
+    eqv (
       this,
       this.mul (x, y),
       this.mul (y, x),
@@ -83,7 +83,7 @@ abstract class field_t <F> extends set_t <F> {
   }
 
   mul_id_left (x: F) {
-    return eqv (
+    eqv (
       this,
       this.mul (this.mul_id, x),
       x,
@@ -91,7 +91,7 @@ abstract class field_t <F> extends set_t <F> {
   }
 
   mul_id_right (x: F) {
-    return eqv (
+    eqv (
       this,
       this.mul (x, this.mul_id),
       x,
@@ -99,7 +99,7 @@ abstract class field_t <F> extends set_t <F> {
   }
 
   mul_id_inv (x: F) {
-    return eqv (
+    eqv (
       this,
       this.mul (x, this.inv (x)),
       this.mul_id,
@@ -107,7 +107,7 @@ abstract class field_t <F> extends set_t <F> {
   }
 
   distr (x: F, y: F, z: F) {
-    return eqv (
+    eqv (
       this,
       this.mul (x, this.add (y, z)),
       this.add (this.mul (x, y), this.mul (x, z)),

@@ -42,11 +42,12 @@
   - dots-and-boxes
   - go
 * motion-picture
-- field
-- vector-space
 - affine-space
 - matrix
 - quaternion
+- abelian_group_t
+  - classification (normalization)
+    prepare for homology
 - clifford-algebra
 - polytope
   - a set of n >= 0 points is affinely independent
