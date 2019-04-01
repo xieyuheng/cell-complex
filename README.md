@@ -7,22 +7,22 @@
 # Cicada Language // 蟬語
 
 Aims:
-- formalizing mathematical structures
-- design formal languages to formalize mathematical structures
-  - intuitive to use
-  - approachable for both mathematicians and programmers
+- Formalizing mathematical structures
+- Design formal languages to formalize mathematical structures
+  - Intuitive to use
+  - Approachable for both mathematicians and programmers
 
 Features:
-- game semantics
-- dependently-typed
-- logic programming interface
-- with nominal subtyping
+- Game semantics
+- Dependently-typed
+- Logic programming interface
+- Nominal subtyping
 
 Contains:
-- combinatorial-game -- a game engine for n-player perfect information games
-- cell-complex -- algebraic topology library
+- combinatorial-game -- A game engine for n-player perfect information games
+- cell-complex -- An algebraic topology library
   - [paper](https://xieyuheng.github.io/writing/investigations-into-cell-complex.html)
-  -- "Investigations into Cell Complex", by Xie Yuheng, 2019
+  -- "Investigations into cell complex", by Xie Yuheng, 2019
 
 ## Docs
 
