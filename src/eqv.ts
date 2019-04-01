@@ -18,3 +18,8 @@ class eqv_t <T> {
     assert (this.set.eq (this.lhs, this.rhs))
   }
 }
+
+export
+function eqv <T> (set: set_t <T>, lhs: T, rhs: T) {
+  new eqv_t (set, lhs, rhs) .check ()
+}

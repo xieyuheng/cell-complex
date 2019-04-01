@@ -1,5 +1,7 @@
+import assert from "assert"
+
 import { set_t } from "./set"
-import { eqv_t } from "./eqv"
+import { eqv } from "./eqv"
 
 export
 abstract class field_t <F> extends set_t <F> {
@@ -11,73 +13,104 @@ abstract class field_t <F> extends set_t <F> {
     return this.add (x, this.neg (y))
   }
 
-  add_assoc (x: F, y: F, z: F): eqv_t <F> {
-    return new eqv_t (
+  add_assoc (x: F, y: F, z: F) {
+    return eqv (
       this,
       this.add (this.add (x, y), z),
       this.add (x, this.add (y, z)),
     )
   }
 
-  add_commu (x: F, y: F): eqv_t <F> {
-    return new eqv_t (
+  add_commu (x: F, y: F) {
+    return eqv (
       this,
       this.add (x, y),
       this.add (y, x),
     )
   }
 
+  add_id_left (x: F) {
+    return eqv (
+      this,
+      this.add (this.add_id, x),
+      x,
+    )
+  }
+
+  add_id_right (x: F) {
+    return eqv (
+      this,
+      this.add (x, this.add_id),
+      x,
+    )
+  }
+
+  add_id_neg (x: F) {
+    return eqv (
+      this,
+      this.add (x, this.neg (x)),
+      this.add_id,
+    )
+  }
+
   abstract mul_id: F
   abstract mul (x: F, y: F): F
-  abstract inv (x: F): F
+  abstract pure_inv (x: F): F
+
+  inv (x: F): F {
+    assert (! this.eq (x, this.add_id))
+    return this.pure_inv (x)
+  }
 
   div (x: F, y: F): F {
     return this.mul (x, this.inv (y))
   }
 
-  mul_assoc (x: F, y: F, z: F): eqv_t <F> {
-    return new eqv_t (
+  mul_assoc (x: F, y: F, z: F) {
+    return eqv (
       this,
       this.mul (this.mul (x, y), z),
       this.mul (x, this.mul (y, z)),
     )
   }
 
-  mul_commu (x: F, y: F): eqv_t <F> {
-    return new eqv_t (
+  mul_commu (x: F, y: F) {
+    return eqv (
       this,
       this.mul (x, y),
       this.mul (y, x),
     )
   }
-}
 
-class number_field_t extends field_t <number> {
-  constructor () {
-    super ()
+  mul_id_left (x: F) {
+    return eqv (
+      this,
+      this.mul (this.mul_id, x),
+      x,
+    )
   }
 
-  eq (x: number, y: number): boolean {
-    return x === y
+  mul_id_right (x: F) {
+    return eqv (
+      this,
+      this.mul (x, this.mul_id),
+      x,
+    )
   }
 
-  add_id = 0
-
-  add (x: number, y: number): number {
-    return x + y
+  mul_id_inv (x: F) {
+    return eqv (
+      this,
+      this.mul (x, this.inv (x)),
+      this.mul_id,
+    )
   }
 
-  neg (x: number): number {
-    return - x
-  }
-
-  mul_id = 1
-
-  mul (x: number, y: number): number {
-    return x * y
-  }
-
-  inv (x: number): number {
-    return 1 / x
+  distr (x: F, y: F, z: F) {
+    return eqv (
+      this,
+      this.mul (x, this.add (y, z)),
+      this.add (this.mul (x, y), this.mul (x, z)),
+    )
   }
 }
