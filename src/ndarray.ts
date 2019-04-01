@@ -2,6 +2,10 @@ export type Array1d = Array <number>
 export type Array2d = Array <Array <number>>
 export type Array3d = Array <Array <Array <number>>>
 
+export type get_index_t = Array <number>
+export type proj_index_t = Array <number | null>
+export type slice_index_t = Array <[number, number] | null>
+
 /**
  * strides based row-major ndarray of number
  */
@@ -74,14 +78,36 @@ class ndarray_t {
     return i === 0
   }
 
+  *linear_entries () {
+    for (let k of this.buffer.keys ()) {
+      if (this.linear_index_valid_p (k)) {
+        yield [k, this.buffer [k]] as [number, number]
+      }
+    }
+  }
+
+  *linear_indexes () {
+    for (let k of this.buffer.keys ()) {
+      if (this.linear_index_valid_p (k)) {
+        yield k as number
+      }
+    }
+  }
+
+  *values () {
+    for (let k of this.buffer.keys ()) {
+      if (this.linear_index_valid_p (k)) {
+        yield this.buffer [k] as number
+      }
+    }
+  }
+
   copy (): ndarray_t {
     let buffer = new Float64Array (this.size)
     let i = 0
-    for (let k of this.buffer.keys ()) {
-      if (this.linear_index_valid_p (k)) {
-        buffer [i] = this.buffer [k]
-        i += 1
-      }
+    for (let x of this.values ()) {
+      buffer [i] = x
+      i += 1
     }
     return new ndarray_t (
       buffer, this.shape,
@@ -123,8 +149,19 @@ class ndarray_t {
     return new ndarray_t (this.buffer, shape, this.strides, offset)
   }
 
-  // TODO
-  // put
+  put (index: Array <[number, number] | null>, src: ndarray_t) {
+    let tar = this.slice (index)
+    let linear_index_array = Array.from (tar.linear_indexes ())
+    let value_array = Array.from (src.values ())
+    if (linear_index_array.length !== value_array.length) {
+      throw new Error ("size mismatch")
+    }
+    for (let k in linear_index_array) {
+      let i = linear_index_array [k]
+      let v = value_array [k]
+      tar.buffer [i] = v
+    }
+  }
 
   static from_1darray (array: Array1d): ndarray_t {
     let buffer = Float64Array.from (array)
@@ -175,4 +212,7 @@ class ndarray_t {
     let strides = ndarray_t.init_strides (shape)
     return new ndarray_t (buffer, shape, strides)
   }
+
+  // ones
+  // zeros
 }

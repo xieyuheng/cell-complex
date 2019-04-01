@@ -85,7 +85,7 @@ function im_dic_check_dim (
   cod: cell_complex_t,
   dic: dic_t <id_t, im_t>,
   dim: number,
-): void {
+) {
   for (let [id, im] of dic) {
     if (id.dim === dim) {
       for (let [id1, im1] of im.cell.dic) {
@@ -105,7 +105,7 @@ function im_dic_check (
   dom: cell_complex_t,
   cod: cell_complex_t,
   dic: dic_t <id_t, im_t>,
-): void {
+) {
   if (dom.cell_dic.size !== dic.size) {
     throw new Error ("dic not complete")
   }

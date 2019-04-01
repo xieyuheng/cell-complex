@@ -90,7 +90,7 @@ abstract class play_t <player_t, position_t, choice_t> {
     return null
   }
 
-  position_log (pos: position_t): void {
+  position_log (pos: position_t) {
     console.log (pos)
   }
 

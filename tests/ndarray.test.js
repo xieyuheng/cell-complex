@@ -184,3 +184,33 @@ test ("slice", t => {
     t.true (x.get ([1, 1]) === 6)
   }
 })
+
+test ("put", t => {
+  let y = ndarray_t.from_3darray ([
+    [[0, 1, 2], [3, 4, 5]],
+    [[5, 5, 0], [6, 6, 0]],
+    [[5, 4, 3], [2, 1, 0]],
+  ])
+
+  {
+    y.put (
+      [null, null, [0, 2]],
+      ndarray_t.from_3darray ([
+        [[9, 9], [9, 9]],
+        [[9, 9], [9, 9]],
+        [[9, 9], [9, 9]],
+      ]))
+    let x = y
+        .slice ([null, null, [0, 2]])
+        .proj ([1, null, null])
+    t.true (x.get ([0, 0]) === 9)
+    t.true (x.get ([0, 1]) === 9)
+    t.true (x.get ([1, 0]) === 9)
+    t.true (x.get ([1, 1]) === 9)
+    x = x.copy ()
+    t.true (x.get ([0, 0]) === 9)
+    t.true (x.get ([0, 1]) === 9)
+    t.true (x.get ([1, 0]) === 9)
+    t.true (x.get ([1, 1]) === 9)
+  }
+})

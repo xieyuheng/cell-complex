@@ -101,7 +101,7 @@ class play_t
 extends cg.play_t <player_t, position_t, choice_t> {
   next_player = this.tow_player_alternating
 
-  position_log (pos: position_t): void {
+  position_log (pos: position_t) {
     let repr = ""
     pos.forEach ((row, x) => {
       row.forEach ((mark, y) => {

@@ -13,7 +13,7 @@ class dic_t <K , V> {
     this.key_to_str = key_to_str
   }
 
-  set (k: K, v: V): void {
+  set (k: K, v: V) {
     let s = this.key_to_str (k)
     this.val_map.set (s, v)
     this.key_map.set (s, k)
