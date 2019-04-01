@@ -28,12 +28,19 @@
 - game semantics
 - babel api
 * combinatorial-game
-- fol
-- cl
+- fol -- game semantics of first order logic
+- cl -- game semantics of constructive logic
 - aristotle (lukasiewicz) -> de morgan -> peirce
 - dots-and-boxes
 - martin-gardner
 - (paper) investigations into game semantics of logic
+- surreal -- the theory of surreal number
+  - theory about two-player normal-ending game
+- game collection
+  - tic-tac-toe
+  - hackenbush
+  - dots-and-boxes
+  - go
 * motion-picture
 - field
 - vector-space
