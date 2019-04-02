@@ -174,6 +174,10 @@ class ndarray_t {
     return new ndarray_t (buffer, shape, strides)
   }
 
+  to_1darray (): Array1d {
+    return Array.from (this.values ())
+  }
+
   static from_2darray (array: Array2d): ndarray_t {
     let y_length = array.length
     let x_length = array[0].length
@@ -186,6 +190,15 @@ class ndarray_t {
     let shape = [y_length, x_length]
     let strides = ndarray_t.init_strides (shape)
     return new ndarray_t (buffer, shape, strides)
+  }
+
+  to_2darray (): Array2d {
+    let array = []
+    let [x, _] = this.shape
+    for (let i = 0; i < x; i++) {
+      array.push (this.proj ([i, null]) .to_1darray ())
+    }
+    return array
   }
 
   static from_3darray (array: Array3d): ndarray_t {
@@ -236,5 +249,90 @@ class ndarray_t {
   fill (x: number): ndarray_t {
     this.buffer.fill (x)
     return this
+  }
+
+  static proj_index_max_p (
+    index: proj_index_t,
+    shape: Array <number>,
+  ): boolean {
+    if (index.length !== shape.length) {
+      throw new Error ("index length mismatch")
+    }
+    let flag = true
+    for (let k in index) {
+      let i = index [k]
+      let s = shape [k]
+      if (i !== null && i < (s - 1)) {
+        flag = false
+      }
+    }
+    return flag
+  }
+
+  static proj_index_inc_with_shape (
+    index: proj_index_t,
+    shape: Array <number>,
+  ): proj_index_t {
+    if (index.length !== shape.length) {
+      throw new Error ("index length mismatch")
+    }
+    if (ndarray_t.proj_index_max_p (index, shape)) {
+      throw new Error ("index out of shape")
+    }
+    let [i] = index.slice (-1)
+    let [s] = shape.slice (-1)
+    if (i === null) {
+      let new_index = index.slice ()
+      let new_shape = shape.slice ()
+      new_index.pop ()
+      new_shape.pop ()
+      new_index = ndarray_t.proj_index_inc_with_shape (
+        new_index,
+        new_shape,
+      )
+      new_index.push (null)
+      return new_index
+    } else if (i >= s - 1) {
+      let new_index = index.slice ()
+      let new_shape = shape.slice ()
+      new_index.pop ()
+      new_shape.pop ()
+      new_index = ndarray_t.proj_index_inc_with_shape (
+        new_index,
+        new_shape,
+      )
+      new_index.push (0)
+      return new_index
+    } else {
+      let new_index = index.slice ()
+      new_index.pop ()
+      new_index.push (i + 1)
+      return new_index
+    }
+  }
+
+  table () {
+    if (this.order === 1) {
+      console.table (this.to_1darray ())
+    } else if (this.order === 2) {
+      console.table (this.to_2darray ())
+    } else {
+      let index: proj_index_t = this.shape.slice () .fill (0)
+      index.pop ()
+      index.pop ()
+      index.push (null)
+      index.push (null)
+      while (true) {
+        console.log (index)
+        this.proj (index) .table ()
+        index = ndarray_t.proj_index_inc_with_shape (
+          index, this.shape)
+        if (ndarray_t.proj_index_max_p (index, this.shape)) {
+          console.log (index)
+          this.proj (index) .table ()
+          return
+        }
+      }
+    }
   }
 }

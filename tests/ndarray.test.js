@@ -254,4 +254,24 @@ test ("fill", t => {
     t.true (x.get ([1, 0]) === 0)
     t.true (x.get ([1, 1]) === 0)
   }
+
+  // {
+  //   let x = ndarray_t.zeros ([10])
+  //   x.table ()
+  // }
+  //
+  // {
+  //   let x = ndarray_t.zeros ([2, 3])
+  //   x.table ()
+  // }
+  //
+  // {
+  //   let x = ndarray_t.zeros ([2, 3, 4])
+  //   x.table ()
+  // }
+  //
+  // {
+  //   let x = ndarray_t.zeros ([2, 3, 4, 5])
+  //   x.table ()
+  // }
 })
