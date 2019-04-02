@@ -214,3 +214,44 @@ test ("put", t => {
     t.true (x.get ([1, 1]) === 9)
   }
 })
+
+test ("numbers", t => {
+  {
+    let x = ndarray_t.numbers (6, [2, 2])
+    t.true (x.get ([0, 0]) === 6)
+    t.true (x.get ([0, 1]) === 6)
+    t.true (x.get ([1, 0]) === 6)
+    t.true (x.get ([1, 1]) === 6)
+  }
+
+  {
+    let x = ndarray_t.zeros ([2, 2])
+    t.true (x.get ([0, 0]) === 0)
+    t.true (x.get ([0, 1]) === 0)
+    t.true (x.get ([1, 0]) === 0)
+    t.true (x.get ([1, 1]) === 0)
+  }
+
+  {
+    let x = ndarray_t.ones ([2, 2])
+    t.true (x.get ([0, 0]) === 1)
+    t.true (x.get ([0, 1]) === 1)
+    t.true (x.get ([1, 0]) === 1)
+    t.true (x.get ([1, 1]) === 1)
+  }
+})
+
+test ("fill", t => {
+  {
+    let x = ndarray_t.numbers (6, [2, 2])
+    t.true (x.get ([0, 0]) === 6)
+    t.true (x.get ([0, 1]) === 6)
+    t.true (x.get ([1, 0]) === 6)
+    t.true (x.get ([1, 1]) === 6)
+    x.fill (0)
+    t.true (x.get ([0, 0]) === 0)
+    t.true (x.get ([0, 1]) === 0)
+    t.true (x.get ([1, 0]) === 0)
+    t.true (x.get ([1, 1]) === 0)
+  }
+})

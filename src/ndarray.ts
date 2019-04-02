@@ -25,13 +25,17 @@ class ndarray_t {
     readonly offset: number = 0,
   ) {
     this.order = shape.length
-    this.size = this.shape.reduce ((acc, cur) => acc * cur)
+    this.size = ndarray_t.shape_to_size (shape)
     if (strides.length !== shape.length) {
       throw new Error ("strides shape length mismatch")
     }
     if (buffer.length < this.size + offset) {
       throw new Error ("buffer not large enough")
     }
+  }
+
+  static shape_to_size (shape: Array <number>): number {
+    return shape.reduce ((acc, cur) => acc * cur)
   }
 
   static init_strides (
@@ -213,6 +217,24 @@ class ndarray_t {
     return new ndarray_t (buffer, shape, strides)
   }
 
-  // ones
-  // zeros
+  static numbers (n: number, shape: Array <number>): ndarray_t {
+    let size = ndarray_t.shape_to_size (shape)
+    let buffer = new Float64Array (size)
+    buffer.fill (n)
+    let strides = ndarray_t.init_strides (shape)
+    return new ndarray_t (buffer, shape, strides)
+  }
+
+  static zeros (shape: Array <number>): ndarray_t {
+    return ndarray_t.numbers (0, shape)
+  }
+
+  static ones (shape: Array <number>): ndarray_t {
+    return ndarray_t.numbers (1, shape)
+  }
+
+  fill (x: number): ndarray_t {
+    this.buffer.fill (x)
+    return this
+  }
 }
