@@ -7,8 +7,8 @@
 # Cicada Language // 蟬語
 
 Aims:
-- Formalizing mathematical structures
-- Design formal languages to formalize mathematical structures
+- Formalizing mathematical structures in existing languages
+- Design new formal languages to formalize mathematical structures
   - Intuitive to use
   - Approachable for both mathematicians and programmers
 
