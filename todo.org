@@ -1,3 +1,4 @@
+- matrix_t
 - vector_t
 - use vector_t to imp hackenbush
 - use combinatorial-game to solve the problem of iso
