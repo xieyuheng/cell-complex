@@ -7,13 +7,15 @@ import { eqv } from "./eqv"
 
 import { ndarray_t } from "./ndarray"
 
-// We can not define matrix_t as subclass of ndarray_t,
-// because methods such as `proj` and `slice` on ndarray_t
-// return ndarray_t instead of matrix_t,
-// such methods can not be generic over ndarray_t's subclasses.
+/**
+ * We can not define matrix_t as subclass of ndarray_t,
+ * because methods such as `proj` and `slice` on ndarray_t
+ * return ndarray_t instead of matrix_t,
+ * such methods can not be generic over ndarray_t's subclasses.
 
-// Due to the lack of dependent type,
-// dimension is checked at runtime.
+ * Due to the lack of dependent type,
+ * dimension is checked at runtime.
+ */
 
 export
 class matrix_t {
@@ -58,13 +60,15 @@ class matrix_t {
   eq (that: matrix_t): boolean {
     return this.array.eq (that.copy_array ())
   }
+
+  // map (v: vector_t): vector_t {}
 }
 
 export
 class vector_t {
   protected array: ndarray_t
   readonly shape: Array <number>
-  readonly size: number
+  readonly dim: number
 
   constructor (array: ndarray_t) {
     if (array.order !== 1) {
@@ -72,7 +76,7 @@ class vector_t {
     }
     this.array = array
     this.shape = array.shape
-    this.size = array.size
+    this.dim = array.size
   }
 
   get (i: number): number {
@@ -94,23 +98,57 @@ class vector_t {
   eq (that: vector_t): boolean {
     return this.array.eq (that.copy_array ())
   }
+
+  // dot (that: vector_t): number {}
 }
 
 export
 class point_t {
-  constructor () {
+  protected array: ndarray_t
+  readonly shape: Array <number>
+  readonly dim: number
 
+  constructor (array: ndarray_t) {
+    if (array.order !== 1) {
+      throw new Error ("array order should be 1")
+    }
+    this.array = array
+    this.shape = array.shape
+    this.dim = array.size
   }
+
+  get (i: number): number {
+    return this.array.get ([i])
+  }
+
+  set (i: number, v: number) {
+    this.array.set ([i], v)
+  }
+
+  slice (i: [number, number]): point_t {
+    return new point_t (this.array.slice ([i]))
+  }
+
+  copy_array (): ndarray_t {
+    return this.array.copy ()
+  }
+
+  eq (that: point_t): boolean {
+    return this.array.eq (that.copy_array ())
+  }
+
+  // trans (v: vector_t): point_t {}
 }
 
-// I do not define abstract inner product space yet.
-// because the axioms involves conjugation of complex structure,
-// which I do not yet fully understand.
+/**
+ * I do not define abstract inner product space yet.
+ * because the axioms involves conjugation of complex structure,
+ * which I do not yet fully understand.
 
-
-// There is only one Euclidean space of each dimension,
-// and since dimension is handled at runtime,
-// I define euclidean_space_t as concrete class.
+ * There is only one Euclidean space of each dimension,
+ * and since dimension is handled at runtime,
+ * I define euclidean_space_t as concrete class.
+ */
 
 // export
 // class euclidean_space_t

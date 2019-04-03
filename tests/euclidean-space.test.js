@@ -14,7 +14,7 @@ test ("new matrix_t", t => {
 
 test ("new vector_t", t => {
   let x = new vector_t (ndarray_t.from_1darray ([1, 2, 4]))
-  t.deepEqual (x.size, 3)
+  t.deepEqual (x.dim, 3)
 })
 
 test ("row & col", t => {

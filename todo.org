@@ -1,6 +1,7 @@
-- point_t
 - basic operations for matrix
 - basic operations for vector
+- basic operations for point
+
 - euclidean_space_t
 - use euclidean-space to re-imp hackenbush
 - use combinatorial-game to solve the problem of iso
