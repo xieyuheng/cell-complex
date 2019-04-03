@@ -34,6 +34,43 @@ class number_add_group_t extends group_t <number> {
   group.id_inv (3)
 }
 
+class number_add_abelian_group_t extends abelian_group_t <number> {
+  constructor () {
+    super ()
+  }
+
+  eq (x: number, y: number): boolean {
+    return x === y
+  }
+
+  id = 0
+
+  add (x: number, y: number): number {
+    return x + y
+  }
+
+  neg (x: number): number {
+    return - x
+  }
+}
+
+{
+  let abel = new number_add_abelian_group_t ()
+
+  abel.assoc (1, 2, 3)
+  abel.assoc (3, 2, 1)
+  abel.id_left (1)
+  abel.id_left (3)
+  abel.id_left (1)
+  abel.id_left (3)
+
+  abel.id_neg (1)
+  abel.id_neg (3)
+
+  abel.commu (1, 2)
+  abel.commu (3, 2)
+}
+
 class number_field_t extends field_t <number> {
   constructor () {
     super ()
@@ -87,41 +124,4 @@ class number_field_t extends field_t <number> {
 
   field.distr (1, 2, 3)
   field.distr (3, 2, 1)
-}
-
-class number_add_abelian_group_t extends abelian_group_t <number> {
-  constructor () {
-    super ()
-  }
-
-  eq (x: number, y: number): boolean {
-    return x === y
-  }
-
-  id = 0
-
-  add (x: number, y: number): number {
-    return x + y
-  }
-
-  neg (x: number): number {
-    return - x
-  }
-}
-
-{
-  let abel = new number_add_abelian_group_t ()
-
-  abel.assoc (1, 2, 3)
-  abel.assoc (3, 2, 1)
-  abel.id_left (1)
-  abel.id_left (3)
-  abel.id_left (1)
-  abel.id_left (3)
-
-  abel.id_neg (1)
-  abel.id_neg (3)
-
-  abel.commu (1, 2)
-  abel.commu (3, 2)
 }

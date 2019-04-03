@@ -14,7 +14,7 @@ abstract class vector_space_t <F, V> extends abelian_group_t <V> {
 
   abstract scale (a: F, x: V): V
 
-  field_id_scale (x: V) {
+  field_id_action (x: V) {
     eqv (
       this,
       this.scale (this.field.mul_id, x),

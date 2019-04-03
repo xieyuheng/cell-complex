@@ -1,4 +1,3 @@
-- affine-space
 - use vector_t to re-imp hackenbush
 - use combinatorial-game to solve the problem of iso
   - iso is hard because total classification is hard
