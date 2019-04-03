@@ -1,7 +1,7 @@
 import test from "ava"
 
 import { ndarray_t } from "../dist/ndarray"
-import { vector_t, matrix_t } from "../dist/vector"
+import { vector_t, matrix_t } from "../dist/euclidean-space"
 
 test ("new matrix_t", t => {
   let x = new matrix_t (ndarray_t.from_2darray ([
