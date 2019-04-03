@@ -1,3 +1,5 @@
+import * as _ from "lodash"
+
 export type Array1d = Array <number>
 export type Array2d = Array <Array <number>>
 export type Array3d = Array <Array <Array <number>>>
@@ -332,6 +334,25 @@ class ndarray_t {
           this.proj (index) .table ()
           return
         }
+      }
+    }
+  }
+
+  eq (that: ndarray_t): boolean {
+    if (this.size !== that.size) { return false }
+    if (this.order !== that.order) { return false }
+    if (! _.isEqual (this.shape, that.shape)) { return false }
+    let this_iter = this.values ()
+    let that_iter = that.values ()
+    while (true) {
+      let x = this_iter.next ()
+      let y = that_iter.next ()
+      if (x.done && y.done) {
+        return true
+      } else if (x.done || y.done) {
+        return false
+      } else if (x.value !== y.value) {
+        return false
       }
     }
   }
