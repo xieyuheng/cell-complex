@@ -1,4 +1,5 @@
 - basic operations for matrix
+- test euclidean_space_t
 - use euclidean-space to re-imp hackenbush
 - use combinatorial-game to solve the problem of iso
   - iso is hard because total classification is hard

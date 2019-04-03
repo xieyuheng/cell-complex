@@ -242,51 +242,36 @@ test ("numbers", t => {
 })
 
 test ("fill", t => {
-  {
-    let x = ndarray_t.numbers (6, [2, 2])
-    t.true (x.get ([0, 0]) === 6)
-    t.true (x.get ([0, 1]) === 6)
-    t.true (x.get ([1, 0]) === 6)
-    t.true (x.get ([1, 1]) === 6)
-    x.fill (0)
-    t.true (x.get ([0, 0]) === 0)
-    t.true (x.get ([0, 1]) === 0)
-    t.true (x.get ([1, 0]) === 0)
-    t.true (x.get ([1, 1]) === 0)
-  }
+  let x = ndarray_t.numbers (6, [2, 2])
+  t.true (x.get ([0, 0]) === 6)
+  t.true (x.get ([0, 1]) === 6)
+  t.true (x.get ([1, 0]) === 6)
+  t.true (x.get ([1, 1]) === 6)
+  x.fill (0)
+  t.true (x.get ([0, 0]) === 0)
+  t.true (x.get ([0, 1]) === 0)
+  t.true (x.get ([1, 0]) === 0)
+  t.true (x.get ([1, 1]) === 0)
+})
 
-  // {
-  //   let x = ndarray_t.zeros ([10])
-  //   x.table ()
-  // }
-  //
-  // {
-  //   let x = ndarray_t.zeros ([2, 3])
-  //   x.table ()
-  // }
-  //
-  // {
-  //   let x = ndarray_t.zeros ([2, 3, 4])
-  //   x.table ()
-  // }
-  //
-  // {
-  //   let x = ndarray_t.zeros ([2, 3, 4, 5])
-  //   x.table ()
-  // }
+test ("table", t => {
+  ndarray_t.zeros ([10]) .table ()
+  ndarray_t.zeros ([2, 3]) .table ()
+  ndarray_t.zeros ([2, 3, 4]) .table ()
+  ndarray_t.zeros ([2, 3, 4, 5]) .table ()
+  ndarray_t.zeros ([2, 3, 4, 5]) .table ()
+  t.pass ()
 })
 
 test ("map", t => {
-  {
-    let x = ndarray_t.numbers (3, [2, 2])
-    t.true (x.get ([0, 0]) === 3)
-    t.true (x.get ([0, 1]) === 3)
-    t.true (x.get ([1, 0]) === 3)
-    t.true (x.get ([1, 1]) === 3)
-    x = x.map (n => n + 3)
-    t.true (x.get ([0, 0]) === 6)
-    t.true (x.get ([0, 1]) === 6)
-    t.true (x.get ([1, 0]) === 6)
-    t.true (x.get ([1, 1]) === 6)
-  }
+  let x = ndarray_t.numbers (3, [2, 2])
+  t.true (x.get ([0, 0]) === 3)
+  t.true (x.get ([0, 1]) === 3)
+  t.true (x.get ([1, 0]) === 3)
+  t.true (x.get ([1, 1]) === 3)
+  x = x.map (n => n + 3)
+  t.true (x.get ([0, 0]) === 6)
+  t.true (x.get ([0, 1]) === 6)
+  t.true (x.get ([1, 0]) === 6)
+  t.true (x.get ([1, 1]) === 6)
 })

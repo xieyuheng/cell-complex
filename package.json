@@ -11,6 +11,7 @@
   "scripts": {
     "build": "tsc",
     "watch": "tsc --watch",
+    "test": "ava 2> /dev/null",
     "web-build": "parcel build web/index.html -d web/dist",
     "web-watch": "parcel web/index.html -d web/dist",
     "web-up": "surge web/dist cicada.surge.sh",
@@ -21,8 +22,8 @@
     "up": "git commit -m 'up'; npm run build; npm run api; npm version patch; git push; npm publish"
   },
   "devDependencies": {
-    "@babel/core": "^7.4.0",
-    "@babel/plugin-transform-runtime": "^7.4.0",
+    "@babel/core": "^7.4.3",
+    "@babel/plugin-transform-runtime": "^7.4.3",
     "ava": "^1.4.1",
     "parcel-bundler": "^1.12.3",
     "surge": "^0.20.3",
@@ -30,7 +31,7 @@
     "typescript": "^3.4.1"
   },
   "dependencies": {
-    "@babel/runtime-corejs2": "^7.4.2",
+    "@babel/runtime-corejs2": "^7.4.3",
     "@types/lodash": "^4.14.123",
     "lodash": "^4.17.11",
     "power-assert": "^1.6.1"
