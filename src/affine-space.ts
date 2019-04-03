@@ -7,11 +7,19 @@ import { eqv } from "./eqv"
 export
 abstract class affine_space_t <F, V, P> extends vector_space_t <F, V> {
   points: set_t <P>
+  vec: vector_space_t <F, V>
 
   constructor (vec: vector_space_t <F, V>, points: set_t <P>) {
     super (vec.field)
     this.points = points
+    this.vec = vec
   }
+
+  eq = this.vec.eq
+  id = this.vec.id
+  add = this.vec.add
+  neg = this.vec.neg
+  scale = this.vec.scale
 
   abstract trans (p: P, v: V): P
   abstract diff (p: P, q: P): V

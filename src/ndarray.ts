@@ -338,22 +338,57 @@ class ndarray_t {
     }
   }
 
+  *zip_many (many: Array <ndarray_t>) {
+    let iters = many.map (a => a.values ())
+    for (let k of this.buffer.keys ()) {
+      if (this.linear_index_valid_p (k)) {
+        let array = [this.buffer [k]]
+        for (let iter of iters) {
+          let next = iter.next ()
+          if (next.done) {
+            return
+          } else {
+            array.push (next.value)
+          }
+        }
+        yield array
+      }
+    }
+  }
+
+  *zip (a: ndarray_t) {
+    for (let many of this.zip_many ([a])) {
+      yield many
+    }
+  }
+
   eq (that: ndarray_t): boolean {
     if (this.size !== that.size) { return false }
     if (this.order !== that.order) { return false }
     if (! _.isEqual (this.shape, that.shape)) { return false }
-    let this_iter = this.values ()
-    let that_iter = that.values ()
-    while (true) {
-      let x = this_iter.next ()
-      let y = that_iter.next ()
-      if (x.done && y.done) {
-        return true
-      } else if (x.done || y.done) {
-        return false
-      } else if (x.value !== y.value) {
+    for (let [x, y] of this.zip (that)) {
+      if (x !== y) {
         return false
       }
+    }
+    return true
+  }
+
+  map (f: (x: number) => number): ndarray_t {
+    let buffer = new Float64Array (this.size)
+    let i = 0
+    for (let x of this.values ()) {
+      buffer [i] = f (x)
+      i += 1
+    }
+    return new ndarray_t (
+      buffer, this.shape,
+      ndarray_t.init_strides (this.shape))
+  }
+
+  for_each (f: (x: number) => any) {
+    for (let x of this.values ()) {
+      f (x)
     }
   }
 }

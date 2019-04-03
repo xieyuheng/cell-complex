@@ -275,3 +275,18 @@ test ("fill", t => {
   //   x.table ()
   // }
 })
+
+test ("map", t => {
+  {
+    let x = ndarray_t.numbers (3, [2, 2])
+    t.true (x.get ([0, 0]) === 3)
+    t.true (x.get ([0, 1]) === 3)
+    t.true (x.get ([1, 0]) === 3)
+    t.true (x.get ([1, 1]) === 3)
+    x = x.map (n => n + 3)
+    t.true (x.get ([0, 0]) === 6)
+    t.true (x.get ([0, 1]) === 6)
+    t.true (x.get ([1, 0]) === 6)
+    t.true (x.get ([1, 1]) === 6)
+  }
+})

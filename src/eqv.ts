@@ -1,10 +1,11 @@
-// Due to the lack of dependent type,
-// [[eqv_t]] is implemented as runtime test generator.
-
 import assert from "assert"
 
 import { set_t } from "./set"
 
+/**
+ * Due to the lack of dependent type,
+ * [[eqv_t]] is implemented as runtime test generator.
+ */
 export
 class eqv_t <T> {
   set: set_t <T>

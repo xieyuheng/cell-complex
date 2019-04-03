@@ -1,6 +1,7 @@
 import { group_t, abelian_group_t } from "./group"
 import { field_t } from "./field"
 
+export
 class number_add_group_t extends group_t <number> {
   constructor () {
     super ()
@@ -34,6 +35,7 @@ class number_add_group_t extends group_t <number> {
   group.id_inv (3)
 }
 
+export
 class number_add_abelian_group_t extends abelian_group_t <number> {
   constructor () {
     super ()
@@ -71,6 +73,7 @@ class number_add_abelian_group_t extends abelian_group_t <number> {
   abel.commu (3, 2)
 }
 
+export
 class number_field_t extends field_t <number> {
   constructor () {
     super ()

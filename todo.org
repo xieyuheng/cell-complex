@@ -1,6 +1,4 @@
 - basic operations for matrix
-- basic operations for vector
-- euclidean_space_t
 - use euclidean-space to re-imp hackenbush
 - use combinatorial-game to solve the problem of iso
   - iso is hard because total classification is hard
@@ -8,10 +6,16 @@
 - learn more about group iso
   - cell-complex iso is generalized group iso
     maybe new ideas
-- classification of games
-  - the games of logic seem like two-player game
-    but they are actually one-player game
-    -- like sudoku
+- why the games of logic seem like one-player game
+- quaternion
+- abelian_group_t
+  - classification (normalization)
+    prepare for homology
+- clifford-algebra
+- polytope
+  - a set of n >= 0 points is affinely independent
+    if its affine hull has dimension n − 1,
+    that is, if every proper subset has a smaller affine hull.
 * cell-complex
 - cell_complex_t.eq ()
 - cell_complex_iso_t
@@ -55,15 +59,3 @@
   - hackenbush
   - dots-and-boxes
   - go
-* motion-picture
-- affine-space
-- matrix
-- quaternion
-- abelian_group_t
-  - classification (normalization)
-    prepare for homology
-- clifford-algebra
-- polytope
-  - a set of n >= 0 points is affinely independent
-    if its affine hull has dimension n − 1,
-    that is, if every proper subset has a smaller affine hull.

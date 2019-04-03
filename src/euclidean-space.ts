@@ -7,6 +7,8 @@ import { vector_space_t } from "./vector-space"
 import { affine_space_t } from "./affine-space"
 import { eqv } from "./eqv"
 
+import { number_field_t } from "./number"
+
 import { ndarray_t } from "./ndarray"
 
 /**
@@ -21,7 +23,7 @@ import { ndarray_t } from "./ndarray"
 
 export
 class matrix_t {
-  protected array: ndarray_t
+  array: ndarray_t
   readonly shape: Array <number>
 
   constructor (array: ndarray_t) {
@@ -47,10 +49,6 @@ class matrix_t {
     return new matrix_t (this.array.slice ([x, y]))
   }
 
-  copy_array (): ndarray_t {
-    return this.array.copy ()
-  }
-
   row (i: number): vector_t {
     return new vector_t (this.array.proj ([i, null]))
   }
@@ -60,17 +58,17 @@ class matrix_t {
   }
 
   eq (that: matrix_t): boolean {
-    return this.array.eq (that.copy_array ())
+    return this.array.eq (that.array.copy ())
   }
 
-  // map (v: vector_t): vector_t {}
+  // apply (v: vector_t): vector_t {}
   // deter (): number {}
   // inv (): matrix_t {}
 }
 
 export
 class vector_t {
-  protected array: ndarray_t
+  array: ndarray_t
   readonly shape: Array <number>
   readonly dim: number
 
@@ -95,12 +93,12 @@ class vector_t {
     return new vector_t (this.array.slice ([i]))
   }
 
-  copy_array (): ndarray_t {
-    return this.array.copy ()
+  copy (): vector_t {
+    return new vector_t (this.array.copy ())
   }
 
   eq (that: vector_t): boolean {
-    return this.array.eq (that.copy_array ())
+    return this.array.eq (that.array.copy ())
   }
 
   *values () {
@@ -125,11 +123,15 @@ class vector_t {
     }
     return product
   }
+
+  map (f: (n: number) => number): vector_t {
+    return new vector_t (this.array.map (f))
+  }
 }
 
 export
 class point_t {
-  protected array: ndarray_t
+  array: ndarray_t
   readonly shape: Array <number>
   readonly dim: number
 
@@ -154,16 +156,12 @@ class point_t {
     return new point_t (this.array.slice ([i]))
   }
 
-  copy_array (): ndarray_t {
-    return this.array.copy ()
-  }
-
   copy (): point_t {
     return new point_t (this.array.copy ())
   }
 
   eq (that: point_t): boolean {
-    return this.array.eq (that.copy_array ())
+    return this.array.eq (that.array.copy ())
   }
 
   *values () {
@@ -187,6 +185,20 @@ class point_t {
     }
     return p
   }
+
+  diff (that: point_t): vector_t {
+    let array = ndarray_t.zeros ([this.dim])
+    let i = 0
+    for (let [x, y] of this.array.zip (that.array)) {
+      array.set ([i], x - y)
+      i += 1
+    }
+    return new vector_t (array)
+  }
+
+  map (f: (n: number) => number): point_t {
+    return new point_t (this.array.map (f))
+  }
 }
 
 /**
@@ -199,8 +211,71 @@ class point_t {
  * I define euclidean_space_t as concrete class.
  */
 
-// export
-// class euclidean_space_t
-// extends affine_space_t <number, vector_t, point_t> {
+export
+class vec_t extends vector_space_t <number, vector_t> {
+  dim: number
 
-// }
+  constructor (dim: number) {
+    super (new number_field_t ())
+    this.dim = dim
+  }
+
+  eq (x: vector_t, y: vector_t): boolean {
+    return x.eq (y)
+  }
+
+  id = new vector_t (ndarray_t.zeros ([this.dim]))
+
+  add (v: vector_t, w: vector_t): vector_t {
+    let vector = this.id.copy ()
+    let i = 0
+    for (let [x, y] of v.array.zip (w.array)) {
+      vector.set (i, x + y)
+      i += i
+    }
+    return vector
+  }
+
+  neg (x: vector_t): vector_t {
+    return x.map (n => -n)
+  }
+
+  scale (a: number, x: vector_t): vector_t {
+    return x.map (n => n * a)
+  }
+}
+
+export
+class point_set_t extends set_t <point_t> {
+  dim: number
+
+  constructor (dim: number) {
+    super ()
+    this.dim = dim
+  }
+
+  eq (x: point_t, y: point_t): boolean {
+    return x.eq (y)
+  }
+}
+
+export
+class euclidean_space_t
+extends affine_space_t <number, vector_t, point_t> {
+  dim: number
+
+  constructor (dim: number) {
+    let vec = new vec_t (dim)
+    let points = new point_set_t (dim)
+    super (vec, points)
+    this.dim = dim
+  }
+
+  trans (p: point_t, v: vector_t): point_t {
+    return p.trans (v)
+  }
+
+  diff (p: point_t, q: point_t): vector_t {
+    return p.diff (q)
+  }
+}
