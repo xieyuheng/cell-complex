@@ -1,6 +1,7 @@
-- inner-product-space
-- euclidean-space
-- affine-combination and affine-coordinates
+- point_t
+- basic operations for matrix
+- basic operations for vector
+- euclidean_space_t
 - use euclidean-space to re-imp hackenbush
 - use combinatorial-game to solve the problem of iso
   - iso is hard because total classification is hard

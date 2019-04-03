@@ -1,3 +1,6 @@
+// Due to the lack of dependent type,
+// [[eqv_t]] is implemented as runtime test generator.
+
 import assert from "assert"
 
 import { set_t } from "./set"
