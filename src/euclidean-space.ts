@@ -1,3 +1,5 @@
+import assert from "assert"
+
 import { set_t } from "./set"
 import { field_t } from "./field"
 import { abelian_group_t } from "./group"
@@ -115,7 +117,14 @@ class vector_t {
     }
   }
 
-  // dot (that: vector_t): number {}
+  dot (that: vector_t): number {
+    assert (this.dim === that.dim)
+    let product = 0
+    for (let [i, y] of that.entries ()) {
+      product += this.get (i) * y
+    }
+    return product
+  }
 }
 
 export
