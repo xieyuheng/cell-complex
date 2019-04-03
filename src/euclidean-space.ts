@@ -62,6 +62,8 @@ class matrix_t {
   }
 
   // map (v: vector_t): vector_t {}
+  // deter (): number {}
+  // inv (): matrix_t {}
 }
 
 export
@@ -99,6 +101,20 @@ class vector_t {
     return this.array.eq (that.copy_array ())
   }
 
+  *values () {
+    for (let x of this.array.values ()) {
+      yield x
+    }
+  }
+
+  *entries () {
+    let i = 0
+    for (let x of this.array.values ()) {
+      yield [i, x]
+      i += 1
+    }
+  }
+
   // dot (that: vector_t): number {}
 }
 
@@ -133,11 +149,35 @@ class point_t {
     return this.array.copy ()
   }
 
+  copy (): point_t {
+    return new point_t (this.array.copy ())
+  }
+
   eq (that: point_t): boolean {
     return this.array.eq (that.copy_array ())
   }
 
-  // trans (v: vector_t): point_t {}
+  *values () {
+    for (let x of this.array.values ()) {
+      yield x
+    }
+  }
+
+  *entries () {
+    let i = 0
+    for (let x of this.array.values ()) {
+      yield [i, x]
+      i += 1
+    }
+  }
+
+  trans (v: vector_t): point_t {
+    let p = this.copy ()
+    for (let [i, y] of v.entries ()) {
+      p.set (i, p.get (i) + y)
+    }
+    return p
+  }
 }
 
 /**
