@@ -1,4 +1,7 @@
-- use vector_t to re-imp hackenbush
+- inner-product-space
+- euclidean-space
+- affine-combination and affine-coordinates
+- use euclidean-space to re-imp hackenbush
 - use combinatorial-game to solve the problem of iso
   - iso is hard because total classification is hard
     how about classification of manifold
