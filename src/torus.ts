@@ -23,3 +23,6 @@ class torus_t extends cx.cell_complex_t {
     this.surf = surf
   }
 }
+
+// let torus = new torus_t ()
+// console.dir (torus.to_exp (), { depth: null })

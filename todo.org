@@ -1,14 +1,18 @@
+- manifold_check
+- homology group of cell-complex
+- 2-dim manifold classification
+------
 - basic operations for matrix
 - test euclidean_space_t
-- use euclidean-space to re-imp hackenbush
 - use combinatorial-game to solve the problem of iso
   - iso is hard because total classification is hard
     how about classification of manifold
-- learn more about group iso
-  - cell-complex iso is generalized group iso
+- learn more about graph graph_iso_t
+  - cell_complex_iso_t is generalized graph_iso_t
     maybe new ideas
 - why the games of logic seem like one-player game
 - quaternion
+- use euclidean-space to re-imp hackenbush
 - abelian_group_t
   - classification (normalization)
     prepare for homology
@@ -30,7 +34,17 @@
   - we need to use cell_complex_iso_t to handle the non unique representation problem
 - bounfold_check
 - manifold_check
+  - we do not need total cell_complex_iso_t
+  - for 1-dim and 2-dim first
 - cell_check
+- can we encode cell-complex by graph ?
+  - what is "encode something by graph" ?
+    with graph label ?
+- category_t
+- groupoid_t
+- groupoid of 2-dim cell-complex
+  - `as_groupoid ()`
+  - what is special about manifold's groupoid
 - product_complex_t
 - quotient_complex_t -- self-gluing
 - vertex_figure_t -- 3 dim
@@ -51,12 +65,8 @@
 - cl -- game semantics of constructive logic
 - aristotle (lukasiewicz) -> de morgan -> peirce
 - dots-and-boxes
+- go
 - martin-gardner
 - (paper) investigations into game semantics of logic
 - surreal -- the theory of surreal number
   - theory about two-player normal-ending game
-- game collection
-  - tic-tac-toe
-  - hackenbush
-  - dots-and-boxes
-  - go

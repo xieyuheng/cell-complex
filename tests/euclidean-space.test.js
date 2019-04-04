@@ -17,7 +17,7 @@ test ("new vector_t", t => {
   t.deepEqual (x.dim, 3)
 })
 
-test ("row & col", t => {
+test ("matrix_t row & col", t => {
   let x = new matrix_t (ndarray_t.from_2darray ([
     [1, 2, 4],
     [4, 5, 6],
@@ -30,10 +30,17 @@ test ("row & col", t => {
   t.true (x.col (0) .eq (c))
 })
 
-test ("trans", t => {
+test ("point_t trans", t => {
   let p = new point_t (ndarray_t.from_1darray ([1, 1, 1]))
   let v = new vector_t (ndarray_t.from_1darray ([1, 2, 4]))
-  let w = new point_t (ndarray_t.from_1darray ([2, 3, 5]))
+  let q = new point_t (ndarray_t.from_1darray ([2, 3, 5]))
 
-  t.true (p.trans (v) .eq (w))
+  t.true (p.trans (v) .eq (q))
+})
+
+test ("vector_t dot", t => {
+  let v = new vector_t (ndarray_t.from_1darray ([1, 2, 4]))
+  let w = new vector_t (ndarray_t.from_1darray ([1, 2, 4]))
+
+  t.true (v.dot (w) === 1 + 4 + 16)
 })
