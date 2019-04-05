@@ -21,17 +21,7 @@ test ("vertex_figure", t => {
 
   log (verf.to_exp ())
 
-  let id_dic = new dic_t ()
-  id_dic.set (new cx.id_t (0, 0), new cx.id_t (0, 0))
-  id_dic.set (new cx.id_t (0, 1), new cx.id_t (0, 2))
-  id_dic.set (new cx.id_t (0, 2), new cx.id_t (0, 1))
-  id_dic.set (new cx.id_t (0, 3), new cx.id_t (0, 3))
-  id_dic.set (new cx.id_t (1, 0), new cx.id_t (1, 0))
-  id_dic.set (new cx.id_t (1, 1), new cx.id_t (1, 1))
-  id_dic.set (new cx.id_t (1, 2), new cx.id_t (1, 2))
-  id_dic.set (new cx.id_t (1, 3), new cx.id_t (1, 3))
-//   let iso = new cx.isomorphism_t (
-//     new cx.polygon_t (4), verf, id_dic)
+  // let iso = new cx.isomorphism_t (new cx.polygon_t (4), verf, dic)
 
   t.true (
     verf.idx (

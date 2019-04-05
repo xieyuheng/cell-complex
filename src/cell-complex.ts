@@ -104,32 +104,18 @@ function im_dic_check (
   }
 }
 
-export
-class morphism_builder_t {
-  constructor (
-    public dom: cell_complex_t,
-    public cod: cell_complex_t,
-    public dic: dic_t <id_t, im_t> = new dic_t (id_to_str),
-  ) {}
-
-  build (): morphism_t {
-    return new morphism_t (this)
-  }
+function new_im_dic (): dic_t <id_t, im_t> {
+  return new dic_t (id_to_str)
 }
 
 export
 class morphism_t {
-  readonly dom: cell_complex_t
-  readonly cod: cell_complex_t
-  readonly dic: dic_t <id_t, im_t>
-
   constructor (
-    bui: morphism_builder_t
+    readonly dom: cell_complex_t,
+    readonly cod: cell_complex_t,
+    readonly dic: dic_t <id_t, im_t>,
   ) {
-    this.dom = bui.dom.clone ()
-    this.cod = bui.cod.clone ()
-    this.dic = bui.dic.clone ()
-    im_dic_check (this.dom, this.cod, this.dic)
+    im_dic_check (dom, cod, dic)
   }
 
   get dim (): number {
@@ -147,16 +133,16 @@ class morphism_t {
   static from_exp (exp: morphism_exp_t): morphism_t {
     let dom = cell_complex_t.from_exp (exp.dom)
     let cod = cell_complex_t.from_exp (exp.cod)
-    let bui = new morphism_builder_t (dom, cod)
+    let dic = new_im_dic ()
     let iter = Object.entries (exp.dic)
     for (let [k, v] of iter) {
       let id = id_t.parse (k)
       let im = new im_t (
         id_t.parse (v.id),
         cell_t.from_exp (v.cell))
-      bui.dic.set (id, im)
+      dic.set (id, im)
     }
-    return new morphism_t (bui)
+    return new morphism_t (dom, cod, dic)
   }
 
   eq (that: morphism_t): boolean {
@@ -178,42 +164,31 @@ class morphism_t {
 }
 
 export
-class cell_builder_t {
-  constructor (
-    public dom: cell_complex_t,
-    public cod: cell_complex_t,
-    public dic: dic_t <id_t, im_t> = new dic_t (id_to_str),
-  ) {}
-
-  build (): cell_t {
-    return new cell_t (this)
-  }
-}
-
-export
 class cell_t extends morphism_t {
   readonly dom: spherical_complex_t
 
   constructor (
-    bui: cell_builder_t
+    dom: cell_complex_t,
+    cod: cell_complex_t,
+    dic: dic_t <id_t, im_t>,
   ) {
-    super (bui)
-    this.dom = bui.dom.as_spherical ()
+    super (dom, cod, dic)
+    this.dom = dom.as_spherical ()
   }
 
   static from_exp (exp: morphism_exp_t): cell_t {
     let dom = cell_complex_t.from_exp (exp.dom)
     let cod = cell_complex_t.from_exp (exp.cod)
-    let bui = new cell_builder_t (dom, cod)
+    let dic = new_im_dic ()
     let iter = Object.entries (exp.dic)
     for (let [k, v] of iter) {
       let id = id_t.parse (k)
       let im = new im_t (
         id_t.parse (v.id),
         cell_t.from_exp (v.cell))
-      bui.dic.set (id, im)
+      dic.set (id, im)
     }
-    return new cell_t (bui)
+    return new cell_t (dom, cod, dic)
   }
 }
 
@@ -650,8 +625,11 @@ const empty_complex = new empty_complex_t ()
 export
 class empty_cell_t extends cell_t {
   constructor () {
-    let cell = new cell_builder_t (empty_complex, empty_complex)
-    super (cell)
+    super (
+      empty_complex,
+      empty_complex,
+      new_im_dic (),
+    )
   }
 }
 
@@ -717,10 +695,10 @@ class edge_t extends cell_t {
   ) {
     let endpoints = new endpoints_t ()
     let cod = bui.skeleton (0)
-    let cell = new cell_builder_t (endpoints, cod)
-    cell.dic.set (endpoints.start, new im_t (start, empty_cell))
-    cell.dic.set (endpoints.end, new im_t (end, empty_cell))
-    super (cell)
+    let dic = new_im_dic ()
+    dic.set (endpoints.start, new im_t (start, empty_cell))
+    dic.set (endpoints.end, new im_t (end, empty_cell))
+    super (endpoints, cod, dic)
     this.start = start
     this.end = end
     this.endpoints = endpoints
@@ -799,35 +777,36 @@ class face_t extends cell_t {
     let size = circuit.length
     let polygon = new polygon_t (size)
     let cod = bui.skeleton (1)
-    let cell = new cell_builder_t (polygon, cod)
+    let dic = new_im_dic ()
     for (let i = 0; i < size; i += 1) {
       let src_id = polygon.edge_array [i]
       let tar_id = circuit [i]
       let src = polygon.get_edge (src_id)
       let tar = bui.get_edge (tar_id)
-      let boundary = new cell_builder_t (src.dom, tar.dom)
+      let boundary_dic = new_im_dic ()
       if (tar_id instanceof rev_id_t) {
-        boundary.dic.set (
+        boundary_dic.set (
           src.endpoints.start,
           new im_t (tar.endpoints.end, empty_cell))
-        boundary.dic.set (
+        boundary_dic.set (
           src.endpoints.end,
           new im_t (tar.endpoints.start, empty_cell))
-        cell.dic.set (src.start, new im_t (tar.end, empty_cell))
-        cell.dic.set (src.end, new im_t (tar.start, empty_cell))
+        dic.set (src.start, new im_t (tar.end, empty_cell))
+        dic.set (src.end, new im_t (tar.start, empty_cell))
       } else {
-        boundary.dic.set (
+        boundary_dic.set (
           src.endpoints.start,
           new im_t (tar.endpoints.start, empty_cell))
-        boundary.dic.set (
+        boundary_dic.set (
           src.endpoints.end,
           new im_t (tar.endpoints.end, empty_cell))
-        cell.dic.set (src.start, new im_t (tar.start, empty_cell))
-        cell.dic.set (src.end, new im_t (tar.end, empty_cell))
+        dic.set (src.start, new im_t (tar.start, empty_cell))
+        dic.set (src.end, new im_t (tar.end, empty_cell))
       }
-      cell.dic.set (src_id, new im_t (tar_id, boundary.build ()))
+      dic.set (src_id, new im_t (
+        tar_id, new cell_t (src.dom, tar.dom, boundary_dic)))
     }
-    super (cell)
+    super (polygon, cod, dic)
     this.circuit = circuit
     this.polygon = polygon
   }
