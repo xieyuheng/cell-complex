@@ -180,6 +180,18 @@ class cell_t {
       return true
     }
   }
+
+  apply_id_dic (id_dic: dic_t <id_t, id_t>): cell_t {
+    let cell = new cell_builder_t (
+      this.dom,
+      this.cod.apply_id_dic (id_dic),
+      this.dic.clone ())
+    for (let im of cell.dic.values ()) {
+      im.id = id_dic.get (im.id)
+      im.cell = im.cell.apply_id_dic (id_dic)
+    }
+    return cell.build ()
+  }
 }
 
 function im_dic_to_exp (
@@ -358,6 +370,17 @@ class cell_complex_t {
   gteq (that: cell_complex_t): boolean {
     return that.lteq (this)
   }
+
+  apply_id_dic (id_dic: dic_t <id_t, id_t>): cell_complex_t {
+    let bui = new cell_complex_builder_t ()
+    for (let [k, v] of id_dic) {
+      let id = v
+      let cell = this.get (k)
+      cell = cell.apply_id_dic (id_dic)
+      bui.set (id, cell)
+    }
+    return bui.build ()
+  }
 }
 
 export
@@ -449,9 +472,33 @@ class cell_complex_builder_t {
   }
 }
 
+function cell_complex_iso_check (
+  dom: cell_complex_t,
+  cod: cell_complex_t,
+  id_dic: dic_t <id_t, id_t>,
+): boolean {
+  return dom.eq (cod.apply_id_dic (id_dic))
+}
+
 export
 class cell_complex_iso_t {
-  // TODO
+  dom: cell_complex_t
+  cod: cell_complex_t
+  id_dic: dic_t <id_t, id_t>
+
+  constructor (
+    dom: cell_complex_t,
+    cod: cell_complex_t,
+    id_dic: dic_t <id_t, id_t>,
+  ) {
+    if (cell_complex_iso_check (dom, cod, id_dic)) {
+      this.dom = dom
+      this.cod = cod
+      this.id_dic = id_dic
+    } else {
+      throw new Error ("cell_complex_iso_check fail")
+    }
+  }
 }
 
 export

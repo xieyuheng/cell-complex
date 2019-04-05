@@ -1,4 +1,3 @@
-- cell_complex_iso_t
 - manifold_check
 - homology group of cell-complex
 - 2-dim manifold classification
