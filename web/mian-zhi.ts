@@ -218,15 +218,15 @@ extends ng.engine_t <HTMLCanvasElement, state_t, event_t> {
       this.state.mouse.y = event.mouse.y
       let play = this.state.play
       let geometry = this.state.geometry
-      let pos = play.last_position ()
+      let s = play.last_state ()
       let edge = blue_point_on_edge (
-        event.mouse, pos.graph, geometry)
+        event.mouse, s.graph, geometry)
       if ((edge !== null) &&
           (play.winner () === null)) {
         play.move ("blue", edge.id)
         let bot = hackenbush.random_bot
         let p = play.next_player ()
-        let ch = bot.next_choice (p, pos)
+        let ch = bot.next_choice (p, s)
         window.setTimeout (() => play.move (p, ch), 600)
         // if (play.winner () === null) {}
         // [todo] winner screen
@@ -247,7 +247,7 @@ extends ng.engine_t <HTMLCanvasElement, state_t, event_t> {
     let y = mouse.y
 
     let play = this.state.play
-    let pos = play.last_position ()
+    let s = play.last_state ()
 
     let geometry = this.state.geometry
     let origin = geometry.origin
@@ -291,12 +291,12 @@ extends ng.engine_t <HTMLCanvasElement, state_t, event_t> {
       ctx.stroke ()
     }
 
-    pos.graph.edge_map.forEach ((edge) => {
+    s.graph.edge_map.forEach ((edge) => {
       draw_edge (edge, color_map [edge.info.value])
     })
 
     let edge = blue_point_on_edge (
-      mouse, pos.graph, geometry)
+      mouse, s.graph, geometry)
 
     if (edge !== null) {
       draw_edge (edge, deep_color_map [edge.info.value])
@@ -311,10 +311,10 @@ extends ng.engine_t <HTMLCanvasElement, state_t, event_t> {
     let width = this.canvas.width
     let height = this.canvas.height
     let play = this.state.play
-    let pos = play.last_position ()
+    let s = play.last_state ()
     let geometry = geometrize (
-      width, height, play.init_position.graph)
-    console.log (play.init_position.graph)
+      width, height, play.init_state.graph)
+    console.log (play.init_state.graph)
     console.log (geometry)
   }
 
@@ -325,7 +325,7 @@ extends ng.engine_t <HTMLCanvasElement, state_t, event_t> {
   }
 }
 
-let bush = new hackenbush.position_t ()
+let bush = new hackenbush.state_t ()
   .blue (0, 1)
   .blue (0, 1)
   .blue (1, 2)
@@ -339,7 +339,7 @@ let play = hackenbush.new_play (bush)
 let geometry = geometrize (
   window.innerWidth,
   window.innerHeight,
-  play.init_position.graph)
+  play.init_state.graph)
 
 let engine: engine_t = new engine_t (
   document.getElementById ("canvas") as HTMLCanvasElement,
@@ -362,7 +362,7 @@ function init (): void {
     engine.state.geometry = geometrize (
       window.innerWidth,
       window.innerHeight,
-      engine.state.play.init_position.graph)
+      engine.state.play.init_state.graph)
   })
 
   engine.canvas.addEventListener ("mousedown", (event) => {

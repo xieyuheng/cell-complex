@@ -553,6 +553,16 @@ class isomorphism_t extends morphism_t {
   }
 }
 
+// export
+// function isomorphic_to_polygon (
+//   cod: cell_complex_t
+// ): isomorphism_t {
+//   let size = ;
+//   let dom = new polygon_t (size)
+//   let dic = new_im_dic ()
+//   return new isomorphism_t (dom, cod, dic)
+// }
+
 export
 class bounfold_evidence_t {
   constructor () {}
@@ -746,7 +756,7 @@ class endpoints_t extends discrete_complex_t {
 /**
  * Although cell-complex is recursively defined,
  * but each dimension has its own special features.
- * For example, the only possible 1-cell is [[edge_t]].
+ * For example, the only ssible 1-cell is [[edge_t]].
  */
 export
 class edge_t extends cell_t {

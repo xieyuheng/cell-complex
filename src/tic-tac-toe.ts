@@ -8,9 +8,9 @@ type mark_t = "_" | "X" | "O"
 
 type row_t = [ mark_t, mark_t, mark_t ]
 
-type position_t = [ row_t, row_t, row_t ]
+type state_t = [ row_t, row_t, row_t ]
 
-let empty_position: position_t = [
+let empty_state: state_t = [
   [ "_", "_", "_" ],
   [ "_", "_", "_" ],
   [ "_", "_", "_" ],
@@ -19,15 +19,15 @@ let empty_position: position_t = [
 type choice_t = [ number, number ]
 
 class game_t
-extends cg.game_t <player_t, position_t, choice_t> {
+extends cg.game_t <player_t, state_t, choice_t> {
   choices (
     _p: player_t,
-    pos: position_t
+    s: state_t
   ): Array <choice_t> {
     let array: Array <choice_t> = []
-    pos.forEach ((row, x) => {
+    s.forEach ((row, x) => {
       row.forEach ((mark, y) => {
-        if (pos [x] [y] === "_")
+        if (s [x] [y] === "_")
           array.push ([x, y])
       })
     })
@@ -37,73 +37,73 @@ extends cg.game_t <player_t, position_t, choice_t> {
   choose (
     p: player_t,
     ch: choice_t,
-    pos: position_t,
-  ): position_t {
-    let pos1 = _.cloneDeep (pos)
+    s: state_t,
+  ): state_t {
+    let s1 = _.cloneDeep (s)
     let [x, y] = ch
-    pos1 [x] [y] = p
-    return pos1
+    s1 [x] [y] = p
+    return s1
   }
 
   win_p (
     p: player_t,
-    pos: position_t,
+    s: state_t,
   ): boolean {
-    return (row_win_p (p, pos) ||
-            column_win_p (p, pos) ||
-            diagonal_win_p (p, pos))
+    return (row_win_p (p, s) ||
+            column_win_p (p, s) ||
+            diagonal_win_p (p, s))
   }
 }
 
 function row_win_p (
   p: player_t,
-  pos: position_t,
+  s: state_t,
 ): boolean {
-  return ((pos [0] [0] === p &&
-           pos [0] [1] === p &&
-           pos [0] [2] === p) ||
-          (pos [1] [0] === p &&
-           pos [1] [1] === p &&
-           pos [1] [2] === p) ||
-          (pos [2] [0] === p &&
-           pos [2] [1] === p &&
-           pos [2] [2] === p))
+  return ((s [0] [0] === p &&
+           s [0] [1] === p &&
+           s [0] [2] === p) ||
+          (s [1] [0] === p &&
+           s [1] [1] === p &&
+           s [1] [2] === p) ||
+          (s [2] [0] === p &&
+           s [2] [1] === p &&
+           s [2] [2] === p))
 }
 
 function column_win_p (
   p: player_t,
-  pos: position_t,
+  s: state_t,
 ): boolean {
-  return ((pos [0] [0] === p &&
-           pos [1] [0] === p &&
-           pos [2] [0] === p) ||
-          (pos [0] [1] === p &&
-           pos [1] [1] === p &&
-           pos [2] [1] === p) ||
-          (pos [0] [2] === p &&
-           pos [1] [2] === p &&
-           pos [2] [2] === p))
+  return ((s [0] [0] === p &&
+           s [1] [0] === p &&
+           s [2] [0] === p) ||
+          (s [0] [1] === p &&
+           s [1] [1] === p &&
+           s [2] [1] === p) ||
+          (s [0] [2] === p &&
+           s [1] [2] === p &&
+           s [2] [2] === p))
 }
 
 function diagonal_win_p (
   p: player_t,
-  pos: position_t,
+  s: state_t,
 ): boolean {
-  return ((pos [0] [0] === p &&
-           pos [1] [1] === p &&
-           pos [2] [2] === p) ||
-          (pos [0] [2] === p &&
-           pos [1] [1] === p &&
-           pos [2] [0] === p))
+  return ((s [0] [0] === p &&
+           s [1] [1] === p &&
+           s [2] [2] === p) ||
+          (s [0] [2] === p &&
+           s [1] [1] === p &&
+           s [2] [0] === p))
 }
 
 class play_t
-extends cg.play_t <player_t, position_t, choice_t> {
+extends cg.play_t <player_t, state_t, choice_t> {
   next_player = this.tow_player_alternating
 
-  position_log (pos: position_t) {
+  state_log (s: state_t) {
     let repr = ""
-    pos.forEach ((row, x) => {
+    s.forEach ((row, x) => {
       row.forEach ((mark, y) => {
         repr += `${ mark } `
       })
@@ -122,7 +122,7 @@ let random_bot = new cg.random_bot_t (tic_tac_toe)
 export
 function new_play (): play_t {
   let play = new play_t (
-    tic_tac_toe, empty_position, "O", ["O", "X"])
+    tic_tac_toe, empty_state, "O", ["O", "X"])
   return play
 }
 

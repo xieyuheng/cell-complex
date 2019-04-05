@@ -21,8 +21,8 @@ test ("random_bot", t => {
 
   while (play.winner () === null) {
     let p = play.next_player ()
-    let pos = play.last_position ()
-    let ch = bot.next_choice (p, pos)
+    let s = play.last_state ()
+    let ch = bot.next_choice (p, s)
     play.move (p, ch)
   }
 

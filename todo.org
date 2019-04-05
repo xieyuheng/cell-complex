@@ -1,8 +1,8 @@
+- isomorphic_to_polygon
 - manifold_check
 - homology group of cell-complex
 - 2-dim manifold classification
 ------
-- fix combinatorial-game type arguments naming
 - use go to test game tree searching
 ------
 - semantics of cicada in js

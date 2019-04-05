@@ -3,7 +3,7 @@ import test from "ava"
 import * as hackenbush from "../dist/hackenbush"
 
 test ("hackenbush", t => {
-  let bush = new hackenbush.position_t ()
+  let bush = new hackenbush.state_t ()
       .blue (0, 1)
       .blue (0, 1)
       .blue (1, 2)
@@ -22,7 +22,7 @@ test ("hackenbush", t => {
 })
 
 test ("random_bot", t => {
-  let bush = new hackenbush.position_t ()
+  let bush = new hackenbush.state_t ()
       .blue (0, 1)
       .blue (0, 1)
       .blue (1, 2)
@@ -36,8 +36,8 @@ test ("random_bot", t => {
 
   while (play.winner () === null) {
     let p = play.next_player ()
-    let pos = play.last_position ()
-    let ch = bot.next_choice (p, pos)
+    let s = play.last_state ()
+    let ch = bot.next_choice (p, s)
     play.move (p, ch)
   }
 
