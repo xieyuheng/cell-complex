@@ -1,6 +1,9 @@
+- cell_complex_iso_t
 - manifold_check
 - homology group of cell-complex
 - 2-dim manifold classification
+------
+- semantics of cicada in js
 ------
 - basic operations for matrix
 - test euclidean_space_t
@@ -22,8 +25,7 @@
     if its affine hull has dimension n − 1,
     that is, if every proper subset has a smaller affine hull.
 * cell-complex
-- cell_complex_t.eq ()
-- cell_complex_iso_t
+- cell_complex_iso_t check
   - we can use combinatorial-game to solve this
   - graph_iso_t is a sub-problem of cell_complex_iso_t
   - same cell_complex has many different isomorphic representations

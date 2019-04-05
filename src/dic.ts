@@ -36,7 +36,7 @@ class dic_t <K , V> {
   get size (): number {
     return this.val_map.size
   }
-  
+
   to_array (): Array <[K, V]> {
     let array = new Array <[K, V]> ()
     for (let [s, v] of this.val_map) {
@@ -79,6 +79,17 @@ class dic_t <K , V> {
     }
   }
 
+  /**
+   * Assuming `this.key_lt (that)`.
+   */
+  *zip (that: dic_t <K, V>) {
+    for (let k of this.keys ()) {
+      let x = this.get (k)
+      let y = that.get (k)
+      yield [k, [x, y]] as [K, [V, V]]
+    }
+  }
+
   key_array (): Array <K> {
     return new Array (...this.key_map.values ())
   }
@@ -92,5 +103,49 @@ class dic_t <K , V> {
     dic.val_map = new Map (this.val_map)
     dic.key_map = new Map (this.key_map)
     return dic
+  }
+
+  key_eq (that: dic_t <K, V>): boolean {
+    if (this.size !== that.size) {
+      return false
+    }
+    for (let k of this.keys ()) {
+      if (! that.has (k)) {
+        return false
+      }
+    }
+    return true
+  }
+
+  key_lt (that: dic_t <K, V>): boolean {
+    if (! (this.size < that.size)) {
+      return false
+    }
+    for (let k of this.keys ()) {
+      if (! that.has (k)) {
+        return false
+      }
+    }
+    return true
+  }
+
+  key_lteq (that: dic_t <K, V>): boolean {
+    if (! (this.size <= that.size)) {
+      return false
+    }
+    for (let k of this.keys ()) {
+      if (! that.has (k)) {
+        return false
+      }
+    }
+    return true
+  }
+
+  key_gt (that: dic_t <K, V>): boolean {
+    return that.key_lt (this)
+  }
+
+  key_gteq (that: dic_t <K, V>): boolean {
+    return that.key_lteq (this)
   }
 }

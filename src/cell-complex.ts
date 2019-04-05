@@ -1,3 +1,5 @@
+import * as _ from "lodash"
+
 import { dic_t } from "./dic"
 
 /**
@@ -78,6 +80,10 @@ class im_t {
       cell: this.cell.to_exp (),
     }
   }
+
+  eq (that: im_t): boolean {
+    return this.id.eq (that.id) && this.cell.eq (that.cell)
+  }
 }
 
 function im_dic_check_dim (
@@ -156,6 +162,23 @@ class cell_t {
       cell.dic.set (id, im)
     }
     return new cell_t (cell)
+  }
+
+  eq (that: cell_t): boolean {
+    if (! this.dom.eq (that.dom)) {
+      return false
+    } else if (! this.cod.lteq (that.cod)) {
+      return false
+    } else if (! this.dic.key_eq (that.dic)) {
+      return false
+    } else {
+      for (let [k, [x, y]] of this.dic.zip (that.dic)) {
+        if (! x.eq (y)) {
+          return false
+        }
+      }
+      return true
+    }
   }
 }
 
@@ -291,6 +314,50 @@ class cell_complex_t {
     }
     return bui.build ()
   }
+
+  eq (that: cell_complex_t): boolean {
+    if (! this.cell_dic.key_eq (that.cell_dic)) {
+      return false
+    }
+    for (let [k, [x, y]] of this.cell_dic.zip (that.cell_dic)) {
+      if (! x.eq (y)) {
+        return false
+      }
+    }
+    return true
+  }
+
+  lt (that: cell_complex_t): boolean {
+    if (! this.cell_dic.key_lt (that.cell_dic)) {
+      return false
+    }
+    for (let [k, [x, y]] of this.cell_dic.zip (that.cell_dic)) {
+      if (! x.eq (y)) {
+        return false
+      }
+    }
+    return true
+  }
+
+  lteq (that: cell_complex_t): boolean {
+    if (! this.cell_dic.key_lteq (that.cell_dic)) {
+      return false
+    }
+    for (let [k, [x, y]] of this.cell_dic.zip (that.cell_dic)) {
+      if (! x.eq (y)) {
+        return false
+      }
+    }
+    return true
+  }
+
+  gt (that: cell_complex_t): boolean {
+    return that.lt (this)
+  }
+
+  gteq (that: cell_complex_t): boolean {
+    return that.lteq (this)
+  }
 }
 
 export
@@ -380,6 +447,11 @@ class cell_complex_builder_t {
   skeleton (dim: number): cell_complex_t {
     return this.build () .skeleton (dim)
   }
+}
+
+export
+class cell_complex_iso_t {
+  // TODO
 }
 
 export
