@@ -1,4 +1,5 @@
 * cell-complex
+- manifold_check -- for 1-dim and 2-dim first
 - refine API
   - morphism_builder -- for im
   - solve id v.s. cell conflict
@@ -8,8 +9,6 @@
     com.edge (<name>)
     com.face (<name>)
     com.subcomplex (<name>)
-- isomorphic_to_endpoints
-- manifold_check -- for 1-dim and 2-dim first
 - bounfold_check
 - category_t
 - groupoid_t

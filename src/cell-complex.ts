@@ -588,15 +588,21 @@ class isomorphism_t extends morphism_t {
 
 export
 function isomorphic_to_endpoints (
-  cod: cell_complex_t
+  com: cell_complex_t
 ): isomorphism_t | null {
-  if (cod.dim !== 0) {
+  if (com.dim !== 0) {
     return null
   }
-  let dom = new endpoints_t ()
+  let size = com.size_of_dim (0)
+  if (size !== 2) {
+    return null
+  }
+  let [start, end] = com.point_array ()
+  let endpoints = new endpoints_t ()
   let dic = new_im_dic ()
-  // TODO
-  return new isomorphism_t (dom, cod, dic)
+  dic.set (endpoints.start, new im_t (start, empty_cell))
+  dic.set (endpoints.end, new im_t (end, empty_cell))
+  return new isomorphism_t (endpoints, com, dic)
 }
 
 export
