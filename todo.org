@@ -1,6 +1,3 @@
-- epimorphism_t
-  monomorphism_t
-  isomorphism_t
 - manifold_check
 - homology group of cell-complex
 - 2-dim manifold classification

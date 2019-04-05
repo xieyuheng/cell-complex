@@ -87,8 +87,6 @@ function im_dic_check_dim (
   }
 }
 
-// complete dic for every dimensions
-// infer from high dim to low dim
 function im_dic_check (
   dom: cell_complex_t,
   cod: cell_complex_t,
@@ -102,6 +100,18 @@ function im_dic_check (
     im_dic_check_dim (dom, cod, dic, dim)
     dim -= 1
   }
+}
+
+function im_dic_has_value_id (
+  dic: dic_t <id_t, im_t>,
+  id: id_t,
+): boolean {
+  for (let im of dic.values ()) {
+    if (id.eq (im.id)) {
+      return true
+    }
+  }
+  return false
 }
 
 function new_im_dic (): dic_t <id_t, im_t> {
@@ -459,32 +469,83 @@ class cell_complex_builder_t {
   }
 }
 
-function isomorphism_check (
+function epimorphism_check (
   dom: cell_complex_t,
   cod: cell_complex_t,
-  id_dic: dic_t <id_t, id_t>,
+  dic: dic_t <id_t, im_t>,
 ): boolean {
+  for (let id of cod.cell_dic.keys ()) {
+    if (! im_dic_has_value_id (dic, id)) {
+      return false
+    }
+  }
   return true
 }
 
 export
-class isomorphism_t {
-  dom: cell_complex_t
-  cod: cell_complex_t
-  id_dic: dic_t <id_t, id_t>
-
+class epimorphism_t extends morphism_t {
   constructor (
     dom: cell_complex_t,
     cod: cell_complex_t,
-    id_dic: dic_t <id_t, id_t>,
+    dic: dic_t <id_t, im_t>,
   ) {
-    if (isomorphism_check (dom, cod, id_dic)) {
-      this.dom = dom
-      this.cod = cod
-      this.id_dic = id_dic
+    if (! epimorphism_check (dom, cod, dic)) {
+      throw new Error ("epimorphism_check fail")
+    }
+    super (dom, cod, dic)
+  }
+}
+
+function monomorphism_check (
+  dom: cell_complex_t,
+  cod: cell_complex_t,
+  dic: dic_t <id_t, im_t>,
+): boolean {
+  let id_str_set = new Set <string> ()
+  for (let im of dic.values ()) {
+    let str = im.id.to_str ()
+    if (id_str_set.has (str)) {
+      return false
     } else {
+      id_str_set.add (str)
+    }
+  }
+  return true
+}
+
+export
+class monomorphism_t extends morphism_t {
+  constructor (
+    dom: cell_complex_t,
+    cod: cell_complex_t,
+    dic: dic_t <id_t, im_t>,
+  ) {
+    if (! monomorphism_check (dom, cod, dic)) {
+      throw new Error ("monomorphism_check fail")
+    }
+    super (dom, cod, dic)
+  }
+}
+
+function isomorphism_check (
+  dom: cell_complex_t,
+  cod: cell_complex_t,
+  dic: dic_t <id_t, im_t>,
+): boolean {
+  return epimorphism_check (dom, cod, dic) && monomorphism_check (dom, cod, dic)
+}
+
+export
+class isomorphism_t extends morphism_t {
+  constructor (
+    dom: cell_complex_t,
+    cod: cell_complex_t,
+    dic: dic_t <id_t, im_t>,
+  ) {
+    if (! isomorphism_check (dom, cod, dic)) {
       throw new Error ("isomorphism_check fail")
     }
+    super (dom, cod, dic)
   }
 }
 
