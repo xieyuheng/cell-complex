@@ -1,8 +1,15 @@
+- epimorphism_t
+  monomorphism_t
+  isomorphism_t
 - manifold_check
 - homology group of cell-complex
 - 2-dim manifold classification
 ------
+- fix combinatorial-game type arguments naming
+- use go to test game tree searching
+------
 - semantics of cicada in js
+  { type: { field: <type> }, field: <value> }
 ------
 - basic operations for matrix
 - test euclidean_space_t
@@ -10,7 +17,7 @@
   - iso is hard because total classification is hard
     how about classification of manifold
 - learn more about graph graph_iso_t
-  - cell_complex_iso_t is generalized graph_iso_t
+  - isomorphism_t is generalized graph_iso_t
     maybe new ideas
 - why the games of logic seem like one-player game
 - quaternion
@@ -24,18 +31,18 @@
     if its affine hull has dimension n − 1,
     that is, if every proper subset has a smaller affine hull.
 * cell-complex
-- cell_complex_iso_t check
+- isomorphism_t check
   - we can use combinatorial-game to solve this
-  - graph_iso_t is a sub-problem of cell_complex_iso_t
+  - graph_iso_t is a sub-problem of isomorphism_t
   - same cell_complex has many different isomorphic representations
     we can not avoid this
   - when generating the new cell_complex
     - such as vertex_figure_t and product_complex_t
     it does not matter how we specify the dic
-  - we need to use cell_complex_iso_t to handle the non unique representation problem
+  - we need to use isomorphism_t to handle the non unique representation problem
 - bounfold_check
 - manifold_check
-  - we do not need total cell_complex_iso_t
+  - we do not need total isomorphism_t
   - for 1-dim and 2-dim first
 - cell_check
 - can we encode cell-complex by graph ?

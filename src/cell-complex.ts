@@ -49,24 +49,6 @@ function id_to_str (id: id_t): string {
   return id.to_str ()
 }
 
-/**
- * I use this builder to enclose
- * some of the functions related to the dic of cell.
- * It also make the process of building explicit in code.
- */
-export
-class cell_builder_t {
-  constructor (
-    public dom: cell_complex_t,
-    public cod: cell_complex_t,
-    public dic: dic_t <id_t, im_t> = new dic_t (id_to_str),
-  ) {}
-
-  build (): cell_t {
-    return new cell_t (this)
-  }
-}
-
 export
 class im_t {
   constructor (
@@ -123,16 +105,29 @@ function im_dic_check (
 }
 
 export
-class cell_t {
-  readonly dom: spherical_complex_t
+class morphism_builder_t {
+  constructor (
+    public dom: cell_complex_t,
+    public cod: cell_complex_t,
+    public dic: dic_t <id_t, im_t> = new dic_t (id_to_str),
+  ) {}
+
+  build (): morphism_t {
+    return new morphism_t (this)
+  }
+}
+
+export
+class morphism_t {
+  readonly dom: cell_complex_t
   readonly cod: cell_complex_t
   readonly dic: dic_t <id_t, im_t>
 
   constructor (
-    bui: cell_builder_t
+    bui: morphism_builder_t
   ) {
-    this.dom = bui.dom.as_spherical ()
-    this.cod = bui.cod
+    this.dom = bui.dom.clone ()
+    this.cod = bui.cod.clone ()
     this.dic = bui.dic.clone ()
     im_dic_check (this.dom, this.cod, this.dic)
   }
@@ -141,7 +136,7 @@ class cell_t {
     return this.dom.dim + 1
   }
 
-  to_exp (): cell_exp_t {
+  to_exp (): morphism_exp_t {
     return {
       dom: this.dom.to_exp (),
       cod: this.cod.to_exp (),
@@ -149,22 +144,22 @@ class cell_t {
     }
   }
 
-  static from_exp (exp: cell_exp_t): cell_t {
+  static from_exp (exp: morphism_exp_t): morphism_t {
     let dom = cell_complex_t.from_exp (exp.dom)
     let cod = cell_complex_t.from_exp (exp.cod)
-    let cell = new cell_builder_t (dom, cod)
+    let bui = new morphism_builder_t (dom, cod)
     let iter = Object.entries (exp.dic)
     for (let [k, v] of iter) {
       let id = id_t.parse (k)
       let im = new im_t (
         id_t.parse (v.id),
         cell_t.from_exp (v.cell))
-      cell.dic.set (id, im)
+      bui.dic.set (id, im)
     }
-    return new cell_t (cell)
+    return new morphism_t (bui)
   }
 
-  eq (that: cell_t): boolean {
+  eq (that: morphism_t): boolean {
     if (! this.dom.eq (that.dom)) {
       return false
     } else if (! this.cod.lteq (that.cod)) {
@@ -180,17 +175,45 @@ class cell_t {
       return true
     }
   }
+}
 
-  apply_id_dic (id_dic: dic_t <id_t, id_t>): cell_t {
-    let cell = new cell_builder_t (
-      this.dom,
-      this.cod.apply_id_dic (id_dic),
-      this.dic.clone ())
-    for (let im of cell.dic.values ()) {
-      im.id = id_dic.get (im.id)
-      im.cell = im.cell.apply_id_dic (id_dic)
+export
+class cell_builder_t {
+  constructor (
+    public dom: cell_complex_t,
+    public cod: cell_complex_t,
+    public dic: dic_t <id_t, im_t> = new dic_t (id_to_str),
+  ) {}
+
+  build (): cell_t {
+    return new cell_t (this)
+  }
+}
+
+export
+class cell_t extends morphism_t {
+  readonly dom: spherical_complex_t
+
+  constructor (
+    bui: cell_builder_t
+  ) {
+    super (bui)
+    this.dom = bui.dom.as_spherical ()
+  }
+
+  static from_exp (exp: morphism_exp_t): cell_t {
+    let dom = cell_complex_t.from_exp (exp.dom)
+    let cod = cell_complex_t.from_exp (exp.cod)
+    let bui = new cell_builder_t (dom, cod)
+    let iter = Object.entries (exp.dic)
+    for (let [k, v] of iter) {
+      let id = id_t.parse (k)
+      let im = new im_t (
+        id_t.parse (v.id),
+        cell_t.from_exp (v.cell))
+      bui.dic.set (id, im)
     }
-    return cell.build ()
+    return new cell_t (bui)
   }
 }
 
@@ -209,15 +232,15 @@ function im_dic_to_exp (
 }
 
 interface cell_complex_exp_t {
-  [id: string] : cell_exp_t
+  [id: string] : morphism_exp_t
 }
 
 interface im_exp_t {
   id: string,
-  cell: cell_exp_t,
+  cell: morphism_exp_t,
 }
 
-interface cell_exp_t {
+interface morphism_exp_t {
   dom: cell_complex_exp_t,
   cod: cell_complex_exp_t,
   dic: {
@@ -370,17 +393,6 @@ class cell_complex_t {
   gteq (that: cell_complex_t): boolean {
     return that.lteq (this)
   }
-
-  apply_id_dic (id_dic: dic_t <id_t, id_t>): cell_complex_t {
-    let bui = new cell_complex_builder_t ()
-    for (let [k, v] of id_dic) {
-      let id = v
-      let cell = this.get (k)
-      cell = cell.apply_id_dic (id_dic)
-      bui.set (id, cell)
-    }
-    return bui.build ()
-  }
 }
 
 export
@@ -472,16 +484,16 @@ class cell_complex_builder_t {
   }
 }
 
-function cell_complex_iso_check (
+function isomorphism_check (
   dom: cell_complex_t,
   cod: cell_complex_t,
   id_dic: dic_t <id_t, id_t>,
 ): boolean {
-  return dom.eq (cod.apply_id_dic (id_dic))
+  return true
 }
 
 export
-class cell_complex_iso_t {
+class isomorphism_t {
   dom: cell_complex_t
   cod: cell_complex_t
   id_dic: dic_t <id_t, id_t>
@@ -491,12 +503,12 @@ class cell_complex_iso_t {
     cod: cell_complex_t,
     id_dic: dic_t <id_t, id_t>,
   ) {
-    if (cell_complex_iso_check (dom, cod, id_dic)) {
+    if (isomorphism_check (dom, cod, id_dic)) {
       this.dom = dom
       this.cod = cod
       this.id_dic = id_dic
     } else {
-      throw new Error ("cell_complex_iso_check fail")
+      throw new Error ("isomorphism_check fail")
     }
   }
 }
