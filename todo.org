@@ -1,6 +1,5 @@
-- isomorphic_to_endpoints
 * cell-complex
-- isomorphic_to_polygon
+- isomorphic_to_endpoints
 - manifold_check -- for 1-dim and 2-dim first
 - bounfold_check
 - category_t

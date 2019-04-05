@@ -268,6 +268,10 @@ class cell_complex_t {
     return this.get (id) .dim
   }
 
+  size_of_dim (dim: number): number {
+    return Array.from (this.in_dim (dim)) .length
+  }
+
   skeleton (dim: number): cell_complex_t {
     let com = new cell_complex_t ()
     for (let [id, cell] of this.cell_dic.to_array ()) {
@@ -276,6 +280,14 @@ class cell_complex_t {
       }
     }
     return com
+  }
+
+  *id_in_dim (dim: number) {
+    for (let id of this.cell_dic.keys ()) {
+      if (id.dim === dim) {
+        yield id as id_t
+      }
+    }
   }
 
   *in_dim (dim: number) {
@@ -578,37 +590,90 @@ export
 function isomorphic_to_endpoints (
   cod: cell_complex_t
 ): isomorphism_t | null {
-  if (cod.dim !== 1) {
+  if (cod.dim !== 0) {
     return null
   }
   let dom = new endpoints_t ()
   let dic = new_im_dic ()
-  // for (let of ) {
-  //   // TODO
-  //   if () {
-  //     return null
-  //   }
-  // }
+  // TODO
   return new isomorphism_t (dom, cod, dic)
 }
 
 export
 function isomorphic_to_polygon (
-  cod: cell_complex_t
+  com: cell_complex_t
 ): isomorphism_t | null {
-  if (cod.dim !== 2) {
+  if (com.dim !== 1) {
     return null
   }
-  let size = cod.point_array () .length;
-  let dom = new polygon_t (size)
+  let size = com.size_of_dim (0)
+  if (size !== com.size_of_dim (1)) {
+    return null
+  }
+  if (size < 1) {
+    return null
+  }
+  let polygon = new polygon_t (size)
   let dic = new_im_dic ()
-  // for (let of ) {
-  //   // TODO
-  //   if () {
-  //     return null
-  //   }
-  // }
-  return new isomorphism_t (dom, cod, dic)
+  let vertex = polygon.vertex_array [0]
+  let { value: first_id } = com.id_in_dim (0) .next ()
+  let point = first_id
+  dic.set (vertex, new im_t (point, empty_cell))
+  let edge_id_set = new Set ()
+  for (let side_id of polygon.side_array) {
+    let side = polygon.get_edge (side_id)
+    vertex = side.endpoints.end
+    let edge_id: id_t | null = null
+    for (let id of com.id_in_dim (1)) {
+      if (! edge_id_set.has (id)) {
+        let edge = com.get_edge (id)
+        if (edge.endpoints.start.eq (point)) {
+          point = edge.endpoints.end
+          edge_id = id
+          break
+        } else if (edge.endpoints.end.eq (point)) {
+          point = edge.endpoints.start
+          edge_id = id.rev ()
+          break
+        }
+      }
+    }
+    if (edge_id === null) {
+      return null
+    }
+    let edge = com.get_edge (edge_id)
+    dic.set (
+      side.endpoints.end,
+      new im_t (edge.endpoints.end, empty_cell))
+    let boundary_dic = new_im_dic ()
+    if (edge_id instanceof rev_id_t) {
+      boundary_dic.merge_array ([
+        [side.endpoints.start, new im_t (
+          edge.endpoints.start, empty_cell)],
+        [side.endpoints.end, new im_t (
+          edge.endpoints.end, empty_cell)],
+      ])
+    } else {
+      boundary_dic.merge_array ([
+        [side.endpoints.start, new im_t (
+          edge.endpoints.end, empty_cell)],
+        [side.endpoints.end, new im_t (
+          edge.endpoints.start, empty_cell)],
+      ])
+    }
+    dic.set (
+      side_id,
+      new im_t (edge_id, new cell_t (
+        side.endpoints, polygon.skeleton (0), boundary_dic)))
+    if (true) {
+      return null
+    }
+  }
+  if (isomorphism_check (polygon, com, dic)) {
+    return new isomorphism_t (polygon, com, dic)
+  } else {
+    return null
+  }
 }
 
 /**

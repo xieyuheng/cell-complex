@@ -45,8 +45,10 @@ test ("vertex_figure", t => {
     [new cx.id_t (0, 1), new cx.im_t (new cx.id_t (0, 0), cx.empty_cell)],
   ]))))
   let iso = new cx.isomorphism_t (new cx.polygon_t (4), verf, dic)
+  // log (iso.to_exp ())
 
-  // log (cx.im_dic_to_exp (dic))
+  let iso2 = cx.isomorphic_to_polygon (verf)
+  // log (iso2.to_exp ())
 
   t.true (
     verf.idx (
