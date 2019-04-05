@@ -121,6 +121,17 @@ function new_im_dic (): dic_t <id_t, im_t> {
   return new dic_t (id_to_str)
 }
 
+/**
+ * Note that,
+ * The category induced by this `morphism_t`
+ * is intended to capture the category of topological spaces.
+
+ * But, for example,
+ * An edge can not be mapped to a path of two edges,
+ * if we allow such map,
+ * the inverse of a morphism would be problematic,
+ * and the definition of [[im_t]] would be much more complicated.
+ */
 export
 class morphism_t {
   constructor (
@@ -279,6 +290,10 @@ class cell_complex_t {
     for (let [id, _cell] of this.in_dim (0)) {
       yield id
     }
+  }
+
+  point_array (): Array <id_t> {
+    return Array.from (this.points ())
   }
 
   has (id: id_t): boolean {
@@ -539,6 +554,12 @@ function isomorphism_check (
   return epimorphism_check (dom, cod, dic) && monomorphism_check (dom, cod, dic)
 }
 
+/**
+ * When generating the new cell-complex,
+ * such as [[vertex_figure_t]] and [[product_complex_t]],
+ * it does not matter how we specify the dic.
+ * `isomorphism_t` handles the non uniqueness of dic.
+ */
 export
 class isomorphism_t extends morphism_t {
   constructor (
@@ -553,40 +574,75 @@ class isomorphism_t extends morphism_t {
   }
 }
 
-// export
-// function isomorphic_to_polygon (
-//   cod: cell_complex_t
-// ): isomorphism_t {
-//   let size = ;
-//   let dom = new polygon_t (size)
-//   let dic = new_im_dic ()
-//   return new isomorphism_t (dom, cod, dic)
-// }
-
 export
-class bounfold_evidence_t {
-  constructor () {}
+function isomorphic_to_endpoints (
+  cod: cell_complex_t
+): isomorphism_t | null {
+  if (cod.dim !== 1) {
+    return null
+  }
+  let dom = new endpoints_t ()
+  let dic = new_im_dic ()
+  // for (let of ) {
+  //   // TODO
+  //   if () {
+  //     return null
+  //   }
+  // }
+  return new isomorphism_t (dom, cod, dic)
 }
 
-function bounfold_check (
+export
+function isomorphic_to_polygon (
+  cod: cell_complex_t
+): isomorphism_t | null {
+  if (cod.dim !== 2) {
+    return null
+  }
+  let size = cod.point_array () .length;
+  let dom = new polygon_t (size)
+  let dic = new_im_dic ()
+  // for (let of ) {
+  //   // TODO
+  //   if () {
+  //     return null
+  //   }
+  // }
+  return new isomorphism_t (dom, cod, dic)
+}
+
+/**
+ * A n-dim manifold, is a topological space,
+ * each point of which has a n-ball as close neighbourhood.
+
+ * For cell-complex, it is sufficient to check that,
+ * each points of it has a n-sphere as [[vertex_figure_t]].
+ */
+export
+class manifold_evidence_t {
+  // TODO
+
+  constructor () {
+  }
+}
+
+export
+function manifold_check (
   cell_complex: cell_complex_t
-): bounfold_evidence_t {
-  let evidence = new bounfold_evidence_t ()
+): manifold_evidence_t {
+  let evidence = new manifold_evidence_t ()
   // TODO
   return evidence
 }
 
-/**
- * [[bounfold_t]] -- manifold with boundary
- */
 export
-class bounfold_t extends cell_complex_t {
-  readonly bounfold_evidence
-  : bounfold_evidence_t
+class manifold_t extends cell_complex_t {
+  readonly manifold_evidence
+  : manifold_evidence_t
 
   constructor (com: cell_complex_t) {
     super (com.as_builder ())
-    this.bounfold_evidence = bounfold_check (this)
+    this.manifold_evidence = manifold_check (this)
   }
 }
 
@@ -801,29 +857,29 @@ class interval_t extends cell_complex_t {
 export
 class polygon_t extends cell_complex_t {
   readonly size: number
-  readonly point_array: Array <id_t>
-  readonly edge_array: Array <id_t>
+  readonly vertex_array: Array <id_t>
+  readonly side_array: Array <id_t>
 
   constructor (size: number) {
     let bui = new cell_complex_builder_t ()
-    let edge_array = []
-    let point_array = bui.inc_points (size)
+    let side_array = []
+    let vertex_array = bui.inc_points (size)
     let i = 0
     while (i < size - 1) {
-      edge_array.push (
+      side_array.push (
         bui.attach_edge (
-          point_array [i],
-          point_array [i + 1]))
+          vertex_array [i],
+          vertex_array [i + 1]))
       i += 1
     }
-    edge_array.push (
+    side_array.push (
       bui.attach_edge (
-        point_array [size - 1],
-        point_array [0]))
+        vertex_array [size - 1],
+        vertex_array [0]))
     super (bui)
     this.size = size
-    this.point_array = point_array
-    this.edge_array = edge_array
+    this.vertex_array = vertex_array
+    this.side_array = side_array
   }
 }
 
@@ -855,7 +911,7 @@ class face_t extends cell_t {
     let cod = bui.skeleton (1)
     let dic = new_im_dic ()
     for (let i = 0; i < size; i += 1) {
-      let src_id = polygon.edge_array [i]
+      let src_id = polygon.side_array [i]
       let tar_id = circuit [i]
       let src = polygon.get_edge (src_id)
       let tar = bui.get_edge (tar_id)

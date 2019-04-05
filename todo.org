@@ -1,55 +1,23 @@
-- isomorphic_to_polygon
-- manifold_check
-- homology group of cell-complex
-- 2-dim manifold classification
-------
-- use go to test game tree searching
-------
-- semantics of cicada in js
-  { type: { field: <type> }, field: <value> }
-------
-- basic operations for matrix
-- test euclidean_space_t
-- use combinatorial-game to solve the problem of iso
-  - iso is hard because total classification is hard
-    how about classification of manifold
-- learn more about graph graph_iso_t
-  - isomorphism_t is generalized graph_iso_t
-    maybe new ideas
-- why the games of logic seem like one-player game
-- quaternion
-- use euclidean-space to re-imp hackenbush
-- abelian_group_t
-  - classification (normalization)
-    prepare for homology
-- clifford-algebra
-- polytope
-  - a set of n >= 0 points is affinely independent
-    if its affine hull has dimension n − 1,
-    that is, if every proper subset has a smaller affine hull.
+- isomorphic_to_endpoints
 * cell-complex
-- isomorphism_t check
-  - we can use combinatorial-game to solve this
-  - graph_iso_t is a sub-problem of isomorphism_t
-  - same cell_complex has many different isomorphic representations
-    we can not avoid this
-  - when generating the new cell_complex
-    - such as vertex_figure_t and product_complex_t
-    it does not matter how we specify the dic
-  - we need to use isomorphism_t to handle the non unique representation problem
+- isomorphic_to_polygon
+- manifold_check -- for 1-dim and 2-dim first
 - bounfold_check
-- manifold_check
-  - we do not need total isomorphism_t
-  - for 1-dim and 2-dim first
-- cell_check
-- can we encode cell-complex by graph ?
-  - what is "encode something by graph" ?
-    with graph label ?
 - category_t
 - groupoid_t
 - groupoid of 2-dim cell-complex
   - `as_groupoid ()`
   - what is special about manifold's groupoid
+- higher_groupoid_t
+- cell_check -- is im_dic_check enough ?
+- homology group of cell-complex
+- 2-dim manifold classification
+- abelian_group_t
+  - classification (normalization)
+    prepare for homology
+- can we encode cell-complex by graph ?
+  - what is "encode something by graph" ?
+    with graph label ?
 - product_complex_t
 - quotient_complex_t -- self-gluing
 - vertex_figure_t -- 3 dim
@@ -62,10 +30,19 @@
 - boundary operator
   - the boundary of the boundary of a cell_complex_t should be zero
     even if the cell_complex_t is not a bounfold_t
-* cicada
-- game semantics
-- babel api
+* geometry
+- basic operations for matrix
+- test euclidean_space_t
+- quaternion
+- use euclidean-space to re-imp hackenbush
+- clifford-algebra
+- polytope
+  - a set of n >= 0 points is affinely independent
+    if its affine hull has dimension n − 1,
+    that is, if every proper subset has a smaller affine hull.
 * combinatorial-game
+- use go to test game tree searching
+- why the games of logic seem like one-player game
 - fol -- game semantics of first order logic
 - cl -- game semantics of constructive logic
 - aristotle (lukasiewicz) -> de morgan -> peirce
@@ -75,3 +52,8 @@
 - (paper) investigations into game semantics of logic
 - surreal -- the theory of surreal number
   - theory about two-player normal-ending game
+* cicada
+- semantics of cicada in js
+  { type: { field: <type> }, field: <value> }
+- game semantics
+- use babel api to handle the syntax

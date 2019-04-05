@@ -74,7 +74,7 @@ test ("vertex_figure", t => {
   )
 
   torus.get_face (torus.surf)
-    .polygon.point_array.map ((p, i) => {
+    .polygon.vertex_array.map ((p, i) => {
       t.true (
         verf.idx (torus.surf, p) .eq (new cx.id_t (1, i)))
     })
