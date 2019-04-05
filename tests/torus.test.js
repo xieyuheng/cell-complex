@@ -19,9 +19,34 @@ test ("vertex_figure", t => {
   let torus = new torus_t ()
   let verf = new cx.vertex_figure_t (torus, torus.origin)
 
-  log (verf.to_exp ())
+  // log (verf.to_exp ())
 
-  // let iso = new cx.isomorphism_t (new cx.polygon_t (4), verf, dic)
+  let dic = cx.new_im_dic ()
+  dic.set (new cx.id_t (0, 0), new cx.im_t (new cx.id_t (0, 0), cx.empty_cell))
+  dic.set (new cx.id_t (0, 1), new cx.im_t (new cx.id_t (0, 2), cx.empty_cell))
+  dic.set (new cx.id_t (0, 2), new cx.im_t (new cx.id_t (0, 1), cx.empty_cell))
+  dic.set (new cx.id_t (0, 3), new cx.im_t (new cx.id_t (0, 3), cx.empty_cell))
+  let dom = new cx.endpoints_t ()
+  let cod = new cx.discrete_complex_t (4)
+  dic.set (new cx.id_t (1, 0), new cx.im_t (new cx.id_t (1, 0), new cx.cell_t (dom, cod, cx.new_im_dic () .merge_array ([
+    [new cx.id_t (0, 0), new cx.im_t (new cx.id_t (0, 0), cx.empty_cell)],
+    [new cx.id_t (0, 1), new cx.im_t (new cx.id_t (0, 1), cx.empty_cell)],
+  ]))))
+  dic.set (new cx.id_t (1, 1), new cx.im_t (new cx.id_t (1, 1), new cx.cell_t (dom, cod, cx.new_im_dic () .merge_array ([
+    [new cx.id_t (0, 0), new cx.im_t (new cx.id_t (0, 1), cx.empty_cell)],
+    [new cx.id_t (0, 1), new cx.im_t (new cx.id_t (0, 0), cx.empty_cell)],
+  ]))))
+  dic.set (new cx.id_t (1, 2), new cx.im_t (new cx.id_t (1, 2), new cx.cell_t (dom, cod, cx.new_im_dic () .merge_array ([
+    [new cx.id_t (0, 0), new cx.im_t (new cx.id_t (0, 1), cx.empty_cell)],
+    [new cx.id_t (0, 1), new cx.im_t (new cx.id_t (0, 0), cx.empty_cell)],
+  ]))))
+  dic.set (new cx.id_t (1, 3), new cx.im_t (new cx.id_t (1, 3), new cx.cell_t (dom, cod, cx.new_im_dic () .merge_array ([
+    [new cx.id_t (0, 0), new cx.im_t (new cx.id_t (0, 1), cx.empty_cell)],
+    [new cx.id_t (0, 1), new cx.im_t (new cx.id_t (0, 0), cx.empty_cell)],
+  ]))))
+  let iso = new cx.isomorphism_t (new cx.polygon_t (4), verf, dic)
+
+  // log (cx.im_dic_to_exp (dic))
 
   t.true (
     verf.idx (

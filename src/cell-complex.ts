@@ -1,3 +1,5 @@
+import assert from "assert"
+
 import * as _ from "lodash"
 
 import { dic_t } from "./dic"
@@ -114,6 +116,7 @@ function im_dic_has_value_id (
   return false
 }
 
+export
 function new_im_dic (): dic_t <id_t, im_t> {
   return new dic_t (id_to_str)
 }
@@ -202,6 +205,7 @@ class cell_t extends morphism_t {
   }
 }
 
+export
 function im_dic_to_exp (
   dic: dic_t <id_t, im_t>
 ): {
@@ -694,6 +698,7 @@ class empty_cell_t extends cell_t {
   }
 }
 
+export
 const empty_cell = new empty_cell_t ()
 
 //// 0 dimension
