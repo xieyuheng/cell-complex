@@ -1,7 +1,5 @@
 * cell-complex
-- manifold_check -- for 1-dim and 2-dim first
 - refine API
-  - morphism_builder -- for im
   - solve id v.s. cell conflict
     com.id (<name>)
     com.cell (<name>)
@@ -9,6 +7,11 @@
     com.edge (<name>)
     com.face (<name>)
     com.subcomplex (<name>)
+  - morphism_builder -- for im
+    can use id_t related interface functions
+    can also use <name> related interface functions
+- spherical_check
+- manifold_check -- for 1-dim and 2-dim first
 - bounfold_check
 - category_t
 - groupoid_t
@@ -16,9 +19,9 @@
   - `as_groupoid ()`
   - what is special about manifold's groupoid
 - higher_groupoid_t
-- cell_check -- is im_dic_check enough ?
+- cell_check -- is im_dic_compatible_p enough ?
 - homology group of cell-complex
-- 2-dim manifold classification
+- 2-dim manifold classification -- zip of john conway
 - abelian_group_t
   - classification (normalization)
     prepare for homology

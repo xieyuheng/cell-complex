@@ -136,6 +136,9 @@ function new_im_dic (): dic_t <id_t, im_t> {
  * if we allow such map,
  * the inverse of a morphism would be problematic,
  * and the definition of [[im_t]] would be much more complicated.
+
+ * Thus to capture the category of topological spaces,
+ * we also need to use subdivision.
  */
 export
 class morphism_t {
@@ -196,7 +199,7 @@ class morphism_t {
 
 export
 class cell_t extends morphism_t {
-  readonly dom: spherical_complex_t
+  readonly dom: spherical_t
 
   constructor (
     dom: cell_complex_t,
@@ -323,15 +326,19 @@ class cell_complex_t {
     return this.cell_dic.get (id)
   }
 
-  as_spherical (): spherical_complex_t {
-    return new spherical_complex_t (this)
+  as_spherical (): spherical_t {
+    return new spherical_t (this)
   }
 
   get_edge (id: id_t): edge_t {
     if (id.dim !== 1) {
       throw new Error ("dimension mismatch")
     } else {
-      return this.get (id) as edge_t
+      let cell = this.get (id)
+      let endpoints = new endpoints_t ()
+      let start = cell.dic.get (endpoints.start) .id
+      let end = cell.dic.get (endpoints.end) .id
+      return new edge_t (this.as_builder (), start, end)
     }
   }
 
@@ -455,7 +462,6 @@ class cell_complex_builder_t {
 
   inc_one_point (): id_t {
     let id = this.gen_id (0)
-    // this.set (id, new empty_cell_t ())
     this.set (id, empty_cell)
     return id
   }
@@ -794,27 +800,51 @@ class vertex_figure_t extends cell_complex_t {
 }
 
 export
-class spherical_complex_evidence_t {
-  constructor () {}
+class spherical_evidence_t {
+  constructor (
+    readonly dim: number,
+    readonly iso: isomorphism_t | null,
+  ) {}
 }
 
-function spherical_complex_check (
+function spherical_check (
   com: cell_complex_t
-): spherical_complex_evidence_t {
-  let evidence = new spherical_complex_evidence_t ()
-  // TODO
-  return evidence
+): spherical_evidence_t | null {
+  if (com.cell_dic.size === 0) {
+    return new spherical_evidence_t (-1, null)
+  } else if (com.dim === 0) {
+    let iso = isomorphic_to_endpoints (com)
+    if (iso === null) {
+      return null
+    } else {
+      return new spherical_evidence_t (com.dim, iso)
+    }
+  } else if (com.dim === 1) {
+    let iso = isomorphic_to_polygon (com)
+    if (iso === null) {
+      return null
+    } else {
+      return new spherical_evidence_t (com.dim, iso)
+    }
+  } else {
+    console.log ("[warning] can not check dim 2 yet")
+    return null
+  }
 }
 
 export
-class spherical_complex_t extends cell_complex_t {
-  readonly spherical_complex_evidence
-  : spherical_complex_evidence_t
+class spherical_t extends cell_complex_t {
+  readonly spherical_evidence : spherical_evidence_t
 
   constructor (com: cell_complex_t) {
     super (com.as_builder ())
-    this.spherical_complex_evidence =
-      spherical_complex_check (this)
+    this.spherical_evidence = new spherical_evidence_t (-1, null)
+    let spherical_evidence = spherical_check (this)
+//     if (spherical_evidence === null) {
+//       throw new Error ("spherical_check fail")
+//     } else {
+//       this.spherical_evidence = spherical_evidence
+//     }
   }
 }
 
