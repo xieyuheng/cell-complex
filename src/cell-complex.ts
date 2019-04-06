@@ -70,38 +70,43 @@ class im_t {
   }
 }
 
-function im_dic_check_dim (
+function im_dic_dim_compatible_p (
   dom: cell_complex_t,
   cod: cell_complex_t,
   dic: dic_t <id_t, im_t>,
   dim: number,
-) {
+): boolean {
   for (let [id, im] of dic) {
     if (id.dim === dim) {
       for (let [id1, im1] of im.cell.dic) {
         let x = dom.get (id) .dic.get (id1) .id
         let y = cod.get (im.id) .dic.get (im1.id) .id
         if (! dic.get (x) .id.eq (y)) {
-          throw new Error ("check fail")
+          return false
         }
       }
     }
   }
+  return true
 }
 
-function im_dic_check (
+function im_dic_compatible_p (
   dom: cell_complex_t,
   cod: cell_complex_t,
   dic: dic_t <id_t, im_t>,
-) {
+): boolean {
   if (dom.cell_dic.size !== dic.size) {
-    throw new Error ("dic not complete")
+    return false
   }
   let dim = dom.dim
   while (dim > 0) {
-    im_dic_check_dim (dom, cod, dic, dim)
-    dim -= 1
+    if (im_dic_dim_compatible_p (dom, cod, dic, dim)) {
+      dim -= 1
+    } else {
+      return false
+    }
   }
+  return true
 }
 
 function im_dic_has_value_id (
@@ -139,7 +144,9 @@ class morphism_t {
     readonly cod: cell_complex_t,
     readonly dic: dic_t <id_t, im_t>,
   ) {
-    im_dic_check (dom, cod, dic)
+    if (! im_dic_compatible_p (dom, cod, dic)) {
+      throw new Error ("im_dic not compatible")
+    }
   }
 
   get dim (): number {
