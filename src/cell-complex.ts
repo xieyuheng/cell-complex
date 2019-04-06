@@ -500,7 +500,7 @@ class cell_complex_builder_t {
   }
 }
 
-function epimorphism_check (
+function epimorphism_p (
   dom: cell_complex_t,
   cod: cell_complex_t,
   dic: dic_t <id_t, im_t>,
@@ -520,14 +520,14 @@ class epimorphism_t extends morphism_t {
     cod: cell_complex_t,
     dic: dic_t <id_t, im_t>,
   ) {
-    if (! epimorphism_check (dom, cod, dic)) {
-      throw new Error ("epimorphism_check fail")
+    if (! epimorphism_p (dom, cod, dic)) {
+      throw new Error ("not epimorphism")
     }
     super (dom, cod, dic)
   }
 }
 
-function monomorphism_check (
+function monomorphism_p (
   dom: cell_complex_t,
   cod: cell_complex_t,
   dic: dic_t <id_t, im_t>,
@@ -551,19 +551,19 @@ class monomorphism_t extends morphism_t {
     cod: cell_complex_t,
     dic: dic_t <id_t, im_t>,
   ) {
-    if (! monomorphism_check (dom, cod, dic)) {
-      throw new Error ("monomorphism_check fail")
+    if (! monomorphism_p (dom, cod, dic)) {
+      throw new Error ("not monomorphism")
     }
     super (dom, cod, dic)
   }
 }
 
-function isomorphism_check (
+function isomorphism_p (
   dom: cell_complex_t,
   cod: cell_complex_t,
   dic: dic_t <id_t, im_t>,
 ): boolean {
-  return epimorphism_check (dom, cod, dic) && monomorphism_check (dom, cod, dic)
+  return epimorphism_p (dom, cod, dic) && monomorphism_p (dom, cod, dic)
 }
 
 /**
@@ -579,8 +579,8 @@ class isomorphism_t extends morphism_t {
     cod: cell_complex_t,
     dic: dic_t <id_t, im_t>,
   ) {
-    if (! isomorphism_check (dom, cod, dic)) {
-      throw new Error ("isomorphism_check fail")
+    if (! isomorphism_p (dom, cod, dic)) {
+      throw new Error ("not isomorphism")
     }
     super (dom, cod, dic)
   }
@@ -628,18 +628,22 @@ function isomorphic_to_polygon (
   let edge_id_set = new Set ()
   for (let side_id of polygon.side_array) {
     let side = polygon.get_edge (side_id)
-    vertex = side.endpoints.end
+    vertex = side.end
     let edge_id: id_t | null = null
     for (let id of com.id_in_dim (1)) {
       if (! edge_id_set.has (id)) {
         let edge = com.get_edge (id)
-        if (edge.endpoints.start.eq (point)) {
-          point = edge.endpoints.end
+        if (edge.start.eq (point)) {
+          point = edge.end
           edge_id = id
+          edge_id_set.add (id)
+          dic.set (vertex, new im_t (point, empty_cell))
           break
-        } else if (edge.endpoints.end.eq (point)) {
-          point = edge.endpoints.start
+        } else if (edge.end.eq (point)) {
+          point = edge.start
           edge_id = id.rev ()
+          edge_id_set.add (id)
+          dic.set (vertex, new im_t (point, empty_cell))
           break
         }
       }
@@ -648,34 +652,28 @@ function isomorphic_to_polygon (
       return null
     }
     let edge = com.get_edge (edge_id)
-    dic.set (
-      side.endpoints.end,
-      new im_t (edge.endpoints.end, empty_cell))
     let boundary_dic = new_im_dic ()
     if (edge_id instanceof rev_id_t) {
       boundary_dic.merge_array ([
         [side.endpoints.start, new im_t (
-          edge.endpoints.start, empty_cell)],
-        [side.endpoints.end, new im_t (
           edge.endpoints.end, empty_cell)],
+        [side.endpoints.end, new im_t (
+          edge.endpoints.start, empty_cell)],
       ])
     } else {
       boundary_dic.merge_array ([
         [side.endpoints.start, new im_t (
-          edge.endpoints.end, empty_cell)],
-        [side.endpoints.end, new im_t (
           edge.endpoints.start, empty_cell)],
+        [side.endpoints.end, new im_t (
+          edge.endpoints.end, empty_cell)],
       ])
     }
     dic.set (
       side_id,
       new im_t (edge_id, new cell_t (
         side.endpoints, polygon.skeleton (0), boundary_dic)))
-    if (true) {
-      return null
-    }
   }
-  if (isomorphism_check (polygon, com, dic)) {
+  if (isomorphism_p (polygon, com, dic)) {
     return new isomorphism_t (polygon, com, dic)
   } else {
     return null
@@ -687,7 +685,7 @@ function isomorphic_to_polygon (
  * each point of which has a n-ball as close neighbourhood.
 
  * For cell-complex, it is sufficient to check that,
- * each points of it has a n-sphere as [[vertex_figure_t]].
+ * each points of it has a (n-1)-sphere as [[vertex_figure_t]].
  */
 export
 class manifold_evidence_t {
@@ -699,7 +697,7 @@ class manifold_evidence_t {
 
 export
 function manifold_check (
-  cell_complex: cell_complex_t
+  com: cell_complex_t
 ): manifold_evidence_t {
   let evidence = new manifold_evidence_t ()
   // TODO
@@ -794,7 +792,7 @@ class spherical_complex_evidence_t {
 }
 
 function spherical_complex_check (
-  cell_complex: cell_complex_t
+  com: cell_complex_t
 ): spherical_complex_evidence_t {
   let evidence = new spherical_complex_evidence_t ()
   // TODO

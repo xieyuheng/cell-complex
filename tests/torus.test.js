@@ -50,6 +50,8 @@ test ("vertex_figure", t => {
   let iso2 = cx.isomorphic_to_polygon (verf)
   // log (iso2.to_exp ())
 
+  t.true (iso2.eq (iso))
+
   t.true (
     verf.idx (
       torus.polo,
