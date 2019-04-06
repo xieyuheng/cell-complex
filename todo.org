@@ -10,7 +10,6 @@
   - morphism_builder -- for im
     can use id_t related interface functions
     can also use <name> related interface functions
-- spherical_check
 - manifold_check -- for 1-dim and 2-dim first
 - bounfold_check
 - category_t

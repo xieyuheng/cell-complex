@@ -838,13 +838,12 @@ class spherical_t extends cell_complex_t {
 
   constructor (com: cell_complex_t) {
     super (com.as_builder ())
-    this.spherical_evidence = new spherical_evidence_t (-1, null)
     let spherical_evidence = spherical_check (this)
-//     if (spherical_evidence === null) {
-//       throw new Error ("spherical_check fail")
-//     } else {
-//       this.spherical_evidence = spherical_evidence
-//     }
+    if (spherical_evidence === null) {
+      throw new Error ("spherical_check fail")
+    } else {
+      this.spherical_evidence = spherical_evidence
+    }
   }
 }
 
