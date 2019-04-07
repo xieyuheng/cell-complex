@@ -23,30 +23,18 @@ test ("vertex_figure", t => {
 
   // log (verf.to_exp ())
 
-  let dic = new cx.im_dic_t ()
-  dic.set (new cx.id_t (0, 0), new cx.im_t (new cx.id_t (0, 0), cx.empty_cell))
-  dic.set (new cx.id_t (0, 1), new cx.im_t (new cx.id_t (0, 2), cx.empty_cell))
-  dic.set (new cx.id_t (0, 2), new cx.im_t (new cx.id_t (0, 1), cx.empty_cell))
-  dic.set (new cx.id_t (0, 3), new cx.im_t (new cx.id_t (0, 3), cx.empty_cell))
-  let dom = new cx.endpoints_t ()
-  let cod = new cx.discrete_complex_t (4)
-  dic.set (new cx.id_t (1, 0), new cx.im_t (new cx.id_t (1, 0), new cx.cell_t (dom, cod, new cx.im_dic_t () .merge_array ([
-    [new cx.id_t (0, 0), new cx.im_t (new cx.id_t (0, 0), cx.empty_cell)],
-    [new cx.id_t (0, 1), new cx.im_t (new cx.id_t (0, 1), cx.empty_cell)],
-  ]))))
-  dic.set (new cx.id_t (1, 1), new cx.im_t (new cx.id_t (1, 1), new cx.cell_t (dom, cod, new cx.im_dic_t () .merge_array ([
-    [new cx.id_t (0, 0), new cx.im_t (new cx.id_t (0, 1), cx.empty_cell)],
-    [new cx.id_t (0, 1), new cx.im_t (new cx.id_t (0, 0), cx.empty_cell)],
-  ]))))
-  dic.set (new cx.id_t (1, 2), new cx.im_t (new cx.id_t (1, 2), new cx.cell_t (dom, cod, new cx.im_dic_t () .merge_array ([
-    [new cx.id_t (0, 0), new cx.im_t (new cx.id_t (0, 1), cx.empty_cell)],
-    [new cx.id_t (0, 1), new cx.im_t (new cx.id_t (0, 0), cx.empty_cell)],
-  ]))))
-  dic.set (new cx.id_t (1, 3), new cx.im_t (new cx.id_t (1, 3), new cx.cell_t (dom, cod, new cx.im_dic_t () .merge_array ([
-    [new cx.id_t (0, 0), new cx.im_t (new cx.id_t (0, 1), cx.empty_cell)],
-    [new cx.id_t (0, 1), new cx.im_t (new cx.id_t (0, 0), cx.empty_cell)],
-  ]))))
-  let iso = new cx.isomorphism_t (new cx.polygon_t (4), verf, dic)
+  let iso = new cx.morphism_builder_t (
+    new cx.polygon_t (4), verf
+  ) .point_ser (0, 0)
+    .point_ser (1, 2)
+    .point_ser (2, 1)
+    .point_ser (3, 3)
+    .edge_ser (0, 0)
+    .edge_ser_rev (1, 1)
+    .edge_ser_rev (2, 2)
+    .edge_ser_rev (3, 3)
+    .build_isomorphism ()
+
   // log (iso.to_exp ())
 
   let iso2 = cx.isomorphic_to_polygon (verf)
