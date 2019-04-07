@@ -1,7 +1,6 @@
 {
   "compilerOptions": {
     "target": "esnext",
-    // "target": "es6",
     // "module": "umd",
     "module": "commonjs",
     // "moduleResolution": "node",

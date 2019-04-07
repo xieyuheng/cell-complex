@@ -13,6 +13,8 @@ test ("from_exp", t => {
   let exp = torus.to_exp ()
   let com = cx.cell_complex_t.from_exp (exp)
   t.deepEqual (exp, com.to_exp ())
+
+  // log (torus.to_exp ())
 })
 
 test ("vertex_figure", t => {

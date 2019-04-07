@@ -2,10 +2,10 @@
 - refine API
   - solve id v.s. cell conflict
     com.id (<name>)
-    com.cell (<name>)
-    com.point (<name>)
-    com.edge (<name>)
-    com.face (<name>)
+    com.cell (<name> | number)
+    com.point (<name> | number)
+    com.edge (<name> | number)
+    com.face (<name> | number)
     com.subcomplex (<name>)
   - morphism_builder -- for im
     can use id_t related interface functions

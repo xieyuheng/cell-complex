@@ -331,23 +331,11 @@ class cell_complex_t {
   }
 
   get_edge (id: id_t): edge_t {
-    if (id.dim !== 1) {
-      throw new Error ("dimension mismatch")
-    } else {
-      let cell = this.get (id)
-      let endpoints = new endpoints_t ()
-      let start = cell.dic.get (endpoints.start) .id
-      let end = cell.dic.get (endpoints.end) .id
-      return new edge_t (this.as_builder (), start, end)
-    }
+    return this.as_builder () .get_edge (id)
   }
 
   get_face (id: id_t): face_t {
-    if (id.dim !== 2) {
-      throw new Error ("dimension mismatch")
-    } else {
-      return this.get (id) as face_t
-    }
+    return this.as_builder () .get_face (id)
   }
 
   as_builder (): cell_complex_builder_t {
@@ -492,7 +480,11 @@ class cell_complex_builder_t {
     if (id.dim !== 1) {
       throw new Error ("dimension mismatch")
     } else {
-      return this.get (id) as edge_t
+      let cell = this.get (id)
+      let endpoints = new endpoints_t ()
+      let start = cell.dic.get (endpoints.start) .id
+      let end = cell.dic.get (endpoints.end) .id
+      return new edge_t (this, start, end)
     }
   }
 
@@ -500,6 +492,10 @@ class cell_complex_builder_t {
     if (id.dim !== 2) {
       throw new Error ("dimension mismatch")
     } else {
+      let cell = this.get (id)
+      // TODO
+      // let circuit = ;
+      // return new face_t (this, circuit)
       return this.get (id) as face_t
     }
   }
@@ -693,6 +689,65 @@ function isomorphic_to_polygon (
   }
 }
 
+function find_next_edge_id (
+  com: cell_complex_t,
+  point: id_t,
+  edge_id_set: Set <id_t>,
+): [id_t, id_t] | null {
+  for (let id of com.id_in_dim (1)) {
+    if (! edge_id_set.has (id)) {
+      let edge = com.get_edge (id)
+      if (edge.start.eq (point)) {
+        point = edge.end
+        edge_id_set.add (id)
+        return [point, id]
+      } else if (edge.end.eq (point)) {
+        point = edge.start
+        edge_id_set.add (id)
+        return [point, id.rev ()]
+      }
+    }
+  }
+  return null
+}
+
+export
+function isomorphic_to_polygon2 (
+  com: cell_complex_t
+): isomorphism_t | null {
+  if (com.dim !== 1) {
+    return null
+  }
+  let size = com.size_of_dim (0)
+  if (size !== com.size_of_dim (1)) {
+    return null
+  }
+  if (size < 1) {
+    return null
+  }
+  let circuit = new Array ()
+  let { value: point } = com.id_in_dim (0) .next ()
+  let edge_id_set = new Set ()
+  console.log (">>>")
+  for (let i = 0; i < size; i++) {
+    console.log (i)
+    let found = find_next_edge_id (com, point, edge_id_set)
+    if (found === null) {
+      return null
+    } else {
+      let [next_point, id] = found
+      circuit.push (id)
+      point = next_point
+    }
+  }
+  let face = new face_t (com.as_builder (), circuit)
+  if (isomorphism_p (face.dom, face.cod, face.dic)) {
+    return new isomorphism_t (face.dom, face.cod, face.dic)
+  } else {
+    return null
+  }
+}
+
 /**
  * A n-dim manifold, is a topological space,
  * each point of which has a n-ball as close neighbourhood.
@@ -803,15 +858,15 @@ export
 class spherical_evidence_t {
   constructor (
     readonly dim: number,
-    readonly iso: isomorphism_t | null,
+    readonly iso: isomorphism_t,
   ) {}
 }
 
 function spherical_check (
   com: cell_complex_t
 ): spherical_evidence_t | null {
-  if (com.cell_dic.size === 0) {
-    return new spherical_evidence_t (-1, null)
+  if (com.eq (empty_complex)) {
+    return new spherical_evidence_t (-1, empty_isomorphism)
   } else if (com.dim === 0) {
     let iso = isomorphic_to_endpoints (com)
     if (iso === null) {
@@ -847,7 +902,7 @@ class spherical_t extends cell_complex_t {
   }
 }
 
-//// empty
+//// -1 dimension
 
 export
 class empty_complex_t extends cell_complex_t {
@@ -857,6 +912,26 @@ class empty_complex_t extends cell_complex_t {
 }
 
 const empty_complex = new empty_complex_t ()
+
+export
+class empty_morphism_t extends morphism_t {
+  constructor () {
+    super (
+      empty_complex,
+      empty_complex,
+      new_im_dic (),
+    )
+  }
+}
+
+export
+const empty_morphism = new empty_morphism_t ()
+
+export
+const empty_isomorphism = new isomorphism_t (
+  empty_morphism.dom,
+  empty_morphism.cod,
+  empty_morphism.dic)
 
 export
 class empty_cell_t extends cell_t {
