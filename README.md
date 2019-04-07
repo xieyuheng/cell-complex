@@ -1,10 +1,4 @@
-> 唯夫蟬之清素兮 潛厥類乎太陰  
-> 在炎陽之仲夏兮 始游豫乎芳林  
-> 實淡泊而寡欲兮 獨咍樂而長吟  
-> 聲噭噭而彌厲兮 似貞士之介心  
-> -- 蟬賦 曹植  
-
-# Cicada Language // 蟬語
+# Cicada Language
 
 Aims:
 - Formalize mathematical structures in existing languages
