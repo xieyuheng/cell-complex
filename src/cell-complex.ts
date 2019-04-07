@@ -128,11 +128,6 @@ class im_dic_t extends dic_t <id_t, im_t> {
   }
 }
 
-export
-function new_im_dic (): im_dic_t {
-  return new im_dic_t ()
-}
-
 /**
  * Note that,
  * The category induced by this `morphism_t`
@@ -621,81 +616,6 @@ function isomorphic_to_endpoints (
   return new isomorphism_t (endpoints, com, dic)
 }
 
-export
-function isomorphic_to_polygon (
-  com: cell_complex_t
-): isomorphism_t | null {
-  if (com.dim !== 1) {
-    return null
-  }
-  let size = com.size_of_dim (0)
-  if (size !== com.size_of_dim (1)) {
-    return null
-  }
-  if (size < 1) {
-    return null
-  }
-  let polygon = new polygon_t (size)
-  let dic = new im_dic_t ()
-  let vertex = polygon.vertex_array [0]
-  let { value: first_id } = com.id_in_dim (0) .next ()
-  let point = first_id
-  dic.set (vertex, new im_t (point, empty_cell))
-  let edge_id_set = new Set ()
-  for (let side_id of polygon.side_array) {
-    let side = polygon.get_edge (side_id)
-    vertex = side.end
-    let edge_id: id_t | null = null
-    for (let id of com.id_in_dim (1)) {
-      if (! edge_id_set.has (id)) {
-        let edge = com.get_edge (id)
-        if (edge.start.eq (point)) {
-          point = edge.end
-          edge_id = id
-          edge_id_set.add (id)
-          dic.set (vertex, new im_t (point, empty_cell))
-          break
-        } else if (edge.end.eq (point)) {
-          point = edge.start
-          edge_id = id.rev ()
-          edge_id_set.add (id)
-          dic.set (vertex, new im_t (point, empty_cell))
-          break
-        }
-      }
-    }
-    if (edge_id === null) {
-      return null
-    }
-    let edge = com.get_edge (edge_id)
-    let boundary_dic = new im_dic_t ()
-    if (edge_id instanceof rev_id_t) {
-      boundary_dic.merge_array ([
-        [side.endpoints.start, new im_t (
-          edge.endpoints.end, empty_cell)],
-        [side.endpoints.end, new im_t (
-          edge.endpoints.start, empty_cell)],
-      ])
-    } else {
-      boundary_dic.merge_array ([
-        [side.endpoints.start, new im_t (
-          edge.endpoints.start, empty_cell)],
-        [side.endpoints.end, new im_t (
-          edge.endpoints.end, empty_cell)],
-      ])
-    }
-    dic.set (
-      side_id,
-      new im_t (edge_id, new cell_t (
-        side.endpoints, polygon.skeleton (0), boundary_dic)))
-  }
-  if (isomorphism_p (polygon, com, dic)) {
-    return new isomorphism_t (polygon, com, dic)
-  } else {
-    return null
-  }
-}
-
 function find_next_edge_id (
   com: cell_complex_t,
   point: id_t,
@@ -719,7 +639,7 @@ function find_next_edge_id (
 }
 
 export
-function isomorphic_to_polygon2 (
+function isomorphic_to_polygon (
   com: cell_complex_t
 ): isomorphism_t | null {
   if (com.dim !== 1) {
@@ -735,9 +655,7 @@ function isomorphic_to_polygon2 (
   let circuit = new Array ()
   let { value: point } = com.id_in_dim (0) .next ()
   let edge_id_set = new Set ()
-  console.log (">>>")
   for (let i = 0; i < size; i++) {
-    console.log (i)
     let found = find_next_edge_id (com, point, edge_id_set)
     if (found === null) {
       return null
@@ -747,9 +665,10 @@ function isomorphic_to_polygon2 (
       point = next_point
     }
   }
-  let face = new face_t (com.as_builder (), circuit)
-  if (isomorphism_p (face.dom, face.cod, face.dic)) {
-    return new isomorphism_t (face.dom, face.cod, face.dic)
+  let polygon = new polygon_t (size)
+  let dic = build_dic_from_circuit (polygon, com, circuit)
+  if (isomorphism_p (polygon, com, dic)) {
+    return new isomorphism_t (polygon, com, dic)
   } else {
     return null
   }
@@ -1084,9 +1003,43 @@ class rev_id_t extends id_t {
 
 type circuit_t = Array <id_t>
 
-// function build_dic_from_circuit (): im_dic_t {
-
-// }
+function build_dic_from_circuit (
+  polygon: polygon_t,
+  cod: cell_complex_t,
+  circuit: circuit_t,
+): im_dic_t {
+  let size = polygon.size
+  let dic = new im_dic_t ()
+  for (let i = 0; i < size; i += 1) {
+    let src_id = polygon.side_array [i]
+    let tar_id = circuit [i]
+    let src = polygon.get_edge (src_id)
+    let tar = cod.get_edge (tar_id)
+    let boundary_dic = new im_dic_t ()
+    if (tar_id instanceof rev_id_t) {
+      boundary_dic.set (
+        src.endpoints.start,
+        new im_t (tar.endpoints.end, empty_cell))
+      boundary_dic.set (
+        src.endpoints.end,
+        new im_t (tar.endpoints.start, empty_cell))
+      dic.set (src.start, new im_t (tar.end, empty_cell))
+      dic.set (src.end, new im_t (tar.start, empty_cell))
+    } else {
+      boundary_dic.set (
+        src.endpoints.start,
+        new im_t (tar.endpoints.start, empty_cell))
+      boundary_dic.set (
+        src.endpoints.end,
+        new im_t (tar.endpoints.end, empty_cell))
+      dic.set (src.start, new im_t (tar.start, empty_cell))
+      dic.set (src.end, new im_t (tar.end, empty_cell))
+    }
+    dic.set (src_id, new im_t (
+      tar_id, new cell_t (src.dom, tar.dom, boundary_dic)))
+  }
+  return dic
+}
 
 export
 class face_t extends cell_t {
@@ -1100,35 +1053,7 @@ class face_t extends cell_t {
     let size = circuit.length
     let polygon = new polygon_t (size)
     let cod = bui.skeleton (1)
-    let dic = new im_dic_t ()
-    for (let i = 0; i < size; i += 1) {
-      let src_id = polygon.side_array [i]
-      let tar_id = circuit [i]
-      let src = polygon.get_edge (src_id)
-      let tar = bui.get_edge (tar_id)
-      let boundary_dic = new im_dic_t ()
-      if (tar_id instanceof rev_id_t) {
-        boundary_dic.set (
-          src.endpoints.start,
-          new im_t (tar.endpoints.end, empty_cell))
-        boundary_dic.set (
-          src.endpoints.end,
-          new im_t (tar.endpoints.start, empty_cell))
-        dic.set (src.start, new im_t (tar.end, empty_cell))
-        dic.set (src.end, new im_t (tar.start, empty_cell))
-      } else {
-        boundary_dic.set (
-          src.endpoints.start,
-          new im_t (tar.endpoints.start, empty_cell))
-        boundary_dic.set (
-          src.endpoints.end,
-          new im_t (tar.endpoints.end, empty_cell))
-        dic.set (src.start, new im_t (tar.start, empty_cell))
-        dic.set (src.end, new im_t (tar.end, empty_cell))
-      }
-      dic.set (src_id, new im_t (
-        tar_id, new cell_t (src.dom, tar.dom, boundary_dic)))
-    }
+    let dic = build_dic_from_circuit (polygon, cod, circuit)
     super (polygon, cod, dic)
     this.circuit = circuit
     this.polygon = polygon
