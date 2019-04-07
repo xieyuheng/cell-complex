@@ -339,12 +339,14 @@ interface morphism_exp_t {
 export
 class cell_complex_t {
   readonly cell_dic: dic_t <id_t, cell_t>
+  protected name_dic: dic_t <string, id_t>
 
   constructor (
-    builder: cell_complex_builder_t =
+    bui: cell_complex_builder_t =
       new cell_complex_builder_t ()
   ) {
-    this.cell_dic = builder.cell_dic.clone ()
+    this.cell_dic = bui.cell_dic.clone ()
+    this.name_dic = bui.name_dic.clone ()
   }
 
   get dim (): number {
@@ -392,7 +394,7 @@ class cell_complex_t {
     }
   }
 
-  point_array (): Array <id_t> {
+  point_id_array (): Array <id_t> {
     return Array.from (this.points ())
   }
 
@@ -489,14 +491,50 @@ class cell_complex_t {
   gteq (that: cell_complex_t): boolean {
     return that.lteq (this)
   }
+
+  define_point (name: string, id: id_t): cell_complex_t {
+    assert (id.dim === 0)
+    this.name_dic.set (name, id)
+    return this
+  }
+
+  define_edge (name: string, id: id_t): cell_complex_t {
+    assert (id.dim === 1)
+    this.name_dic.set (name, id)
+    return this
+  }
+
+  define_face (name: string, id: id_t): cell_complex_t {
+    assert (id.dim === 2)
+    this.name_dic.set (name, id)
+    return this
+  }
+
+  id (name: string): id_t {
+    return this.name_dic.get (name)
+  }
+
+  cell (name: string): cell_t {
+    return this.get (this.id (name))
+  }
+
+  edge (name: string): edge_t {
+    return this.get_edge (this.id (name))
+  }
+
+  face (name: string): face_t {
+    return this.get_face (this.id (name))
+  }
 }
 
 export
 class cell_complex_builder_t {
   cell_dic: dic_t <id_t, cell_t>
+  name_dic: dic_t <string, id_t>
 
   constructor () {
     this.cell_dic = new dic_t (id_to_str)
+    this.name_dic = new dic_t ()
   }
 
   get dim (): number {
@@ -684,7 +722,7 @@ function isomorphic_to_endpoints (
   if (size !== 2) {
     return null
   }
-  let [start, end] = com.point_array ()
+  let [start, end] = com.point_id_array ()
   let endpoints = new endpoints_t ()
   let dic = new morphism_builder_t (
     endpoints, com
@@ -988,6 +1026,9 @@ class endpoints_t extends discrete_complex_t {
     super (2)
     this.start = this.idx (0)
     this.end = this.idx (1)
+    this
+      .define_point ("start", this.start)
+      .define_point ("end", this.end)
   }
 }
 
@@ -1043,29 +1084,29 @@ class interval_t extends cell_complex_t {
 export
 class polygon_t extends cell_complex_t {
   readonly size: number
-  readonly vertex_array: Array <id_t>
-  readonly side_array: Array <id_t>
+  readonly vertex_id_array: Array <id_t>
+  readonly side_id_array: Array <id_t>
 
   constructor (size: number) {
     let bui = new cell_complex_builder_t ()
-    let side_array = []
-    let vertex_array = bui.inc_points (size)
+    let side_id_array = []
+    let vertex_id_array = bui.inc_points (size)
     let i = 0
     while (i < size - 1) {
-      side_array.push (
+      side_id_array.push (
         bui.attach_edge (
-          vertex_array [i],
-          vertex_array [i + 1]))
+          vertex_id_array [i],
+          vertex_id_array [i + 1]))
       i += 1
     }
-    side_array.push (
+    side_id_array.push (
       bui.attach_edge (
-        vertex_array [size - 1],
-        vertex_array [0]))
+        vertex_id_array [size - 1],
+        vertex_id_array [0]))
     super (bui)
     this.size = size
-    this.vertex_array = vertex_array
-    this.side_array = side_array
+    this.vertex_id_array = vertex_id_array
+    this.side_id_array = side_id_array
   }
 }
 
@@ -1091,7 +1132,7 @@ function polygon_zip_circuit (
   let size = polygon.size
   let bui = new morphism_builder_t (polygon, cod)
   for (let i = 0; i < size; i += 1) {
-    let src_id = polygon.side_array [i]
+    let src_id = polygon.side_id_array [i]
     let tar_id = circuit [i]
     let src = polygon.get_edge (src_id)
     let tar = cod.get_edge (tar_id)

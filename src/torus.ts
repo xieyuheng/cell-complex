@@ -3,11 +3,6 @@ import * as cx from "./cell-complex"
 
 export
 class torus_t extends cx.cell_complex_t {
-  readonly origin: cx.id_t
-  readonly polo: cx.id_t
-  readonly toro: cx.id_t
-  readonly surf: cx.id_t
-
   constructor () {
     let bui = new cx.cell_complex_builder_t ()
     let origin = bui.inc_one_point ()
@@ -17,9 +12,10 @@ class torus_t extends cx.cell_complex_t {
       polo, toro, polo.rev (), toro.rev (),
     ])
     super (bui)
-    this.origin = origin
-    this.polo = polo
-    this.toro = toro
-    this.surf = surf
+    this
+      .define_point ("origin", origin)
+      .define_edge ("polo", polo)
+      .define_edge ("toro", toro)
+      .define_face ("surf", surf)
   }
 }

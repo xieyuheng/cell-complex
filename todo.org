@@ -1,11 +1,5 @@
 * cell-complex
-- [refine API] solve id v.s. cell conflict
-  com.id (<name>)
-  com.cell (<name> | number)
-  com.point (<name> | number)
-  com.edge (<name> | number)
-  com.face (<name> | number)
-  com.subcomplex (<name>)
+- use ts in tests
 - [refine API] auto compatible in morphism_builder_t
 - fix `get_face`
 - manifold_check -- for 1-dim and 2-dim first

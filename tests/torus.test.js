@@ -19,7 +19,7 @@ test ("from_exp", t => {
 
 test ("vertex_figure", t => {
   let torus = new torus_t ()
-  let verf = new cx.vertex_figure_t (torus, torus.origin)
+  let verf = new cx.vertex_figure_t (torus, torus.id ("origin"))
 
   // log (verf.to_exp ())
 
@@ -44,32 +44,31 @@ test ("vertex_figure", t => {
 
   t.true (
     verf.idx (
-      torus.polo,
-      torus.get_edge (torus.polo) .endpoints.start,
+      torus.id ("polo"),
+      torus.edge ("polo") .endpoints.id ("start"),
     ) .eq (new cx.id_t (0, 0))
   )
   t.true (
     verf.idx (
-      torus.polo,
-      torus.get_edge (torus.polo) .endpoints.end,
+      torus.id ("polo"),
+      torus.edge ("polo") .endpoints.id ("end"),
     ) .eq (new cx.id_t (0, 1))
   )
   t.true (
     verf.idx (
-      torus.toro,
-      torus.get_edge (torus.toro) .endpoints.start,
+      torus.id ("toro"),
+      torus.edge ("toro") .endpoints.id ("start"),
     ) .eq (new cx.id_t (0, 2))
   )
   t.true (
     verf.idx (
-      torus.toro,
-      torus.get_edge (torus.toro) .endpoints.end,
+      torus.id ("toro"),
+      torus.edge ("toro") .endpoints.id ("end"),
     ) .eq (new cx.id_t (0, 3))
   )
 
-  torus.get_face (torus.surf)
-    .polygon.vertex_array.map ((p, i) => {
-      t.true (
-        verf.idx (torus.surf, p) .eq (new cx.id_t (1, i)))
-    })
+  torus.face ("surf") .polygon.vertex_id_array.map ((p, i) => {
+    t.true (
+      verf.idx (torus.id ("surf"), p) .eq (new cx.id_t (1, i)))
+  })
 })
