@@ -34,13 +34,15 @@ test ("vertex_figure", t => {
     .edge_ser_rev (2, 2)
     .edge_ser_rev (3, 3)
     .build_isomorphism ()
-
   // log (iso.to_exp ())
 
   let iso2 = cx.isomorphic_to_polygon (verf)
-  // log (iso2.to_exp ())
-
-  t.true (iso2.eq (iso))
+  if (iso2 === null) {
+    t.fail ()
+  } else {
+    // log (iso2.to_exp ())
+    t.true (iso2.eq (iso))
+  }
 
   t.true (
     verf.idx (

@@ -598,8 +598,8 @@ class cell_complex_builder_t {
     } else {
       let cell = this.get (id)
       let endpoints = new endpoints_t ()
-      let start = cell.dic.get (endpoints.start) .id
-      let end = cell.dic.get (endpoints.end) .id
+      let start = cell.dic.get (endpoints.id ("start")) .id
+      let end = cell.dic.get (endpoints.id ("end")) .id
       return new edge_t (this, start, end)
     }
   }
@@ -726,8 +726,8 @@ function isomorphic_to_endpoints (
   let endpoints = new endpoints_t ()
   let dic = new morphism_builder_t (
     endpoints, com
-  ) .point (endpoints.start, start)
-    .point (endpoints.end, end)
+  ) .point (endpoints.id ("start"), start)
+    .point (endpoints.id ("end"), end)
     .build_im_dic ()
   return new isomorphism_t (endpoints, com, dic)
 }
@@ -1009,26 +1009,20 @@ class discrete_complex_t extends cell_complex_t {
 
 export
 class singleton_t extends discrete_complex_t {
-  readonly point: id_t
-
   constructor () {
     super (1)
-    this.point = this.idx (0)
+    this
+      .define_point ("point", this.idx (0))
   }
 }
 
 export
 class endpoints_t extends discrete_complex_t {
-  readonly start: id_t
-  readonly end: id_t
-
   constructor () {
     super (2)
-    this.start = this.idx (0)
-    this.end = this.idx (1)
     this
-      .define_point ("start", this.start)
-      .define_point ("end", this.end)
+      .define_point ("start", this.idx (0))
+      .define_point ("end", this.idx (1))
   }
 }
 
@@ -1054,8 +1048,8 @@ class edge_t extends cell_t {
     let cod = bui.skeleton (0)
     let dic = new morphism_builder_t (
       endpoints, cod
-    ) .point (endpoints.start, start)
-      .point (endpoints.end, end)
+    ) .point (endpoints.id ("start"), start)
+      .point (endpoints.id ("end"), end)
       .build_im_dic ()
     super (endpoints, cod, dic)
     this.start = start
@@ -1066,18 +1060,17 @@ class edge_t extends cell_t {
 
 export
 class interval_t extends cell_complex_t {
-  readonly start: id_t
-  readonly end: id_t
-  readonly inter: id_t
-
   constructor () {
-    let com = new endpoints_t ()
-    let bui = com.as_builder ()
-    let inter = bui.attach_edge (com.start, com.end)
+    let endpoints = new endpoints_t ()
+    let bui = endpoints.as_builder ()
+    let start = endpoints.id ("start")
+    let end = endpoints.id ("end")
+    let inter = bui.attach_edge (start, end)
     super (bui)
-    this.start = com.start
-    this.end = com.end
-    this.inter = inter
+    this
+      .define_point ("start", start)
+      .define_point ("end", end)
+      .define_edge ("inter", inter)
   }
 }
 

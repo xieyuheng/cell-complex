@@ -1,8 +1,7 @@
 * cell-complex
-- use ts in tests
+- manifold_check -- for 1-dim and 2-dim first
 - [refine API] auto compatible in morphism_builder_t
 - fix `get_face`
-- manifold_check -- for 1-dim and 2-dim first
 - bounfold_check
 - category_t
 - groupoid_t
