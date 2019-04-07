@@ -1,4 +1,10 @@
 * cell-complex
+- homology group of cell-complex
+- abelian_group_t
+  - classification (normalization)
+    prepare for homology
+- 2-dim manifold classification -- zip of john conway
+- vuepress for docs
 - [refine API] auto compatible in morphism_builder_t
 - fix `get_face`
 - bounfold_check
@@ -9,11 +15,6 @@
   - what is special about manifold's groupoid
 - higher_groupoid_t
 - cell_check -- is im_dic_compatible_p enough ?
-- homology group of cell-complex
-- 2-dim manifold classification -- zip of john conway
-- abelian_group_t
-  - classification (normalization)
-    prepare for homology
 - can we encode cell-complex by graph ?
   - what is "encode something by graph" ?
     with graph label ?

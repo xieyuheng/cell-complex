@@ -11,11 +11,23 @@ test ("cell_complex_t eq", t => {
 })
 
 test ("manifold_check", t => {
-  let interval = new cx.interval_t ()
-  let manifold_evidence = cx.manifold_check (interval)
-  if (manifold_evidence === null) {
-    t.pass ()
-  } else {
-    t.fail ()
+  {
+    let interval = new cx.interval_t ()
+    let manifold_evidence = cx.manifold_check (interval)
+    if (manifold_evidence === null) {
+      t.pass ()
+    } else {
+      t.fail ()
+    }
+  }
+
+  {
+    let hundred_gon = new cx.polygon_t (100)
+    let manifold_evidence = cx.manifold_check (hundred_gon)
+    if (manifold_evidence === null) {
+      t.fail ()
+    } else {
+      t.pass ()
+    }
   }
 })
