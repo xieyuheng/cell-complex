@@ -5,13 +5,13 @@ export
 abstract class game_t <P, S, C> {
   abstract choices (p: P, s: S): Array <C>
 
-  abstract choose (p: P, ch: C, s: S): S
+  abstract choose (p: P, c: C, s: S): S
 
   abstract win_p (p: P, s: S): boolean
 
-  valid_choice_p (p: P, ch: C, s: S): boolean {
+  valid_choice_p (p: P, c: C, s: S): boolean {
     let choices = this.choices (p, s)
-    return choices.some ((x) => _.isEqual (x, ch))
+    return choices.some ((x) => _.isEqual (x, c))
   }
 }
 
@@ -95,20 +95,20 @@ abstract class play_t <P, S, C> {
     console.log (s)
   }
 
-  move (p: P, ch: C) {
+  move (p: P, c: C) {
     if (this.next_player () === p) {
       let s = this.last_state ()
-      if (this.game.valid_choice_p (p, ch, s)) {
-        let next_state = this.game.choose (p, ch, s)
+      if (this.game.valid_choice_p (p, c, s)) {
+        let next_state = this.game.choose (p, c, s)
         this.moments.push ({
           player: p,
-          choice: ch,
+          choice: c,
           state: next_state,
         })
       } else {
         console.log (
           `[warning]`,
-          `invalid move: ${ ch } for player: ${ p }`,
+          `invalid move: ${c} for player: ${p}`,
         )
       }
     } else {
@@ -121,7 +121,7 @@ abstract class play_t <P, S, C> {
     let w = this.winner ()
     if (w !== null) console.log (
       `[info]`,
-      `winner is ${ w }`,
+      `winner is ${w}`,
     )
   }
 }
