@@ -74,3 +74,13 @@ test ("vertex_figure", t => {
       verf.idx (torus.id ("surf"), p) .eq (new cx.id_t (1, i)))
   })
 })
+
+test ("manifold_check", t => {
+  let torus = new torus_t ()
+  let manifold_evidence = cx.manifold_check (torus)
+  if (manifold_evidence === null) {
+    t.fail ()
+  } else {
+    t.pass ()
+  }
+})

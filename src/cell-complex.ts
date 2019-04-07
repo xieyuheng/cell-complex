@@ -351,7 +351,7 @@ class cell_complex_t {
 
   get dim (): number {
     let array = this.cell_dic.key_array () .map (id => id.dim)
-    return Math.max (0, ...array)
+    return Math.max (-1, ...array)
   }
 
   dim_of (id: id_t): number {
@@ -799,19 +799,51 @@ function isomorphic_to_polygon (
  */
 export
 class manifold_evidence_t {
-  // TODO
+  dim: number
+  iso_dic: dic_t <id_t, isomorphism_t>
 
-  constructor () {
+  constructor (dim: number) {
+    this.dim = dim
+    this.iso_dic = new dic_t (id_to_str)
   }
 }
 
 export
 function manifold_check (
   com: cell_complex_t
-): manifold_evidence_t {
-  let evidence = new manifold_evidence_t ()
-  // TODO
-  return evidence
+): manifold_evidence_t | null {
+  if (com.eq (empty_complex)) {
+    return new manifold_evidence_t (com.dim)
+  } else if (com.dim === 0) {
+    return new manifold_evidence_t (com.dim)
+  } else if (com.dim === 1) {
+    let evidence = new manifold_evidence_t (com.dim)
+    for (let vertex of com.points ()) {
+      let verf = new vertex_figure_t (com, vertex)
+      let iso = isomorphic_to_endpoints (verf)
+      if (iso === null) {
+        return null
+      } else {
+        evidence.iso_dic.set (vertex, iso)
+      }
+    }
+    return evidence
+  } else if (com.dim === 2) {
+    let evidence = new manifold_evidence_t (com.dim)
+    for (let vertex of com.points ()) {
+      let verf = new vertex_figure_t (com, vertex)
+      let iso = isomorphic_to_polygon (verf)
+      if (iso === null) {
+        return null
+      } else {
+        evidence.iso_dic.set (vertex, iso)
+      }
+    }
+    return evidence
+  } else {
+    console.log ("[warning] can not check dim 3 yet")
+    return null
+  }
 }
 
 export
@@ -821,7 +853,12 @@ class manifold_t extends cell_complex_t {
 
   constructor (com: cell_complex_t) {
     super (com.as_builder ())
-    this.manifold_evidence = manifold_check (this)
+    let manifold_evidence = manifold_check (this)
+    if (manifold_evidence === null) {
+      throw new Error ("manifold_check fail")
+    } else {
+      this.manifold_evidence = manifold_evidence
+    }
   }
 }
 
@@ -908,7 +945,7 @@ function spherical_check (
   com: cell_complex_t
 ): spherical_evidence_t | null {
   if (com.eq (empty_complex)) {
-    return new spherical_evidence_t (-1, empty_isomorphism)
+    return new spherical_evidence_t (com.dim, empty_isomorphism)
   } else if (com.dim === 0) {
     let iso = isomorphic_to_endpoints (com)
     if (iso === null) {

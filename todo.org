@@ -1,5 +1,4 @@
 * cell-complex
-- manifold_check -- for 1-dim and 2-dim first
 - [refine API] auto compatible in morphism_builder_t
 - fix `get_face`
 - bounfold_check
