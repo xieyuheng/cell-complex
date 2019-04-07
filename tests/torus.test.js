@@ -23,26 +23,26 @@ test ("vertex_figure", t => {
 
   // log (verf.to_exp ())
 
-  let dic = cx.new_im_dic ()
+  let dic = new cx.im_dic_t ()
   dic.set (new cx.id_t (0, 0), new cx.im_t (new cx.id_t (0, 0), cx.empty_cell))
   dic.set (new cx.id_t (0, 1), new cx.im_t (new cx.id_t (0, 2), cx.empty_cell))
   dic.set (new cx.id_t (0, 2), new cx.im_t (new cx.id_t (0, 1), cx.empty_cell))
   dic.set (new cx.id_t (0, 3), new cx.im_t (new cx.id_t (0, 3), cx.empty_cell))
   let dom = new cx.endpoints_t ()
   let cod = new cx.discrete_complex_t (4)
-  dic.set (new cx.id_t (1, 0), new cx.im_t (new cx.id_t (1, 0), new cx.cell_t (dom, cod, cx.new_im_dic () .merge_array ([
+  dic.set (new cx.id_t (1, 0), new cx.im_t (new cx.id_t (1, 0), new cx.cell_t (dom, cod, new cx.im_dic_t () .merge_array ([
     [new cx.id_t (0, 0), new cx.im_t (new cx.id_t (0, 0), cx.empty_cell)],
     [new cx.id_t (0, 1), new cx.im_t (new cx.id_t (0, 1), cx.empty_cell)],
   ]))))
-  dic.set (new cx.id_t (1, 1), new cx.im_t (new cx.id_t (1, 1), new cx.cell_t (dom, cod, cx.new_im_dic () .merge_array ([
+  dic.set (new cx.id_t (1, 1), new cx.im_t (new cx.id_t (1, 1), new cx.cell_t (dom, cod, new cx.im_dic_t () .merge_array ([
     [new cx.id_t (0, 0), new cx.im_t (new cx.id_t (0, 1), cx.empty_cell)],
     [new cx.id_t (0, 1), new cx.im_t (new cx.id_t (0, 0), cx.empty_cell)],
   ]))))
-  dic.set (new cx.id_t (1, 2), new cx.im_t (new cx.id_t (1, 2), new cx.cell_t (dom, cod, cx.new_im_dic () .merge_array ([
+  dic.set (new cx.id_t (1, 2), new cx.im_t (new cx.id_t (1, 2), new cx.cell_t (dom, cod, new cx.im_dic_t () .merge_array ([
     [new cx.id_t (0, 0), new cx.im_t (new cx.id_t (0, 1), cx.empty_cell)],
     [new cx.id_t (0, 1), new cx.im_t (new cx.id_t (0, 0), cx.empty_cell)],
   ]))))
-  dic.set (new cx.id_t (1, 3), new cx.im_t (new cx.id_t (1, 3), new cx.cell_t (dom, cod, cx.new_im_dic () .merge_array ([
+  dic.set (new cx.id_t (1, 3), new cx.im_t (new cx.id_t (1, 3), new cx.cell_t (dom, cod, new cx.im_dic_t () .merge_array ([
     [new cx.id_t (0, 0), new cx.im_t (new cx.id_t (0, 1), cx.empty_cell)],
     [new cx.id_t (0, 1), new cx.im_t (new cx.id_t (0, 0), cx.empty_cell)],
   ]))))

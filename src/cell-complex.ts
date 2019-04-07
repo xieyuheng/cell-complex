@@ -73,7 +73,7 @@ class im_t {
 function im_dic_dim_compatible_p (
   dom: cell_complex_t,
   cod: cell_complex_t,
-  dic: dic_t <id_t, im_t>,
+  dic: im_dic_t,
   dim: number,
 ): boolean {
   for (let [id, im] of dic) {
@@ -93,7 +93,7 @@ function im_dic_dim_compatible_p (
 function im_dic_compatible_p (
   dom: cell_complex_t,
   cod: cell_complex_t,
-  dic: dic_t <id_t, im_t>,
+  dic: im_dic_t,
 ): boolean {
   if (dom.cell_dic.size !== dic.size) {
     return false
@@ -110,7 +110,7 @@ function im_dic_compatible_p (
 }
 
 function im_dic_has_value_id (
-  dic: dic_t <id_t, im_t>,
+  dic: im_dic_t,
   id: id_t,
 ): boolean {
   for (let im of dic.values ()) {
@@ -122,8 +122,15 @@ function im_dic_has_value_id (
 }
 
 export
-function new_im_dic (): dic_t <id_t, im_t> {
-  return new dic_t (id_to_str)
+class im_dic_t extends dic_t <id_t, im_t> {
+  constructor () {
+    super (id_to_str)
+  }
+}
+
+export
+function new_im_dic (): im_dic_t {
+  return new im_dic_t ()
 }
 
 /**
@@ -145,7 +152,7 @@ class morphism_t {
   constructor (
     readonly dom: cell_complex_t,
     readonly cod: cell_complex_t,
-    readonly dic: dic_t <id_t, im_t>,
+    readonly dic: im_dic_t,
   ) {
     if (! im_dic_compatible_p (dom, cod, dic)) {
       throw new Error ("im_dic not compatible")
@@ -167,7 +174,7 @@ class morphism_t {
   static from_exp (exp: morphism_exp_t): morphism_t {
     let dom = cell_complex_t.from_exp (exp.dom)
     let cod = cell_complex_t.from_exp (exp.cod)
-    let dic = new_im_dic ()
+    let dic = new im_dic_t ()
     let iter = Object.entries (exp.dic)
     for (let [k, v] of iter) {
       let id = id_t.parse (k)
@@ -204,7 +211,7 @@ class cell_t extends morphism_t {
   constructor (
     dom: cell_complex_t,
     cod: cell_complex_t,
-    dic: dic_t <id_t, im_t>,
+    dic: im_dic_t,
   ) {
     super (dom, cod, dic)
     this.dom = dom.as_spherical ()
@@ -213,7 +220,7 @@ class cell_t extends morphism_t {
   static from_exp (exp: morphism_exp_t): cell_t {
     let dom = cell_complex_t.from_exp (exp.dom)
     let cod = cell_complex_t.from_exp (exp.cod)
-    let dic = new_im_dic ()
+    let dic = new im_dic_t ()
     let iter = Object.entries (exp.dic)
     for (let [k, v] of iter) {
       let id = id_t.parse (k)
@@ -228,7 +235,7 @@ class cell_t extends morphism_t {
 
 export
 function im_dic_to_exp (
-  dic: dic_t <id_t, im_t>
+  dic: im_dic_t
 ): {
   [id: string]: im_exp_t
 } {
@@ -512,7 +519,7 @@ class cell_complex_builder_t {
 function epimorphism_p (
   dom: cell_complex_t,
   cod: cell_complex_t,
-  dic: dic_t <id_t, im_t>,
+  dic: im_dic_t,
 ): boolean {
   for (let id of cod.cell_dic.keys ()) {
     if (! im_dic_has_value_id (dic, id)) {
@@ -527,7 +534,7 @@ class epimorphism_t extends morphism_t {
   constructor (
     dom: cell_complex_t,
     cod: cell_complex_t,
-    dic: dic_t <id_t, im_t>,
+    dic: im_dic_t,
   ) {
     if (! epimorphism_p (dom, cod, dic)) {
       throw new Error ("not epimorphism")
@@ -539,7 +546,7 @@ class epimorphism_t extends morphism_t {
 function monomorphism_p (
   dom: cell_complex_t,
   cod: cell_complex_t,
-  dic: dic_t <id_t, im_t>,
+  dic: im_dic_t,
 ): boolean {
   let id_str_set = new Set <string> ()
   for (let im of dic.values ()) {
@@ -558,7 +565,7 @@ class monomorphism_t extends morphism_t {
   constructor (
     dom: cell_complex_t,
     cod: cell_complex_t,
-    dic: dic_t <id_t, im_t>,
+    dic: im_dic_t,
   ) {
     if (! monomorphism_p (dom, cod, dic)) {
       throw new Error ("not monomorphism")
@@ -570,7 +577,7 @@ class monomorphism_t extends morphism_t {
 function isomorphism_p (
   dom: cell_complex_t,
   cod: cell_complex_t,
-  dic: dic_t <id_t, im_t>,
+  dic: im_dic_t,
 ): boolean {
   return epimorphism_p (dom, cod, dic) && monomorphism_p (dom, cod, dic)
 }
@@ -586,7 +593,7 @@ class isomorphism_t extends morphism_t {
   constructor (
     dom: cell_complex_t,
     cod: cell_complex_t,
-    dic: dic_t <id_t, im_t>,
+    dic: im_dic_t,
   ) {
     if (! isomorphism_p (dom, cod, dic)) {
       throw new Error ("not isomorphism")
@@ -608,7 +615,7 @@ function isomorphic_to_endpoints (
   }
   let [start, end] = com.point_array ()
   let endpoints = new endpoints_t ()
-  let dic = new_im_dic ()
+  let dic = new im_dic_t ()
   dic.set (endpoints.start, new im_t (start, empty_cell))
   dic.set (endpoints.end, new im_t (end, empty_cell))
   return new isomorphism_t (endpoints, com, dic)
@@ -629,7 +636,7 @@ function isomorphic_to_polygon (
     return null
   }
   let polygon = new polygon_t (size)
-  let dic = new_im_dic ()
+  let dic = new im_dic_t ()
   let vertex = polygon.vertex_array [0]
   let { value: first_id } = com.id_in_dim (0) .next ()
   let point = first_id
@@ -661,7 +668,7 @@ function isomorphic_to_polygon (
       return null
     }
     let edge = com.get_edge (edge_id)
-    let boundary_dic = new_im_dic ()
+    let boundary_dic = new im_dic_t ()
     if (edge_id instanceof rev_id_t) {
       boundary_dic.merge_array ([
         [side.endpoints.start, new im_t (
@@ -919,7 +926,7 @@ class empty_morphism_t extends morphism_t {
     super (
       empty_complex,
       empty_complex,
-      new_im_dic (),
+      new im_dic_t (),
     )
   }
 }
@@ -939,7 +946,7 @@ class empty_cell_t extends cell_t {
     super (
       empty_complex,
       empty_complex,
-      new_im_dic (),
+      new im_dic_t (),
     )
   }
 }
@@ -1007,7 +1014,7 @@ class edge_t extends cell_t {
   ) {
     let endpoints = new endpoints_t ()
     let cod = bui.skeleton (0)
-    let dic = new_im_dic ()
+    let dic = new im_dic_t ()
     dic.set (endpoints.start, new im_t (start, empty_cell))
     dic.set (endpoints.end, new im_t (end, empty_cell))
     super (endpoints, cod, dic)
@@ -1077,6 +1084,10 @@ class rev_id_t extends id_t {
 
 type circuit_t = Array <id_t>
 
+// function build_dic_from_circuit (): im_dic_t {
+
+// }
+
 export
 class face_t extends cell_t {
   circuit: circuit_t
@@ -1089,13 +1100,13 @@ class face_t extends cell_t {
     let size = circuit.length
     let polygon = new polygon_t (size)
     let cod = bui.skeleton (1)
-    let dic = new_im_dic ()
+    let dic = new im_dic_t ()
     for (let i = 0; i < size; i += 1) {
       let src_id = polygon.side_array [i]
       let tar_id = circuit [i]
       let src = polygon.get_edge (src_id)
       let tar = bui.get_edge (tar_id)
-      let boundary_dic = new_im_dic ()
+      let boundary_dic = new im_dic_t ()
       if (tar_id instanceof rev_id_t) {
         boundary_dic.set (
           src.endpoints.start,
