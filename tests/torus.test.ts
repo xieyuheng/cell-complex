@@ -1,10 +1,10 @@
 import test from "ava"
 
-import { dic_t } from "../dist/dic"
+import { dic_t } from "../src/dic"
 
-import * as cx from "../dist/cell-complex"
+import * as cx from "../src/cell-complex"
 
-import { torus_t } from "../dist/torus"
+import { torus_t } from "../src/torus"
 
 import { log } from "./util"
 

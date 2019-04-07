@@ -1,6 +1,6 @@
 import test from "ava"
 
-import * as hackenbush from "../dist/hackenbush"
+import * as hackenbush from "../src/hackenbush"
 
 test ("hackenbush", t => {
   let bush = new hackenbush.state_t ()

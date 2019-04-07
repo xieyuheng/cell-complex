@@ -1,6 +1,6 @@
 import test from "ava"
 
-import * as tic_tac_toe from "../dist/tic-tac-toe"
+import * as tic_tac_toe from "../src/tic-tac-toe"
 
 test ("tic_tac_toe", t => {
   let play = tic_tac_toe.new_play ()

@@ -1,6 +1,6 @@
 import test from "ava"
 
-import { ndarray_t } from "../dist/ndarray"
+import { ndarray_t } from "../src/ndarray"
 
 test ("init_strides", t => {
   let shape = [2, 3, 4]

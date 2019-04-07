@@ -1,7 +1,7 @@
 import test from "ava"
 
-import * as cx from "../dist/cell-complex"
-import { torus_t } from "../dist/torus"
+import * as cx from "../src/cell-complex"
+import { torus_t } from "../src/torus"
 
 import { log } from "./util"
 
