@@ -35,6 +35,7 @@ class id_t {
   }
 
   static parse (str: string): id_t {
+    assert (this.valid_id_str (str))
     let words = str.split (":")
     let dim = Number.parseInt (words [0])
     let ser = Number.parseInt (words [1])
@@ -42,7 +43,7 @@ class id_t {
   }
 
   rev (): rev_id_t {
-    return new rev_id_t (this.dim, this.ser)
+    return new rev_id_t (this)
   }
 }
 
@@ -525,6 +526,17 @@ class cell_complex_t {
   face (name: string): face_t {
     return this.get_face (this.id (name))
   }
+
+  chain_from_array (
+    dim: number,
+    array: Array <[id_t, number]>,
+  ): chain_t {
+    let chain = new chain_t (dim, this)
+    for (let [id, n] of array) {
+      chain.dic.for (id, (m) => m + n)
+    }
+    return chain
+  }
 }
 
 export
@@ -735,8 +747,8 @@ function isomorphic_to_endpoints (
 function find_next_edge_id (
   com: cell_complex_t,
   point: id_t,
-  edge_id_set: Set <id_t>,
-): [id_t, id_t] | null {
+  edge_id_set: Set <id_t | rev_id_t>,
+): [id_t, id_t | rev_id_t] | null {
   for (let id of com.id_in_dim (1)) {
     if (! edge_id_set.has (id)) {
       let edge = com.get_edge (id)
@@ -1143,20 +1155,21 @@ class polygon_t extends cell_complex_t {
 //// 2 dimension
 
 export
-class rev_id_t extends id_t {
+class rev_id_t {
   constructor (
-    readonly dim: number,
-    readonly ser: number,
-  ) {
-    super (dim, ser)
+    readonly id: id_t,
+  ) {}
+
+  eq (that: rev_id_t): boolean {
+    return this.id.eq (that.id)
   }
 
   rev (): id_t {
-    return new id_t (this.dim, this.ser)
+    return this.id
   }
 }
 
-type circuit_t = Array <id_t>
+type circuit_t = Array <id_t | rev_id_t>
 
 function polygon_zip_circuit (
   polygon: polygon_t,
@@ -1169,12 +1182,14 @@ function polygon_zip_circuit (
     let src_id = polygon.side_id_array [i]
     let tar_id = circuit [i]
     let src = polygon.get_edge (src_id)
-    let tar = cod.get_edge (tar_id)
     if (tar_id instanceof rev_id_t) {
+      tar_id = tar_id.rev ()
+      let tar = cod.get_edge (tar_id)
       bui.point (src.start, tar.end)
       bui.point (src.end, tar.start)
       bui.edge_rev (src_id, tar_id)
     } else {
+      let tar = cod.get_edge (tar_id)
       bui.point (src.start, tar.start)
       bui.point (src.end, tar.end)
       bui.edge (src_id, tar_id)
@@ -1231,30 +1246,94 @@ class globular_t extends cell_complex_t {
 export
 class homotopical_chain_t {
   dim: number
-  space: cell_complex_t
+  com: cell_complex_t
   glob_array: Array <glob_t>
 
   constructor (
     dim: number,
-    space: cell_complex_t,
+    com: cell_complex_t,
   ) {
     this.dim = dim
-    this.space = space
+    this.com = com
     this.glob_array = new Array ()
   }
 }
 
+// TODO use data-panel here
+
 export
 class chain_t {
-  dim: number
-  space: cell_complex_t
-  // TODO
+  readonly dim: number
+  readonly com: cell_complex_t
+  dic: dic_t <id_t, number>
 
   constructor (
     dim: number,
-    space: cell_complex_t,
+    com: cell_complex_t,
   ) {
     this.dim = dim
-    this.space = space
+    this.com = com
+    this.dic = new dic_t (id_to_str)
+    for (let [id, _] of com.in_dim (dim)) {
+      this.dic.set (id, 0)
+    }
+  }
+
+  // add_array ()
+
+  // add_dic ()
+
+  // boundary_matrix (): data_panel_t {}
+
+  boundary_matrix (): dic_t <[id_t, id_t], number> {
+    let matrix = new dic_t <[id_t, id_t], number> ()
+    return matrix
+  }
+
+  // boundary (): chain_t {
+
+  // }
+}
+
+export
+function boundary_dic_of_basis (
+  com: cell_complex_t,
+  id: id_t,
+): dic_t <id_t, number> {
+  if (id.dim === 0) {
+    let dic = new dic_t <id_t, number> ()
+    return dic
+  } else if (id.dim === 1) {
+    let dic = new dic_t <id_t, number> ()
+    let edge = com.get_edge (id)
+    dic.set (edge.start, -1)
+    dic.set (edge.end, 1)
+    return dic
+  } else if (id.dim === 2) {
+    let dic = new dic_t <id_t, number> ()
+    let face = com.get_face (id)
+    for (let e of face.circuit) {
+      if (e instanceof rev_id_t) {
+        dic.set (e.rev (), -1)
+      } else {
+        dic.set (e, 1)
+      }
+    }
+    return dic
+  } else {
+    throw new Error ("can only calculate dim 0, 1, 2 yet")
   }
 }
+
+
+// {
+//   let square = new polygon_t (4)
+
+//   let chain = square.chain_from_array (1, [
+//     [new id_t (1, 0), 1],
+//     [new id_t (1, 1), 2],
+//     [new id_t (1, 2), 1],
+//   ])
+
+//   console.log (chain)
+// }

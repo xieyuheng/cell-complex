@@ -1,8 +1,13 @@
+* data-panel
+- smith normal form of matrix to calculet homology group
 * cell-complex
+- fix `get_face`
 - homology of group
 - glob_t
 - chain_t
+  - `chain_t.boundary ()`
 - homotopical_chain_t
+  - `.boundary ()`
   - `.as_group ()` -- formalize presentation of group
   - `.as_groupoid ()` -- presentation of groupoid with `homotopical_chain_t`
   - abelianization of `homotopical_chain_t` to get homology theory
@@ -19,15 +24,12 @@
       也就是说
       1. 放宽对元素联通性的要求
       2. 丰富 compose 为 glue
-  - `.boundary ()`
 - homology group of cell-complex
 - abelian_group_t
   - classification (normalization)
     prepare for homology
 - 2-dim manifold classification -- zip of john conway
-- vuepress for docs
 - [refine API] auto compatible in morphism_builder_t
-- fix `get_face`
 - bounfold_check
 - category_t
 - groupoid_t
