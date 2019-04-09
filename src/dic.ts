@@ -36,7 +36,7 @@ class dic_t <K , V> {
   for (k: K, f: (v: V) => V): dic_t <K , V> {
     let v = this.get (k)
     this.set (k, f (v))
-    return this
+    return this      
   }
 
   get size (): number {

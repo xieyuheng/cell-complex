@@ -14,7 +14,7 @@ Features:
 
 Contains:
 - combinatorial-game -- A game engine for n-player perfect information games
-- cell-complex -- An algebraic topology library
+- cell-complex -- A low dimensional algebraic topology library
   - [paper](https://xieyuheng.github.io/writing/investigations-into-cell-complex.html)
   -- "Investigations into cell complex", by Xie Yuheng, 2019
 -- ndarray -- strides based row-major ndarray of number

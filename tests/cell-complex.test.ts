@@ -31,3 +31,18 @@ test ("manifold_check", t => {
     }
   }
 })
+
+test ("boundary_dic_of_basis", t => {
+  let torus = new torus_t ()
+  let square = new cx.polygon_t (4)
+
+  log (
+    cx.boundary_dic_of_basis (torus, torus.id ("toro"))
+  )
+
+  log (
+    cx.boundary_dic_of_basis (square, new cx.id_t (1, 0))
+  )
+
+  t.pass ()
+})

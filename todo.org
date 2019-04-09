@@ -1,6 +1,5 @@
 * data-panel
 - smith normal form of matrix to calculet homology group
-
 * cell-complex
 - homology of group
 - glob_t
@@ -55,6 +54,7 @@
     even if the cell_complex_t is not a bounfold_t
 * geometry
 - basic operations for matrix
+- tensor mul -- generalize matrix mul
 - test euclidean_space_t
 - quaternion
 - use euclidean-space to re-imp hackenbush

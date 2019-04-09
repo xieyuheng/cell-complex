@@ -533,7 +533,7 @@ class cell_complex_t {
   ): chain_t {
     let chain = new chain_t (dim, this)
     for (let [id, n] of array) {
-      chain.dic.for (id, (m) => m + n)
+      chain.dic.for (id, m => m + n)
     }
     return chain
   }
@@ -1316,23 +1316,23 @@ function boundary_dic_of_basis (
   com: cell_complex_t,
   id: id_t,
 ): dic_t <id_t, number> {
+  let chain = new chain_t (id.dim - 1, com)
+  let dic = chain.dic
   if (id.dim === 0) {
-    let dic = new dic_t <id_t, number> ()
     return dic
   } else if (id.dim === 1) {
-    let dic = new dic_t <id_t, number> ()
     let edge = com.get_edge (id)
-    dic.set (edge.start, -1)
-    dic.set (edge.end, 1)
+    dic.for (edge.start, n => n - 1)
+    dic.for (edge.end, n => n + 1)
     return dic
   } else if (id.dim === 2) {
-    let dic = new dic_t <id_t, number> ()
     let face = com.get_face (id)
+    console.log ("2")
     for (let e of face.circuit) {
       if (e instanceof rev_id_t) {
-        dic.set (e.rev (), -1)
+        dic.for (e.rev (), n => n - 1)
       } else {
-        dic.set (e, 1)
+        dic.for (e, n => n + 1)
       }
     }
     return dic
@@ -1340,16 +1340,3 @@ function boundary_dic_of_basis (
     throw new Error ("can only calculate dim 0, 1, 2 yet")
   }
 }
-
-
-// {
-//   let square = new polygon_t (4)
-
-//   let chain = square.chain_from_array (1, [
-//     [new id_t (1, 0), 1],
-//     [new id_t (1, 1), 2],
-//     [new id_t (1, 2), 1],
-//   ])
-
-//   console.log (chain)
-// }
