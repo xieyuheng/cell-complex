@@ -621,10 +621,26 @@ class cell_complex_builder_t {
       throw new Error ("dimension mismatch")
     } else {
       let cell = this.get (id)
-      // TODO
-      // let circuit = ;
-      // return new face_t (this, circuit)
-      return this.get (id) as face_t
+      let circuit = new Array <id_t | rev_id_t> ()
+      let size = cell.dom.size_of_dim (1)
+      let polygon = new polygon_t (size)
+      for (let side_id of polygon.side_id_array) {
+        let im = cell.dic.get (side_id)
+        let endpoints = new endpoints_t ()
+        let start = endpoints.id ("start")
+        let end = endpoints.id ("end")
+        let dic = im.cell.dic
+        if ((dic.get (start) .id.eq (start)) &&
+            (dic.get (end) .id.eq (end))) {
+          circuit.push (im.id)
+        } else if ((dic.get (start) .id.eq (end)) &&
+                   (dic.get (end) .id.eq (start))) {
+          circuit.push (im.id.rev ())
+        } else {
+          throw new Error ("endpoints mismatch")
+        }
+      }
+      return new face_t (this, circuit)
     }
   }
 

@@ -1,7 +1,7 @@
 * data-panel
 - smith normal form of matrix to calculet homology group
+
 * cell-complex
-- fix `get_face`
 - homology of group
 - glob_t
 - chain_t
