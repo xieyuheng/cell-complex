@@ -7,8 +7,8 @@ class vertex_t <V> {
     public info: V,
   ) {}
 
-  // - shallow clone
-  clone (): vertex_t <V> {
+  // - shallow copy
+  copy (): vertex_t <V> {
     return new vertex_t (this.id, this.info)
   }
 
@@ -29,8 +29,8 @@ class edge_t <V, E> {
     public info: E,
   ) {}
 
-  // - shallow clone
-  clone (): edge_t <V, E> {
+  // - shallow copy
+  copy (): edge_t <V, E> {
     return new edge_t (this.id, this.start, this.end, this.info)
   }
 
@@ -80,9 +80,9 @@ class graph_t <V, E> {
     return this
   }
 
-  // - shallow clone
+  // - shallow copy
   // - time ~ O (V + E)
-  clone (): graph_t <V, E> {
+  copy (): graph_t <V, E> {
     let graph: graph_t <V, E> = new graph_t ()
     this.vertex_map.forEach ((vertex, id) => {
       graph.vertex_map.set (id, vertex)

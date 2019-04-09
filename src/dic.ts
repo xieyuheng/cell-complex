@@ -98,7 +98,7 @@ class dic_t <K , V> {
     return new Array (...this.val_map.values ())
   }
 
-  clone (): dic_t <K, V> {
+  copy (): dic_t <K, V> {
     let dic = new dic_t <K, V> (this.key_to_str)
     dic.val_map = new Map (this.val_map)
     dic.key_map = new Map (this.key_map)

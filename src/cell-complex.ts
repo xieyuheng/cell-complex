@@ -345,8 +345,8 @@ class cell_complex_t {
     bui: cell_complex_builder_t =
       new cell_complex_builder_t ()
   ) {
-    this.cell_dic = bui.cell_dic.clone ()
-    this.name_dic = bui.name_dic.clone ()
+    this.cell_dic = bui.cell_dic.copy ()
+    this.name_dic = bui.name_dic.copy ()
   }
 
   get dim (): number {
@@ -420,11 +420,11 @@ class cell_complex_t {
 
   as_builder (): cell_complex_builder_t {
     let bui = new cell_complex_builder_t ()
-    bui.cell_dic = this.cell_dic.clone ()
+    bui.cell_dic = this.cell_dic.copy ()
     return bui
   }
 
-  clone (): cell_complex_t {
+  copy (): cell_complex_t {
     return new cell_complex_t (this.as_builder ())
   }
 
@@ -1150,6 +1150,10 @@ class rev_id_t extends id_t {
   ) {
     super (dim, ser)
   }
+
+  rev (): id_t {
+    return new id_t (this.dim, this.ser)
+  }
 }
 
 type circuit_t = Array <id_t>
@@ -1201,3 +1205,56 @@ class face_t extends cell_t {
 //// 3 dimension
 
 // TODO
+
+//// algebraic structure
+
+export
+class path_t extends cell_complex_t {
+
+}
+
+export
+class solid_polygon_t extends cell_complex_t {
+
+}
+
+export
+class glob_t extends morphism_t {
+
+}
+
+export
+class globular_t extends cell_complex_t {
+
+}
+
+export
+class homotopical_chain_t {
+  dim: number
+  space: cell_complex_t
+  glob_array: Array <glob_t>
+
+  constructor (
+    dim: number,
+    space: cell_complex_t,
+  ) {
+    this.dim = dim
+    this.space = space
+    this.glob_array = new Array ()
+  }
+}
+
+export
+class chain_t {
+  dim: number
+  space: cell_complex_t
+  // TODO
+
+  constructor (
+    dim: number,
+    space: cell_complex_t,
+  ) {
+    this.dim = dim
+    this.space = space
+  }
+}

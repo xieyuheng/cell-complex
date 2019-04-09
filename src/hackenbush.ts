@@ -66,7 +66,7 @@ extends cg.game_t <player_t, state_t, choice_t> {
     ch: choice_t,
     s: state_t,
   ): state_t {
-    let graph = s.graph.clone ()
+    let graph = s.graph.copy ()
     graph.edge_map.delete (ch)
     return new state_t (
       graph.connected_component_of_vertex (0))
