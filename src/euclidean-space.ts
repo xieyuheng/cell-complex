@@ -66,8 +66,11 @@ class matrix_t {
       this.array.contract (that.array, 1, 0))
   }
 
+  act (v: vector_t): vector_t {
+    return v.trans (this)
+  }
+
   // TODO
-  // act (v: vector_t): vector_t {}
   // det (): number {}
   // inv (): matrix_t {}
 }
@@ -134,9 +137,15 @@ class vector_t {
     return new vector_t (this.array.map (f))
   }
 
-  // TODO
-  // trans (matrix: matrix_t): vector_t {}
-  // act (v: point_t): point_t {}
+
+  trans (matrix: matrix_t): vector_t {
+    return new vector_t (
+      this.array.contract (matrix.array, 0, 1))
+  }
+
+  act (p: point_t): point_t {
+    return p.trans (this)
+  }
 }
 
 export

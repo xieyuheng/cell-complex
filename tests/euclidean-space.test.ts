@@ -2,6 +2,7 @@ import test from "ava"
 
 import * as nd from "../src/ndarray"
 import { point_t, vector_t, matrix_t } from "../src/euclidean-space"
+import { log } from "../src/util"
 
 test ("new matrix_t", t => {
   let x = new matrix_t (nd.array_t.from_2darray ([
@@ -64,6 +65,7 @@ test ("point_t trans", t => {
   let q = new point_t (nd.array_t.from_1darray ([2, 3, 5]))
 
   t.true (p.trans (v) .eq (q))
+  t.true (p.trans (v) .eq (v.act (p)))
 })
 
 test ("vector_t dot", t => {
@@ -71,4 +73,22 @@ test ("vector_t dot", t => {
   let w = new vector_t (nd.array_t.from_1darray ([1, 2, 4]))
 
   t.true (v.dot (w) === 1 + 4 + 16)
+})
+
+test ("vector_t trans", t => {
+  let v = new vector_t (nd.array_t.from_1darray ([1, 2]))
+
+  let f = new matrix_t (nd.array_t.from_2darray ([
+    [0, 1],
+    [0, 0],
+  ]))
+
+  t.true (
+    v.trans (f)
+      .eq (new vector_t (nd.array_t.from_1darray ([2, 0])))
+  )
+
+  t.true (
+    v.trans (f) .eq (f.act (v))
+  )
 })
