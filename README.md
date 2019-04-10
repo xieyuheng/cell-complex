@@ -29,9 +29,6 @@ Contains:
 - [Style Guide](STYLE-GUIDE.md) -- observe the style of existing code and respect it
 - See [cicada-rs](http://github.com/xieyuheng/cicada-rs) old cicada attempt in rust
 - IRC -- #cicada-language (at freenode)
-
-## Code Of Conduct
-
 - [Contributor Covenant Code of Conduct](CODE-OF-CONDUCT.md)
 
 ## License
