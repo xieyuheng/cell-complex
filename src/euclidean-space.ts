@@ -9,13 +9,13 @@ import { eqv } from "./eqv"
 
 import { number_field_t } from "./number"
 
-import { ndarray_t } from "./ndarray"
+import * as nd from "./ndarray"
 
 /**
- * We can not define matrix_t as subclass of ndarray_t,
- * because methods such as `proj` and `slice` on ndarray_t
- * return ndarray_t instead of matrix_t,
- * such methods can not be generic over ndarray_t's subclasses.
+ * We can not define matrix_t as subclass of nd.array_t,
+ * because methods such as `proj` and `slice` on nd.array_t
+ * return nd.array_t instead of matrix_t,
+ * such methods can not be generic over nd.array_t's subclasses.
 
  * Due to the lack of dependent type,
  * dimension is checked at runtime.
@@ -23,10 +23,10 @@ import { ndarray_t } from "./ndarray"
 
 export
 class matrix_t {
-  array: ndarray_t
+  array: nd.array_t
   readonly shape: Array <number>
 
-  constructor (array: ndarray_t) {
+  constructor (array: nd.array_t) {
     if (array.order !== 2) {
       throw new Error ("array order should be 2")
     }
@@ -69,11 +69,11 @@ class matrix_t {
 
 export
 class vector_t {
-  array: ndarray_t
+  array: nd.array_t
   readonly shape: Array <number>
   readonly dim: number
 
-  constructor (array: ndarray_t) {
+  constructor (array: nd.array_t) {
     if (array.order !== 1) {
       throw new Error ("array order should be 1")
     }
@@ -132,11 +132,11 @@ class vector_t {
 
 export
 class point_t {
-  array: ndarray_t
+  array: nd.array_t
   readonly shape: Array <number>
   readonly dim: number
 
-  constructor (array: ndarray_t) {
+  constructor (array: nd.array_t) {
     if (array.order !== 1) {
       throw new Error ("array order should be 1")
     }
@@ -188,7 +188,7 @@ class point_t {
   }
 
   diff (that: point_t): vector_t {
-    let array = ndarray_t.zeros ([this.dim])
+    let array = nd.array_t.zeros ([this.dim])
     let i = 0
     for (let [x, y] of this.array.zip (that.array)) {
       array.set ([i], x - y)
@@ -225,7 +225,7 @@ class vec_t extends vector_space_t <number, vector_t> {
     return x.eq (y)
   }
 
-  id = new vector_t (ndarray_t.zeros ([this.dim]))
+  id = new vector_t (nd.array_t.zeros ([this.dim]))
 
   add (v: vector_t, w: vector_t): vector_t {
     let vector = this.id.copy ()

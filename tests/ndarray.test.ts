@@ -1,18 +1,18 @@
 import test from "ava"
 
-import { ndarray_t } from "../src/ndarray"
+import * as nd from "../src/ndarray"
 
 test ("init_strides", t => {
   let shape = [2, 3, 4]
-  let strides = ndarray_t.init_strides (shape)
+  let strides = nd.array_t.init_strides (shape)
   t.deepEqual (strides, [12, 4, 1])
 })
 
-test ("new ndarray_t", t => {
+test ("new nd.array_t", t => {
   let shape = [3, 4]
-  let strides = ndarray_t.init_strides (shape)
+  let strides = nd.array_t.init_strides (shape)
   let buffer = new Float64Array (12)
-  let x = new ndarray_t (buffer, shape, strides)
+  let x = new nd.array_t (buffer, shape, strides)
   t.true (x.get ([1, 2]) === 0)
   x.set ([1, 2], 666)
   t.true (x.get ([1, 2]) === 666)
@@ -20,14 +20,14 @@ test ("new ndarray_t", t => {
 
   t.throws (() => {
     let shape = [3, 4]
-    let strides = ndarray_t.init_strides (shape)
+    let strides = nd.array_t.init_strides (shape)
     let buffer = new Float64Array (11)
-    let x = new ndarray_t (buffer, shape, strides)
+    let x = new nd.array_t (buffer, shape, strides)
   })
 })
 
 test ("from_1darray", t => {
-  let x = ndarray_t.from_1darray ([0, 1, 2])
+  let x = nd.array_t.from_1darray ([0, 1, 2])
   t.true (x.get ([0]) === 0)
   t.true (x.get ([1]) === 1)
   t.true (x.get ([2]) === 2)
@@ -35,10 +35,10 @@ test ("from_1darray", t => {
 
 test ("from_2darray", t => {
   t.throws (() => {
-    ndarray_t.from_2darray ([[0, 1, 2], [3, 4, 5, 6]])
+    nd.array_t.from_2darray ([[0, 1, 2], [3, 4, 5, 6]])
   })
 
-  let x = ndarray_t.from_2darray ([[0, 1, 2], [3, 4, 5]])
+  let x = nd.array_t.from_2darray ([[0, 1, 2], [3, 4, 5]])
   t.true (x.get ([0, 0]) === 0)
   t.true (x.get ([0, 1]) === 1)
   t.true (x.get ([0, 2]) === 2)
@@ -49,13 +49,13 @@ test ("from_2darray", t => {
 
 test ("from_3darray", t => {
   t.throws (() => {
-    ndarray_t.from_3darray ([
+    nd.array_t.from_3darray ([
       [[0, 1, 2], [3, 4, 5]],
       [[5, 4, 3], [2, 1, 0, 0]],
     ])
   })
 
-  let x = ndarray_t.from_3darray ([
+  let x = nd.array_t.from_3darray ([
     [[0, 1, 2], [3, 4, 5]],
     [[5, 4, 3], [2, 1, 0]],
   ])
@@ -74,7 +74,7 @@ test ("from_3darray", t => {
 })
 
 test ("from_buffer", t => {
-  let x = ndarray_t.from_buffer (
+  let x = nd.array_t.from_buffer (
     [2, 2, 3],
     Float64Array.from ([
       0, 1, 2,  3, 4, 5,
@@ -95,7 +95,7 @@ test ("from_buffer", t => {
 })
 
 test ("proj", t => {
-  let y = ndarray_t.from_3darray ([
+  let y = nd.array_t.from_3darray ([
     [[0, 1, 2], [3, 4, 5]],
     [[5, 4, 3], [2, 1, 0]],
   ])
@@ -144,7 +144,7 @@ test ("proj", t => {
 })
 
 test ("slice", t => {
-  let y = ndarray_t.from_3darray ([
+  let y = nd.array_t.from_3darray ([
     [[0, 1, 2], [3, 4, 5]],
     [[5, 5, 0], [6, 6, 0]],
     [[5, 4, 3], [2, 1, 0]],
@@ -186,7 +186,7 @@ test ("slice", t => {
 })
 
 test ("put", t => {
-  let y = ndarray_t.from_3darray ([
+  let y = nd.array_t.from_3darray ([
     [[0, 1, 2], [3, 4, 5]],
     [[5, 5, 0], [6, 6, 0]],
     [[5, 4, 3], [2, 1, 0]],
@@ -195,7 +195,7 @@ test ("put", t => {
   {
     y.put (
       [null, null, [0, 2]],
-      ndarray_t.from_3darray ([
+      nd.array_t.from_3darray ([
         [[9, 9], [9, 9]],
         [[9, 9], [9, 9]],
         [[9, 9], [9, 9]],
@@ -217,7 +217,7 @@ test ("put", t => {
 
 test ("numbers", t => {
   {
-    let x = ndarray_t.numbers (6, [2, 2])
+    let x = nd.array_t.numbers (6, [2, 2])
     t.true (x.get ([0, 0]) === 6)
     t.true (x.get ([0, 1]) === 6)
     t.true (x.get ([1, 0]) === 6)
@@ -225,7 +225,7 @@ test ("numbers", t => {
   }
 
   {
-    let x = ndarray_t.zeros ([2, 2])
+    let x = nd.array_t.zeros ([2, 2])
     t.true (x.get ([0, 0]) === 0)
     t.true (x.get ([0, 1]) === 0)
     t.true (x.get ([1, 0]) === 0)
@@ -233,7 +233,7 @@ test ("numbers", t => {
   }
 
   {
-    let x = ndarray_t.ones ([2, 2])
+    let x = nd.array_t.ones ([2, 2])
     t.true (x.get ([0, 0]) === 1)
     t.true (x.get ([0, 1]) === 1)
     t.true (x.get ([1, 0]) === 1)
@@ -242,7 +242,7 @@ test ("numbers", t => {
 })
 
 test ("fill", t => {
-  let x = ndarray_t.numbers (6, [2, 2])
+  let x = nd.array_t.numbers (6, [2, 2])
   t.true (x.get ([0, 0]) === 6)
   t.true (x.get ([0, 1]) === 6)
   t.true (x.get ([1, 0]) === 6)
@@ -255,16 +255,16 @@ test ("fill", t => {
 })
 
 test ("table", t => {
-  ndarray_t.zeros ([10]) .table ()
-  ndarray_t.zeros ([2, 3]) .table ()
-  ndarray_t.zeros ([2, 3, 4]) .table ()
-  ndarray_t.zeros ([2, 3, 4, 5]) .table ()
-  ndarray_t.zeros ([2, 3, 4, 5]) .table ()
+  nd.array_t.zeros ([10]) .table ()
+  nd.array_t.zeros ([2, 3]) .table ()
+  nd.array_t.zeros ([2, 3, 4]) .table ()
+  nd.array_t.zeros ([2, 3, 4, 5]) .table ()
+  nd.array_t.zeros ([2, 3, 4, 5]) .table ()
   t.pass ()
 })
 
 test ("map", t => {
-  let x = ndarray_t.numbers (3, [2, 2])
+  let x = nd.array_t.numbers (3, [2, 2])
   t.true (x.get ([0, 0]) === 3)
   t.true (x.get ([0, 1]) === 3)
   t.true (x.get ([1, 0]) === 3)

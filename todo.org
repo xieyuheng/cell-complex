@@ -1,4 +1,7 @@
-* data-panel
+* ndarray
+- tensor contraction -- generalize matrix mul
+- basic operations for matrix
+- data_t
 - smith normal form of matrix to calculet homology group
 * cell-complex
 - homology of group
@@ -53,8 +56,6 @@
   - the boundary of the boundary of a cell_complex_t should be zero
     even if the cell_complex_t is not a bounfold_t
 * geometry
-- basic operations for matrix
-- tensor mul -- generalize matrix mul
 - test euclidean_space_t
 - quaternion
 - use euclidean-space to re-imp hackenbush

@@ -1,4 +1,5 @@
 import * as _ from "lodash"
+import { dic_t } from "./dic"
 
 export type Array1d = Array <number>
 export type Array2d = Array <Array <number>>
@@ -12,7 +13,7 @@ export type slice_index_t = Array <[number, number] | null>
  * strides based row-major ndarray of number
  */
 export
-class ndarray_t {
+class array_t {
   readonly size: number
   readonly order: number
 
@@ -27,7 +28,7 @@ class ndarray_t {
     readonly offset: number = 0,
   ) {
     this.order = shape.length
-    this.size = ndarray_t.shape_to_size (shape)
+    this.size = array_t.shape_to_size (shape)
     if (strides.length !== shape.length) {
       throw new Error ("strides shape length mismatch")
     }
@@ -108,19 +109,19 @@ class ndarray_t {
     }
   }
 
-  copy (): ndarray_t {
+  copy (): array_t {
     let buffer = new Float64Array (this.size)
     let i = 0
     for (let x of this.values ()) {
       buffer [i] = x
       i += 1
     }
-    return new ndarray_t (
+    return new array_t (
       buffer, this.shape,
-      ndarray_t.init_strides (this.shape))
+      array_t.init_strides (this.shape))
   }
 
-  proj (index: Array <number | null>): ndarray_t {
+  proj (index: Array <number | null>): array_t {
     if (index.length !== this.shape.length) {
       throw new Error ("index length mismatch")
     }
@@ -135,10 +136,10 @@ class ndarray_t {
         offset += v * this.strides [k]
       }
     }
-    return new ndarray_t (this.buffer, shape, strides, offset)
+    return new array_t (this.buffer, shape, strides, offset)
   }
 
-  slice (index: Array <[number, number] | null>): ndarray_t {
+  slice (index: Array <[number, number] | null>): array_t {
     if (index.length !== this.shape.length) {
       throw new Error ("index length mismatch")
     }
@@ -152,10 +153,10 @@ class ndarray_t {
         offset += start * this.strides [k]
       }
     }
-    return new ndarray_t (this.buffer, shape, this.strides, offset)
+    return new array_t (this.buffer, shape, this.strides, offset)
   }
 
-  put (index: Array <[number, number] | null>, src: ndarray_t) {
+  put (index: Array <[number, number] | null>, src: array_t) {
     let tar = this.slice (index)
     let linear_index_array = Array.from (tar.linear_indexes ())
     let value_array = Array.from (src.values ())
@@ -169,18 +170,18 @@ class ndarray_t {
     }
   }
 
-  static from_1darray (array: Array1d): ndarray_t {
+  static from_1darray (array: Array1d): array_t {
     let buffer = Float64Array.from (array)
     let shape = [array.length]
-    let strides = ndarray_t.init_strides (shape)
-    return new ndarray_t (buffer, shape, strides)
+    let strides = array_t.init_strides (shape)
+    return new array_t (buffer, shape, strides)
   }
 
   to_1darray (): Array1d {
     return Array.from (this.values ())
   }
 
-  static from_2darray (array: Array2d): ndarray_t {
+  static from_2darray (array: Array2d): array_t {
     let y_length = array.length
     let x_length = array[0].length
     for (let a of array) {
@@ -190,8 +191,8 @@ class ndarray_t {
     }
     let buffer = Float64Array.from (array.flat ())
     let shape = [y_length, x_length]
-    let strides = ndarray_t.init_strides (shape)
-    return new ndarray_t (buffer, shape, strides)
+    let strides = array_t.init_strides (shape)
+    return new array_t (buffer, shape, strides)
   }
 
   to_2darray (): Array2d {
@@ -203,7 +204,7 @@ class ndarray_t {
     return array
   }
 
-  static from_3darray (array: Array3d): ndarray_t {
+  static from_3darray (array: Array3d): array_t {
     let z_length = array.length
     let y_length = array[0].length
     let x_length = array[0][0].length
@@ -220,35 +221,35 @@ class ndarray_t {
     }
     let buffer = Float64Array.from (array.flat (2))
     let shape = [z_length, y_length, x_length]
-    let strides = ndarray_t.init_strides (shape)
-    return new ndarray_t (buffer, shape, strides)
+    let strides = array_t.init_strides (shape)
+    return new array_t (buffer, shape, strides)
   }
 
   static from_buffer (
     shape: Array <number>,
     buffer: Float64Array,
-  ): ndarray_t {
-    let strides = ndarray_t.init_strides (shape)
-    return new ndarray_t (buffer, shape, strides)
+  ): array_t {
+    let strides = array_t.init_strides (shape)
+    return new array_t (buffer, shape, strides)
   }
 
-  static numbers (n: number, shape: Array <number>): ndarray_t {
-    let size = ndarray_t.shape_to_size (shape)
+  static numbers (n: number, shape: Array <number>): array_t {
+    let size = array_t.shape_to_size (shape)
     let buffer = new Float64Array (size)
     buffer.fill (n)
-    let strides = ndarray_t.init_strides (shape)
-    return new ndarray_t (buffer, shape, strides)
+    let strides = array_t.init_strides (shape)
+    return new array_t (buffer, shape, strides)
   }
 
-  static zeros (shape: Array <number>): ndarray_t {
-    return ndarray_t.numbers (0, shape)
+  static zeros (shape: Array <number>): array_t {
+    return array_t.numbers (0, shape)
   }
 
-  static ones (shape: Array <number>): ndarray_t {
-    return ndarray_t.numbers (1, shape)
+  static ones (shape: Array <number>): array_t {
+    return array_t.numbers (1, shape)
   }
 
-  fill (x: number): ndarray_t {
+  fill (x: number): array_t {
     this.buffer.fill (x)
     return this
   }
@@ -278,7 +279,7 @@ class ndarray_t {
     if (index.length !== shape.length) {
       throw new Error ("index length mismatch")
     }
-    if (ndarray_t.proj_index_max_p (index, shape)) {
+    if (array_t.proj_index_max_p (index, shape)) {
       throw new Error ("index out of shape")
     }
     let [i] = index.slice (-1)
@@ -288,7 +289,7 @@ class ndarray_t {
       let new_shape = shape.slice ()
       new_index.pop ()
       new_shape.pop ()
-      new_index = ndarray_t.proj_index_inc_with_shape (
+      new_index = array_t.proj_index_inc_with_shape (
         new_index,
         new_shape,
       )
@@ -299,7 +300,7 @@ class ndarray_t {
       let new_shape = shape.slice ()
       new_index.pop ()
       new_shape.pop ()
-      new_index = ndarray_t.proj_index_inc_with_shape (
+      new_index = array_t.proj_index_inc_with_shape (
         new_index,
         new_shape,
       )
@@ -327,9 +328,9 @@ class ndarray_t {
       while (true) {
         console.log (index)
         this.proj (index) .table ()
-        index = ndarray_t.proj_index_inc_with_shape (
+        index = array_t.proj_index_inc_with_shape (
           index, this.shape)
-        if (ndarray_t.proj_index_max_p (index, this.shape)) {
+        if (array_t.proj_index_max_p (index, this.shape)) {
           console.log (index)
           this.proj (index) .table ()
           return
@@ -338,7 +339,7 @@ class ndarray_t {
     }
   }
 
-  *zip_many (many: Array <ndarray_t>) {
+  *zip_many (many: Array <array_t>) {
     let iters = many.map (a => a.values ())
     for (let k of this.buffer.keys ()) {
       if (this.linear_index_valid_p (k)) {
@@ -356,13 +357,13 @@ class ndarray_t {
     }
   }
 
-  *zip (a: ndarray_t) {
+  *zip (a: array_t) {
     for (let many of this.zip_many ([a])) {
       yield many
     }
   }
 
-  eq (that: ndarray_t): boolean {
+  eq (that: array_t): boolean {
     if (this.size !== that.size) { return false }
     if (this.order !== that.order) { return false }
     if (! _.isEqual (this.shape, that.shape)) { return false }
@@ -374,16 +375,16 @@ class ndarray_t {
     return true
   }
 
-  map (f: (x: number) => number): ndarray_t {
+  map (f: (x: number) => number): array_t {
     let buffer = new Float64Array (this.size)
     let i = 0
     for (let x of this.values ()) {
       buffer [i] = f (x)
       i += 1
     }
-    return new ndarray_t (
+    return new array_t (
       buffer, this.shape,
-      ndarray_t.init_strides (this.shape))
+      array_t.init_strides (this.shape))
   }
 
   for_each (f: (x: number) => any) {
@@ -392,3 +393,11 @@ class ndarray_t {
     }
   }
 }
+
+// export
+// class data_t {
+//   readonly size: number
+//   readonly order: number
+//   readonly shape: Array <number>
+//   readonly array: array_t
+// }
