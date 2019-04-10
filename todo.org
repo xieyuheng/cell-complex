@@ -1,5 +1,4 @@
 * ndarray
-- act and trans
 - inv and det
 - data_t
 - smith normal form of matrix to calculate homology group
