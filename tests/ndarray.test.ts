@@ -277,6 +277,50 @@ test ("map", t => {
   t.true (x.get ([1, 1]) === 6)
 })
 
+test ("indexes", t => {
+  let y = nd.array_t.from_3darray ([
+    [[0, 1, 2], [3, 4, 5]],
+    [[5, 4, 3], [2, 1, 0]],
+  ])
+
+  t.deepEqual (Array.from (y.indexes ()), [
+    [ 0, 0, 0 ],
+    [ 0, 0, 1 ],
+    [ 0, 0, 2 ],
+    [ 0, 1, 0 ],
+    [ 0, 1, 1 ],
+    [ 0, 1, 2 ],
+    [ 1, 0, 0 ],
+    [ 1, 0, 1 ],
+    [ 1, 0, 2 ],
+    [ 1, 1, 0 ],
+    [ 1, 1, 1 ],
+    [ 1, 1, 2 ],
+  ])
+
+  let x = y.proj ([0, null, null])
+
+  t.deepEqual (Array.from (x.indexes ()), [
+    [ 0, 0 ],
+    [ 0, 1 ],
+    [ 0, 2 ],
+    [ 1, 0 ],
+    [ 1, 1 ],
+    [ 1, 2 ],
+  ])
+
+  x = x.copy ()
+
+  t.deepEqual (Array.from (x.indexes ()), [
+    [ 0, 0 ],
+    [ 0, 1 ],
+    [ 0, 2 ],
+    [ 1, 0 ],
+    [ 1, 1 ],
+    [ 1, 2 ],
+  ])
+})
+
 test ("new data_t", t => {
   let axis = nd.axis_t.from_array ([ "silent", "betray" ])
   let axes = nd.axes_t.from_obj ({

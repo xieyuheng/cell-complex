@@ -65,6 +65,20 @@ class array_t {
     return linear_index
   }
 
+  linear_index_to_get_index (
+    linear_index: number
+  ): get_index_t {
+    let index = new Array ()
+    linear_index -= this.offset
+    for (let i = 0; i < this.shape.length; i += 1) {
+      let quotient = Math.floor (linear_index / this.strides [i])
+      let remainder = linear_index % this.strides [i]
+      index [i] = quotient
+      linear_index = remainder
+    }
+    return index
+  }
+
   get (index: Array <number>): number {
     return this.buffer [this.get_linear_index (index)]
   }
@@ -106,6 +120,28 @@ class array_t {
     for (let k of this.buffer.keys ()) {
       if (this.linear_index_valid_p (k)) {
         yield this.buffer [k] as number
+      }
+    }
+  }
+
+  *entries () {
+    for (let k of this.buffer.keys ()) {
+      if (this.linear_index_valid_p (k)) {
+        yield [
+          this.linear_index_to_get_index (k),
+          this.buffer [k],
+        ] as [
+          get_index_t,
+          number,
+        ]
+      }
+    }
+  }
+
+  *indexes () {
+    for (let k of this.buffer.keys ()) {
+      if (this.linear_index_valid_p (k)) {
+        yield this.linear_index_to_get_index (k) as get_index_t
       }
     }
   }
@@ -394,10 +430,65 @@ class array_t {
     }
   }
 
+//   reshape (
+//     shape_permutation: Array <number>
+//   ): array_t {
 
-  //   contract () {
-  // // TODO
-  //   }
+//   }
+
+//   self_contract (
+//     i: number,
+//     j: number,
+//   ): array_t {
+
+//  }
+
+  // [3, 4] [4, 5] => [3, 5]
+  contract (
+    that: array_t,
+    i: number,
+    j: number,
+  ): array_t {
+    let this_size = this.shape [i]
+    let that_size = that.shape [j]
+    if (this_size !== that_size) {
+      throw new Error ("size mismatch")
+    }
+    let shape = new Array ()
+    this.shape.forEach ((s, k) => {
+      if (k !== i) {
+        shape.push (s)
+      }
+    })
+    that.shape.forEach ((s, k) => {
+      if (k !== j) {
+        shape.push (s)
+      }
+    })
+    let buffer = new Float64Array (this.size)
+    let size = array_t.shape_to_size (shape)
+    let strides = array_t.init_strides (shape)
+    let array = new array_t (buffer, shape, strides)
+    let split_index = (
+      index: get_index_t
+    ): [proj_index_t, proj_index_t] => {
+      let left = index.slice (0, this.order - 1) as proj_index_t
+      left.splice (i, 0, null)
+      let right = index.slice (this.order - 1) as proj_index_t
+      right.splice (j, 0, null)
+      return [left, right]
+    }
+    for (let index of array.indexes ()) {
+      let [left, right] = split_index (index)
+      let sum = 0
+      let zip = this.proj (left) .zip (that.proj (right))
+      for (let [x, y] of zip) {
+        sum += x * y
+      }
+      array.set (index, sum)
+    }
+    return array
+  }
 }
 
 export

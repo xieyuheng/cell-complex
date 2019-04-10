@@ -1,10 +1,12 @@
 * ndarray
-- tensor contraction -- generalize matrix mul
-- basic operations for matrix
+
 - data_t
-- smith normal form of matrix to calculet homology group
+- smith normal form of matrix to calculate homology group
 * cell-complex
-- homology of group
+- presentation of groupoid is the same as 2-dim cell-complex
+  - by which we can calculate homology group of groupoid
+  - my first aim is to
+    generalize this algebraic structure for 3-dim cell-complex
 - glob_t
 - chain_t
   - `chain_t.boundary ()`

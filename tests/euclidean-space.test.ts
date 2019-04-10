@@ -30,6 +30,34 @@ test ("matrix_t row & col", t => {
   t.true (x.col (0) .eq (c))
 })
 
+test ("matrix_t mul", t => {
+  {
+    let x = new matrix_t (nd.array_t.from_2darray ([
+      [0, 1],
+      [0, 0],
+    ]))
+
+    let y = new matrix_t (nd.array_t.from_2darray ([
+      [0, 0],
+      [1, 0],
+    ]))
+
+    t.true (
+      x.mul (y) .eq (new matrix_t (nd.array_t.from_2darray ([
+        [1, 0],
+        [0, 0],
+      ])))
+    )
+
+    t.true (
+      y.mul (x) .eq (new matrix_t (nd.array_t.from_2darray ([
+        [0, 0],
+        [0, 1],
+      ])))
+    )
+  }
+})
+
 test ("point_t trans", t => {
   let p = new point_t (nd.array_t.from_1darray ([1, 1, 1]))
   let v = new vector_t (nd.array_t.from_1darray ([1, 2, 4]))

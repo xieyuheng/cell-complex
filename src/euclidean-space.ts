@@ -61,7 +61,12 @@ class matrix_t {
     return this.array.eq (that.array.copy ())
   }
 
-  // mul (that: matrix_t): matrix_t
+  mul (that: matrix_t): matrix_t {
+    return new matrix_t (
+      this.array.contract (that.array, 1, 0))
+  }
+
+  // TODO
   // apply (v: vector_t): vector_t {}
   // deter (): number {}
   // inv (): matrix_t {}
