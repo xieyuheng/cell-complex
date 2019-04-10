@@ -1,6 +1,7 @@
 import test from "ava"
 
 import * as nd from "../src/ndarray"
+import { log } from "../src/util"
 
 test ("init_strides", t => {
   let shape = [2, 3, 4]
@@ -274,4 +275,31 @@ test ("map", t => {
   t.true (x.get ([0, 1]) === 6)
   t.true (x.get ([1, 0]) === 6)
   t.true (x.get ([1, 1]) === 6)
+})
+
+test ("new data_t", t => {
+  let axis = nd.axis_t.from_array ([ "silent", "betray" ])
+  let axes = nd.axes_t.from_obj ({
+    "Alice": [ "silent", "betray" ],
+    "Bob": [ "silent", "betray" ],
+    "payoff": [ "Alice", "Bob" ],
+  })
+
+  // log (axes)
+
+  let prisoner_s_dilemma = new nd.data_t (
+    nd.axes_t.from_obj ({
+      "Alice": [ "silent", "betray" ],
+      "Bob": [ "silent", "betray" ],
+      "payoff": [ "Alice", "Bob" ],
+    }),
+    nd.array_t.from_3darray ([
+      [[-1, -1], [-3, -0]],
+      [[-0, -3], [-2, -2]],
+    ]),
+  )
+
+  // log (prisoner_s_dilemma)
+
+  t.pass ()
 })

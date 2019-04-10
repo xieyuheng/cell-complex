@@ -1,12 +1,9 @@
 import test from "ava"
 
 import { dic_t } from "../src/dic"
-
 import * as cx from "../src/cell-complex"
-
 import { torus_t } from "../src/torus"
-
-import { log } from "./util"
+import { log } from "../src/util"
 
 test ("from_exp", t => {
   let torus = new torus_t ()

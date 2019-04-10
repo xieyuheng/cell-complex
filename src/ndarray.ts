@@ -1,5 +1,6 @@
 import * as _ from "lodash"
-import { dic_t } from "./dic"
+
+import { log } from "./util"
 
 export type Array1d = Array <number>
 export type Array2d = Array <Array <number>>
@@ -392,12 +393,67 @@ class array_t {
       f (x)
     }
   }
+
+
+  //   contract () {
+  // // TODO
+  //   }
 }
 
-// export
-// class data_t {
-//   readonly size: number
-//   readonly order: number
-//   readonly shape: Array <number>
-//   readonly array: array_t
-// }
+export
+class axes_t {
+  map: Map <string, axis_t>
+
+  constructor (
+    map: Map <string, axis_t>
+  ) {
+    this.map = map
+  }
+
+  static from_obj (
+    obj: { [index: string]: Array <string> }
+  ): axes_t {
+    let map = new Map ()
+    for (let name in obj) {
+      let array = obj [name]
+      map.set (name, axis_t.from_array (array))
+    }
+    return new axes_t (map)
+  }
+}
+
+export
+class axis_t {
+  map: Map <string, number>
+
+  constructor (
+    map: Map <string, number>
+  ) {
+    this.map = map
+  }
+
+  static from_array (array: Array <string>): axis_t {
+    let map = new Map ()
+    for (let k in array) {
+      let v = array [k]
+      map.set (v, k)
+    }
+    return new axis_t (map)
+  }
+}
+
+export
+class data_t {
+  axes: axes_t
+  array: array_t
+
+  constructor (
+    axes: axes_t,
+    array: array_t,
+  ) {
+    this.axes = axes
+    this.array = array
+  }
+
+  // TODO
+}

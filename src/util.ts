@@ -1,3 +1,4 @@
-export function log (x: any) {
+export
+function log (x: any) {
   console.dir (x, { depth: null })
 }

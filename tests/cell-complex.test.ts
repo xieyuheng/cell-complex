@@ -2,8 +2,7 @@ import test from "ava"
 
 import * as cx from "../src/cell-complex"
 import { torus_t } from "../src/torus"
-
-import { log } from "./util"
+import { log } from "../src/util"
 
 test ("cell_complex_t eq", t => {
   let torus = new torus_t ()
