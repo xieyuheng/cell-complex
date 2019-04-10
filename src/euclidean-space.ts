@@ -67,8 +67,8 @@ class matrix_t {
   }
 
   // TODO
-  // apply (v: vector_t): vector_t {}
-  // deter (): number {}
+  // act (v: vector_t): vector_t {}
+  // det (): number {}
   // inv (): matrix_t {}
 }
 
@@ -133,6 +133,10 @@ class vector_t {
   map (f: (n: number) => number): vector_t {
     return new vector_t (this.array.map (f))
   }
+
+  // TODO
+  // trans (matrix: matrix_t): vector_t {}
+  // act (v: point_t): point_t {}
 }
 
 export

@@ -17,7 +17,7 @@ Contains:
 - cell-complex -- A low dimensional algebraic topology library
   - [paper](https://xieyuheng.github.io/writing/investigations-into-cell-complex.html)
   -- "Investigations into cell complex", by Xie Yuheng, 2019
--- ndarray -- strides based row-major ndarray of number
+- ndarray -- strides based row-major ndarray of number
 
 ## Docs
 
