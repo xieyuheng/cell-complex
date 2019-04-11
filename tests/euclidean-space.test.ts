@@ -1,7 +1,11 @@
 import test from "ava"
 
 import * as nd from "../src/ndarray"
-import { point_t, vector_t, matrix_t } from "../src/euclidean-space"
+import {
+  point_t,
+  vector_t,
+  matrix_t,
+} from "../src/euclidean-space"
 import { log } from "../src/util"
 
 test ("new matrix_t", t => {

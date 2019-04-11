@@ -130,10 +130,7 @@ class array_t {
         yield [
           this.linear_index_to_get_index (k),
           this.buffer [k],
-        ] as [
-          get_index_t,
-          number,
-        ]
+        ] as [ get_index_t, number ]
       }
     }
   }
