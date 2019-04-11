@@ -85,6 +85,11 @@ class matrix_t {
   // inv (): matrix_t {}
 }
 
+export
+function matrix (array: nd.Array2d): matrix_t {
+  return matrix_t.from_array (array)
+}
+
 /**
  * Although `Array` in js is written as a row,
  * `vector_t` should be viewed as column vector.
@@ -175,6 +180,11 @@ class vector_t {
 }
 
 export
+function vector (array: nd.Array1d): vector_t {
+  return vector_t.from_array (array)
+}
+
+export
 class point_t {
   array: nd.array_t
   readonly shape: Array <number>
@@ -253,6 +263,11 @@ class point_t {
   map (f: (n: number) => number): point_t {
     return new point_t (this.array.map (f))
   }
+}
+
+export
+function point (array: nd.Array1d): point_t {
+  return point_t.from_array (array)
 }
 
 /**

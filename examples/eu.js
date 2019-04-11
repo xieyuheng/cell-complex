@@ -4,17 +4,17 @@ let eu = require ("cicada-lang/lib/euclidean-space")
 let log = require ("cicada-lang/lib/util") .log
 
 {
-  let m = eu.matrix_t.from_array ([
+  let m = eu.matrix ([
     [ 2, -1],
     [-1,  2],
   ])
 
-  let b = eu.vector_t.from_array ([
+  let b = eu.vector ([
     0,
     3,
   ])
 
-  let v = eu.vector_t.from_array ([
+  let v = eu.vector ([
     1,
     2,
   ])
@@ -30,19 +30,19 @@ let log = require ("cicada-lang/lib/util") .log
 }
 
 {
-  let m = eu.matrix_t.from_array ([
+  let m = eu.matrix ([
     [ 2, -1,  0],
     [-1,  2, -1],
     [ 0, -3,  4],
   ])
 
-  let b = eu.vector_t.from_array ([
+  let b = eu.vector ([
     0,
     -1,
     4,
   ])
 
-  let v = eu.vector_t.from_array ([
+  let v = eu.vector ([
     0,
     0,
     1,
@@ -58,19 +58,19 @@ let log = require ("cicada-lang/lib/util") .log
 }
 
 {
-  let m = eu.matrix_t.from_array ([
+  let m = eu.matrix ([
     [1, 2, 1],
     [3, 8, 1],
     [0, 4, 1],
   ])
 
-//   let b = eu.vector_t.from_array ([
+//   let b = eu.vector ([
 //     0,
 //     -1,
 //     4,
 //   ])
 
-  let v = eu.vector_t.from_array ([
+  let v = eu.vector ([
     0,
     0,
     1,
@@ -83,4 +83,32 @@ let log = require ("cicada-lang/lib/util") .log
 //   assert (
 //     m.act (v) .eq (b)
 //   )
+}
+
+{
+  let m = eu.matrix ([
+    [ 1, 0, 0],
+    [-3, 1, 0],
+    [ 0, 0, 1],
+  ])
+
+  let n = eu.matrix ([
+    [1, 0, 0],
+    [3, 1, 0],
+    [0, 0, 1],
+  ])
+
+  assert (
+    m.mul (n) .eq (n.mul (m))
+  )
+
+  assert (
+    m.mul (n) .eq (eu.matrix ([
+      [1, 0, 0],
+      [0, 1, 0],
+      [0, 0, 1],
+    ]))
+  )
+
+  m.mul (n) .table ()
 }
