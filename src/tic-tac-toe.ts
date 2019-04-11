@@ -111,6 +111,15 @@ extends cg.play_t <player_t, state_t, choice_t> {
     })
     console.log (repr)
   }
+
+  draw_p (): boolean {
+    for (let p of this.players) {
+      if (this.game.choices (p, this.last_state ()) .length > 0) {
+        return false
+      }
+    }
+    return true
+  }
 }
 
 export
