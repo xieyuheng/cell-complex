@@ -80,12 +80,12 @@ test ("vector_t trans", t => {
 
   let f = new matrix_t (nd.array_t.from_2darray ([
     [0, 1],
-    [0, 0],
+    [0, 1],
   ]))
 
   t.true (
     v.trans (f)
-      .eq (new vector_t (nd.array_t.from_1darray ([2, 0])))
+      .eq (new vector_t (nd.array_t.from_1darray ([2, 2])))
   )
 
   t.true (

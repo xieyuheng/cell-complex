@@ -6,9 +6,7 @@ import { abelian_group_t } from "./group"
 import { vector_space_t } from "./vector-space"
 import { affine_space_t } from "./affine-space"
 import { eqv } from "./eqv"
-
 import { number_field_t } from "./number"
-
 import * as nd from "./ndarray"
 
 /**
@@ -75,6 +73,11 @@ class matrix_t {
   // inv (): matrix_t {}
 }
 
+/**
+ * Although array in js is written as a row,
+ * vector is viewed as column vector,
+ * and when transformed by a matrix as (M * v).
+ */
 export
 class vector_t {
   array: nd.array_t
