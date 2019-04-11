@@ -8,6 +8,6 @@
     "url": "git@github.com:xieyuheng/cicada.git"
   },
   "dependencies": {
-    "cicada-lang": "0.0.8"
+    "cicada-lang": "0.0.9"
   }
 }

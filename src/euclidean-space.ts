@@ -45,7 +45,7 @@ class matrix_t {
   }
 
   table () {
-    console.log (this.constructor)
+    console.log ("matrix:")
     this.array.table ()
   }
 
@@ -115,7 +115,7 @@ class vector_t {
   }
 
   table () {
-    console.log (this.constructor)
+    console.log ("vector:")
     this.array.table ()
   }
 
@@ -197,7 +197,7 @@ class point_t {
   }
 
   table () {
-    console.log (this.constructor)
+    console.log ("point:")
     this.array.table ()
   }
 
