@@ -76,17 +76,23 @@ class matrix_t {
     return v.trans (this)
   }
 
+  transpose (): matrix_t {
+    return new matrix_t (this.array.reshape ([1, 0]))
+  }
+
   // TODO
   // det (): number {}
   // inv (): matrix_t {}
-  // transpose (): matrix_t {}
 }
 
 /**
- * Although array in js is written as a row,
- * vector is viewed as column vector,
- * and when transformed by a matrix as (M * v).
+ * Although `Array` in js is written as a row,
+ * `vector_t` should be viewed as column vector.
+ * (respecting the tradition of mathematics)
+ *
+ * `A x` is a combination of the columns of `A`.
  */
+
 export
 class vector_t {
   array: nd.array_t
@@ -138,10 +144,9 @@ class vector_t {
   }
 
   *entries () {
-    let i = 0
-    for (let x of this.array.values ()) {
-      yield [i, x]
-      i += 1
+    for (let [k, v] of this.array.entries ()) {
+      let [i] = k
+      yield [i, v]
     }
   }
 

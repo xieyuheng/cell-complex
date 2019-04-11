@@ -63,6 +63,25 @@ test ("matrix_t mul", t => {
   }
 })
 
+test ("matrix_t transpose", t => {
+  {
+    let x = matrix_t.from_array ([
+      [1, 2],
+      [3, 4],
+      [5, 6],
+    ])
+
+    let y = matrix_t.from_array ([
+      [1, 3, 5],
+      [2, 4, 6],
+    ])
+
+    t.true (
+      x.transpose () .eq (y)
+    )
+  }
+})
+
 test ("point_t trans", t => {
   let p = point_t.from_array ([1, 1, 1])
   let v = vector_t.from_array ([1, 2, 4])

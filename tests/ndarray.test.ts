@@ -321,6 +321,38 @@ test ("indexes", t => {
   ])
 })
 
+test ("reshape", t => {
+  let y = nd.array_t.from_3darray ([
+    [[0, 1, 2], [3, 4, 5]],
+    [[5, 4, 3], [2, 1, 0]],
+  ])
+
+
+  t.deepEqual (
+    y.reshape ([1, 0, 2]) .shape,
+    [2, 2, 3],
+  )
+
+  let x = y.proj ([1, null, null])
+
+  t.deepEqual (
+    x.reshape ([1, 0]) .shape,
+    [3, 2],
+  )
+
+  let z = nd.array_t.from_2darray ([
+    [5, 2],
+    [4, 1],
+    [3, 0],
+  ])
+
+  t.true (
+    x.reshape ([1, 0]) .eq (z)
+  )
+
+  t.pass ()
+})
+
 test ("new data_t", t => {
   let axis = nd.axis_t.from_array ([ "silent", "betray" ])
   let axes = nd.axes_t.from_obj ({

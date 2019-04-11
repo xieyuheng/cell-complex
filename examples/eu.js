@@ -20,9 +20,9 @@ let log = require ("cicada-lang/lib/util") .log
   ])
 
 
-  m.table ()
-  v.table ()
-  m.act (v) .table ()
+  // m.table ()
+  // v.table ()
+  // m.act (v) .table ()
 
   assert (
     m.act (v) .eq (b)
@@ -48,11 +48,39 @@ let log = require ("cicada-lang/lib/util") .log
     1,
   ])
 
-  m.table ()
-  v.table ()
-  m.act (v) .table ()
+  // m.table ()
+  // v.table ()
+  // m.act (v) .table ()
 
   assert (
     m.act (v) .eq (b)
   )
+}
+
+{
+  let m = eu.matrix_t.from_array ([
+    [1, 2, 1],
+    [3, 8, 1],
+    [0, 4, 1],
+  ])
+
+//   let b = eu.vector_t.from_array ([
+//     0,
+//     -1,
+//     4,
+//   ])
+
+  let v = eu.vector_t.from_array ([
+    0,
+    0,
+    1,
+  ])
+
+  m.table ()
+  v.table ()
+  m.act (v) .table ()
+
+//   assert (
+//     m.act (v) .eq (b)
+//   )
 }

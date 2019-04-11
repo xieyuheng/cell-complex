@@ -65,20 +65,6 @@ class array_t {
     return linear_index
   }
 
-  linear_index_to_get_index (
-    linear_index: number
-  ): get_index_t {
-    let index = new Array ()
-    linear_index -= this.offset
-    for (let i = 0; i < this.shape.length; i += 1) {
-      let quotient = Math.floor (linear_index / this.strides [i])
-      let remainder = linear_index % this.strides [i]
-      index [i] = quotient
-      linear_index = remainder
-    }
-    return index
-  }
-
   get (index: Array <number>): number {
     return this.buffer [this.get_linear_index (index)]
   }
@@ -87,72 +73,36 @@ class array_t {
     this.buffer [this.get_linear_index (index)] = x
   }
 
-  protected linear_index_valid_p (i: number): boolean {
-    if (i < this.offset) { return false }
-    i -= this.offset
-    for (let [n, s] of this.strides.entries ()) {
-      if (Math.floor (i / s) < this.shape [n]) {
-        i = i % s
-      } else {
-        return false
-      }
-    }
-    return i === 0
-  }
-
-  *linear_entries () {
-    for (let k of this.buffer.keys ()) {
-      if (this.linear_index_valid_p (k)) {
-        yield [k, this.buffer [k]] as [number, number]
-      }
-    }
-  }
-
-  *linear_indexes () {
-    for (let k of this.buffer.keys ()) {
-      if (this.linear_index_valid_p (k)) {
-        yield k as number
-      }
-    }
-  }
-
   *values () {
-    for (let k of this.buffer.keys ()) {
-      if (this.linear_index_valid_p (k)) {
-        yield this.buffer [k] as number
-      }
+    for (let index of get_indexes_of_shape (this.shape)) {
+      yield this.get (index) as number
     }
   }
 
   *entries () {
-    for (let k of this.buffer.keys ()) {
-      if (this.linear_index_valid_p (k)) {
-        yield [
-          this.linear_index_to_get_index (k),
-          this.buffer [k],
-        ] as [ get_index_t, number ]
-      }
+    for (let index of get_indexes_of_shape (this.shape)) {
+      yield [
+        index.slice (),
+        this.get (index),
+      ] as [ get_index_t, number ]
     }
   }
 
   *indexes () {
-    for (let k of this.buffer.keys ()) {
-      if (this.linear_index_valid_p (k)) {
-        yield this.linear_index_to_get_index (k) as get_index_t
-      }
+    for (let index of get_indexes_of_shape (this.shape)) {
+      yield index.slice () as get_index_t
     }
   }
 
   copy (): array_t {
     let buffer = new Float64Array (this.size)
-    let i = 0
-    for (let x of this.values ()) {
-      buffer [i] = x
-      i += 1
-    }
-    return new array_t (
+    let array = new array_t (
       buffer, this.shape,
       array_t.init_strides (this.shape))
+    for (let [i, x] of this.entries ()) {
+      array.set (i, x)
+    }
+    return array
   }
 
   proj (index: Array <number | null>): array_t {
@@ -192,15 +142,15 @@ class array_t {
 
   put (index: Array <[number, number] | null>, src: array_t) {
     let tar = this.slice (index)
-    let linear_index_array = Array.from (tar.linear_indexes ())
+    let index_array = Array.from (tar.indexes ())
     let value_array = Array.from (src.values ())
-    if (linear_index_array.length !== value_array.length) {
+    if (index_array.length !== value_array.length) {
       throw new Error ("size mismatch")
     }
-    for (let k in linear_index_array) {
-      let i = linear_index_array [k]
+    for (let k in index_array) {
+      let i = index_array [k]
       let v = value_array [k]
-      tar.buffer [i] = v
+      tar.set (i, v)
     }
   }
 
@@ -373,27 +323,17 @@ class array_t {
     }
   }
 
-  *zip_many (many: Array <array_t>) {
-    let iters = many.map (a => a.values ())
-    for (let k of this.buffer.keys ()) {
-      if (this.linear_index_valid_p (k)) {
-        let array = [this.buffer [k]]
-        for (let iter of iters) {
-          let next = iter.next ()
-          if (next.done) {
-            return
-          } else {
-            array.push (next.value)
-          }
-        }
-        yield array
+  *zip (that: array_t) {
+    let this_iter = this.values ()
+    let that_iter = that.values ()
+    while (true) {
+      let this_next = this_iter.next ()
+      let that_next = that_iter.next ()
+      if (this_next.done || that_next.done) {
+        return
+      } else {
+        yield [this_next.value, that_next.value]
       }
-    }
-  }
-
-  *zip (a: array_t) {
-    for (let many of this.zip_many ([a])) {
-      yield many
     }
   }
 
@@ -411,14 +351,13 @@ class array_t {
 
   map (f: (x: number) => number): array_t {
     let buffer = new Float64Array (this.size)
-    let i = 0
-    for (let x of this.values ()) {
-      buffer [i] = f (x)
-      i += 1
-    }
-    return new array_t (
+    let array = new array_t (
       buffer, this.shape,
       array_t.init_strides (this.shape))
+    for (let [i, x] of this.entries ()) {
+      array.set (i, f (x))
+    }
+    return array
   }
 
   for_each (f: (x: number) => any) {
@@ -427,18 +366,26 @@ class array_t {
     }
   }
 
-//   reshape (
-//     shape_permutation: Array <number>
-//   ): array_t {
+  reshape (
+    permutation: Array <number>
+  ): array_t {
+    let shape = new Array ()
+    let strides = new Array ()
+    for (let i of permutation) {
+      shape.push (this.shape [i])
+      strides.push (this.strides [i])
+    }
+    return new array_t (
+      this.buffer, shape, strides,
+      this.offset)
+  }
 
-//   }
+  //   self_contract (
+  //     i: number,
+  //     j: number,
+  //   ): array_t {
 
-//   self_contract (
-//     i: number,
-//     j: number,
-//   ): array_t {
-
-//  }
+  //  }
 
   // [3, 4] [4, 5] => [3, 5]
   contract (
@@ -485,6 +432,55 @@ class array_t {
       array.set (index, sum)
     }
     return array
+  }
+}
+
+export
+function get_index_max_p (
+  index: get_index_t,
+  shape: Array <number>,
+): boolean {
+  for (let k in index) {
+    let i = index [k]
+    let s = shape [k]
+    if (i < s - 1) {
+      return false
+    }
+  }
+  return true
+}
+
+/**
+ * recursive side-effect over index
+ */
+export
+function get_index_step (
+  index: get_index_t,
+  shape: Array <number>,
+  cursor: number,
+): get_index_t {
+  let i = index [cursor]
+  let s = shape [cursor]
+  if (i < s - 1) {
+    index [cursor] = i + 1
+    return index
+  } else {
+    index [cursor] = 0
+    return get_index_step (index, shape, cursor - 1)
+  }
+}
+
+export
+function* get_indexes_of_shape (shape: Array <number>) {
+  let size = shape.length
+  let index = new Array (size) .fill (0)
+  yield index
+  while (true) {
+    if (get_index_max_p (index, shape)) {
+      return
+    } else {
+      yield get_index_step (index, shape, size - 1)
+    }
   }
 }
 
