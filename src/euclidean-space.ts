@@ -32,6 +32,10 @@ class matrix_t {
     this.shape = array.shape
   }
 
+  static from_array (array: nd.Array2d): matrix_t {
+    return new matrix_t (nd.array_t.from_2darray (array))
+  }
+
   get (x: number, y: number): number {
     return this.array.get ([x, y])
   }
@@ -60,8 +64,7 @@ class matrix_t {
   }
 
   mul (that: matrix_t): matrix_t {
-    return new matrix_t (
-      this.array.contract (that.array, 1, 0))
+    return new matrix_t (this.array.contract (that.array, 1, 0))
   }
 
   act (v: vector_t): vector_t {
@@ -71,6 +74,7 @@ class matrix_t {
   // TODO
   // det (): number {}
   // inv (): matrix_t {}
+  // transpose (): matrix_t {}
 }
 
 /**
@@ -91,6 +95,10 @@ class vector_t {
     this.array = array
     this.shape = array.shape
     this.dim = array.size
+  }
+
+  static from_array (array: nd.Array1d): vector_t {
+    return new vector_t (nd.array_t.from_1darray (array))
   }
 
   get (i: number): number {
@@ -164,6 +172,10 @@ class point_t {
     this.array = array
     this.shape = array.shape
     this.dim = array.size
+  }
+
+  static from_array (array: nd.Array1d): point_t {
+    return new point_t (nd.array_t.from_1darray (array))
   }
 
   get (i: number): number {

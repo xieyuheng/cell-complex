@@ -7,6 +7,8 @@
   - by which we can calculate homology group of groupoid
   - my first aim is to
     generalize this algebraic structure for 3-dim cell-complex
+  - we also want to study group representation
+    i.e. find matrix group iso to given group
 - glob_t
 - chain_t
   - `chain_t.boundary ()`
