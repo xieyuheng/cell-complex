@@ -1,5 +1,6 @@
 # js
 dist
+lib
 node_modules
 
 # parcel

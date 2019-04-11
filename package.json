@@ -7,7 +7,7 @@
     "type": "git",
     "url": "git@github.com:xieyuheng/cicada.git"
   },
-  "main": "dist/cicada.js",
+  "main": "lib/cicada.js",
   "scripts": {
     "build": "tsc",
     "watch": "tsc --watch",

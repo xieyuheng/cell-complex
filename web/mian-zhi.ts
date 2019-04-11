@@ -1,6 +1,6 @@
 // 勉之 -- 免枝而有餘者勝
 
-import * as hackenbush from "../dist/hackenbush"
+import * as hackenbush from "../lib/hackenbush"
 
 import {
   id_t, vertex_t, edge_t, graph_t
