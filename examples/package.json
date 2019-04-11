@@ -8,7 +8,7 @@
     "url": "git@github.com:xieyuheng/cicada.git"
   },
   "dependencies": {
-    "cicada-lang": "0.0.10",
+    "cicada-lang": "0.0.11",
     "power-assert": "^1.6.1"
   }
 }
