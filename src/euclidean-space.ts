@@ -44,6 +44,11 @@ class matrix_t {
     this.array.set ([x, y], v)
   }
 
+  table () {
+    console.log (this.constructor)
+    this.array.table ()
+  }
+
   slice (
     x: [number, number] | null,
     y: [number, number] | null,
@@ -107,6 +112,11 @@ class vector_t {
 
   set (i: number, v: number) {
     this.array.set ([i], v)
+  }
+
+  table () {
+    console.log (this.constructor)
+    this.array.table ()
   }
 
   slice (i: [number, number]): vector_t {
@@ -184,6 +194,11 @@ class point_t {
 
   set (i: number, v: number) {
     this.array.set ([i], v)
+  }
+
+  table () {
+    console.log (this.constructor)
+    this.array.table ()
   }
 
   slice (i: [number, number]): point_t {
