@@ -281,6 +281,12 @@ class matrix_t {
     return matrix
   }
 
+  // append_cols
+  // // TODO
+
+  // append_rows
+  // // TODO
+
   // rank
   // // TODO
 
