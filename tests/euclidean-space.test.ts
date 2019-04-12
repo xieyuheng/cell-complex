@@ -145,3 +145,47 @@ test ("eu.vector_t trans", t => {
     )
   }
 })
+
+test ("eu.matrix_t diag", t => {
+  let m = eu.matrix ([
+    [1, 3, 1],
+    [1, 1, -1],
+    [3, 11, 5],
+  ])
+  let v = eu.vector ([
+    1,
+    1,
+    5,
+  ])
+
+  t.true (m.diag () .eq (v))
+})
+
+test ("reduced_row_echelon_form", t => {
+  let m = eu.matrix ([
+    [1, 3, 1, 9],
+    [1, 1, -1, 1],
+    [3, 11, 5, 35],
+  ])
+  m.row_echelon_form ()
+  m.unit_row_echelon_form ()
+  t.true (
+    m.reduced_row_echelon_form () .eq (eu.matrix ([
+      [1, 0, -2, -3],
+      [-0, 1, 1, 4],
+      [0, 0, 0, 0],
+    ]))
+  )
+})
+
+test ("eu.vector_t reduce", t => {
+  let v = eu.vector ([1, 2, 3])
+
+  t.true (
+    v.reduce ((acc, cur) => acc * cur) === 6
+  )
+
+  t.true (
+    v.reduce_with (10, (acc, cur) => acc * cur) === 60
+  )
+})

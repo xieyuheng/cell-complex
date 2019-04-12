@@ -112,14 +112,3 @@ let log = require ("../lib/util") .log
 
   m.mul (n) .table ()
 }
-
-{
-  let m = eu.matrix ([
-    [1, 3, 1, 9],
-    [1, 1, -1, 1],
-    [3, 11, 5, 35],
-  ])
-  m.row_echelon_form () .table ()
-  m.unit_row_echelon_form () .table ()
-  m.reduced_row_echelon_form () .table ()
-}

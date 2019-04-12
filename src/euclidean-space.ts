@@ -1,5 +1,7 @@
 import assert from "assert"
 
+import * as ut from "./util"
+
 import { set_t } from "./set"
 import { field_t } from "./field"
 import { abelian_group_t } from "./group"
@@ -279,6 +281,9 @@ class matrix_t {
     return matrix
   }
 
+  // rank
+  // // TODO
+
   // lower_upper_decomposition (): [matrix_t, matrix_t] {
   // // TODO
   // }
@@ -287,24 +292,26 @@ class matrix_t {
   // // TODO
   // }
 
-  // rank
-  // // TODO
-
-  // inv_able_p (): boolean {
-  // // TODO
-  // }
-
   inv (): matrix_t | null {
-    if (! this.square_p ()) {
-      throw new Error ("non square matrix")
-    }
+    assert (this.square_p ())
     // TODO
     return this
   }
 
-  // det (): number {
-  // // TODO
-  // }
+  diag (): vector_t {
+    assert (this.square_p ())
+    let [_n, n] = this.shape
+    let vector = vector_t.zeros (n)
+    for (let i of ut.range (0, n)) {
+      vector.set (i, this.get (i, i))
+    }
+    return vector
+  }
+
+  //   det (): number {
+  //     assert (this.square_p ())
+  //     // TODO
+  //   }
 }
 
 export
@@ -349,10 +356,8 @@ class vector_t {
   }
 
   *indexes () {
-    let i = 0
-    while (i < this.dim) {
+    for (let i of ut.range (0, this.dim)) {
       yield i
-      i += 1
     }
   }
 
@@ -463,6 +468,44 @@ class vector_t {
 
   act (p: point_t): point_t {
     return p.trans (this)
+  }
+
+  static numbers (n: number, dim: number): vector_t {
+    return new vector_t (nd.array_t.numbers (n, [dim]))
+  }
+
+  static zeros (dim: number): vector_t {
+    return vector_t.numbers (0, dim)
+  }
+
+  static ones (dim: number): vector_t {
+    return vector_t.numbers (0, dim)
+  }
+
+  reduce_with (
+    init: number,
+    f: (acc: number, cur: number) => number,
+  ): number {
+    let acc = init
+    for (let i of ut.range (0, this.dim)) {
+      acc = f (acc, this.get (i))
+    }
+    return acc
+  }
+
+  reduce (
+    f: (acc: number, cur: number) => number,
+  ): number {
+    assert (this.dim > 0)
+    if (this.dim === 1) {
+      return this.get (0)
+    } else {
+      let acc = this.get (0)
+      for (let i of ut.range (1, this.dim)) {
+        acc = f (acc, this.get (i))
+      }
+      return acc
+    }
   }
 }
 

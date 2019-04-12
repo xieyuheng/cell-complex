@@ -1,6 +1,7 @@
 * ndarray
 - learn from existing ndarray lib
-- inv and det
+- inv
+- det
 - data_t
 - smith normal form of matrix to calculate homology group
 * cell-complex
@@ -61,6 +62,7 @@
   - the boundary of the boundary of a cell_complex_t should be zero
     even if the cell_complex_t is not a bounfold_t
 * geometry
+- point_t as vector_t, vector_t as point_t
 - test euclidean_space_t
 - quaternion
 - use euclidean-space to re-imp hackenbush

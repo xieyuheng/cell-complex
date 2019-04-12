@@ -1,6 +1,6 @@
 import * as _ from "lodash"
 
-import { log } from "./util"
+import * as ut from "./util"
 
 export type Array1d = Array <number>
 export type Array2d = Array <Array <number>>
