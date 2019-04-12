@@ -1,18 +1,14 @@
 # Cicada Language
 
-Aims:
+## Aims
+
 - Formalize mathematical structures in existing languages
 - Design new formal languages to formalize mathematical structures
   - Intuitive to use
   - Approachable for both mathematicians and programmers
 
-Features:
-- Game semantics
-- Dependently-typed
-- Logic programming interface
-- Nominal subtyping
+## Contents
 
-Contains:
 - combinatorial-game -- A game engine for n-player perfect information games
 - cell-complex -- A low dimensional algebraic topology library
   - [paper](https://xieyuheng.github.io/writing/investigations-into-cell-complex.html)
@@ -20,6 +16,9 @@ Contains:
 - ndarray -- strides based row-major ndarray of number
 - euclidean-space -- affine-space with dot product
   - contains `matrix_t`, `vector_t` and `point_t`
+- cicada -- A dependently-typed programming language with game semantics
+  - Logic programming interface
+  - Nominal subtyping
 
 ## Docs
 
