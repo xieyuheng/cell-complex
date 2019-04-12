@@ -28,7 +28,7 @@
 
 - We enforce C4 as collaboration protocol -- [The C4 RFC](https://rfc.zeromq.org/spec:42/C4)
 - [Style Guide](STYLE-GUIDE.md) -- observe the style of existing code and respect it
-- See [cicada-rs](http://github.com/xieyuheng/cicada-rs) old cicada attempt in rust
+- See [cicada-rs](http://github.com/xieyuheng/cicada-rs) for an old cicada attempt in rust
 - IRC -- #cicada-language (at freenode)
 - [Contributor Covenant Code of Conduct](CODE-OF-CONDUCT.md)
 
