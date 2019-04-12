@@ -531,6 +531,13 @@ class axis_t {
   }
 }
 
+/**
+ * ndarray + named axes,
+ * where an axis maps names to indexes.
+
+ * Do not implicitly generate data when there are missing data.
+ * Missing data should be handled explicitly.
+ */
 export
 class data_t {
   axes: axes_t

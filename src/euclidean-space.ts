@@ -467,6 +467,23 @@ class vector_t {
     return vector
   }
 
+  update_sub (that: vector_t): vector_t {
+    assert (this.dim === that.dim)
+    for (let [i, x] of that.entries ()) {
+      this.update_at (i, v => v - x)
+    }
+    return this
+  }
+
+  sub (that: vector_t): vector_t {
+    assert (this.dim === that.dim)
+    let vector = this.copy ()
+    for (let [i, x] of that.entries ()) {
+      vector.update_at (i, v => v - x)
+    }
+    return vector
+  }
+
   trans (matrix: matrix_t): vector_t {
     return new vector_t (
       this.array.contract (matrix.array, 0, 1))
@@ -591,13 +608,7 @@ class point_t {
   }
 
   diff (that: point_t): vector_t {
-    let array = nd.array_t.zeros ([this.dim])
-    let i = 0
-    for (let [x, y] of this.array.zip (that.array)) {
-      array.set ([i], x - y)
-      i += 1
-    }
-    return new vector_t (array)
+    return this.as_vector () .sub (that.as_vector ())
   }
 
   map (f: (n: number) => number): point_t {
@@ -640,13 +651,7 @@ class vec_t extends vector_space_t <number, vector_t> {
   id = new vector_t (nd.array_t.zeros ([this.dim]))
 
   add (v: vector_t, w: vector_t): vector_t {
-    let vector = this.id.copy ()
-    let i = 0
-    for (let [x, y] of v.array.zip (w.array)) {
-      vector.set (i, x + y)
-      i += i
-    }
-    return vector
+    return v.add (w)
   }
 
   neg (x: vector_t): vector_t {
