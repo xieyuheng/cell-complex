@@ -18,6 +18,8 @@ Contains:
   - [paper](https://xieyuheng.github.io/writing/investigations-into-cell-complex.html)
   -- "Investigations into cell complex", by Xie Yuheng, 2019
 - ndarray -- strides based row-major ndarray of number
+- euclidean-space -- affine-space with dot product
+  - contains `matrix_t`, `vector_t` and `point_t`
 
 ## Docs
 
