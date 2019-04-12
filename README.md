@@ -16,7 +16,7 @@
 - ndarray -- Strides based row-major ndarray of number
 - euclidean-space -- affine-space with dot product
   - contains `matrix_t`, `vector_t` and `point_t`
-- cicada -- A dependently-typed programming language with game semantics
+- [WIP] cicada -- A dependently-typed programming language with game semantics
   - Logic programming interface
   - Class with multi-inheritance
 
