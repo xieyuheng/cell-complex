@@ -38,13 +38,11 @@
     "surge": "^0.20.3",
     "ts-node": "^8.0.3",
     "typedoc": "^0.14.2",
-    "typescript": "^3.4.3",
-    "vuepress": "^0.14.10"
+    "typescript": "^3.4.3"
   },
   "dependencies": {
     "@babel/runtime-corejs2": "^7.4.3",
     "@types/lodash": "^4.14.123",
-    "lodash": "^4.17.11",
-    "power-assert": "^1.6.1"
+    "lodash": "^4.17.11"
   }
 }

@@ -1,5 +1,5 @@
 import * as _ from "lodash"
-
+import assert from "assert"
 import * as ut from "./util"
 
 export type Array1d = Array <number>
@@ -371,6 +371,17 @@ class array_t {
     return this
   }
 
+  append (i: number, that: array_t): array_t {
+    assert (this.order === that.order)
+    for (let j of ut.range (0, this.order)) {
+      if (i !== j) {
+        assert (this.shape [i] === that.shape [i])
+      }
+    }
+    // TODO
+    return this
+  }
+
   reshape (
     permutation: Array <number>
   ): array_t {
@@ -384,6 +395,9 @@ class array_t {
       this.buffer, shape, strides,
       this.offset)
   }
+
+  // permute
+  // TODO
 
   //   self_contract (
   //     i: number,

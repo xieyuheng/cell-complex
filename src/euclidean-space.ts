@@ -203,6 +203,9 @@ class matrix_t {
     return x === y
   }
 
+  // permute_rows
+  // TODO
+
   swap_rows (i: number, j: number): matrix_t {
     let x = this.row (i)
     let y = this.row (j)
