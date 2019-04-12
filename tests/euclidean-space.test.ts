@@ -31,6 +31,21 @@ test ("eu.matrix_t row & col", t => {
   t.true (x.col (0) .eq (c))
 })
 
+test ("eu.matrix_t put_row & put_col", t => {
+  let x = eu.matrix ([
+    [1, 2, 4],
+    [4, 5, 6],
+    [7, 8, 9],
+  ])
+  let r = eu.vector ([0, 0, 0])
+  x.put_row (0, r)
+  t.true (x.row (0) .eq (r))
+
+  let c = eu.vector ([0, 0, 0])
+  x.put_col (0, r)
+  t.true (x.col (0) .eq (c))
+})
+
 test ("eu.matrix_t mul", t => {
   {
     let x = eu.matrix ([

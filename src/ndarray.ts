@@ -140,7 +140,10 @@ class array_t {
     return new array_t (this.buffer, shape, this.strides, offset)
   }
 
-  put (index: Array <[number, number] | null>, src: array_t) {
+  put (
+    index: Array <[number, number] | null>,
+    src: array_t,
+  ): array_t {
     let tar = this.slice (index)
     let index_array = Array.from (tar.indexes ())
     let value_array = Array.from (src.values ())
@@ -152,6 +155,7 @@ class array_t {
       let v = value_array [k]
       tar.set (i, v)
     }
+    return this
   }
 
   static from_1darray (array: Array1d): array_t {

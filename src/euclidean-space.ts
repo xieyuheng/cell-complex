@@ -19,6 +19,29 @@ import * as nd from "./ndarray"
  * dimension is checked at runtime.
  */
 
+/**
+ * Find the first max index,
+ * in left close, right open integer interval.
+ */
+export
+function argmax (
+  lo: number,
+  hi: number,
+  f: (i: number) => number,
+): number {
+  assert (hi - lo >= 1)
+  let max = lo
+  let cur = f (lo)
+  for (let i = lo; i < hi; i++) {
+    let next = f (i)
+    if (cur < next) {
+      max = i
+      cur = next
+    }
+  }
+  return max
+}
+
 export
 class matrix_t {
   array: nd.array_t
@@ -56,12 +79,26 @@ class matrix_t {
     return new matrix_t (this.array.slice ([x, y]))
   }
 
+  copy (): matrix_t {
+    return new matrix_t (this.array.copy ())
+  }
+
   row (i: number): vector_t {
     return new vector_t (this.array.proj ([i, null]))
   }
 
+  put_row (i: number, src: vector_t): matrix_t {
+    this.array.put ([[i, i+1], null], src.array)
+    return this
+  }
+
   col (i: number): vector_t {
     return new vector_t (this.array.proj ([null, i]))
+  }
+
+  put_col (i: number, src: vector_t): matrix_t {
+    this.array.put ([null, [i, i+1]], src.array)
+    return this
   }
 
   eq (that: matrix_t): boolean {
@@ -80,9 +117,86 @@ class matrix_t {
     return new matrix_t (this.array.reshape ([1, 0]))
   }
 
+  square_p (): boolean {
+    let [x, y] = this.shape
+    return x === y
+  }
+
+  swap_rows (i: number, j: number): matrix_t {
+    let x = this.row (i)
+    let y = this.row (j)
+    this.put_row (i, y)
+    this.put_row (j, x)
+    return this
+  }
+
+  row_echelon_form (): matrix_t {
+    let matrix = this.copy ()
+    let [m, n] = this.shape
+    let h = 0 // init pivot row
+    let k = 0 // init pivot column
+    while (h < m && k < n) {
+      // find the k-th pivot
+      let max = argmax (h, m, (i) => Math.abs (matrix.get (i, k)))
+      if (matrix.get (max, k) === 0) {
+        // no pivot in this column, pass to next column
+        k += 1
+      } else {
+        matrix.swap_rows (h, max)
+        // for all rows below pivot
+        for (let i = h + 1; i < m; i++) {
+          let f = matrix.get (i, k) / matrix.get (h, k)
+          matrix.set (i, k, 0)
+          // for all remaining elements in current row
+          for (let j = k + 1; j < n; j++) {
+            let c = matrix.get (i, j)
+            let v = c - matrix.get (h, j) * f
+            matrix.set (i, j, v)
+          }
+        }
+        h += 1
+        k += 1
+      }
+    }
+    return matrix
+  }
+
+  /**
+   * row echelon form + back substitution
+
+   * The reduced row echelon form of a matrix is unique
+   * i.e. does not depend on the algorithm used to compute it.
+   */
+
+  // reduced_row_echelon_form (): matrix_t {
+  //   return this.copy ()
+  // }
+
+  // lower_upper_decomposition (): [matrix_t, matrix_t] {
+  // // TODO
+  // }
+
+  // solve (b: vector_t): vector_t | null {
+  // // TODO
+  // }
+
+  // rank
+
+  // inv_able_p (): boolean {
+  // // TODO
+  // }
+
+  inv (): matrix_t | null {
+    if (! this.square_p ()) {
+      throw new Error ("non square matrix")
+    }
+    // TODO
+    return this
+  }
+
+  // det (): number {
   // TODO
-  // det (): number {}
-  // inv (): matrix_t {}
+  // }
 }
 
 export
