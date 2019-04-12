@@ -43,6 +43,21 @@ function argmax (
 }
 
 export
+function argfirst (
+  lo: number,
+  hi: number,
+  p: (i: number) => boolean,
+): number | null {
+  assert (hi - lo >= 1)
+  for (let i = lo; i < hi; i++) {
+    if (p (i)) {
+      return i
+    }
+  }
+  return null
+}
+
+export
 class matrix_t {
   array: nd.array_t
   readonly shape: Array <number>
@@ -87,8 +102,40 @@ class matrix_t {
     return new vector_t (this.array.proj ([i, null]))
   }
 
-  put_row (i: number, src: vector_t): matrix_t {
+  set_row (i: number, src: vector_t): matrix_t {
     this.array.put ([[i, i+1], null], src.array)
+    return this
+  }
+
+  *index_rows () {
+    let [m, _n] = this.shape
+    for (let i = 0; i < m; i++) {
+      yield [i, this.row (i)] as [number, vector_t]
+    }
+  }
+
+  *rows () {
+    let [m, _n] = this.shape
+    for (let i = 0; i < m; i++) {
+      yield this.row (i) as vector_t
+    }
+  }
+
+  for_each_row_index (
+    f: (row: vector_t, i: number) => any
+  ): matrix_t {
+    for (let [i, row] of this.index_rows ()) {
+      f (row, i)
+    }
+    return this
+  }
+
+  for_each_row (
+    f: (row: vector_t) => any
+  ): matrix_t {
+    for (let row of this.rows ()) {
+      f (row)
+    }
     return this
   }
 
@@ -96,8 +143,40 @@ class matrix_t {
     return new vector_t (this.array.proj ([null, i]))
   }
 
-  put_col (i: number, src: vector_t): matrix_t {
+  set_col (i: number, src: vector_t): matrix_t {
     this.array.put ([null, [i, i+1]], src.array)
+    return this
+  }
+
+  *index_cols () {
+    let [_m, n] = this.shape
+    for (let i = 0; i < n; i++) {
+      yield [i, this.col (i)] as [number, vector_t]
+    }
+  }
+
+  *cols () {
+    let [_m, n] = this.shape
+    for (let i = 0; i < n; i++) {
+      yield this.col (i) as vector_t
+    }
+  }
+
+  for_each_col_index (
+    f: (col: vector_t, i: number) => any
+  ): matrix_t {
+    for (let [i, col] of this.index_cols ()) {
+      f (col, i)
+    }
+    return this
+  }
+
+  for_each_col (
+    f: (col: vector_t) => any
+  ): matrix_t {
+    for (let col of this.cols ()) {
+      f (col)
+    }
     return this
   }
 
@@ -125,8 +204,8 @@ class matrix_t {
   swap_rows (i: number, j: number): matrix_t {
     let x = this.row (i)
     let y = this.row (j)
-    this.put_row (i, y)
-    this.put_row (j, x)
+    this.set_row (i, y)
+    this.set_row (j, x)
     return this
   }
 
@@ -162,15 +241,43 @@ class matrix_t {
   }
 
   /**
-   * row echelon form + back substitution
+   * with all pivots equal to 1.
+   */
+  unit_row_echelon_form (): matrix_t {
+    let matrix = this.row_echelon_form ()
+    matrix.for_each_row_index ((row, i) => {
+      let pivot = row.first (x => x !== 0)
+      if (pivot !== null) {
+        matrix.set_row (i, row.scale (1 / pivot))
+      }
+    })
+    return matrix
+  }
+
+  /**
+   * unit row echelon form + back substitution
 
    * The reduced row echelon form of a matrix is unique
    * i.e. does not depend on the algorithm used to compute it.
    */
-
-  // reduced_row_echelon_form (): matrix_t {
-  //   return this.copy ()
-  // }
+  reduced_row_echelon_form (): matrix_t {
+    let matrix = this.unit_row_echelon_form ()
+    for (let [i, row] of matrix.index_rows ()) {
+      for (let [j, sub] of matrix.index_rows ()) {
+        if (j > i) {
+          let arg = sub.argfirst (x => x === 1)
+          if (arg !== null) {
+            let pivot = sub.get (arg)
+            let x = matrix.get (i, j)
+            if (x !== 0) {
+              row.update_add (sub.scale (-x))
+            }
+          }
+        }
+      }
+    }
+    return matrix
+  }
 
   // lower_upper_decomposition (): [matrix_t, matrix_t] {
   // // TODO
@@ -181,6 +288,7 @@ class matrix_t {
   // }
 
   // rank
+  // // TODO
 
   // inv_able_p (): boolean {
   // // TODO
@@ -195,7 +303,7 @@ class matrix_t {
   }
 
   // det (): number {
-  // TODO
+  // // TODO
   // }
 }
 
@@ -235,8 +343,28 @@ class vector_t {
     return this.array.get ([i])
   }
 
-  set (i: number, v: number) {
+  set (i: number, v: number): vector_t {
     this.array.set ([i], v)
+    return this
+  }
+
+  *indexes () {
+    let i = 0
+    while (i < this.dim) {
+      yield i
+      i += 1
+    }
+  }
+
+  update_at (i: number, f: (v: number) => number): vector_t {
+    return this.set (i, f (this.get (i)))
+  }
+
+  update (f: (v: number) => number): vector_t {
+    for (let i of this.indexes ()) {
+      this.set (i, f (this.get (i)))
+    }
+    return this
   }
 
   table () {
@@ -282,6 +410,51 @@ class vector_t {
     return new vector_t (this.array.map (f))
   }
 
+  scale (a: number): vector_t {
+    return this.map (n => n * a)
+  }
+
+  update_scale (a: number): vector_t {
+    return this.update (n => n * a)
+  }
+
+  argmax (f: (x: number) => number): number {
+    let lo = 0
+    let hi = this.dim
+    return argmax (lo, hi, i => f (this.get (i)))
+  }
+
+  argfirst (p: (x: number) => boolean): number | null {
+    let lo = 0
+    let hi = this.dim
+    return argfirst (lo, hi, i => p (this.get (i)))
+  }
+
+  first (p: (x: number) => boolean): number | null {
+    let arg = this.argfirst (p)
+    if (arg === null) {
+      return null
+    } else {
+      return this.get (arg)
+    }
+  }
+
+  update_add (that: vector_t): vector_t {
+    assert (this.dim === that.dim)
+    for (let [i, x] of that.entries ()) {
+      this.update_at (i, v => v + x)
+    }
+    return this
+  }
+
+  add (that: vector_t): vector_t {
+    assert (this.dim === that.dim)
+    let vector = this.copy ()
+    for (let [i, x] of that.entries ()) {
+      vector.update_at (i, v => v + x)
+    }
+    return vector
+  }
 
   trans (matrix: matrix_t): vector_t {
     return new vector_t (
@@ -424,7 +597,7 @@ class vec_t extends vector_space_t <number, vector_t> {
   }
 
   scale (a: number, x: vector_t): vector_t {
-    return x.map (n => n * a)
+    return x.scale (a)
   }
 }
 

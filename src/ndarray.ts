@@ -364,10 +364,11 @@ class array_t {
     return array
   }
 
-  for_each (f: (x: number) => any) {
+  for_each (f: (x: number) => any): array_t {
     for (let x of this.values ()) {
       f (x)
     }
+    return this
   }
 
   reshape (

@@ -120,4 +120,6 @@ let log = require ("../lib/util") .log
     [3, 11, 5, 35],
   ])
   m.row_echelon_form () .table ()
+  m.unit_row_echelon_form () .table ()
+  m.reduced_row_echelon_form () .table ()
 }

@@ -533,7 +533,7 @@ class cell_complex_t {
   ): chain_t {
     let chain = new chain_t (dim, this)
     for (let [id, n] of array) {
-      chain.dic.update (id, m => m + n)
+      chain.dic.update_at (id, m => m + n)
     }
     return chain
   }
@@ -1322,17 +1322,17 @@ function boundary_dic_of_basis (
     return dic
   } else if (id.dim === 1) {
     let edge = com.get_edge (id)
-    dic.update (edge.start, n => n - 1)
-    dic.update (edge.end, n => n + 1)
+    dic.update_at (edge.start, n => n - 1)
+    dic.update_at (edge.end, n => n + 1)
     return dic
   } else if (id.dim === 2) {
     let face = com.get_face (id)
     console.log ("2")
     for (let e of face.circuit) {
       if (e instanceof rev_id_t) {
-        dic.update (e.rev (), n => n - 1)
+        dic.update_at (e.rev (), n => n - 1)
       } else {
-        dic.update (e, n => n + 1)
+        dic.update_at (e, n => n + 1)
       }
     }
     return dic
