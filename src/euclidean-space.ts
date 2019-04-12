@@ -513,6 +513,10 @@ class vector_t {
       return acc
     }
   }
+
+  as_point (): point_t {
+    return new point_t (this.array)
+  }
 }
 
 export
@@ -598,6 +602,10 @@ class point_t {
 
   map (f: (n: number) => number): point_t {
     return new point_t (this.array.map (f))
+  }
+
+  as_vector (): vector_t {
+    return new vector_t (this.array)
   }
 }
 
