@@ -10,15 +10,15 @@
 ## Contents
 
 - combinatorial-game -- A game engine for n-player perfect information games
-- cell-complex -- A low dimensional algebraic topology library
+- cell-complex -- Cell-complex based low dimensional algebraic topology library
   - [paper](https://xieyuheng.github.io/writing/investigations-into-cell-complex.html)
   -- "Investigations into cell complex", by Xie Yuheng, 2019
-- ndarray -- strides based row-major ndarray of number
+- ndarray -- Strides based row-major ndarray of number
 - euclidean-space -- affine-space with dot product
   - contains `matrix_t`, `vector_t` and `point_t`
 - cicada -- A dependently-typed programming language with game semantics
   - Logic programming interface
-  - Nominal subtyping
+  - Class with multi-inheritance
 
 ## Docs
 

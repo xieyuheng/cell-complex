@@ -62,7 +62,6 @@
   - the boundary of the boundary of a cell_complex_t should be zero
     even if the cell_complex_t is not a bounfold_t
 * geometry
-
 - test euclidean_space_t
 - quaternion
 - use euclidean-space to re-imp hackenbush
