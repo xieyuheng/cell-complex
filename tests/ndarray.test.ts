@@ -353,6 +353,48 @@ test ("reshape", t => {
   t.pass ()
 })
 
+test ("append", t => {
+  // let x = nd.array_t.from_3darray ([
+  //   [[0, 1, 2], [3, 4, 5]],
+  //   [[5, 4, 3], [2, 1, 0]],
+  // ])
+
+  // let y = nd.array_t.from_3darray ([
+  //   [[0, 1, 2], [3, 4, 5]],
+  //   [[5, 4, 3], [2, 1, 0]],
+  // ])
+
+  // x.append (0, y) .table ()
+
+  let x = nd.array_t.from_2darray ([
+    [0, 1, 2],
+    [3, 4, 5],
+  ])
+
+  let y = nd.array_t.from_2darray ([
+    [0, 1, 2],
+    [3, 4, 5],
+  ])
+
+  t.true (
+    x.append (0, y) .eq (nd.array_t.from_2darray ([
+      [0, 1, 2],
+      [3, 4, 5],
+      [0, 1, 2],
+      [3, 4, 5],
+    ]))
+  )
+
+  t.true (
+    x.append (1, y) .eq (nd.array_t.from_2darray ([
+      [0, 1, 2, 0, 1, 2],
+      [3, 4, 5, 3, 4, 5],
+    ]))
+  )
+
+  t.pass ()
+})
+
 test ("new data_t", t => {
   let axis = nd.axis_t.from_array ([ "silent", "betray" ])
   let axes = nd.axes_t.from_obj ({

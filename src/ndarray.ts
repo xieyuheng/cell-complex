@@ -371,15 +371,29 @@ class array_t {
     return this
   }
 
-  append (i: number, that: array_t): array_t {
+  append (k: number, that: array_t): array_t {
     assert (this.order === that.order)
     for (let j of ut.range (0, this.order)) {
-      if (i !== j) {
-        assert (this.shape [i] === that.shape [i])
+      if (j !== k) {
+        assert (this.shape [j] === that.shape [j])
       }
     }
-    // TODO
-    return this
+    let shape = this.shape.slice ()
+    shape [k] = this.shape [k] + that.shape [k]
+    let buffer = new Float64Array (array_t.shape_to_size (shape))
+    let strides = array_t.init_strides (shape)
+    let array = new array_t (buffer, shape, strides)
+    let offset = this.shape [k]
+    for (let i of array.indexes ()) {
+      if (i [k] < offset) {
+        array.set (i, this.get (i))
+      } else {
+        let j = i.slice ()
+        j [k] = j [k] - offset
+        array.set (i, that.get (j))
+      }
+    }
+    return array
   }
 
   reshape (
