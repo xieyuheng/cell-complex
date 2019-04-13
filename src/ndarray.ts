@@ -448,8 +448,9 @@ class array_t {
         shape.push (s)
       }
     })
-    let buffer = new Float64Array (this.size)
+
     let size = array_t.shape_to_size (shape)
+    let buffer = new Float64Array (size)
     let strides = array_t.init_strides (shape)
     let array = new array_t (buffer, shape, strides)
     let split_index = (

@@ -302,4 +302,13 @@ test ("eu.matrix_t.symmetric_p", t => {
     [-3, 1, 0],
     [ 0, 0, 1],
   ]) .symmetric_p ())
+
+  let m = eu.matrix ([
+    [ 1, 0],
+    [-3, 1],
+    [ 0, 0],
+  ])
+
+  t.true (m.transpose () .mul (m) .symmetric_p ())
+  t.true (m.mul (m.transpose ()) .symmetric_p ())
 })
