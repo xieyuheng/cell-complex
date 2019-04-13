@@ -354,18 +354,6 @@ test ("reshape", t => {
 })
 
 test ("append", t => {
-  // let x = nd.array_t.from_3darray ([
-  //   [[0, 1, 2], [3, 4, 5]],
-  //   [[5, 4, 3], [2, 1, 0]],
-  // ])
-
-  // let y = nd.array_t.from_3darray ([
-  //   [[0, 1, 2], [3, 4, 5]],
-  //   [[5, 4, 3], [2, 1, 0]],
-  // ])
-
-  // x.append (0, y) .table ()
-
   let x = nd.array_t.from_2darray ([
     [0, 1, 2],
     [3, 4, 5],
@@ -389,6 +377,29 @@ test ("append", t => {
     x.append (1, y) .eq (nd.array_t.from_2darray ([
       [0, 1, 2, 0, 1, 2],
       [3, 4, 5, 3, 4, 5],
+    ]))
+  )
+
+  t.pass ()
+})
+
+test ("permute", t => {
+  let x = nd.array_t.from_3darray ([
+    [[0, 1, 2], [3, 4, 5]],
+    [[5, 4, 3], [2, 1, 0]],
+  ])
+
+  t.true (
+    x.permute (0, [1, 0]) .eq (nd.array_t.from_3darray ([
+      [[5, 4, 3], [2, 1, 0]],
+      [[0, 1, 2], [3, 4, 5]],
+    ]))
+  )
+
+  t.true (
+    x.permute (2, [1, 0, 2]) .eq (nd.array_t.from_3darray ([
+      [[1, 0, 2], [4, 3, 5]],
+      [[4, 5, 3], [1, 2, 0]],  
     ]))
   )
 

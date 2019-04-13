@@ -410,17 +410,23 @@ class array_t {
       this.offset)
   }
 
-  // permute
-  // TODO
+  permute (
+    k: number,
+    permutation: Array <number>,
+  ): array_t {
+    assert (permutation.length === this.shape [k])
+    let array = this.copy ()
+    for (let i of this.indexes ()) {
+      let j = i.slice ()
+      j [k] = permutation [j [k]]
+      array.set (j, this.get (i))
+    }
+    return array
+  }
 
-  //   self_contract (
-  //     i: number,
-  //     j: number,
-  //   ): array_t {
-
-  //  }
-
-  // [3, 4] [4, 5] => [3, 5]
+  // [1, 2, <3>, 4]
+  //    [2, <3>, 4, 5]
+  // => [1, 2, 4, 2, 4, 5]
   contract (
     that: array_t,
     i: number,

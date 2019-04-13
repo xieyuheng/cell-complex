@@ -203,10 +203,8 @@ class matrix_t {
     return x === y
   }
 
-  // permute_rows
-  // TODO
 
-  swap_rows (i: number, j: number): matrix_t {
+  update_swap_rows (i: number, j: number): matrix_t {
     let x = this.row (i)
     let y = this.row (j)
     this.set_row (i, y)
@@ -226,7 +224,7 @@ class matrix_t {
         // no pivot in this column, pass to next column
         k += 1
       } else {
-        matrix.swap_rows (h, max)
+        matrix.update_swap_rows (h, max)
         // for all rows below pivot
         for (let i = h + 1; i < m; i++) {
           let f = matrix.get (i, k) / matrix.get (h, k)
