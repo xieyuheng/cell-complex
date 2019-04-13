@@ -289,25 +289,54 @@ class matrix_t {
     return new matrix_t (this.array.append (0, that.array))
   }
 
+  /**
+   * Singular matrixes can also have LU decomposition.
+   */
   // lower_upper_decomposition (): [matrix_t, matrix_t] {
-  //   let augmented = this.
-  //   let lower = ;
-  //   let upper = ;
+  //   let [m, n] = this.shape
+  //   let augmented = this.append_cols (matrix_t.identity (m))
+  //   let echelon = augmented.row_echelon_form ()
+  //   augmented.table ()
+  //   let lower = echelon.slice (null, [n, n + m])
+  //   let upper = echelon.slice (null, [0, n])
   //   return [lower, upper]
   // }
 
-  // rank
-  // // TODO
-
+  rank (): number {
+    let echelon = this.row_echelon_form ()
+    let rank = 0
+    for (let row of echelon.rows ()) {
+      if (row.some (v => v !== 0)) {
+        rank += 1
+      }
+    }
+    return rank
+  }
 
   // solve (b: vector_t): vector_t | null {
   // // TODO
   // }
 
-  inv (): matrix_t | null {
+  inv_maybe (): matrix_t | null {
     assert (this.square_p ())
-    // TODO
-    return this
+    let [_m, n] = this.shape
+    let augmented = this.append_cols (matrix_t.identity (n))
+    let echelon = augmented.reduced_row_echelon_form ()
+    let inv = echelon.slice (null, [n, n + n])
+    if (inv.rank () === n) {
+      return inv
+    } else {
+      return null
+    }
+  }
+
+  inv (): matrix_t {
+    let inv = this.inv_maybe ()
+    if (inv === null) {
+      throw new Error ("not invertible")
+    } else {
+      return inv
+    }
   }
 
   diag (): vector_t {
@@ -555,6 +584,24 @@ class vector_t {
       }
       return acc
     }
+  }
+
+  some (p: (v: number) => boolean): boolean {
+    for (let v of this.values ()) {
+      if (p (v)) {
+        return true
+      }
+    }
+    return false
+  }
+
+  every (p: (v: number) => boolean): boolean {
+    for (let v of this.values ()) {
+      if (! p (v)) {
+        return false
+      }
+    }
+    return true
   }
 
   as_point (): point_t {

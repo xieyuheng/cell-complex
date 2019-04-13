@@ -178,6 +178,56 @@ test ("reduced_row_echelon_form", t => {
   )
 })
 
+test ("rank", t => {
+  let m = eu.matrix ([
+    [1, 3, 1, 9],
+    [1, 1, -1, 1],
+    [3, 11, 5, 35],
+  ])
+
+  t.true (
+    m.rank () === 2
+  )
+})
+
+test ("inv", t => {
+  {
+    let m = eu.matrix ([
+      [1, 3, 1],
+      [1, 1, -1],
+      [3, 11, 5],
+    ])
+
+    t.true (
+      m.inv_maybe () === null
+    )
+  }
+
+  {
+    let m = eu.matrix ([
+      [1, 2, 3],
+      [4, 5, 6],
+      [7, 8, 9],
+    ])
+
+    t.true (
+      m.inv_maybe () === null
+    )
+  }
+
+  {
+    let m = eu.matrix ([
+      [2, -1, 0],
+      [-1, 2, -1],
+      [0, -1, 2],
+    ])
+
+    let inv = m.inv ()
+    let id = m.mul (inv)
+    // TODO check id is close to identity matrix
+    // id.table ()
+  }
+})
 
 test ("append_cols & append_cols", t => {
   let m = eu.matrix ([

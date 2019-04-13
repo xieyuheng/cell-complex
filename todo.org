@@ -1,4 +1,5 @@
 * ndarray
+- check float numbers are close enough with tolerance
 - learn from existing ndarray lib
 - inv
 - det
