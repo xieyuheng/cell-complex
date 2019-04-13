@@ -227,3 +227,15 @@ test ("eu.vector_t reduce", t => {
     v.reduce_with (10, (acc, cur) => acc * cur) === 60
   )
 })
+
+test ("eu.matrix_t.identity", t => {
+  let v = eu.matrix_t.identity (3)
+
+  t.true (
+    v.eq (eu.matrix ([
+      [1, 0, 0],
+      [0, 1, 0],
+      [0, 0, 1],
+    ]))
+  )
+})

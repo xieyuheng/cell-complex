@@ -203,7 +203,6 @@ class matrix_t {
     return x === y
   }
 
-
   update_swap_rows (i: number, j: number): matrix_t {
     let x = this.row (i)
     let y = this.row (j)
@@ -290,12 +289,16 @@ class matrix_t {
     return new matrix_t (this.array.append (0, that.array))
   }
 
+  // lower_upper_decomposition (): [matrix_t, matrix_t] {
+  //   let augmented = this.
+  //   let lower = ;
+  //   let upper = ;
+  //   return [lower, upper]
+  // }
+
   // rank
   // // TODO
 
-  // lower_upper_decomposition (): [matrix_t, matrix_t] {
-  // // TODO
-  // }
 
   // solve (b: vector_t): vector_t | null {
   // // TODO
@@ -321,6 +324,26 @@ class matrix_t {
   //     assert (this.square_p ())
   //     // TODO
   //   }
+
+  static numbers (n: number, shape: [number, number]): matrix_t {
+    return new matrix_t (nd.array_t.numbers (n, shape))
+  }
+
+  static zeros (shape: [number, number]): matrix_t {
+    return matrix_t.numbers (0, shape)
+  }
+
+  static ones (shape: [number, number]): matrix_t {
+    return matrix_t.numbers (1, shape)
+  }
+
+  static identity (n: number): matrix_t {
+    let matrix = matrix_t.zeros ([n, n])
+    for (let i of ut.range (0, n)) {
+      matrix.set (i, i, 1)
+    }
+    return matrix
+  }
 }
 
 export
