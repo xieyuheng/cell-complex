@@ -373,6 +373,10 @@ class matrix_t {
     }
     return matrix
   }
+
+  symmetric_p (): boolean {
+    return this.eq (this.transpose ())
+  }
 }
 
 export

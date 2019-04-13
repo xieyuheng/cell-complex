@@ -289,3 +289,17 @@ test ("eu.matrix_t.identity", t => {
     ]))
   )
 })
+
+test ("eu.matrix_t.symmetric_p", t => {
+  t.true (eu.matrix ([
+    [ 1, -3, 0],
+    [-3, 1, 0],
+    [ 0, 0, 1],
+  ]) .symmetric_p ())
+
+  t.true (! eu.matrix ([
+    [ 1, 0, 0],
+    [-3, 1, 0],
+    [ 0, 0, 1],
+  ]) .symmetric_p ())
+})
