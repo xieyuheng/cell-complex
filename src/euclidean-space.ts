@@ -284,11 +284,13 @@ class matrix_t {
     return matrix
   }
 
-  // append_cols
-  // // TODO
+  append_cols (that: matrix_t): matrix_t {
+    return new matrix_t (this.array.append (1, that.array))
+  }
 
-  // append_rows
-  // // TODO
+  append_rows (that: matrix_t): matrix_t {
+    return new matrix_t (this.array.append (0, that.array))
+  }
 
   // rank
   // // TODO
