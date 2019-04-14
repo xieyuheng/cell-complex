@@ -60,6 +60,14 @@ function argfirst (
 }
 
 export
+const EPSILON = 0.00000001
+
+export
+function epsilon_p (x: number): boolean {
+  return Math.abs (x) < EPSILON
+}
+
+export
 class matrix_t {
   array: nd.array_t
   readonly shape: Array <number>
@@ -80,8 +88,17 @@ class matrix_t {
     return this.array.get ([x, y])
   }
 
-  set (x: number, y: number, v: number) {
+  set (x: number, y: number, v: number): matrix_t {
     this.array.set ([x, y], v)
+    return this
+  }
+
+  update_at (
+    i: number,
+    j: number,
+    f: (v: number) => number,
+  ): matrix_t {
+    return this.set (i, j, f (this.get (i, j)))
   }
 
   table () {
@@ -182,8 +199,83 @@ class matrix_t {
     return this
   }
 
+  *entries () {
+    for (let e of this.array.entries ()) {
+      let [[i, j], v] = e
+      yield [i, j, v] as [number, number, number]
+    }
+  }
+
+  *indexes () {
+    for (let index of this.array.indexes ()) {
+      assert (index.length === 2)
+      yield index as [number, number]
+    }
+  }
+
+  *values () {
+    for (let row of this.rows ()) {
+      for (let v of row.values ()) {
+        yield v
+      }
+    }
+  }
+
+  every (p: (v: number) => boolean): boolean {
+    for (let v of this.values ()) {
+      if (! p (v)) {
+        return false
+      }
+    }
+    return true
+  }
+
+  some (p: (v: number) => boolean): boolean {
+    for (let v of this.values ()) {
+      if (p (v)) {
+        return true
+      }
+    }
+    return false
+  }
+
   eq (that: matrix_t): boolean {
     return this.array.eq (that.array.copy ())
+  }
+
+  same_shape_p (that: matrix_t): boolean {
+    return ((this.shape [0] === that.shape [0]) &&
+            (this.shape [1] === that.shape [1]))
+  }
+
+  add (that: matrix_t): matrix_t {
+    assert (this.same_shape_p (that))
+    let matrix = this.copy ()
+    for (let [i, j, v] of that.entries ()) {
+      matrix.update_at (i, j, x => x + v)
+    }
+    return matrix
+  }
+
+  sub (that: matrix_t): matrix_t {
+    assert (this.same_shape_p (that))
+    let matrix = this.copy ()
+    for (let [i, j, v] of that.entries ()) {
+      matrix.update_at (i, j, x => x - v)
+    }
+    return matrix
+  }
+
+  map (f: (v: number) => number): matrix_t {
+    let matrix = this.copy ()
+    for (let [i, j, v] of this.entries ()) {
+      matrix.update_at (i, j, f)
+    }
+    return matrix
+  }
+
+  scale (a: number): matrix_t {
+    return this.map (n => n * a)
   }
 
   mul (that: matrix_t): matrix_t {
@@ -204,7 +296,7 @@ class matrix_t {
   }
 
   update_swap_rows (i: number, j: number): matrix_t {
-    let x = this.row (i)
+    let x = this.row (i) .copy ()
     let y = this.row (j)
     this.set_row (i, y)
     this.set_row (j, x)
@@ -217,21 +309,20 @@ class matrix_t {
     let h = 0 // init pivot row
     let k = 0 // init pivot column
     while (h < m && k < n) {
-      // find the k-th pivot
-      let max = argmax (h, m, (i) => Math.abs (matrix.get (i, k)))
-      if (matrix.get (max, k) === 0) {
+      // find the next pivot
+      let piv = argmax (h, m, (i) => Math.abs (matrix.get (i, k)))
+      if (epsilon_p (matrix.get (piv, k))) {
         // no pivot in this column, pass to next column
         k += 1
       } else {
-        matrix.update_swap_rows (h, max)
+        matrix.update_swap_rows (h, piv)
         // for all rows below pivot
         for (let i = h + 1; i < m; i++) {
           let f = matrix.get (i, k) / matrix.get (h, k)
           matrix.set (i, k, 0)
           // for all remaining elements in current row
           for (let j = k + 1; j < n; j++) {
-            let c = matrix.get (i, j)
-            let v = c - matrix.get (h, j) * f
+            let v = matrix.get (i, j) - matrix.get (h, j) * f
             matrix.set (i, j, v)
           }
         }
@@ -248,7 +339,7 @@ class matrix_t {
   unit_row_echelon_form (): matrix_t {
     let matrix = this.row_echelon_form ()
     matrix.for_each_row_index ((row, i) => {
-      let pivot = row.first (x => x !== 0)
+      let pivot = row.first (x => ! epsilon_p (x))
       if (pivot !== null) {
         matrix.set_row (i, row.scale (1 / pivot))
       }
@@ -271,7 +362,7 @@ class matrix_t {
           if (arg !== null) {
             let pivot = sub.get (arg)
             let x = matrix.get (i, j)
-            if (x !== 0) {
+            if (! epsilon_p (x)) {
               row.update_add (sub.scale (-x))
             }
           }
@@ -289,28 +380,97 @@ class matrix_t {
     return new matrix_t (this.array.append (0, that.array))
   }
 
+  upper_p (): boolean {
+    for (let [i, j, v] of this.entries ()) {
+      if (i > j) {
+        if (! epsilon_p (v)) {
+          return false
+        }
+      }
+    }
+    return true
+  }
+
+  lower_p (): boolean {
+    for (let [i, j, v] of this.entries ()) {
+      if (i < j) {
+        if (! epsilon_p (v)) {
+          return false
+        }
+      }
+    }
+    return true
+  }
+
   /**
-   * Singular matrixes can also have LU decomposition.
+   * Returns [L, U, P], where P * A = L * U.
+   * (singular matrixes allowed)
    */
-  // lower_upper_decomposition (): [matrix_t, matrix_t] {
-  //   let [m, n] = this.shape
-  //   let augmented = this.append_cols (matrix_t.identity (m))
-  //   let echelon = augmented.row_echelon_form ()
-  //   augmented.table ()
-  //   let lower = echelon.slice (null, [n, n + m])
-  //   let upper = echelon.slice (null, [0, n])
-  //   return [lower, upper]
-  // }
+  lower_upper_permutation_decomposition (
+  ): [matrix_t, matrix_t, matrix_t] {
+    let matrix = this.copy ()
+    let [m, n] = this.shape
+    assert (m === n)
+    let record = matrix_t.identity (n)
+    let permutation = matrix_t.identity (n)
+    let h = 0 // init pivot row
+    let k = 0 // init pivot column
+    while (h < m && k < n) {
+      // find the next pivot
+      let piv = argmax (h, m, (i) => Math.abs (matrix.get (i, k)))
+      if (epsilon_p (matrix.get (piv, k))) {
+        // no pivot in this column, pass to next column
+        k += 1
+      } else {
+        matrix.update_swap_rows (h, piv)
+        permutation.update_swap_rows (h, piv)
+        // for all rows below pivot
+        for (let i = h + 1; i < m; i++) {
+          let f = matrix.get (i, k) / matrix.get (h, k)
+          matrix.set (i, k, 0)
+          record.update_at (i, k, v => v + f)
+          // for all remaining elements in current row
+          for (let j = k + 1; j < n; j++) {
+            let v = matrix.get (i, j) - matrix.get (h, j) * f
+            matrix.set (i, j, v)
+          }
+        }
+        h += 1
+        k += 1
+      }
+    }
+    return [
+      record,
+      matrix,
+      permutation,
+    ]
+  }
 
   rank (): number {
     let echelon = this.row_echelon_form ()
     let rank = 0
     for (let row of echelon.rows ()) {
-      if (row.some (v => v !== 0)) {
+      if (row.some (v => ! epsilon_p (v))) {
         rank += 1
       }
     }
     return rank
+  }
+
+  singular_p () {
+    assert (this.square_p ())
+    let [_m, n] = this.shape
+    for (let row of this.rows ()) {
+      if (row.every (x => epsilon_p (x))) {
+        return true
+      }
+    }
+    for (let col of this.cols ()) {
+      if (col.every (x => epsilon_p (x))) {
+        return true
+      }
+    }
+    return this.rank () < n
   }
 
   // solve (b: vector_t): vector_t | null {
@@ -322,11 +482,12 @@ class matrix_t {
     let [_m, n] = this.shape
     let augmented = this.append_cols (matrix_t.identity (n))
     let echelon = augmented.reduced_row_echelon_form ()
+    let upper = echelon.slice (null, [0, n])
     let inv = echelon.slice (null, [n, n + n])
-    if (inv.rank () === n) {
-      return inv
-    } else {
+    if (upper.singular_p ()) {
       return null
+    } else {
+      return inv
     }
   }
 
@@ -349,25 +510,26 @@ class matrix_t {
     return vector
   }
 
-  //   det (): number {
-  //     assert (this.square_p ())
-  //     // TODO
-  //   }
+  // det (): number {
+  //   assert (this.square_p ())
+  //   // TODO
+  // }
 
-  static numbers (n: number, shape: [number, number]): matrix_t {
+  static numbers (n: number, x: number, y: number): matrix_t {
+    let shape = [x, y]
     return new matrix_t (nd.array_t.numbers (n, shape))
   }
 
-  static zeros (shape: [number, number]): matrix_t {
-    return matrix_t.numbers (0, shape)
+  static zeros (x: number, y: number): matrix_t {
+    return matrix_t.numbers (0, x, y)
   }
 
-  static ones (shape: [number, number]): matrix_t {
-    return matrix_t.numbers (1, shape)
+  static ones (x: number, y: number): matrix_t {
+    return matrix_t.numbers (1, x, y)
   }
 
   static identity (n: number): matrix_t {
-    let matrix = matrix_t.zeros ([n, n])
+    let matrix = matrix_t.zeros (n, n)
     for (let i of ut.range (0, n)) {
       matrix.set (i, i, 1)
     }
@@ -376,6 +538,10 @@ class matrix_t {
 
   symmetric_p (): boolean {
     return this.eq (this.transpose ())
+  }
+
+  epsilon_p (): boolean {
+    return this.every (epsilon_p)
   }
 }
 

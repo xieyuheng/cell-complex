@@ -1,4 +1,4 @@
-import test from "ava"
+import test, { ExecutionContext } from "ava"
 
 import * as nd from "../src/ndarray"
 import * as eu from "../src/euclidean-space"
@@ -178,16 +178,55 @@ test ("reduced_row_echelon_form", t => {
   )
 })
 
-test ("rank", t => {
-  let m = eu.matrix ([
-    [1, 3, 1, 9],
-    [1, 1, -1, 1],
-    [3, 11, 5, 35],
-  ])
+function test_lower_upper_permutation (
+  t: ExecutionContext,
+  matrix: eu.matrix_t,
+) {
+  let [
+    lower, upper, permutation
+  ] = matrix.lower_upper_permutation_decomposition ()
+  t.true (lower.lower_p ())
+  t.true (upper.upper_p ())
+  t.true (permutation.mul (matrix) .eq (lower.mul (upper)))
+}
 
-  t.true (
-    m.rank () === 2
-  )
+test ("lower_upper_permutation_decomposition", t => {
+  test_lower_upper_permutation (t, eu.matrix ([
+    [1, 3, 1],
+    [1, 1, -1],
+    [3, 11, 5],
+  ]))
+
+  test_lower_upper_permutation (t, eu.matrix ([
+    [4, 3],
+    [6, 3],
+  ]))
+})
+
+test ("rank", t => {
+  {
+    let m = eu.matrix ([
+      [1, 3, 1, 9],
+      [1, 1, -1, 1],
+      [3, 11, 5, 35],
+    ])
+
+    t.true (
+      m.rank () === 2
+    )
+  }
+
+  {
+    let m = eu.matrix ([
+      [1, 3, 1, 9],
+      [0, 0, 0, 0],
+      [0, 0, 0, 0.00000000001],
+    ])
+
+    t.true (
+      m.rank () === 1
+    )
+  }
 })
 
 test ("inv", t => {
@@ -197,10 +236,7 @@ test ("inv", t => {
       [1, 1, -1],
       [3, 11, 5],
     ])
-
-    t.true (
-      m.inv_maybe () === null
-    )
+    t.true (m.inv_maybe () === null)
   }
 
   {
@@ -209,10 +245,7 @@ test ("inv", t => {
       [4, 5, 6],
       [7, 8, 9],
     ])
-
-    t.true (
-      m.inv_maybe () === null
-    )
+    t.true (m.inv_maybe () === null)
   }
 
   {
@@ -222,11 +255,14 @@ test ("inv", t => {
       [0, -1, 2],
     ])
 
-    let inv = m.inv ()
-    let id = m.mul (inv)
-    // TODO check id is close to identity matrix
-    // id.table ()
+    t.true (
+      m.mul (m.inv ()) .sub (
+        eu.matrix_t.identity (3)
+      ) .epsilon_p ()
+    )
   }
+
+  t.pass ()
 })
 
 test ("append_cols & append_cols", t => {
