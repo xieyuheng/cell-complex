@@ -9,7 +9,9 @@ import { vector_space_t } from "./vector-space"
 import { affine_space_t } from "./affine-space"
 import { eqv } from "./eqv"
 import { number_field_t } from "./number"
+import { permutation_t } from "./permutation"
 import * as nd from "./ndarray"
+
 
 /**
  * We can not define matrix_t as subclass of nd.array_t,
@@ -308,7 +310,9 @@ class matrix_t {
   }
 
   transpose (): matrix_t {
-    return new matrix_t (this.array.reshape ([1, 0]))
+    return new matrix_t (
+      this.array.reshape (
+        new permutation_t ([1, 0])))
   }
 
   square_p (): boolean {
@@ -556,10 +560,6 @@ class matrix_t {
     }
     return this.rank () < n
   }
-
-  // solve (b: vector_t): vector_t | null {
-  // // TODO
-  // }
 
   inv_maybe (): matrix_t | null {
     assert (this.square_p ())

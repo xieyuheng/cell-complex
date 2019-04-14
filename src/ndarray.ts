@@ -2,6 +2,8 @@ import * as _ from "lodash"
 import assert from "assert"
 import * as ut from "./util"
 
+import { permutation_t } from "./permutation"
+
 export type Array1d = Array <number>
 export type Array2d = Array <Array <number>>
 export type Array3d = Array <Array <Array <number>>>
@@ -408,7 +410,7 @@ class array_t {
   }
 
   reshape (
-    permutation: Array <number>
+    permutation: permutation_t
   ): array_t {
     let shape = new Array ()
     let strides = new Array ()
@@ -423,13 +425,13 @@ class array_t {
 
   permute (
     k: number,
-    permutation: Array <number>,
+    permutation: permutation_t,
   ): array_t {
-    assert (permutation.length === this.shape [k])
+    assert (permutation.size === this.shape [k])
     let array = this.copy ()
     for (let i of this.indexes ()) {
       let j = i.slice ()
-      j [k] = permutation [j [k]]
+      j [k] = permutation.get (j [k])
       array.set (j, this.get (i))
     }
     return array

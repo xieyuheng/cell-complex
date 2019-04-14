@@ -1,6 +1,7 @@
 import test from "ava"
 
 import * as nd from "../src/ndarray"
+import { permutation_t } from "../src/permutation"
 import { log } from "../src/util"
 
 test ("init_strides", t => {
@@ -329,14 +330,14 @@ test ("reshape", t => {
 
 
   t.deepEqual (
-    y.reshape ([1, 0, 2]) .shape,
+    y.reshape (new permutation_t ([1, 0, 2])) .shape,
     [2, 2, 3],
   )
 
   let x = y.proj ([1, null, null])
 
   t.deepEqual (
-    x.reshape ([1, 0]) .shape,
+    x.reshape (new permutation_t ([1, 0])) .shape,
     [3, 2],
   )
 
@@ -347,7 +348,7 @@ test ("reshape", t => {
   ])
 
   t.true (
-    x.reshape ([1, 0]) .eq (z)
+    x.reshape (new permutation_t ([1, 0])) .eq (z)
   )
 
   t.pass ()
@@ -390,16 +391,20 @@ test ("permute", t => {
   ])
 
   t.true (
-    x.permute (0, [1, 0]) .eq (nd.array_t.from_3darray ([
+    x.permute (
+      0, new permutation_t ([1, 0])
+    ) .eq (nd.array_t.from_3darray ([
       [[5, 4, 3], [2, 1, 0]],
       [[0, 1, 2], [3, 4, 5]],
     ]))
   )
 
   t.true (
-    x.permute (2, [1, 0, 2]) .eq (nd.array_t.from_3darray ([
+    x.permute (
+      2, new permutation_t ([1, 0, 2])
+    ) .eq (nd.array_t.from_3darray ([
       [[1, 0, 2], [4, 3, 5]],
-      [[4, 5, 3], [1, 2, 0]],  
+      [[4, 5, 3], [1, 2, 0]],
     ]))
   )
 

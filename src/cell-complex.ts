@@ -1,7 +1,5 @@
 import assert from "assert"
 
-import * as _ from "lodash"
-
 import { dic_t } from "./dic"
 
 /**
