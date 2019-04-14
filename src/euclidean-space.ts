@@ -60,11 +60,19 @@ function argfirst (
 }
 
 export
-const EPSILON = 0.00000001
+interface config_t {
+  /** for almost degenerated matrix */   
+  epsilon: number
+}
+
+export
+let config: config_t = {
+  epsilon: 0.00000001
+}
 
 export
 function epsilon_p (x: number): boolean {
-  return Math.abs (x) < EPSILON
+  return Math.abs (x) < config.epsilon
 }
 
 export
