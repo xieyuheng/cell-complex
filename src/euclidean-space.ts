@@ -336,7 +336,9 @@ class matrix_t {
         // no pivot in this column, pass to next column
         k += 1
       } else {
-        matrix.update_swap_rows (h, piv)
+        if (h !== piv) {
+          matrix.update_swap_rows (h, piv)
+        }
         // for all rows below pivot
         for (let i = h + 1; i < m; i++) {
           let f = matrix.get (i, k) / matrix.get (h, k)
@@ -467,15 +469,31 @@ class matrix_t {
    * Returns [L, U, P], where P * A = L * U.
    * (singular matrixes allowed)
    */
-  lower_upper_permutation_decomposition (
+  lower_upper_permu_decomposition (
   ): [matrix_t, matrix_t, matrix_t] {
+    let [
+      lower,
+      upper,
+      permu,
+      inver,
+    ] = this.lower_upper_permu_inver_decomposition ()
+    return [
+      lower,
+      upper,
+      permu,
+    ]
+  }
+
+  lower_upper_permu_inver_decomposition (
+  ): [matrix_t, matrix_t, matrix_t, number] {
     let matrix = this.copy ()
     let [m, n] = this.shape
     assert (m === n)
     let record = matrix_t.zeros (m, n)
-    let permutation = matrix_t.identity (n)
+    let permu = matrix_t.identity (n)
     let h = 0 // init pivot row
     let k = 0 // init pivot column
+    let inver = 0
     while (h < m && k < n) {
       // find the next pivot
       let piv = argmax (h, m, (i) => Math.abs (matrix.get (i, k)))
@@ -483,9 +501,12 @@ class matrix_t {
         // no pivot in this column, pass to next column
         k += 1
       } else {
-        matrix.update_swap_rows (h, piv)
-        record.update_swap_rows (h, piv)
-        permutation.update_swap_rows (h, piv)
+        if (h !== piv) {
+          matrix.update_swap_rows (h, piv)
+          record.update_swap_rows (h, piv)
+          permu.update_swap_rows (h, piv)
+          inver += 1
+        }
         // for all rows below pivot
         for (let i = h + 1; i < m; i++) {
           let f = matrix.get (i, k) / matrix.get (h, k)
@@ -504,7 +525,8 @@ class matrix_t {
     return [
       record.update_add (matrix_t.identity (n)),
       matrix,
-      permutation,
+      permu,
+      inver,
     ]
   }
 
@@ -572,27 +594,19 @@ class matrix_t {
     return vector
   }
 
-  permutation_sign (): number {
-    let sum = this
-      .strict_lower ()
-      .reduce_with (0, (acc, cur) => acc + cur)
-    if (epsilon_p (sum % 2)) {
-      return +1
-    } else {
-      return -1
-    }
-  }
-
   det (): number {
     assert (this.square_p ())
     let [
-      lower, upper, permutation
-    ] = this.lower_upper_permutation_decomposition ()
-    let sign = permutation.permutation_sign ()
-    console.log ("sign:", sign)
-    permutation.table ()
-    lower.table ()
-    upper.table ()
+      lower, upper, permu, inver
+    ] = this.lower_upper_permu_inver_decomposition ()
+    let sign: number
+    console.log ("inver:", inver)
+    permu.table ()
+    if (inver % 2 === 0) {
+      sign = +1
+    } else {
+      sign = -1
+    }
     return sign * upper.diag () .reduce ((acc, cur) => acc * cur)
   }
 
