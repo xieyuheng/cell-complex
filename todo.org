@@ -1,7 +1,6 @@
 * ndarray
 - learn from existing ndarray lib
-- inv
-- det
+- permutation_t
 - data_t
 - smith normal form of matrix to calculate homology group
 * cell-complex

@@ -61,7 +61,7 @@ function argfirst (
 
 export
 interface config_t {
-  /** for almost degenerated matrix */   
+  /** for almost degenerated matrix */
   epsilon: number
 }
 
@@ -227,6 +227,13 @@ class matrix_t {
         yield v
       }
     }
+  }
+
+  reduce_with (
+    init: number,
+    f: (acc: number, cur: number) => number,
+  ): number {
+    return this.array.reduce_with (init, f)
   }
 
   every (p: (v: number) => boolean): boolean {
@@ -410,6 +417,46 @@ class matrix_t {
     return true
   }
 
+  upper (): matrix_t {
+    let matrix = this.copy ()
+    for (let [i, j] of this.indexes ()) {
+      if (i > j) {
+        matrix.set (i, j, 0)
+      }
+    }
+    return matrix
+  }
+
+  strict_upper (): matrix_t {
+    let matrix = this.copy ()
+    for (let [i, j] of this.indexes ()) {
+      if (i >= j) {
+        matrix.set (i, j, 0)
+      }
+    }
+    return matrix
+  }
+
+  lower (): matrix_t {
+    let matrix = this.copy ()
+    for (let [i, j] of this.indexes ()) {
+      if (i < j) {
+        matrix.set (i, j, 0)
+      }
+    }
+    return matrix
+  }
+
+  strict_lower (): matrix_t {
+    let matrix = this.copy ()
+    for (let [i, j] of this.indexes ()) {
+      if (i <= j) {
+        matrix.set (i, j, 0)
+      }
+    }
+    return matrix
+  }
+
   /**
    * Returns [L, U, P], where P * A = L * U.
    * (singular matrixes allowed)
@@ -518,10 +565,25 @@ class matrix_t {
     return vector
   }
 
-  // det (): number {
-  //   assert (this.square_p ())
-  //   // TODO
-  // }
+  permutation_sign (): number {
+    let sum = this
+      .strict_lower ()
+      .reduce_with (0, (acc, cur) => acc + cur)
+    if (sum % 2 === 0) {
+      return +1
+    } else {
+      return -1
+    }
+  }
+
+  det (): number {
+    assert (this.square_p ())
+    let [
+      _lower, upper, permutation
+    ] = this.lower_upper_permutation_decomposition ()
+    let sign = permutation.permutation_sign ()
+    return sign * upper.diag () .reduce ((acc, cur) => acc * cur)
+  }
 
   static numbers (n: number, x: number, y: number): matrix_t {
     let shape = [x, y]
@@ -742,11 +804,7 @@ class vector_t {
     init: number,
     f: (acc: number, cur: number) => number,
   ): number {
-    let acc = init
-    for (let i of ut.range (0, this.dim)) {
-      acc = f (acc, this.get (i))
-    }
-    return acc
+    return this.array.reduce_with (init, f)
   }
 
   reduce (

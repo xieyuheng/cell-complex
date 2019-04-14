@@ -94,6 +94,17 @@ class array_t {
     }
   }
 
+  reduce_with (
+    init: number,
+    f: (acc: number, cur: number) => number,
+  ): number {
+    let acc = init
+    for (let v of this.values ()) {
+      acc = f (acc, v)
+    }
+    return acc
+  }
+
   copy (): array_t {
     let buffer = new Float64Array (this.size)
     let array = new array_t (
@@ -448,7 +459,6 @@ class array_t {
         shape.push (s)
       }
     })
-
     let size = array_t.shape_to_size (shape)
     let buffer = new Float64Array (size)
     let strides = array_t.init_strides (shape)

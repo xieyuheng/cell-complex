@@ -348,3 +348,65 @@ test ("eu.matrix_t.symmetric_p", t => {
   t.true (m.transpose () .mul (m) .symmetric_p ())
   t.true (m.mul (m.transpose ()) .symmetric_p ())
 })
+
+test ("eu.matrix_t upper & lower", t => {
+  let m = eu.matrix ([
+    [1, 3, 1, 9],
+    [1, 1, -1, 1],
+    [3, 11, 5, 35],
+  ])
+
+  t.true (
+    m.upper () .eq (
+      eu.matrix ([
+        [1, 3, 1, 9],
+        [0, 1, -1, 1],
+        [0, 0, 5, 35],
+      ])
+    )
+  )
+
+  t.true (
+    m.strict_upper () .eq (
+      eu.matrix ([
+        [0, 3, 1, 9],
+        [0, 0, -1, 1],
+        [0, 0, 0, 35],
+      ])
+    )
+  )
+
+  t.true (
+    m.lower () .eq (
+      eu.matrix ([
+        [1, 0, 0, 0],
+        [1, 1, 0, 0],
+        [3, 11, 5, 0],
+      ])
+    )
+  )
+
+  t.true (
+    m.strict_lower () .eq (
+      eu.matrix ([
+        [0, 0, 0, 0],
+        [1, 0, 0, 0],
+        [3, 11, 0, 0],
+      ])
+    )
+  )
+
+  t.pass ()
+})
+
+test ("eu.matrix_t.det", t => {
+  t.true (
+    eu.matrix ([
+      [-2, 2, -3],
+      [-1, 1, 3],
+      [2, 0, -1],
+    ]) .det () === 18
+  )
+
+  t.pass ()
+})
