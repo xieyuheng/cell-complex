@@ -67,7 +67,7 @@ interface config_t {
 
 export
 let config: config_t = {
-  epsilon: 0.00000001
+  epsilon: 0.000000001
 }
 
 export
@@ -263,22 +263,28 @@ class matrix_t {
             (this.shape [1] === that.shape [1]))
   }
 
-  add (that: matrix_t): matrix_t {
+  update_add (that: matrix_t): matrix_t {
     assert (this.same_shape_p (that))
-    let matrix = this.copy ()
     for (let [i, j, v] of that.entries ()) {
-      matrix.update_at (i, j, x => x + v)
+      this.update_at (i, j, x => x + v)
     }
-    return matrix
+    return this
+  }
+
+  add (that: matrix_t): matrix_t {
+    return this.copy () .update_add (that)
+  }
+
+  update_sub (that: matrix_t): matrix_t {
+    assert (this.same_shape_p (that))
+    for (let [i, j, v] of that.entries ()) {
+      this.update_at (i, j, x => x - v)
+    }
+    return this
   }
 
   sub (that: matrix_t): matrix_t {
-    assert (this.same_shape_p (that))
-    let matrix = this.copy ()
-    for (let [i, j, v] of that.entries ()) {
-      matrix.update_at (i, j, x => x - v)
-    }
-    return matrix
+    return this.copy () .update_sub (that)
   }
 
   map (f: (v: number) => number): matrix_t {
@@ -466,7 +472,7 @@ class matrix_t {
     let matrix = this.copy ()
     let [m, n] = this.shape
     assert (m === n)
-    let record = matrix_t.identity (n)
+    let record = matrix_t.zeros (m, n)
     let permutation = matrix_t.identity (n)
     let h = 0 // init pivot row
     let k = 0 // init pivot column
@@ -478,6 +484,7 @@ class matrix_t {
         k += 1
       } else {
         matrix.update_swap_rows (h, piv)
+        record.update_swap_rows (h, piv)
         permutation.update_swap_rows (h, piv)
         // for all rows below pivot
         for (let i = h + 1; i < m; i++) {
@@ -495,7 +502,7 @@ class matrix_t {
       }
     }
     return [
-      record,
+      record.update_add (matrix_t.identity (n)),
       matrix,
       permutation,
     ]
@@ -569,7 +576,7 @@ class matrix_t {
     let sum = this
       .strict_lower ()
       .reduce_with (0, (acc, cur) => acc + cur)
-    if (sum % 2 === 0) {
+    if (epsilon_p (sum % 2)) {
       return +1
     } else {
       return -1
@@ -579,9 +586,13 @@ class matrix_t {
   det (): number {
     assert (this.square_p ())
     let [
-      _lower, upper, permutation
+      lower, upper, permutation
     ] = this.lower_upper_permutation_decomposition ()
     let sign = permutation.permutation_sign ()
+    console.log ("sign:", sign)
+    permutation.table ()
+    lower.table ()
+    upper.table ()
     return sign * upper.diag () .reduce ((acc, cur) => acc * cur)
   }
 

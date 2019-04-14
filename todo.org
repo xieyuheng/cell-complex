@@ -1,3 +1,4 @@
+- fix det
 * ndarray
 - learn from existing ndarray lib
 - permutation_t

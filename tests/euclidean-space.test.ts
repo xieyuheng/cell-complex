@@ -180,14 +180,14 @@ test ("reduced_row_echelon_form", t => {
 
 function test_lower_upper_permutation (
   t: ExecutionContext,
-  matrix: eu.matrix_t,
+  m: eu.matrix_t,
 ) {
   let [
     lower, upper, permutation
-  ] = matrix.lower_upper_permutation_decomposition ()
+  ] = m.lower_upper_permutation_decomposition ()
   t.true (lower.lower_p ())
   t.true (upper.upper_p ())
-  t.true (permutation.mul (matrix) .eq (lower.mul (upper)))
+  t.true (permutation.mul (m) .eq (lower.mul (upper)))
 }
 
 test ("lower_upper_permutation_decomposition", t => {
@@ -198,8 +198,48 @@ test ("lower_upper_permutation_decomposition", t => {
   ]))
 
   test_lower_upper_permutation (t, eu.matrix ([
+    [1, 3, 1],
+    [1, 1, -1],
+    [3, 11, 5],
+  ]) .transpose ())
+
+  test_lower_upper_permutation (t, eu.matrix ([
+    [1, 3, 1],
+    [1, 1, -1],
+    [3, 11, 5000],
+  ]))
+
+  test_lower_upper_permutation (t, eu.matrix ([
     [4, 3],
     [6, 3],
+  ]))
+
+  test_lower_upper_permutation (t, eu.matrix ([
+    [4, 3],
+    [6, 3],
+  ]) .inv ())
+
+  test_lower_upper_permutation (t, eu.matrix ([
+    [-2, 3],
+    [-1, 3],
+  ]))
+
+  test_inv (t, eu.matrix ([
+    [2, 2, 100],
+    [0, 0, 3],
+    [2, 1, 1],
+  ]))
+
+  test_lower_upper_permutation (t, eu.matrix ([
+    [2, 2, 100],
+    [0, 0, 3],
+    [2, 1, 1],
+  ]))
+
+  test_lower_upper_permutation (t, eu.matrix ([
+    [-2, 2, -3],
+    [-1, 1, 3],
+    [2, 0, -1],
   ]))
 })
 
@@ -229,6 +269,19 @@ test ("rank", t => {
   }
 })
 
+function test_inv (
+  t: ExecutionContext,
+  m: eu.matrix_t,
+) {
+  t.true (m.square_p ())
+  let [_n, n] = m.shape
+  t.true (
+    m.mul (m.inv ()) .sub (
+      eu.matrix_t.identity (n)
+    ) .epsilon_p ()
+  )
+}
+
 test ("inv", t => {
   {
     let m = eu.matrix ([
@@ -248,21 +301,17 @@ test ("inv", t => {
     t.true (m.inv_maybe () === null)
   }
 
-  {
-    let m = eu.matrix ([
-      [2, -1, 0],
-      [-1, 2, -1],
-      [0, -1, 2],
-    ])
+  test_inv (t, eu.matrix ([
+    [2, -1, 0],
+    [-1, 2, -1],
+    [0, -1, 2],
+  ]))
 
-    t.true (
-      m.mul (m.inv ()) .sub (
-        eu.matrix_t.identity (3)
-      ) .epsilon_p ()
-    )
-  }
-
-  t.pass ()
+  test_inv (t, eu.matrix ([
+    [-2, 2, 113],
+    [0, 0, 3],
+    [2, 0, 1],
+  ]))
 })
 
 test ("append_cols & append_cols", t => {
@@ -400,13 +449,25 @@ test ("eu.matrix_t upper & lower", t => {
 })
 
 test ("eu.matrix_t.det", t => {
+  let m = eu.matrix ([
+    [-2, 2, -3],
+    [-1, 1, 3],
+    [2, 0, -1],
+  ])
+
   t.true (
-    eu.matrix ([
-      [-2, 2, -3],
-      [-1, 1, 3],
-      [2, 0, -1],
-    ]) .det () === 18
+    m.det () === 18
   )
 
-  t.pass ()
+  t.true (
+    m.transpose () .det () === 18
+  )
+
+  console.log (
+    m.inv () .det ()
+  )
+
+  t.true (
+    m.det () * m.inv () .det () === 1
+  )
 })
