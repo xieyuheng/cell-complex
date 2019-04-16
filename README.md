@@ -9,16 +9,35 @@
 
 ## Contents
 
-- combinatorial-game -- A game engine for n-player perfect information games
-- cell-complex -- Cell-complex based low dimensional algebraic topology library
+- combinatorial-game -- a game engine for n-player perfect information games
+  - example games:
+    - tic-tac-toe
+    - hackenbush ([early demo][http://hackenbush.combinatorial-game.surge.sh/])
+
+- cell-complex -- cell-complex based low dimensional algebraic topology library
   - [paper](https://xieyuheng.github.io/writing/investigations-into-cell-complex.html)
   -- "Investigations into cell complex", by Xie Yuheng, 2019
-- ndarray -- Strides based row-major ndarray of number
-- euclidean-space -- affine-space with dot product
+  - example cell complexes:
+    - torus
+
+- ndarray
+  - `array_t` -- strides based row-major ndarray of number
+  - `data_t` -- ndarray with named axes, where an axis maps labels to indexes.
+
+- formalized abstmathematical structures in typescript:
+  - `set_t`
+  - `group_t`, `abelian_group_t`
+  - `field_t`
+  - `vector_space_t`, `affine_space_t`
+
+- euclidean-space -- `affine_space_t` with dot product
   - contains `matrix_t`, `vector_t` and `point_t`
-- [WIP] cicada -- A dependently-typed programming language with game semantics
-  - Logic programming interface
-  - Class with multi-inheritance
+
+- permutation -- `permutation_t` and `symmetric_group_t`
+
+- [todo] cicada -- a dependently-typed programming language with game semantics
+  - logic programming interface
+  - class with multi-inheritance
 
 ## Docs
 

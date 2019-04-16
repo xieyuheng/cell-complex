@@ -1,5 +1,5 @@
 /**
- * Map with `.toString ()` value as key.
+ * Map with `string` as key.
  */
 export
 class dic_t <K , V> {

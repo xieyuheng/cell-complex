@@ -1,4 +1,3 @@
-import { dic_t } from "./dic"
 import * as cx from "./cell-complex"
 
 export
