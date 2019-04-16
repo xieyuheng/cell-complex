@@ -1,6 +1,7 @@
 import assert from "assert"
 
 import { dic_t } from "./dic"
+import * as nd from "./ndarray"
 
 /**
  * In the context of a [[cell_complex_t]],
@@ -525,16 +526,16 @@ class cell_complex_t {
     return this.get_face (this.id (name))
   }
 
-  chain_from_array (
-    dim: number,
-    array: Array <[id_t, number]>,
-  ): chain_t {
-    let chain = new chain_t (dim, this)
-    for (let [id, n] of array) {
-      chain.dic.update_at (id, m => m + n)
-    }
-    return chain
-  }
+  // chain_from_array (
+  //   dim: number,
+  //   array: Array <[id_t, number]>,
+  // ): chain_t {
+  //   let chain = new chain_t (dim, this)
+  //   for (let [id, n] of array) {
+  //     chain.dic.update_at (id, m => m + n)
+  //   }
+  //   return chain
+  // }
 }
 
 export
@@ -1257,6 +1258,11 @@ class globular_t extends cell_complex_t {
 
 }
 
+/**
+ * `glob_t` is the basic object of higher algebra.
+ * But, to get homological chain after abelianization,
+ * we need array of glob, instead of one glob.
+ */
 export
 class homotopical_chain_t {
   dim: number
@@ -1273,68 +1279,79 @@ class homotopical_chain_t {
   }
 }
 
-// TODO use data-panel here
-
 export
 class chain_t {
   readonly dim: number
   readonly com: cell_complex_t
-  dic: dic_t <id_t, number>
+  readonly series: nd.data_t
 
   constructor (
     dim: number,
     com: cell_complex_t,
+    series: nd.data_t,
   ) {
     this.dim = dim
     this.com = com
-    this.dic = new dic_t (id_to_str)
-    for (let [id, _] of com.in_dim (dim)) {
-      this.dic.set (id, 0)
-    }
+    this.series = series
   }
 
-  // add_array ()
-
-  // add_dic ()
-
-  // boundary_matrix (): data_panel_t {}
-
-  boundary_matrix (): dic_t <[id_t, id_t], number> {
-    let matrix = new dic_t <[id_t, id_t], number> ()
-    return matrix
+  static zeros (
+    dim: number,
+    com: cell_complex_t,
+  ): chain_t {
+    let name = dim.toString ()
+    let axis = nd.axis (
+      Array.from (com.id_in_dim (dim))
+        .map (id_to_str)
+    )
+    let array = nd.array_t.zeros ([com.size_of_dim (dim)])
+    let series = nd.series (name, axis, array)
+    return new chain_t (dim, com, series)
   }
 
+  // TODO
+  // boundary_data (): nd.data_t {
+  // }
+
+  // TODO
   // boundary (): chain_t {
+  // }
 
+  // add (that: chain_t): chain_t {
+  //   assert (this.dim === that.dim)
+  //   return new chain_t (
+  //     this.dim,
+  //     this.com,
+  //     this.series.add (that.series))
   // }
 }
 
-export
-function boundary_dic_of_basis (
-  com: cell_complex_t,
-  id: id_t,
-): dic_t <id_t, number> {
-  let chain = new chain_t (id.dim - 1, com)
-  let dic = chain.dic
-  if (id.dim === 0) {
-    return dic
-  } else if (id.dim === 1) {
-    let edge = com.get_edge (id)
-    dic.update_at (edge.start, n => n - 1)
-    dic.update_at (edge.end, n => n + 1)
-    return dic
-  } else if (id.dim === 2) {
-    let face = com.get_face (id)
-    console.log ("2")
-    for (let e of face.circuit) {
-      if (e instanceof rev_id_t) {
-        dic.update_at (e.rev (), n => n - 1)
-      } else {
-        dic.update_at (e, n => n + 1)
-      }
-    }
-    return dic
-  } else {
-    throw new Error ("can only calculate dim 0, 1, 2 yet")
-  }
-}
+// export
+// function boundary_dic_of_basis (
+//   com: cell_complex_t,
+//   id: id_t,
+// ): dic_t <id_t, number> {
+//   let chain = new chain_t (id.dim - 1, com)
+//   let dic = chain.dic
+//   if (id.dim === 0) {
+//     return dic
+//   } else if (id.dim === 1) {
+//     let edge = com.get_edge (id)
+//     dic.update_at (edge.start, n => n - 1)
+//     dic.update_at (edge.end, n => n + 1)
+//     return dic
+//   } else if (id.dim === 2) {
+//     let face = com.get_face (id)
+//     console.log ("2")
+//     for (let e of face.circuit) {
+//       if (e instanceof rev_id_t) {
+//         dic.update_at (e.rev (), n => n - 1)
+//       } else {
+//         dic.update_at (e, n => n + 1)
+//       }
+//     }
+//     return dic
+//   } else {
+//     throw new Error ("can only calculate dim 0, 1, 2 yet")
+//   }
+// }

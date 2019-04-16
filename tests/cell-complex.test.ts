@@ -2,7 +2,7 @@ import test from "ava"
 
 import * as cx from "../src/cell-complex"
 import { torus_t } from "../src/torus"
-import { log } from "../src/util"
+import * as ut from "../src/util"
 
 test ("cell_complex_t eq", t => {
   let torus = new torus_t ()
@@ -31,17 +31,26 @@ test ("manifold_check", t => {
   }
 })
 
-test ("boundary_dic_of_basis", t => {
+test ("new chain_t", t => {
   let torus = new torus_t ()
-  let square = new cx.polygon_t (4)
+  let chain = cx.chain_t.zeros (1, torus)
 
-  log (
-    cx.boundary_dic_of_basis (torus, torus.id ("toro"))
-  )
-
-  log (
-    cx.boundary_dic_of_basis (square, new cx.id_t (1, 0))
-  )
+  ut.log (chain.series)
 
   t.pass ()
 })
+
+// test ("boundary_dic_of_basis", t => {
+//   let torus = new torus_t ()
+//   let square = new cx.polygon_t (4)
+
+//   ut.log (
+//     cx.boundary_dic_of_basis (torus, torus.id ("toro"))
+//   )
+
+//   ut.log (
+//     cx.boundary_dic_of_basis (square, new cx.id_t (1, 0))
+//   )
+
+//   t.pass ()
+// })

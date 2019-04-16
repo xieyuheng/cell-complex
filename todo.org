@@ -1,8 +1,10 @@
 * ndarray
-- learn from existing ndarray lib
 - data_t
 - smith normal form of matrix to calculate homology group
 * cell-complex
+- homology group of cell-complex
+- abelian_group_t
+  - classification (normalization)
 - presentation of groupoid is the same as 2-dim cell-complex
   - by which we can calculate homology group of groupoid
   - my first aim is to
@@ -30,10 +32,6 @@
       也就是说
       1. 放宽对元素联通性的要求
       2. 丰富 compose 为 glue
-- homology group of cell-complex
-- abelian_group_t
-  - classification (normalization)
-    prepare for homology
 - 2-dim manifold classification -- zip of john conway
 - [refine API] auto compatible in morphism_builder_t
 - bounfold_check

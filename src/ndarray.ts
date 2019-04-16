@@ -171,6 +171,9 @@ class array_t {
     return this
   }
 
+  // TODO
+  // add
+
   static from_1darray (array: Array1d): array_t {
     let buffer = Float64Array.from (array)
     let shape = [array.length]
@@ -488,6 +491,46 @@ class array_t {
 }
 
 export
+function array1d_p (array: Array <any>): boolean {
+  if (array.length === 0) {
+    return true
+  } else {
+    return typeof array [0] === 'number'
+  }
+}
+
+export
+function array2d_p (array: Array <any>): boolean {
+  if (array.length === 0) {
+    return true
+  } else {
+    return array1d_p (array [0])
+  }
+}
+
+export
+function array3d_p (array: Array <any>): boolean {
+  if (array.length === 0) {
+    return true
+  } else {
+    return array2d_p (array [0])
+  }
+}
+
+export
+function array (array: Array1d | Array2d | Array3d): array_t {
+  if (array1d_p (array)) {
+    return array_t.from_1darray (array as Array1d)
+  } else if (array2d_p (array)) {
+    return array_t.from_2darray (array as Array2d)
+  } else if (array3d_p (array)) {
+    return array_t.from_3darray (array as Array3d)
+  } else {
+    throw new Error ("can only handle Array1d | Array2d | Array3d")
+  }
+}
+
+export
 function get_index_max_p (
   index: get_index_t,
   shape: Array <number>,
@@ -546,17 +589,15 @@ class axes_t {
     this.map = map
   }
 
-  static from_obj (
-    obj: { [index: string]: Array <string> }
+  static from_array (
+    array: Array <[string, axis_t]>
   ): axes_t {
-    let map = new Map ()
-    for (let name in obj) {
-      let array = obj [name]
-      map.set (name, axis_t.from_array (array))
-    }
-    return new axes_t (map)
+    return new axes_t (new Map (array))
   }
 }
+
+export
+let axes = axes_t.from_array
 
 export
 class axis_t {
@@ -570,12 +611,17 @@ class axis_t {
 
   static from_array (array: Array <string>): axis_t {
     let map = new Map ()
-    for (let k in array) {
-      let v = array [k]
-      map.set (v, k)
+    for (let i of ut.range (0, array.length)) {
+      let v = array [i]
+      map.set (v, i)
     }
     return new axis_t (map)
   }
+}
+
+export
+function axis (array: Array <string>): axis_t {
+  return axis_t.from_array (array)
 }
 
 /**
@@ -599,4 +645,25 @@ class data_t {
   }
 
   // TODO
+  // get
+  // set
+  // copy
+  // proj
+  // slice
+  // contract
+
+  // TODO
+  // add
+}
+
+export
+function series (
+  name: string,
+  axis: axis_t,
+  array: array_t,
+): data_t {
+  let axes = axes_t.from_array ([
+    [name, axis]
+  ])
+  return new data_t (axes, array)
 }
