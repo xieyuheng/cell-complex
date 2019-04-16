@@ -24,7 +24,7 @@
   - `array_t` -- strides based row-major ndarray of number
   - `data_t` -- ndarray with named axes, where an axis maps labels to indexes.
 
-- formalized abstmathematical structures in typescript:
+- formalized abstract mathematical structures (in typescript):
   - `set_t`
   - `group_t`, `abelian_group_t`
   - `field_t`
