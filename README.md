@@ -6,8 +6,8 @@
 - Design new formal languages to formalize mathematical structures
   - Intuitive to use
   - Approachable for both mathematicians and programmers
-- Questions and pull requests are welcome, Your voices will guide me to solve the right problems.
-  -- [issues](https://github.com/xieyuheng/cicada/issues)
+- Questions are welcome, Your voices will guide me to solve the right problems.
+  - [issues](https://github.com/xieyuheng/cicada/issues)
 
 ## Contents
 
