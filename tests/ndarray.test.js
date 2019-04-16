@@ -444,8 +444,6 @@ test ("new data_t", t => {
     ]),
   )
 
-  ut.log (prisoner_s_dilemma)
-
   t.pass ()
 })
 
@@ -464,6 +462,39 @@ test ("frame_t.from_rows", t => {
     frame.get (nd.data_index ([
       ["rows", "row1"],
       ["cols", "col2"],
+    ])) === 2
+  )
+
+  t.true (
+    frame.get (nd.data_index ([
+      ["cols", "col2"],
+      ["rows", "row1"],
+    ])) === 2
+  )
+})
+
+test ("frame_t.from_cols", t => {
+  let frame = nd.frame_t.from_cols (
+    "rows", "cols", [
+      nd.series ("col1",
+                 nd.axis (["row1", "row2"]),
+                 nd.array ([1, 3])),
+      nd.series ("col2",
+                 nd.axis (["row1", "row2"]),
+                 nd.array ([2, 4])),
+    ])
+
+  t.true (
+    frame.get (nd.data_index ([
+      ["rows", "row1"],
+      ["cols", "col2"],
+    ])) === 2
+  )
+
+  t.true (
+    frame.get (nd.data_index ([
+      ["cols", "col2"],
+      ["rows", "row1"],
     ])) === 2
   )
 })

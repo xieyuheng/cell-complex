@@ -929,13 +929,15 @@ class frame_t extends data_t {
 
   constructor (
     data: data_t,
+    row_col_index: [number, number] = [0, 1],
   ) {
     assert (data.order === 2)
     super (data.axes, data.array)
-    this.row_name = this.axes.get_name_by_index (0)
-    this.row_axis = this.axes.get_axis_by_index (0)
-    this.col_name = this.axes.get_name_by_index (1)
-    this.col_axis = this.axes.get_axis_by_index (1)
+    let [row_index, col_index] = row_col_index
+    this.row_name = this.axes.get_name_by_index (row_index)
+    this.row_axis = this.axes.get_axis_by_index (row_index)
+    this.col_name = this.axes.get_name_by_index (col_index)
+    this.col_axis = this.axes.get_axis_by_index (col_index)
   }
 
   static from_rows (
@@ -960,6 +962,25 @@ class frame_t extends data_t {
       array_t.from_lower_order (lower),
     )
   }
+
+  static from_cols (
+    row_name: string,
+    col_name: string,
+    cols: Array <series_t>,
+  ): frame_t {
+    return frame_t.from_rows (
+      col_name,
+      row_name,
+      cols,
+    ) .transpose ()
+  }
+
+  transpose (): frame_t {
+    return new frame_t (this, [1, 0])
+  }
+
+  // TODO
+  // static from_rows
 }
 
 export

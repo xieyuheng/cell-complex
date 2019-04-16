@@ -1,5 +1,4 @@
 * ndarray
-- frame_t.from_cols
 - nd.array_t add
 - test cx.chain_t add
 - data_t contract
