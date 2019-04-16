@@ -1,6 +1,7 @@
 image: node:latest
 
 stages:
+  - install
   - build
   - test
 
@@ -9,7 +10,7 @@ cache:
     - node_modules/
 
 install:
-  stage: build
+  stage: install
   script:
     - npm install
   artifacts:
@@ -26,4 +27,5 @@ build:
 
 test:
   stage: test
-  script: npm test
+  script:
+    - npm run test
