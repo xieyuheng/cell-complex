@@ -7,6 +7,11 @@
   - Intuitive to use
   - Approachable for both mathematicians and programmers
 
+------
+
+- Questions and pull requests are welcome, Your voices will guide me to solve the right problems.
+  -- [issues](https://github.com/xieyuheng/cicada/issues)
+
 ## Contents
 
 - combinatorial-game -- a game engine for n-player perfect information games

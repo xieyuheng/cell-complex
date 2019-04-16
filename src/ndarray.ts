@@ -776,7 +776,7 @@ class data_slice_index_t {
 
 /**
  * ndarray + named axes,
- * where an axis maps names to indexes.
+ * where an axis maps labels to indexes.
 
  * Do not implicitly generate data when there are missing data.
  * Missing data should be handled explicitly.
@@ -872,3 +872,6 @@ function frame (
   ])
   return new data_t (axes, array)
 }
+
+// TODO
+// frame_from_series_array
