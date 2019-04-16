@@ -20,9 +20,9 @@ let log = require ("../lib/util") .log
   ])
 
 
-  // m.table ()
-  // v.table ()
-  // m.act (v) .table ()
+  // m.print ()
+  // v.print ()
+  // m.act (v) .print ()
 
   assert (
     m.act (v) .eq (b)
@@ -48,9 +48,9 @@ let log = require ("../lib/util") .log
     1,
   ])
 
-  // m.table ()
-  // v.table ()
-  // m.act (v) .table ()
+  // m.print ()
+  // v.print ()
+  // m.act (v) .print ()
 
   assert (
     m.act (v) .eq (b)
@@ -76,9 +76,9 @@ let log = require ("../lib/util") .log
     1,
   ])
 
-  m.table ()
-  v.table ()
-  m.act (v) .table ()
+  m.print ()
+  v.print ()
+  m.act (v) .print ()
 
 //   assert (
 //     m.act (v) .eq (b)
@@ -110,5 +110,5 @@ let log = require ("../lib/util") .log
     ]))
   )
 
-  m.mul (n) .table ()
+  m.mul (n) .print ()
 }

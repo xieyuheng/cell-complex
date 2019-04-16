@@ -344,7 +344,7 @@ class array_t {
     }
   }
 
-  table () {
+  print () {
     if (this.order === 1) {
       console.table (this.to_1darray ())
     } else if (this.order === 2) {
@@ -357,12 +357,12 @@ class array_t {
       index.push (null)
       while (true) {
         console.log (index)
-        this.proj (index) .table ()
+        this.proj (index) .print ()
         index = array_t.proj_index_inc_with_shape (
           index, this.shape)
         if (array_t.proj_index_max_p (index, this.shape)) {
           console.log (index)
-          this.proj (index) .table ()
+          this.proj (index) .print ()
           return
         }
       }

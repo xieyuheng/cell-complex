@@ -1,8 +1,9 @@
 * ndarray
-- nd.array_t add
-- test cx.chain_t add
-- data_t.table
+- data_t print
+- array_t add
+- chain_t add
 - data_t contract
+- frame_t mul
 - smith normal form of matrix to calculate homology group
 * cell-complex
 - homology group of cell-complex

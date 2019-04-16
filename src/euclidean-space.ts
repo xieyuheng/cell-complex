@@ -111,9 +111,9 @@ class matrix_t {
     return this.set (i, j, f (this.get (i, j)))
   }
 
-  table () {
+  print () {
     console.log ("matrix:")
-    this.array.table ()
+    this.array.print ()
   }
 
   slice (
@@ -601,7 +601,7 @@ class matrix_t {
     ] = this.lower_upper_permu_inver_decomposition ()
     let sign: number
     console.log ("inver:", inver)
-    permu.table ()
+    permu.print ()
     if (inver % 2 === 0) {
       sign = +1
     } else {
@@ -698,9 +698,9 @@ class vector_t {
     return this
   }
 
-  table () {
+  print () {
     console.log ("vector:")
-    this.array.table ()
+    this.array.print ()
   }
 
   slice (i: [number, number]): vector_t {
@@ -902,9 +902,9 @@ class point_t {
     this.array.set ([i], v)
   }
 
-  table () {
+  print () {
     console.log ("point:")
-    this.array.table ()
+    this.array.print ()
   }
 
   slice (i: [number, number]): point_t {

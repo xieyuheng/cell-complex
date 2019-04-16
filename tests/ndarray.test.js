@@ -256,12 +256,12 @@ test ("fill", t => {
   t.true (x.get ([1, 1]) === 0)
 })
 
-test ("table", t => {
-  nd.array_t.zeros ([10]) .table ()
-  nd.array_t.zeros ([2, 3]) .table ()
-  nd.array_t.zeros ([2, 3, 4]) .table ()
-  nd.array_t.zeros ([2, 3, 4, 5]) .table ()
-  nd.array_t.zeros ([2, 3, 4, 5]) .table ()
+test ("print", t => {
+  nd.array_t.zeros ([10]) .print ()
+  nd.array_t.zeros ([2, 3]) .print ()
+  nd.array_t.zeros ([2, 3, 4]) .print ()
+  nd.array_t.zeros ([2, 3, 4, 5]) .print ()
+  nd.array_t.zeros ([2, 3, 4, 5]) .print ()
   t.pass ()
 })
 
