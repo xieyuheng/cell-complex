@@ -21,22 +21,12 @@
     "api": "npm run api-local; npm run api-up",
     "up": "git commit -m 'up'; npm run build; npm run api; npm version patch; git push; npm publish"
   },
-  "ava": {
-    "compileEnhancements": false,
-    "extensions": [
-      "ts"
-    ],
-    "require": [
-      "ts-node/register"
-    ]
-  },
   "devDependencies": {
     "@babel/core": "^7.4.3",
     "@babel/plugin-transform-runtime": "^7.4.3",
     "ava": "^1.4.1",
     "parcel-bundler": "^1.12.3",
     "surge": "^0.20.3",
-    "ts-node": "^8.1.0",
     "typedoc": "^0.14.2",
     "typescript": "^3.4.3"
   },
