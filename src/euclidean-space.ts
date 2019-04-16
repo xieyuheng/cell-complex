@@ -132,7 +132,7 @@ class matrix_t {
   }
 
   set_row (i: number, src: vector_t): matrix_t {
-    this.array.put ([[i, i+1], null], src.array)
+    this.array.put_porj ([i, null], src.array)
     return this
   }
 
@@ -173,7 +173,7 @@ class matrix_t {
   }
 
   set_col (i: number, src: vector_t): matrix_t {
-    this.array.put ([null, [i, i+1]], src.array)
+    this.array.put_porj ([null, i], src.array)
     return this
   }
 

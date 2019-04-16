@@ -144,7 +144,7 @@ class array_t {
     return new array_t (this.buffer, shape, strides, offset)
   }
 
-  slice (index: Array <[number, number] | null>): array_t {
+  slice (index: slice_index_t): array_t {
     if (index.length !== this.shape.length) {
       throw new Error ("index length mismatch")
     }
@@ -161,8 +161,12 @@ class array_t {
     return new array_t (this.buffer, shape, this.strides, offset)
   }
 
+  /**
+   * the order of `src` array can be higher or lower,
+   * as long as its `.values` match `tar.indexes`.
+   */
   put (
-    index: Array <[number, number] | null>,
+    index: slice_index_t,
     src: array_t,
   ): array_t {
     let tar = this.slice (index)
@@ -177,6 +181,20 @@ class array_t {
       tar.set (i, v)
     }
     return this
+  }
+
+  put_porj (
+    index: proj_index_t,
+    src: array_t,
+  ): array_t {
+    let slice_index: slice_index_t = index.map (i => {
+      if (i === null) {
+        return null
+      } else {
+        return [i, i+1]
+      }
+    })
+    return this.put (slice_index, src)
   }
 
   // TODO
@@ -496,6 +514,26 @@ class array_t {
     }
     return array
   }
+
+  static from_lower_order (lower: Array <array_t>): array_t {
+    assert (lower.length !== 0)
+    let first_array = lower [0]
+    let first_shape = first_array.shape
+    let shape = [lower.length] .concat (first_array.shape)
+    let size = array_t.shape_to_size (shape)
+    let buffer = new Float64Array (size)
+    let higher = new array_t (
+      buffer, shape,
+      array_t.init_strides (shape))
+    for (let i of ut.range (0, lower.length)) {
+      let array = lower [i]
+      assert (_.isEqual (array.shape, first_shape))
+      let index: proj_index_t = [i]
+      index = index.concat (ut.repeats (null, shape.length-1))
+      higher.put_porj (index, array)
+    }
+    return higher
+  }
 }
 
 export
@@ -631,17 +669,20 @@ class axes_t {
     throw new Error ("name not in key of map")
   }
 
-  axis_name_array (): Array <string> {
-    let name_array = new Array ()
-    for (let name of this.map.keys ()) {
-      name_array.push (name)
-    }
-    return name_array
+  name_array (): Array <string> {
+    return Array.from (this.map.keys ())
   }
 
-  get_axis_name (i: number): string {
-    let axis_name_array = this.axis_name_array ()
-    return axis_name_array [i]
+  axis_array (): Array <axis_t> {
+    return Array.from (this.map.values ())
+  }
+
+  get_name_by_index (i: number): string {
+    return this.name_array () [i]
+  }
+
+  get_axis_by_index (i: number): axis_t {
+    return this.axis_array () [i]
   }
 
   get (name: string): axis_t {
@@ -674,11 +715,11 @@ let axes = axes_t.from_array
 
 export
 class axis_t {
-  map: Map <string, number>
+  readonly map: Map <string, number>
   readonly length: number
 
   constructor (
-    map: Map <string, number>
+    map: Map <string, number> = new Map (),
   ) {
     this.map = map
     this.length = map.size
@@ -720,6 +761,14 @@ class axis_t {
   *[Symbol.iterator] () {
     for (let [k, v] of this.map) {
       yield [k, v] as [string, number]
+    }
+  }
+
+  eq (that: axis_t): boolean {
+    if (this.length !== that.length) {
+      return false
+    } else {
+      return _.isEqual (this.map, that.map)
     }
   }
 }
@@ -792,7 +841,11 @@ class data_t {
     axes: axes_t,
     array: array_t,
   ) {
-    assert (_.isEqual (axes.shape, array.shape))
+    if (! _.isEqual (axes.shape, array.shape)) {
+      console.log ("axes.shape:", axes.shape)
+      console.log ("array.shape:", array.shape)
+      throw new Error ("shape mismatch")
+    }
     this.axes = axes
     this.array = array
     this.shape = axes.shape
@@ -839,13 +892,16 @@ class data_t {
 
 export
 class series_t extends data_t {
-  name: string
+  readonly name: string
+  readonly axis: axis_t
+
   constructor (
     data: data_t,
   ) {
     assert (data.order === 1)
     super (data.axes, data.array)
-    this.name = this.axes.get_axis_name (0)
+    this.name = this.axes.get_name_by_index (0)
+    this.axis = this.axes.get_axis_by_index (0)
   }
 }
 
@@ -866,32 +922,44 @@ let series = new_series
 
 export
 class frame_t extends data_t {
+  readonly row_name: string
+  readonly row_axis: axis_t
+  readonly col_name: string
+  readonly col_axis: axis_t
+
   constructor (
     data: data_t,
   ) {
     assert (data.order === 2)
     super (data.axes, data.array)
+    this.row_name = this.axes.get_name_by_index (0)
+    this.row_axis = this.axes.get_axis_by_index (0)
+    this.col_name = this.axes.get_name_by_index (1)
+    this.col_axis = this.axes.get_axis_by_index (1)
   }
 
-//   // TODO
-//   from_rows (
-//     row_name: string,
-//     col_name: string,
-//     rows: Array <data_t>
-//   ): frame_t {
-//     assert (rows.length !== 0)
-//     let first_row = rows [0]
-//     let row_axis = ;
-//     let col_axis = axes_of_first_row
-//     for (let row of rows) {
-//       let name = name_of_series (row)
-//     }
-//     return new_frame (
-//       row_name, row_axis,
-//       col_name, col_axis,
-//       array,
-//     )
-//   }
+  static from_rows (
+    row_name: string,
+    col_name: string,
+    rows: Array <series_t>,
+  ): frame_t {
+    assert (rows.length !== 0)
+    let first_row = rows [0]
+    let label_array = new Array ()
+    let col_axis = first_row.axis
+    let lower = new Array <array_t> ()
+    for (let row of rows) {
+      assert (row.axis.eq (col_axis))
+      label_array.push (row.name)
+      lower.push (row.array)
+    }
+    let row_axis = axis_t.from_array (label_array)
+    return new_frame (
+      row_name, row_axis,
+      col_name, col_axis,
+      array_t.from_lower_order (lower),
+    )
+  }
 }
 
 export
@@ -899,7 +967,7 @@ function new_frame (
   row_name: string, row_axis: axis_t,
   col_name: string, col_axis: axis_t,
   array: array_t,
-): data_t {
+): frame_t {
   let axes = axes_t.from_array ([
     [row_name, row_axis],
     [col_name, col_axis],

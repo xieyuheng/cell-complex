@@ -1367,4 +1367,4 @@ class chain_t {
   //     this.com,
   //     this.series.add (that.series))
   // }
-}
+ }

@@ -1,7 +1,7 @@
 import assert from "assert"
 
 export
-function log (x: any) {
+function log <T> (x: T) {
   console.dir (x, { depth: null })
 }
 
@@ -16,4 +16,13 @@ function* range (lo: number, hi: number) {
     yield i
     i += 1
   }
+}
+
+export
+function repeats <T> (x: T, n: number): Array <T> {
+  let array = new Array ()
+  for (let _ of range (0, n)) {
+    array.push (x)
+  }
+  return array
 }

@@ -2,7 +2,7 @@ import test from "ava"
 
 import * as nd from "../lib/ndarray"
 import { permutation_t } from "../lib/permutation"
-import { log } from "../lib/util"
+import * as ut from "../lib/util"
 
 test ("init_strides", t => {
   let shape = [2, 3, 4]
@@ -411,6 +411,20 @@ test ("permute", t => {
   t.pass ()
 })
 
+test ("from_lower_order", t => {
+  let x = nd.array_t.from_lower_order ([
+    nd.array ([1, 2, 3]),
+    nd.array ([4, 5, 6]),
+  ])
+
+  let y = nd.array ([
+    [1, 2, 3],
+    [4, 5, 6],
+  ])
+
+  t.true (x.eq (y))
+})
+
 test ("new data_t", t => {
   let axes = nd.axes ([
     ["Alice", nd.axis (["silent", "betray"])],
@@ -430,7 +444,26 @@ test ("new data_t", t => {
     ]),
   )
 
-  log (prisoner_s_dilemma)
+  ut.log (prisoner_s_dilemma)
 
   t.pass ()
+})
+
+test ("frame_t.from_rows", t => {
+  let frame = nd.frame_t.from_rows (
+    "rows", "cols", [
+      nd.series ("row1",
+                 nd.axis (["col1", "col2"]),
+                 nd.array ([1, 2])),
+      nd.series ("row2",
+                 nd.axis (["col1", "col2"]),
+                 nd.array ([3, 4])),
+    ])
+
+  t.true (
+    frame.get (nd.data_index ([
+      ["rows", "row1"],
+      ["cols", "col2"],
+    ])) === 2
+  )
 })
