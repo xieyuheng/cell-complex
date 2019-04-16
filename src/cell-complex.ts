@@ -1283,7 +1283,7 @@ export
 class chain_t {
   readonly dim: number
   readonly com: cell_complex_t
-  readonly series: nd.data_t
+  series: nd.data_t
 
   constructor (
     dim: number,
@@ -1309,7 +1309,44 @@ class chain_t {
     return new chain_t (dim, com, series)
   }
 
-  // TODO
+  update_at (
+    id: id_t,
+    f: (v: number) => number,
+  ): chain_t {
+    let index = nd.data_index ([
+      [id.dim.toString (), id.to_str ()]
+    ])
+    this.series.update_at (index, f)
+    return this
+  }
+
+  static boundary_of_basis (
+    com: cell_complex_t,
+    id: id_t,    
+  ): chain_t {
+    let boundary = chain_t.zeros (id.dim - 1, com)
+    if (id.dim === 0) {
+      return boundary
+    } else if (id.dim === 1) {
+      let edge = com.get_edge (id)
+      boundary.update_at (edge.start, n => n - 1)
+      boundary.update_at (edge.end, n => n + 1)
+      return boundary
+    } else if (id.dim === 2) {
+      let face = com.get_face (id)
+      for (let e of face.circuit) {
+        if (e instanceof rev_id_t) {
+          boundary.update_at (e.rev (), n => n - 1)
+        } else {
+          boundary.update_at (e, n => n + 1)
+        }
+      }
+      return boundary
+    } else {
+      throw new Error ("can only calculate dim 0, 1, 2 yet")
+    }
+  }
+
   // boundary_data (): nd.data_t {
   // }
 
@@ -1325,33 +1362,3 @@ class chain_t {
   //     this.series.add (that.series))
   // }
 }
-
-// export
-// function boundary_dic_of_basis (
-//   com: cell_complex_t,
-//   id: id_t,
-// ): dic_t <id_t, number> {
-//   let chain = new chain_t (id.dim - 1, com)
-//   let dic = chain.dic
-//   if (id.dim === 0) {
-//     return dic
-//   } else if (id.dim === 1) {
-//     let edge = com.get_edge (id)
-//     dic.update_at (edge.start, n => n - 1)
-//     dic.update_at (edge.end, n => n + 1)
-//     return dic
-//   } else if (id.dim === 2) {
-//     let face = com.get_face (id)
-//     console.log ("2")
-//     for (let e of face.circuit) {
-//       if (e instanceof rev_id_t) {
-//         dic.update_at (e.rev (), n => n - 1)
-//       } else {
-//         dic.update_at (e, n => n + 1)
-//       }
-//     }
-//     return dic
-//   } else {
-//     throw new Error ("can only calculate dim 0, 1, 2 yet")
-//   }
-// }

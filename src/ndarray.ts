@@ -8,7 +8,7 @@ export type Array1d = Array <number>
 export type Array2d = Array <Array <number>>
 export type Array3d = Array <Array <Array <number>>>
 
-export type get_index_t = Array <number>
+export type index_t = Array <number>
 export type proj_index_t = Array <number | null>
 export type slice_index_t = Array <[number, number] | null>
 
@@ -56,7 +56,7 @@ class array_t {
     return strides.reverse ()
   }
 
-  get_linear_index (index: Array <number>): number {
+  get_linear_index (index: index_t): number {
     if (index.length !== this.shape.length) {
       throw new Error ("index length mismatch")
     }
@@ -67,32 +67,40 @@ class array_t {
     return linear_index
   }
 
-  get (index: Array <number>): number {
+  get (index: index_t): number {
     return this.buffer [this.get_linear_index (index)]
   }
 
-  set (index: Array <number>, x: number) {
+  set (index: index_t, x: number): array_t {
     this.buffer [this.get_linear_index (index)] = x
+    return this
+  }
+
+  update_at (
+    index: index_t,
+    f: (v: number) => number,
+  ): array_t {
+    return this.set (index, f (this.get (index)))
   }
 
   *values () {
-    for (let index of get_indexes_of_shape (this.shape)) {
+    for (let index of indexes_of_shape (this.shape)) {
       yield this.get (index) as number
     }
   }
 
   *entries () {
-    for (let index of get_indexes_of_shape (this.shape)) {
+    for (let index of indexes_of_shape (this.shape)) {
       yield [
         index.slice (),
         this.get (index),
-      ] as [ get_index_t, number ]
+      ] as [ index_t, number ]
     }
   }
 
   *indexes () {
-    for (let index of get_indexes_of_shape (this.shape)) {
-      yield index.slice () as get_index_t
+    for (let index of indexes_of_shape (this.shape)) {
+      yield index.slice () as index_t
     }
   }
 
@@ -469,7 +477,7 @@ class array_t {
     let strides = array_t.init_strides (shape)
     let array = new array_t (buffer, shape, strides)
     let split_index = (
-      index: get_index_t
+      index: index_t
     ): [proj_index_t, proj_index_t] => {
       let left = index.slice (0, this.order - 1) as proj_index_t
       left.splice (i, 0, null)
@@ -531,8 +539,8 @@ function array (array: Array1d | Array2d | Array3d): array_t {
 }
 
 export
-function get_index_max_p (
-  index: get_index_t,
+function index_max_p (
+  index: index_t,
   shape: Array <number>,
 ): boolean {
   for (let k in index) {
@@ -549,11 +557,11 @@ function get_index_max_p (
  * recursive side-effect over index
  */
 export
-function get_index_step (
-  index: get_index_t,
+function index_step (
+  index: index_t,
   shape: Array <number>,
   cursor: number,
-): get_index_t {
+): index_t {
   let i = index [cursor]
   let s = shape [cursor]
   if (i < s - 1) {
@@ -561,24 +569,27 @@ function get_index_step (
     return index
   } else {
     index [cursor] = 0
-    return get_index_step (index, shape, cursor - 1)
+    return index_step (index, shape, cursor - 1)
   }
 }
 
 export
-function* get_indexes_of_shape (shape: Array <number>) {
+function* indexes_of_shape (shape: Array <number>) {
   let size = shape.length
   let index = new Array (size) .fill (0)
   yield index
   while (true) {
-    if (get_index_max_p (index, shape)) {
+    if (index_max_p (index, shape)) {
       return
     } else {
-      yield get_index_step (index, shape, size - 1)
+      yield index_step (index, shape, size - 1)
     }
   }
 }
 
+/**
+ * The order matters.
+ */
 export
 class axes_t {
   map: Map <string, axis_t>
@@ -593,6 +604,30 @@ class axes_t {
     array: Array <[string, axis_t]>
   ): axes_t {
     return new axes_t (new Map (array))
+  }
+
+  get (name: string): axis_t {
+    let axis = this.map.get (name)
+    if (axis === undefined) {
+      throw new Error ("name undefined")
+    } else {
+      return axis
+    }
+  }
+
+  *[Symbol.iterator] () {
+    for (let [k, v] of this.map) {
+      yield [k, v] as [string, axis_t]
+    }
+  }
+
+  index (data_index: data_index_t): index_t {
+    let index = new Array ()
+    // the order is used here
+    for (let [name, axis] of this) {
+      index.push (axis.get (data_index.get (name)))
+    }
+    return index
   }
 }
 
@@ -617,11 +652,71 @@ class axis_t {
     }
     return new axis_t (map)
   }
+
+  get (label: string): number {
+    let i = this.map.get (label)
+    if (i === undefined) {
+      throw new Error ("label undefined")
+    } else {
+      return i
+    }
+  }
+
+  *[Symbol.iterator] () {
+    for (let [k, v] of this.map) {
+      yield [k, v] as [string, number]
+    }
+  }
 }
 
 export
 function axis (array: Array <string>): axis_t {
   return axis_t.from_array (array)
+}
+
+export
+class data_index_t {
+  map: Map <string, string>
+
+  constructor (map: Map <string, string>) {
+    this.map = map
+  }
+
+  get (name: string): string {
+    let label = this.map.get (name)
+    if (label === undefined) {
+      throw new Error ("name undefined")
+    } else {
+      return label
+    }
+  }
+
+  static from_array (
+    array: Array <[string, string]>
+  ): data_index_t {
+    return new data_index_t (new Map (array))
+  }
+}
+
+export
+let data_index = data_index_t.from_array
+
+export
+class data_slice_index_t {
+  map: Map <string, Array <string>>
+
+  constructor (map: Map <string, Array <string>>) {
+    this.map = map
+  }
+
+  get (name: string): Array <string> {
+    let label_array = this.map.get (name)
+    if (label_array === undefined) {
+      throw new Error ("name undefined")
+    } else {
+      return label_array
+    }
+  }
 }
 
 /**
@@ -644,9 +739,25 @@ class data_t {
     this.array = array
   }
 
+  get (data_index: data_index_t): number {
+    let index = this.axes.index (data_index)
+    return this.array.get (index)
+  }
+
+  set (data_index: data_index_t, x: number): data_t {
+    let index = this.axes.index (data_index)
+    this.array.set (index, x)
+    return this
+  }
+
+  update_at (
+    data_index: data_index_t,
+    f: (v: number) => number,
+  ): data_t {
+    return this.set (data_index, f (this.get (data_index)))
+  }
+
   // TODO
-  // get
-  // set
   // copy
   // proj
   // slice
