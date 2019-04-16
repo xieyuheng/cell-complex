@@ -33,7 +33,7 @@ test ("manifold_check", t => {
 
 test ("new chain_t", t => {
   let torus = new torus_t ()
-  let chain = cx.chain_t.zeros (1, torus)
+  let chain = cx.chain_t.zeros ("torus edge", 1, torus)
 
   t.pass ()
 })

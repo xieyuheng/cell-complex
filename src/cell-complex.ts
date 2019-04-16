@@ -1284,6 +1284,7 @@ class chain_t {
   readonly dim: number
   readonly com: cell_complex_t
   series: nd.data_t
+  readonly name: string
 
   constructor (
     dim: number,
@@ -1293,20 +1294,22 @@ class chain_t {
     this.dim = dim
     this.com = com
     this.series = series
+    this.name = nd.name_of_series (series)
   }
 
   static zeros (
+    name: string,
     dim: number,
     com: cell_complex_t,
   ): chain_t {
-    let name = dim.toString ()
     let axis = nd.axis (
       Array.from (com.id_in_dim (dim))
         .map (id_to_str)
     )
     let array = nd.array_t.zeros ([com.size_of_dim (dim)])
-    let series = nd.series (name, axis, array)
-    return new chain_t (dim, com, series)
+    return new chain_t (
+      dim, com,
+      nd.series (name, axis, array))
   }
 
   update_at (
@@ -1322,9 +1325,10 @@ class chain_t {
 
   static boundary_of_basis (
     com: cell_complex_t,
-    id: id_t,    
+    id: id_t,
   ): chain_t {
-    let boundary = chain_t.zeros (id.dim - 1, com)
+    let name = id.to_str ()
+    let boundary = chain_t.zeros (name, id.dim - 1, com)
     if (id.dim === 0) {
       return boundary
     } else if (id.dim === 1) {
@@ -1347,13 +1351,15 @@ class chain_t {
     }
   }
 
-  // boundary_data (): nd.data_t {
+  // TODO
+  // boundary_frame (): nd.data_t {
   // }
 
   // TODO
   // boundary (): chain_t {
   // }
 
+  // TODO
   // add (that: chain_t): chain_t {
   //   assert (this.dim === that.dim)
   //   return new chain_t (

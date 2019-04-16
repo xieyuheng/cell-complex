@@ -593,17 +593,55 @@ function* indexes_of_shape (shape: Array <number>) {
 export
 class axes_t {
   map: Map <string, axis_t>
+  readonly length: number
+  readonly shape: Array <number>
+  readonly order: number
 
   constructor (
     map: Map <string, axis_t>
   ) {
     this.map = map
+    this.length = map.size
+    let shape = new Array ()
+    for (let axis of map.values ()) {
+      shape.push (axis.length)
+    }
+    this.shape = shape
+    this.order = shape.length
   }
 
   static from_array (
     array: Array <[string, axis_t]>
   ): axes_t {
     return new axes_t (new Map (array))
+  }
+
+  copy (): axes_t {
+    return new axes_t (new Map (this.map))
+  }
+
+  arg (name: string): number {
+    let i = 0
+    for (let k of this.map.keys ()) {
+      if (k === name) {
+        return i
+      }
+      i += 1
+    }
+    throw new Error ("name not in key of map")
+  }
+
+  axis_name_array (): Array <string> {
+    let name_array = new Array ()
+    for (let name of this.map.keys ()) {
+      name_array.push (name)
+    }
+    return name_array
+  }
+
+  get_axis_name (i: number): string {
+    let axis_name_array = this.axis_name_array ()
+    return axis_name_array [i]
   }
 
   get (name: string): axis_t {
@@ -637,11 +675,13 @@ let axes = axes_t.from_array
 export
 class axis_t {
   map: Map <string, number>
+  readonly length: number
 
   constructor (
     map: Map <string, number>
   ) {
     this.map = map
+    this.length = map.size
   }
 
   static from_array (array: Array <string>): axis_t {
@@ -651,6 +691,21 @@ class axis_t {
       map.set (v, i)
     }
     return new axis_t (map)
+  }
+
+  copy (): axis_t {
+    return new axis_t (new Map (this.map))
+  }
+
+  arg (name: string): number {
+    let i = 0
+    for (let k of this.map.keys ()) {
+      if (k === name) {
+        return i
+      }
+      i += 1
+    }
+    throw new Error ("name not in key of map")
   }
 
   get (label: string): number {
@@ -730,13 +785,18 @@ export
 class data_t {
   axes: axes_t
   array: array_t
+  readonly shape: Array <number>
+  readonly order: number
 
   constructor (
     axes: axes_t,
     array: array_t,
   ) {
+    assert (_.isEqual (axes.shape, array.shape))
     this.axes = axes
     this.array = array
+    this.shape = axes.shape
+    this.order = axes.order
   }
 
   get (data_index: data_index_t): number {
@@ -757,10 +817,20 @@ class data_t {
     return this.set (data_index, f (this.get (data_index)))
   }
 
+  copy (): data_t {
+    return new data_t (
+      this.axes.copy (),
+      this.array.copy (),
+    )
+  }
+
   // TODO
-  // copy
   // proj
+
+  // TODO
   // slice
+
+  // TODO
   // contract
 
   // TODO
@@ -774,7 +844,31 @@ function series (
   array: array_t,
 ): data_t {
   let axes = axes_t.from_array ([
-    [name, axis]
+    [name, axis],
+  ])
+  return new data_t (axes, array)
+}
+
+export
+function series_p (data: data_t): boolean {
+  return data.order === 1
+}
+
+export
+function name_of_series (series: data_t): string {
+  assert (series)
+  return series.axes.get_axis_name (0)
+}
+
+export
+function frame (
+  row_name: string, row_axis: axis_t,
+  col_name: string, col_axis: axis_t,
+  array: array_t,
+): data_t {
+  let axes = axes_t.from_array ([
+    [row_name, row_axis],
+    [col_name, col_axis],
   ])
   return new data_t (axes, array)
 }
