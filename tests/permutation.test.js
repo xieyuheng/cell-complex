@@ -1,11 +1,11 @@
-import test, { ExecutionContext } from "ava"
+import test from "ava"
 
 import {
   permutation_t,
   symmetric_group_t,
-} from "../src/permutation"
+} from "../lib/permutation"
 
-import * as ut from "../src/util"
+import * as ut from "../lib/util"
 
 test ("new", t => {
   let x = new permutation_t ([0, 2, 3, 1])

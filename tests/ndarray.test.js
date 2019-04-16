@@ -1,8 +1,8 @@
 import test from "ava"
 
-import * as nd from "../src/ndarray"
-import { permutation_t } from "../src/permutation"
-import { log } from "../src/util"
+import * as nd from "../lib/ndarray"
+import { permutation_t } from "../lib/permutation"
+import { log } from "../lib/util"
 
 test ("init_strides", t => {
   let shape = [2, 3, 4]

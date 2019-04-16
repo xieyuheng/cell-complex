@@ -1,8 +1,8 @@
 import test from "ava"
 
-import * as cx from "../src/cell-complex"
-import { torus_t } from "../src/torus"
-import * as ut from "../src/util"
+import * as cx from "../lib/cell-complex"
+import { torus_t } from "../lib/torus"
+import * as ut from "../lib/util"
 
 test ("cell_complex_t eq", t => {
   let torus = new torus_t ()

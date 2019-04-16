@@ -1,8 +1,8 @@
-import test, { ExecutionContext } from "ava"
+import test from "ava"
 
-import * as nd from "../src/ndarray"
-import * as eu from "../src/euclidean-space"
-import { log } from "../src/util"
+import * as nd from "../lib/ndarray"
+import * as eu from "../lib/euclidean-space"
+import { log } from "../lib/util"
 
 test ("new eu.matrix_t", t => {
   let x = eu.matrix ([
@@ -178,10 +178,7 @@ test ("reduced_row_echelon_form", t => {
   )
 })
 
-function test_lower_upper_permu (
-  t: ExecutionContext,
-  m: eu.matrix_t,
-) {
+function test_lower_upper_permu (t, m) {
   let [
     lower, upper, permu
   ] = m.lower_upper_permu_decomposition ()
@@ -269,10 +266,7 @@ test ("rank", t => {
   }
 })
 
-function test_inv (
-  t: ExecutionContext,
-  m: eu.matrix_t,
-) {
+function test_inv (t, m) {
   t.true (m.square_p ())
   let [_n, n] = m.shape
   t.true (
