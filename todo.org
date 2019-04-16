@@ -1,6 +1,7 @@
 * ndarray
-- frame_from_series_array
-- test series and frame
+
+- frame_t.from_rows
+- frame_t.from_cols
 - nd.array_t add
 - test cx.chain_t add
 - data_t contract

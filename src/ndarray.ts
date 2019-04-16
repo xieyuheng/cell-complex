@@ -838,30 +838,64 @@ class data_t {
 }
 
 export
-function series (
+class series_t extends data_t {
+  name: string
+  constructor (
+    data: data_t,
+  ) {
+    assert (data.order === 1)
+    super (data.axes, data.array)
+    this.name = this.axes.get_axis_name (0)
+  }
+}
+
+export
+function new_series (
   name: string,
   axis: axis_t,
   array: array_t,
-): data_t {
+): series_t {
   let axes = axes_t.from_array ([
     [name, axis],
   ])
-  return new data_t (axes, array)
+  return new series_t (new data_t (axes, array))
 }
 
 export
-function series_p (data: data_t): boolean {
-  return data.order === 1
+let series = new_series
+
+export
+class frame_t extends data_t {
+  constructor (
+    data: data_t,
+  ) {
+    assert (data.order === 2)
+    super (data.axes, data.array)
+  }
+
+//   // TODO
+//   from_rows (
+//     row_name: string,
+//     col_name: string,
+//     rows: Array <data_t>
+//   ): frame_t {
+//     assert (rows.length !== 0)
+//     let first_row = rows [0]
+//     let row_axis = ;
+//     let col_axis = axes_of_first_row
+//     for (let row of rows) {
+//       let name = name_of_series (row)
+//     }
+//     return new_frame (
+//       row_name, row_axis,
+//       col_name, col_axis,
+//       array,
+//     )
+//   }
 }
 
 export
-function name_of_series (series: data_t): string {
-  assert (series)
-  return series.axes.get_axis_name (0)
-}
-
-export
-function frame (
+function new_frame (
   row_name: string, row_axis: axis_t,
   col_name: string, col_axis: axis_t,
   array: array_t,
@@ -870,8 +904,8 @@ function frame (
     [row_name, row_axis],
     [col_name, col_axis],
   ])
-  return new data_t (axes, array)
+  return new frame_t (new data_t (axes, array))
 }
 
-// TODO
-// frame_from_series_array
+export
+let frame = new_frame

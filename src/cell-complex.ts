@@ -1283,18 +1283,18 @@ export
 class chain_t {
   readonly dim: number
   readonly com: cell_complex_t
-  series: nd.data_t
+  series: nd.series_t
   readonly name: string
 
   constructor (
     dim: number,
     com: cell_complex_t,
-    series: nd.data_t,
+    series: nd.series_t,
   ) {
     this.dim = dim
     this.com = com
     this.series = series
-    this.name = nd.name_of_series (series)
+    this.name = series.name
   }
 
   static zeros (
