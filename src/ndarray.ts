@@ -978,9 +978,6 @@ class frame_t extends data_t {
   transpose (): frame_t {
     return new frame_t (this, [1, 0])
   }
-
-  // TODO
-  // static from_rows
 }
 
 export

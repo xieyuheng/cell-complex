@@ -1317,7 +1317,7 @@ class chain_t {
     f: (v: number) => number,
   ): chain_t {
     let index = nd.data_index ([
-      [id.dim.toString (), id.to_str ()]
+      [this.name, id.to_str ()]
     ])
     this.series.update_at (index, f)
     return this
@@ -1351,9 +1351,23 @@ class chain_t {
     }
   }
 
-  // TODO
-  // boundary_frame (): nd.data_t {
-  // }
+  static boundary_frame (
+    com: cell_complex_t,
+    dim: number,
+  ): nd.frame_t {
+    let array = new Array ()
+    for (let id of com.id_in_dim (dim)) {
+      let boundary = chain_t.boundary_of_basis (com, id)
+      array.push (boundary.series)
+    }
+    let row_name = dim.toString ()
+    let col_name = (dim - 1) .toString ()
+    return nd.frame_t.from_cols (
+      row_name,
+      col_name,
+      array,
+    )
+  }
 
   // TODO
   // boundary (): chain_t {
@@ -1367,4 +1381,4 @@ class chain_t {
   //     this.com,
   //     this.series.add (that.series))
   // }
- }
+}
