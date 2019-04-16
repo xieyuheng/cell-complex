@@ -14,8 +14,7 @@
 - combinatorial-game -- a game engine for n-player perfect information games
   - example games:
     - tic-tac-toe
-    - hackenbush
-      -- [early demo](http://hackenbush.combinatorial-game.surge.sh/)
+    - hackenbush -- [demo](http://hackenbush.combinatorial-game.surge.sh/)
 
 - cell-complex -- cell-complex based low dimensional algebraic topology library
   - "Investigations into cell complex", by Xie Yuheng, 2019
