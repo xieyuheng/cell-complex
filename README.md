@@ -52,8 +52,7 @@
 - [Style Guide](STYLE-GUIDE.md) -- observe the style of existing code and respect it
 - [Contributor Covenant Code of Conduct](CODE-OF-CONDUCT.md)
 - [cicada-rs](http://github.com/xieyuheng/cicada-rs) -- an old cicada attempt in rust
-- IRC -- #cicada-language (irc.freenode.net)
-  -- [kiwiirc](https://kiwiirc.com/nextclient/irc.freenode.net/#cicada-language)
+- IRC -- [#cicada-language](https://kiwiirc.com/nextclient/irc.freenode.net/#cicada-language)
 - CI -- [gitlab-ci](https://gitlab.com/xieyuheng/cicada/pipelines)
 
 ## License
