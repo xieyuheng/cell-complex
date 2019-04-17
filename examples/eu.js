@@ -1,7 +1,7 @@
 let assert = require ("assert")
 
 let eu = require ("../lib/euclidean-space")
-let log = require ("../lib/util") .log
+let ut = require ("../lib/util")
 
 {
   let m = eu.matrix ([

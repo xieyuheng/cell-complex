@@ -1317,10 +1317,10 @@ class chain_t {
     id: id_t,
     f: (v: number) => number,
   ): chain_t {
-    let index = pd.data_index ([
+    let index = pd.index ([
       [this.name, id.to_str ()]
     ])
-    this.series.update_at (index, f)
+    this.series.data.update_at (index, f)
     return this
   }
 

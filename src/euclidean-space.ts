@@ -12,13 +12,14 @@ import { number_field_t } from "./number"
 import { permutation_t } from "./permutation"
 import * as nd from "./ndarray"
 
-
 /**
  * We can not define matrix_t as subclass of nd.array_t,
  * because methods such as `proj` and `slice` on nd.array_t
  * return nd.array_t instead of matrix_t,
  * such methods can not be generic over nd.array_t's subclasses.
+ */
 
+/**
  * Due to the lack of dependent type,
  * dimension is checked at runtime.
  */

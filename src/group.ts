@@ -67,3 +67,29 @@ abstract class abelian_group_t <A> extends group_t <A> {
   mul = this.add
   inv = this.neg
 }
+
+namespace composition_version {
+  /**
+   * The following composition_version also make sense,
+   * but if `abelian_group_t` does not extend `group_t`,
+   * why should `group_t` extend `set_t` ?
+   */
+  export
+  abstract class abelian_group_t <A> {
+    group: group_t <A>
+
+    constructor (
+      group: group_t <A>
+    ) {
+      this.group = group
+    }
+
+    commu (x: A, y: A) {
+      eqv (
+        this.group,
+        this.group.mul (x, y),
+        this.group.mul (y, x),
+      )
+    }
+  }
+}

@@ -625,3 +625,8 @@ function* indexes_of_shape (shape: Array <number>) {
     }
   }
 }
+
+export
+interface to_array_t {
+  to_array (): array_t
+}

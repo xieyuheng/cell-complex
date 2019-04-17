@@ -75,19 +75,20 @@ class axes_t {
     }
   }
 
-  *[Symbol.iterator] () {
-    for (let [k, v] of this.map) {
-      yield [k, v] as [string, axis_t]
+  index (index: index_t): nd.index_t {
+    let array_index = new Array ()
+    // the order is used here
+    for (let [name, axis] of this.map) {
+      array_index.push (axis.get (index.get (name)))
     }
+    return array_index
   }
 
-  index (data_index: data_index_t): nd.index_t {
-    let index = new Array ()
-    // the order is used here
-    for (let [name, axis] of this) {
-      index.push (axis.get (data_index.get (name)))
+  print () {
+    for (let [name, axis] of this.map) {
+      console.log (name)
+      console.table (axis.map)
     }
-    return index
   }
 }
 
@@ -139,18 +140,16 @@ class axis_t {
     }
   }
 
-  *[Symbol.iterator] () {
-    for (let [k, v] of this.map) {
-      yield [k, v] as [string, number]
-    }
-  }
-
   eq (that: axis_t): boolean {
     if (this.length !== that.length) {
       return false
     } else {
       return _.isEqual (this.map, that.map)
     }
+  }
+
+  print () {
+    console.table (this.map)
   }
 }
 
@@ -160,7 +159,7 @@ function axis (array: Array <string>): axis_t {
 }
 
 export
-class data_index_t {
+class index_t {
   map: Map <string, string>
 
   constructor (map: Map <string, string>) {
@@ -178,16 +177,16 @@ class data_index_t {
 
   static from_array (
     array: Array <[string, string]>
-  ): data_index_t {
-    return new data_index_t (new Map (array))
+  ): index_t {
+    return new index_t (new Map (array))
   }
 }
 
 export
-let data_index = data_index_t.from_array
+let index = index_t.from_array
 
 export
-class data_slice_index_t {
+class slice_index_t {
   map: Map <string, Array <string>>
 
   constructor (map: Map <string, Array <string>>) {
@@ -233,22 +232,22 @@ class data_t {
     this.order = axes.order
   }
 
-  get (data_index: data_index_t): number {
-    let index = this.axes.index (data_index)
-    return this.array.get (index)
+  get (index: index_t): number {
+    let array_index = this.axes.index (index)
+    return this.array.get (array_index)
   }
 
-  set (data_index: data_index_t, x: number): data_t {
-    let index = this.axes.index (data_index)
-    this.array.set (index, x)
+  set (index: index_t, x: number): data_t {
+    let array_index = this.axes.index (index)
+    this.array.set (array_index, x)
     return this
   }
 
   update_at (
-    data_index: data_index_t,
+    index: index_t,
     f: (v: number) => number,
   ): data_t {
-    return this.set (data_index, f (this.get (data_index)))
+    return this.set (index, f (this.get (index)))
   }
 
   copy (): data_t {
@@ -260,7 +259,8 @@ class data_t {
 
   // TODO
   print () {
-
+    this.axes.print ()
+    this.array.print ()
   }
 
   // TODO
@@ -277,17 +277,55 @@ class data_t {
 }
 
 export
-class series_t extends data_t {
+interface series_exp_t {
+  [k: string]: number
+}
+
+export
+class series_t {
+  data: data_t
   readonly name: string
   readonly axis: axis_t
+  readonly array: nd.array_t
 
   constructor (
     data: data_t,
   ) {
     assert (data.order === 1)
-    super (data.axes, data.array)
-    this.name = this.axes.get_name_by_index (0)
-    this.axis = this.axes.get_axis_by_index (0)
+    this.data = data
+    this.name = data.axes.get_name_by_index (0)
+    this.axis = data.axes.get_axis_by_index (0)
+    this.array = data.array
+  }
+
+  label_to_index (label: string): index_t {
+    return index_t.from_array ([
+      [this.name, label],
+    ])
+  }
+
+  get (label: string): number {
+    return this.data.get (this.label_to_index (label))
+  }
+
+  *entries () {
+    for (let label of this.axis.map.keys ()) {
+      yield [label, this.get (label)] as [string, number]
+    }
+  }
+
+  to_exp (): series_exp_t {
+    let exp: series_exp_t = {}
+    for (let [k, v] of this.entries ()) {
+      exp [k] = v
+    }
+    return exp
+  }
+
+  print () {
+    console.group (this.name + ":")
+    console.table (this.to_exp ())
+    console.groupEnd ()
   }
 }
 
@@ -307,7 +345,14 @@ export
 let series = new_series
 
 export
-class frame_t extends data_t {
+interface frame_exp_t {
+  [k: string]: series_exp_t
+}
+
+export
+class frame_t {
+  data: data_t
+  readonly array: nd.array_t
   readonly row_name: string
   readonly row_axis: axis_t
   readonly col_name: string
@@ -318,12 +363,13 @@ class frame_t extends data_t {
     row_col_index: [number, number] = [0, 1],
   ) {
     assert (data.order === 2)
-    super (data.axes, data.array)
+    this.data = data
+    this.array = data.array
     let [row_index, col_index] = row_col_index
-    this.row_name = this.axes.get_name_by_index (row_index)
-    this.row_axis = this.axes.get_axis_by_index (row_index)
-    this.col_name = this.axes.get_name_by_index (col_index)
-    this.col_axis = this.axes.get_axis_by_index (col_index)
+    this.row_name = data.axes.get_name_by_index (row_index)
+    this.row_axis = data.axes.get_axis_by_index (row_index)
+    this.col_name = data.axes.get_name_by_index (col_index)
+    this.col_axis = data.axes.get_axis_by_index (col_index)
   }
 
   static from_rows (
@@ -362,8 +408,28 @@ class frame_t extends data_t {
   }
 
   transpose (): frame_t {
-    return new frame_t (this, [1, 0])
+    return new frame_t (this.data, [1, 0])
   }
+
+//   *rows () {
+
+//     yield series_t
+//   }
+
+//   *cols () {
+
+//   }
+
+//   /**
+//    * row is always the major.
+//    */
+//   to_exp (): frame_exp_t {
+//     let exp: frame_exp_t = {}
+//     for () {
+
+//     }
+//     return exp
+//   }
 }
 
 export

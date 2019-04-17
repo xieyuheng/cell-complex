@@ -1,6 +1,7 @@
+- "do not use subclass" in mathematical structures
 * panel-data
-- frame_t to_object
-- frame_t.from_object
+- frame_t to_exp
+- frame_t.from_exp
 - data_t print
 - array_t add
 - chain_t add
@@ -92,3 +93,6 @@
 * dance
 - 3 circle dance
 - 4 circle dance
+* principle about subclass
+- we need a principle for the use of subclass,
+  and the simplest principle is "do not use subclass".

@@ -25,11 +25,23 @@ test ("new pd.data_t", t => {
       [[-0, -3], [-2, -2]],
     ]),
   )
+  // prisoner_s_dilemma.print ()
+  t.pass ()
+})
+
+test ("new pd.series_t", t => {
+  let x = pd.series (
+    "abc",
+    pd.axis (["a", "b", "c"]),
+    nd.array ([1, 2, 3]),
+  )
+
+  x.print ()
 
   t.pass ()
 })
 
-test ("frame_t.from_rows", t => {
+test ("pd.frame_t.from_rows", t => {
   let frame = pd.frame_t.from_rows (
     "rows", "cols", [
       pd.series ("row1",
@@ -41,21 +53,21 @@ test ("frame_t.from_rows", t => {
     ])
 
   t.true (
-    frame.get (pd.data_index ([
+    frame.data.get (pd.index ([
       ["rows", "row1"],
       ["cols", "col2"],
     ])) === 2
   )
 
   t.true (
-    frame.get (pd.data_index ([
+    frame.data.get (pd.index ([
       ["cols", "col2"],
       ["rows", "row1"],
     ])) === 2
   )
 })
 
-test ("frame_t.from_cols", t => {
+test ("pd.frame_t.from_cols", t => {
   let frame = pd.frame_t.from_cols (
     "rows", "cols", [
       pd.series ("col1",
@@ -67,14 +79,14 @@ test ("frame_t.from_cols", t => {
     ])
 
   t.true (
-    frame.get (pd.data_index ([
+    frame.data.get (pd.index ([
       ["rows", "row1"],
       ["cols", "col2"],
     ])) === 2
   )
 
   t.true (
-    frame.get (pd.data_index ([
+    frame.data.get (pd.index ([
       ["cols", "col2"],
       ["rows", "row1"],
     ])) === 2
