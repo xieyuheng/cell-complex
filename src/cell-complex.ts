@@ -2,6 +2,7 @@ import assert from "assert"
 
 import { dic_t } from "./dic"
 import * as nd from "./ndarray"
+import * as pd from "./panel-data"
 
 /**
  * In the context of a [[cell_complex_t]],
@@ -1283,13 +1284,13 @@ export
 class chain_t {
   readonly dim: number
   readonly com: cell_complex_t
-  series: nd.series_t
+  series: pd.series_t
   readonly name: string
 
   constructor (
     dim: number,
     com: cell_complex_t,
-    series: nd.series_t,
+    series: pd.series_t,
   ) {
     this.dim = dim
     this.com = com
@@ -1302,21 +1303,21 @@ class chain_t {
     dim: number,
     com: cell_complex_t,
   ): chain_t {
-    let axis = nd.axis (
+    let axis = pd.axis (
       Array.from (com.id_in_dim (dim))
         .map (id_to_str)
     )
     let array = nd.array_t.zeros ([com.size_of_dim (dim)])
     return new chain_t (
       dim, com,
-      nd.series (name, axis, array))
+      pd.series (name, axis, array))
   }
 
   update_at (
     id: id_t,
     f: (v: number) => number,
   ): chain_t {
-    let index = nd.data_index ([
+    let index = pd.data_index ([
       [this.name, id.to_str ()]
     ])
     this.series.update_at (index, f)
@@ -1354,7 +1355,7 @@ class chain_t {
   static boundary_frame (
     com: cell_complex_t,
     dim: number,
-  ): nd.frame_t {
+  ): pd.frame_t {
     let array = new Array ()
     for (let id of com.id_in_dim (dim)) {
       let boundary = chain_t.boundary_of_basis (com, id)
@@ -1362,7 +1363,7 @@ class chain_t {
     }
     let row_name = dim.toString ()
     let col_name = (dim - 1) .toString ()
-    return nd.frame_t.from_cols (
+    return pd.frame_t.from_cols (
       row_name,
       col_name,
       array,

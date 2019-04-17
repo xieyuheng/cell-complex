@@ -1,4 +1,6 @@
-* ndarray
+* panel-data
+- frame_t to_object
+- frame_t.from_object
 - data_t print
 - array_t add
 - chain_t add
