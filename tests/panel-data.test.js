@@ -118,3 +118,35 @@ test ("pd.frame_t.from_cols", t => {
     ])) === 2
   )
 })
+
+test ("pd.frame_t.row & col", t => {
+  let frame = pd.frame_t.from_rows (
+    "rows", "cols", [
+      pd.series ("row1",
+                 pd.axis (["col1", "col2"]),
+                 nd.array ([1, 2])),
+      pd.series ("row2",
+                 pd.axis (["col1", "col2"]),
+                 nd.array ([3, 4])),
+    ])
+
+  t.true (
+    frame.row ("row1") .get ("col1") === 1
+  )
+
+  t.true (
+    frame.row ("row1") .get ("col2") === 2
+  )
+
+  t.true (
+    frame.row ("row1") .get ("col1") ===
+      frame.col ("col1") .get ("row1")
+  )
+
+  t.true (
+    frame.row ("row1") .get ("col2") ===
+      frame.col ("col2") .get ("row1")
+  )
+
+  t.pass ()
+})

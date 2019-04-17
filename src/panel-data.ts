@@ -285,7 +285,8 @@ class data_t {
     }
     return new data_t (
       axes_t.from_array (axes_array),
-      this.array.proj (this.axes.array_proj_index (index)))
+      this.array.proj (
+        this.axes.array_proj_index (index)))
   }
 
   // TODO
@@ -433,13 +434,21 @@ class frame_t {
     return new frame_t (this.data, [1, 0])
   }
 
-//   row (label: string): series_t {
-//     new series_t ()
-//   }
+  row (label: string): series_t {
+    return new series_t (this.data.proj (
+      index_t.from_array ([
+        [this.row_name, label],
+      ])
+    ))
+  }
 
-//   col (label: string): series_t {
-
-//   }
+  col (label: string): series_t {
+    return new series_t (this.data.proj (
+      index_t.from_array ([
+        [this.col_name, label],
+      ])
+    ))
+  }
 
 //   *rows () {
 
