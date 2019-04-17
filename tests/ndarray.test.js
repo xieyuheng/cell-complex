@@ -424,3 +424,13 @@ test ("from_lower_order", t => {
 
   t.true (x.eq (y))
 })
+
+test ("nd.array_t.add", t => {
+  let x = nd.array_t.ones ([2, 3])
+  let y = nd.array ([
+    [2, 2, 2],
+    [2, 2, 2],
+  ])
+
+  t.true (x.add (x) .eq (y))
+})

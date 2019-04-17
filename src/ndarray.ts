@@ -198,8 +198,13 @@ class array_t {
     return this.put (slice_index, src)
   }
 
-  // TODO
-  // add
+  add (that: array_t): array_t {
+    let array = this.copy ()
+    for (let [i, v] of that.entries ()) {
+      array.update_at (i, x => x + v)
+    }
+    return array
+  }
 
   static from_1darray (array: Array1d): array_t {
     let buffer = Float64Array.from (array)
