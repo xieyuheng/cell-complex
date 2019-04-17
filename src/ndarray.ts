@@ -1,5 +1,6 @@
 import * as _ from "lodash"
 import assert from "assert"
+
 import * as ut from "./util"
 
 import { permutation_t } from "./permutation"
@@ -187,13 +188,13 @@ class array_t {
     index: proj_index_t,
     src: array_t,
   ): array_t {
-    let slice_index: slice_index_t = index.map (i => {
+    let slice_index = index.map (i => {
       if (i === null) {
         return null
       } else {
         return [i, i+1]
       }
-    })
+    }) as slice_index_t
     return this.put (slice_index, src)
   }
 
