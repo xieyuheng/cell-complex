@@ -221,3 +221,26 @@ test ("pd.frame_t.add", t => {
 
   t.pass ()
 })
+
+test ("pd.frame_t.mul", t => {
+  let x = pd.frame (
+    "rows", pd.axis (["row1", "row2"]),
+    "cols", pd.axis (["col1", "col2"]),
+    nd.array ([
+      [0, 1],
+      [0, 0],
+    ]))
+
+  let y = pd.frame (
+    "rows", pd.axis (["row1", "row2"]),
+    "cols", pd.axis (["col1", "col2"]),
+    nd.array ([
+      [0, 0],
+      [1, 0],
+    ]))
+
+  // x.mul (y) .print ()
+  // y.mul (x) .print ()
+
+  t.pass ()
+})

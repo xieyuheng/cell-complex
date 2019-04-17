@@ -11,7 +11,7 @@ import { permutation_t } from "./permutation"
  */
 export
 class axes_t {
-  map: Map <string, axis_t>
+  readonly map: Map <string, axis_t>
   readonly length: number
   readonly shape: Array <number>
   readonly order: number
@@ -375,10 +375,32 @@ class data_t {
   }
 
   // TODO
-  // slice
+  // slice (index: slice_index_t): data_t {
+  // }
 
-  // TODO
-  // contract
+  contract (
+    that: data_t,
+    left_name: string,
+    right_name: string,
+  ): data_t {
+    let left_arg = this.axes.arg (left_name)
+    let right_arg = that.axes.arg (right_name)
+    let array = this.array.contract (
+      that.array, left_arg, right_arg)
+    let map = new Map ()
+    for (let [name, axis] of this.axes.map) {
+      if (name !== left_name) {
+        map.set (name, axis)
+      }
+    }
+    for (let [name, axis] of that.axes.map) {
+      if (name !== right_name) {
+        map.set (name, axis)
+      }
+    }
+    let axes = new axes_t (map)
+    return new data_t (axes, array)
+  }
 }
 
 export
@@ -574,6 +596,12 @@ class frame_t {
 
   add (that: frame_t): frame_t {
     return new frame_t (this.data.add (that.data))
+  }
+
+  mul (that: frame_t): frame_t {
+    return new frame_t (
+      this.data.contract (
+        that.data, this.col_name, that.row_name))
   }
 
   /**
