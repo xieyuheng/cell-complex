@@ -346,7 +346,7 @@ class series_t {
   }
 
   print () {
-    console.group (this.name + ":")
+    console.group (`${this.name}:`)
     console.table (this.to_exp ())
     console.groupEnd ()
   }
@@ -456,22 +456,40 @@ class frame_t {
     }
   }
 
+  *row_entries () {
+    for (let label of this.row_axis.map.keys ()) {
+      yield [label, this.row (label)] as [string, series_t]
+    }
+  }
+
   *cols () {
     for (let label of this.col_axis.map.keys ()) {
       yield this.col (label) as series_t
     }
   }
 
-//   /**
-//    * row is always the major.
-//    */
-//   to_exp (): frame_exp_t {
-//     let exp: frame_exp_t = {}
-//     for () {
+  *col_entries () {
+    for (let label of this.col_axis.map.keys ()) {
+      yield [label, this.col (label)] as [string, series_t]
+    }
+  }
 
-//     }
-//     return exp
-//   }
+  /**
+   * row is always the major.
+   */
+  to_exp (): frame_exp_t {
+    let exp: frame_exp_t = {}
+    for (let [label, row] of this.row_entries ()) {
+      exp [label] = row.to_exp ()
+    }
+    return exp
+  }
+
+  print () {
+    console.group (`${this.row_name}, ${this.col_name}:`)
+    console.table (this.to_exp ())
+    console.groupEnd ()
+  }
 }
 
 export

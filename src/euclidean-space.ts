@@ -137,7 +137,7 @@ class matrix_t {
     return this
   }
 
-  *index_rows () {
+  *row_entries () {
     let [m, _n] = this.shape
     for (let i = 0; i < m; i++) {
       yield [i, this.row (i)] as [number, vector_t]
@@ -154,7 +154,7 @@ class matrix_t {
   for_each_row_index (
     f: (row: vector_t, i: number) => any
   ): matrix_t {
-    for (let [i, row] of this.index_rows ()) {
+    for (let [i, row] of this.row_entries ()) {
       f (row, i)
     }
     return this
@@ -178,7 +178,7 @@ class matrix_t {
     return this
   }
 
-  *index_cols () {
+  *col_entries () {
     let [_m, n] = this.shape
     for (let i = 0; i < n; i++) {
       yield [i, this.col (i)] as [number, vector_t]
@@ -195,7 +195,7 @@ class matrix_t {
   for_each_col_index (
     f: (col: vector_t, i: number) => any
   ): matrix_t {
-    for (let [i, col] of this.index_cols ()) {
+    for (let [i, col] of this.col_entries ()) {
       f (col, i)
     }
     return this
@@ -383,8 +383,8 @@ class matrix_t {
    */
   reduced_row_echelon_form (): matrix_t {
     let matrix = this.unit_row_echelon_form ()
-    for (let [i, row] of matrix.index_rows ()) {
-      for (let [j, sub] of matrix.index_rows ()) {
+    for (let [i, row] of matrix.row_entries ()) {
+      for (let [j, sub] of matrix.row_entries ()) {
         if (j > i) {
           let arg = sub.argfirst (x => x === 1)
           if (arg !== null) {

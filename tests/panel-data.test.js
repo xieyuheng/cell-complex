@@ -172,3 +172,35 @@ test ("pd.frame_t *row & *col", t => {
 
   t.pass ()
 })
+
+test ("pd.frame_t.print", t => {
+  {
+    let frame = pd.frame_t.from_rows (
+      "rows", "cols", [
+        pd.series ("row1",
+                   pd.axis (["col1", "col2"]),
+                   nd.array ([1, 2])),
+        pd.series ("row2",
+                   pd.axis (["col1", "col2"]),
+                   nd.array ([3, 4])),
+      ])
+
+    frame.print ()
+  }
+
+  {
+    let frame = pd.frame_t.from_cols (
+      "rows", "cols", [
+        pd.series ("col1",
+                   pd.axis (["row1", "row2"]),
+                   nd.array ([1, 3])),
+        pd.series ("col2",
+                   pd.axis (["row1", "row2"]),
+                   nd.array ([2, 4])),
+      ])
+
+    frame.print ()
+  }
+
+  t.pass ()
+})
