@@ -450,14 +450,17 @@ class frame_t {
     ))
   }
 
-//   *rows () {
+  *rows () {
+    for (let label of this.row_axis.map.keys ()) {
+      yield this.row (label) as series_t
+    }
+  }
 
-//     yield as series_t
-//   }
-
-//   *cols () {
-
-//   }
+  *cols () {
+    for (let label of this.col_axis.map.keys ()) {
+      yield this.col (label) as series_t
+    }
+  }
 
 //   /**
 //    * row is always the major.
