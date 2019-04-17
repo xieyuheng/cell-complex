@@ -24,7 +24,11 @@
 
 - ndarray
   - `array_t` -- strides based row-major ndarray of number
-  - `data_t` -- ndarray with named axes, where an axis maps labels to indexes.
+
+- panel-data
+  - `data_t` -- ndarray with named axes, where an axis maps labels to indexes
+  - `frame_t` -- 1d `data_t`
+  - `series_t` -- 2d `data_t`
 
 - formalized abstract mathematical structures (in typescript):
   - `set_t`
