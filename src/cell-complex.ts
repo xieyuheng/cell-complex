@@ -1374,12 +1374,15 @@ class chain_t {
   // boundary (): chain_t {
   // }
 
-  // TODO
-  // add (that: chain_t): chain_t {
-  //   assert (this.dim === that.dim)
-  //   return new chain_t (
-  //     this.dim,
-  //     this.com,
-  //     this.series.add (that.series))
-  // }
+  /**
+   * maintain this.name
+   */
+  add (that: chain_t): chain_t {
+    assert (this.dim === that.dim)
+    let series = that.series.rename (this.name)
+    return new chain_t (
+      this.dim,
+      this.com,
+      this.series.add (series))
+  }
 }

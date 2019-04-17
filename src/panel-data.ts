@@ -88,8 +88,8 @@ class axes_t {
     let map = new Map ()
     for (let k of ut.range (0, array_index.length)) {
       let i = array_index [k]
-      let name = this.get_name_by_index (i)
-      let axis = this.get_axis_by_index (i)
+      let name = this.get_name_by_index (k)
+      let axis = this.get_axis_by_index (k)
       map.set (name, axis.arg_label (i))
     }
     return new index_t (map)
@@ -115,8 +115,8 @@ class axes_t {
     for (let k of ut.range (0, array_proj_index.length)) {
       let i = array_proj_index [k]
       if (i !== null) {
-        let name = this.get_name_by_index (i)
-        let axis = this.get_axis_by_index (i)
+        let name = this.get_name_by_index (k)
+        let axis = this.get_axis_by_index (k)
         map.set (name, axis.arg_label (i))
       }
     }
@@ -309,6 +309,21 @@ class data_t {
     )
   }
 
+  *entries () {
+    for (let [array_index, v] of this.array.entries ()) {
+      let index = this.axes.array_index_to_index (array_index)
+      yield [index, v] as [index_t, number]
+    }
+  }
+
+  add (that: data_t): data_t {
+    let data = this.copy ()
+    for (let [i, v] of that.entries ()) {
+      data.update_at (i, x => x + v)
+    }
+    return data
+  }
+
   print () {
     if (this.order === 1) {
       new series_t (this) .print ()
@@ -364,9 +379,6 @@ class data_t {
 
   // TODO
   // contract
-
-  // TODO
-  // add
 }
 
 export
@@ -391,6 +403,14 @@ class series_t {
     this.array = data.array
   }
 
+  copy (): series_t {
+    return new series_t (this.data)
+  }
+
+  rename (name: string) {
+    return new_series (name, this.axis, this.array)
+  }
+
   label_to_index (label: string): index_t {
     return index_t.from_array ([
       [this.name, label],
@@ -399,6 +419,10 @@ class series_t {
 
   get (label: string): number {
     return this.data.get (this.label_to_index (label))
+  }
+
+  add (that: series_t): series_t {
+    return new series_t (this.data.add (that.data))
   }
 
   *entries () {
@@ -463,6 +487,10 @@ class frame_t {
     this.row_axis = data.axes.get_axis_by_index (row_index)
     this.col_name = data.axes.get_name_by_index (col_index)
     this.col_axis = data.axes.get_axis_by_index (col_index)
+  }
+
+  copy (): frame_t {
+    return new frame_t (this.data)
   }
 
   static from_rows (
@@ -542,6 +570,10 @@ class frame_t {
     for (let label of this.col_axis.map.keys ()) {
       yield [label, this.col (label)] as [string, series_t]
     }
+  }
+
+  add (that: frame_t): frame_t {
+    return new frame_t (this.data.add (that.data))
   }
 
   /**

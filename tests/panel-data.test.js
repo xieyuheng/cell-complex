@@ -204,3 +204,20 @@ test ("pd.frame_t.print", t => {
 
   t.pass ()
 })
+
+test ("pd.frame_t.add", t => {
+  let frame = pd.frame_t.from_rows (
+    "rows", "cols", [
+      pd.series ("row1",
+                 pd.axis (["col1", "col2"]),
+                 nd.array ([1, 2])),
+      pd.series ("row2",
+                 pd.axis (["col1", "col2"]),
+                 nd.array ([3, 4])),
+    ])
+
+  frame.add (frame)
+    // .print ()
+
+  t.pass ()
+})

@@ -57,3 +57,22 @@ test ("chain_t.boundary_frame", t => {
 
   t.pass ()
 })
+
+test ("chain_t.add", t => {
+  let square = new cx.polygon_t (4)
+
+  let chain0 =
+    cx.chain_t.boundary_of_basis (
+      square, new cx.id_t (1, 0)
+    )
+
+  let chain1 =
+    cx.chain_t.boundary_of_basis (
+      square, new cx.id_t (1, 1)
+    )
+
+  chain0.add (chain1)
+    // .series.print ()
+
+  t.pass ()
+})
