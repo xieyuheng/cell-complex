@@ -1,4 +1,5 @@
 - "do not use subclass" in mathematical structures
+- [maybe] "do not use subclass" in cell-complex
 * panel-data
 - frame_t to_exp
 - frame_t.from_exp

@@ -29,6 +29,32 @@ test ("new pd.data_t", t => {
   t.pass ()
 })
 
+test ("pd.data_t.proj", t => {
+  let axes = pd.axes ([
+    ["Alice", pd.axis (["silent", "betray"])],
+    ["Bob", pd.axis (["silent", "betray"])],
+    ["payoff", pd.axis (["Alice", "Bob"])],
+  ])
+
+  let prisoner_s_dilemma = new pd.data_t (
+    pd.axes ([
+      ["Alice", pd.axis (["silent", "betray"])],
+      ["Bob", pd.axis (["silent", "betray"])],
+      ["payoff", pd.axis (["Alice", "Bob"])],
+    ]),
+    nd.array ([
+      [[-1, -1], [-3, -0]],
+      [[-0, -3], [-2, -2]],
+    ]),
+  )
+
+  prisoner_s_dilemma.proj (pd.index ([
+    ["Alice", "betray"],
+  ])) .print ()
+
+  t.pass ()
+})
+
 test ("new pd.series_t", t => {
   let x = pd.series (
     "abc",
@@ -36,7 +62,7 @@ test ("new pd.series_t", t => {
     nd.array ([1, 2, 3]),
   )
 
-  x.print ()
+  // x.print ()
 
   t.pass ()
 })

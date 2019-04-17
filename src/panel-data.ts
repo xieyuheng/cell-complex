@@ -69,17 +69,30 @@ class axes_t {
   get (name: string): axis_t {
     let axis = this.map.get (name)
     if (axis === undefined) {
-      throw new Error ("name undefined")
+      throw new Error (`name: ${name} undefined`)
     } else {
       return axis
     }
   }
 
-  index (index: index_t): nd.index_t {
+  array_index (index: index_t): nd.index_t {
     let array_index = new Array ()
     // the order is used here
     for (let [name, axis] of this.map) {
       array_index.push (axis.get (index.get (name)))
+    }
+    return array_index
+  }
+
+  array_proj_index (index: index_t): nd.proj_index_t {
+    let array_index = new Array ()
+    // the order is used here
+    for (let [name, axis] of this.map) {
+      if (index.map.has (name)) {
+        array_index.push (axis.get (index.get (name)))
+      } else {
+        array_index.push (null)
+      }
     }
     return array_index
   }
@@ -169,7 +182,7 @@ class index_t {
   get (name: string): string {
     let label = this.map.get (name)
     if (label === undefined) {
-      throw new Error ("name undefined")
+      throw new Error (`name: ${name} undefined`)
     } else {
       return label
     }
@@ -196,7 +209,7 @@ class slice_index_t {
   get (name: string): Array <string> {
     let label_array = this.map.get (name)
     if (label_array === undefined) {
-      throw new Error ("name undefined")
+      throw new Error (`name: ${name} undefined`)
     } else {
       return label_array
     }
@@ -233,12 +246,12 @@ class data_t {
   }
 
   get (index: index_t): number {
-    let array_index = this.axes.index (index)
+    let array_index = this.axes.array_index (index)
     return this.array.get (array_index)
   }
 
   set (index: index_t, x: number): data_t {
-    let array_index = this.axes.index (index)
+    let array_index = this.axes.array_index (index)
     this.array.set (array_index, x)
     return this
   }
@@ -263,8 +276,17 @@ class data_t {
     this.array.print ()
   }
 
-  // TODO
-  // proj
+  proj (index: index_t): data_t {
+    let axes_array = new Array ()
+    for (let [name, axis] of this.axes.map) {
+      if (! index.map.has (name)) {
+        axes_array.push ([name, axis])
+      }
+    }
+    return new data_t (
+      axes_t.from_array (axes_array),
+      this.array.proj (this.axes.array_proj_index (index)))
+  }
 
   // TODO
   // slice
@@ -411,9 +433,17 @@ class frame_t {
     return new frame_t (this.data, [1, 0])
   }
 
+//   row (label: string): series_t {
+//     new series_t ()
+//   }
+
+//   col (label: string): series_t {
+
+//   }
+
 //   *rows () {
 
-//     yield series_t
+//     yield as series_t
 //   }
 
 //   *cols () {

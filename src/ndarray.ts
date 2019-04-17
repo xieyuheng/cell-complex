@@ -127,7 +127,7 @@ class array_t {
     return array
   }
 
-  proj (index: Array <number | null>): array_t {
+  proj (index: proj_index_t): array_t {
     if (index.length !== this.shape.length) {
       throw new Error ("index length mismatch")
     }
