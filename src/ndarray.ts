@@ -357,12 +357,14 @@ class array_t {
       index.push (null)
       index.push (null)
       while (true) {
-        console.log (index)
+        console.log ("array index:", index)
         this.proj (index) .print ()
-        index = array_t.proj_index_inc_with_shape (
-          index, this.shape)
+        index =
+          array_t.proj_index_inc_with_shape (
+            index,
+            this.shape)
         if (array_t.proj_index_max_p (index, this.shape)) {
-          console.log (index)
+          console.log ("array index:", index)
           this.proj (index) .print ()
           return
         }
@@ -624,9 +626,4 @@ function* indexes_of_shape (shape: Array <number>) {
       yield index_step (index, shape, size - 1)
     }
   }
-}
-
-export
-interface to_array_t {
-  to_array (): array_t
 }

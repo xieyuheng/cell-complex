@@ -84,6 +84,17 @@ class axes_t {
     return array_index
   }
 
+  array_index_to_index (array_index: nd.index_t): index_t {
+    let map = new Map ()
+    for (let k of ut.range (0, array_index.length)) {
+      let i = array_index [k]
+      let name = this.get_name_by_index (i)
+      let axis = this.get_axis_by_index (i)
+      map.set (name, axis.arg_label (i))
+    }
+    return new index_t (map)
+  }
+
   array_proj_index (index: index_t): nd.proj_index_t {
     let array_index = new Array ()
     // the order is used here
@@ -95,6 +106,21 @@ class axes_t {
       }
     }
     return array_index
+  }
+
+  array_proj_index_to_index (
+    array_proj_index: nd.proj_index_t
+  ): index_t {
+    let map = new Map ()
+    for (let k of ut.range (0, array_proj_index.length)) {
+      let i = array_proj_index [k]
+      if (i !== null) {
+        let name = this.get_name_by_index (i)
+        let axis = this.get_axis_by_index (i)
+        map.set (name, axis.arg_label (i))
+      }
+    }
+    return new index_t (map)
   }
 
   print () {
@@ -142,6 +168,15 @@ class axis_t {
       i += 1
     }
     throw new Error ("name not in key of map")
+  }
+
+  arg_label (index: number): string {
+    for (let [label, i] of this.map) {
+      if (i === index) {
+        return label
+      }
+    }
+    throw new Error ("label not in key of map")
   }
 
   get (label: string): number {
@@ -192,6 +227,10 @@ class index_t {
     array: Array <[string, string]>
   ): index_t {
     return new index_t (new Map (array))
+  }
+
+  to_array (): Array <[string, string]> {
+    return Array.from (this.map)
   }
 }
 
@@ -270,10 +309,41 @@ class data_t {
     )
   }
 
-  // TODO
   print () {
-    this.axes.print ()
-    this.array.print ()
+    if (this.order === 1) {
+      new series_t (this) .print ()
+    } else if (this.order === 2) {
+      new frame_t (this) .print ()
+    } else {
+      let array_proj_index: nd.proj_index_t =
+        this.shape.slice () .fill (0)
+      array_proj_index.pop ()
+      array_proj_index.pop ()
+      array_proj_index.push (null)
+      array_proj_index.push (null)
+      while (true) {
+        let index =
+          this.axes.array_proj_index_to_index (
+            array_proj_index)
+        console.log ("data index:", index.to_array ())
+        console.log ("array index:", array_proj_index)
+        this.proj (index) .print ()
+        array_proj_index =
+          nd.array_t.proj_index_inc_with_shape (
+            array_proj_index,
+            this.shape)
+        if (
+          nd.array_t.proj_index_max_p (
+            array_proj_index,
+            this.shape)
+        ) {
+          console.log ("data index:", index.to_array ())
+          console.log ("array index:", array_proj_index)
+          this.proj (index) .print ()
+          return
+        }
+      }
+    }
   }
 
   proj (index: index_t): data_t {
@@ -486,7 +556,9 @@ class frame_t {
   }
 
   print () {
-    console.group (`${this.row_name}, ${this.col_name}:`)
+    console.group (
+      `asis names: ${this.row_name}, ${this.col_name}`
+    )
     console.table (this.to_exp ())
     console.groupEnd ()
   }

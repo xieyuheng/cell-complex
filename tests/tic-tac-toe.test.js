@@ -14,20 +14,20 @@ test ("tic_tac_toe", t => {
   t.pass ()
 })
 
-test ("random_bot", t => {
-  let play = tic_tac_toe.new_play ()
+// test ("random_bot", t => {
+//   let play = tic_tac_toe.new_play ()
 
-  let bot = tic_tac_toe.random_bot
+//   let bot = tic_tac_toe.random_bot
 
-  while (play.winner () === null) {
-    if (play.draw_p ()) {
-      return
-    }
-    let p = play.next_player ()
-    let s = play.last_state ()
-    let ch = bot.next_choice (p, s)
-    play.move (p, ch)
-  }
+//   while (play.winner () === null) {
+//     if (play.draw_p ()) {
+//       return
+//     }
+//     let p = play.next_player ()
+//     let s = play.last_state ()
+//     let ch = bot.next_choice (p, s)
+//     play.move (p, ch)
+//   }
 
-  t.pass ()
-})
+//   t.pass ()
+// })

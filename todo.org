@@ -2,7 +2,6 @@
 - [maybe] "do not use subclass" in cell-complex
 * panel-data
 
-- data_t print
 - array_t add
 - chain_t add
 - data_t contract

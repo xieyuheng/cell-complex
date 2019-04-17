@@ -25,7 +25,7 @@ test ("new pd.data_t", t => {
       [[-0, -3], [-2, -2]],
     ]),
   )
-  // prisoner_s_dilemma.print ()
+  prisoner_s_dilemma.print ()
   t.pass ()
 })
 
@@ -185,7 +185,7 @@ test ("pd.frame_t.print", t => {
                    nd.array ([3, 4])),
       ])
 
-    frame.print ()
+    // frame.print ()
   }
 
   {
@@ -199,7 +199,7 @@ test ("pd.frame_t.print", t => {
                    nd.array ([2, 4])),
       ])
 
-    frame.print ()
+    // frame.print ()
   }
 
   t.pass ()
