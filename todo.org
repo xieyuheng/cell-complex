@@ -1,5 +1,4 @@
 - "do not use subclass" in mathematical structures
-- [maybe] "do not use subclass" in cell-complex
 * panel-data
 
 - data_t slice

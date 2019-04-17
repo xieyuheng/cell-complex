@@ -1375,7 +1375,7 @@ class chain_t {
   // }
 
   /**
-   * maintain this.name
+   * maintain `this.name`
    */
   add (that: chain_t): chain_t {
     assert (this.dim === that.dim)
@@ -1384,5 +1384,10 @@ class chain_t {
       this.dim,
       this.com,
       this.series.add (series))
+  }
+
+  print () {
+    console.log (`dim: ${this.dim}`)
+    this.series.print ()
   }
 }

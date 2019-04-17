@@ -440,7 +440,7 @@ class series_t {
   }
 
   print () {
-    console.group (`${this.name}:`)
+    console.group (`axis_name: ${this.name}`)
     console.table (this.to_exp ())
     console.groupEnd ()
   }
@@ -588,9 +588,9 @@ class frame_t {
   }
 
   print () {
-    console.group (
-      `asis names: ${this.row_name}, ${this.col_name}`
-    )
+    console.log (`row_name: ${this.row_name}`)
+    console.log (`col_name: ${this.col_name}`)
+    console.group ()
     console.table (this.to_exp ())
     console.groupEnd ()
   }

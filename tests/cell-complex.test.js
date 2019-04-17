@@ -71,8 +71,7 @@ test ("chain_t.add", t => {
       square, new cx.id_t (1, 1)
     )
 
-  chain0.add (chain1)
-    // .series.print ()
+  chain0.add (chain1) .print ()
 
   t.pass ()
 })
