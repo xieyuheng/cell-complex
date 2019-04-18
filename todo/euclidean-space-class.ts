@@ -1,9 +1,8 @@
-import { set_t } from "./set"
+import { set_t, eqv } from "./set"
 import { field_t } from "./field"
 import { abelian_group_t } from "./group"
 import { vector_space_t } from "./vector-space"
 import { affine_space_t } from "./affine-space"
-import { eqv } from "./eqv"
 import { number_field_t } from "./number"
 
 /**
