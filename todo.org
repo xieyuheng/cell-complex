@@ -1,4 +1,3 @@
-- restore vector-space.ts
 - restore affine-space.ts
 - optimize matrix_t and vector_t by not using ndarray
 * panel-data

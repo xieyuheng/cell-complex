@@ -28,6 +28,7 @@
   },
   "dependencies": {
     "@babel/runtime-corejs2": "^7.4.3",
+    "@types/assert": "^1.4.2",
     "@types/lodash": "^4.14.123",
     "lodash": "^4.17.11"
   }

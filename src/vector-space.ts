@@ -1,22 +1,28 @@
-import { set_t } from "./set"
+import { set_t, eqv } from "./set"
 import { field_t } from "./field"
 import { abelian_group_t } from "./group"
-import { eqv } from "./eqv"
 
 export
-abstract class vector_space_t <F, V> extends abelian_group_t <V> {
-  field: field_t <F>
+class vector_space_t <F, V> {
+  readonly field: field_t <F>
+  readonly vector: abelian_group_t <V>
+  readonly scale: (a: F, x: V) => V
 
-  constructor (field: field_t <F>) {
-    super ()
-    this.field = field
+  constructor (the: {
+    field: field_t <F>,
+    vector: abelian_group_t <V>,
+    scale: (a: F, x: V) => V,
+  }) {
+    this.field = the.field
+    this.vector = the.vector
+    this.scale = the.scale
   }
 
-  abstract scale (a: F, x: V): V
+  add = this.vector.add
 
   field_id_action (x: V) {
     eqv (
-      this,
+      this.vector.elements,
       this.scale (this.field.mul_id, x),
       x,
     )
@@ -24,7 +30,7 @@ abstract class vector_space_t <F, V> extends abelian_group_t <V> {
 
   field_action (a: F, b: F, x: V) {
     eqv (
-      this,
+      this.vector.elements,
       this.scale (a, this.scale (b, x)),
       this.scale (this.field.mul (a, b), x),
     )
@@ -32,7 +38,7 @@ abstract class vector_space_t <F, V> extends abelian_group_t <V> {
 
   scale_vector_add_distr (a: F, x: V, y: V) {
     eqv (
-      this,
+      this.vector.elements,
       this.scale (a, this.add (x, y)),
       this.add (
         this.scale (a, x),
@@ -43,7 +49,7 @@ abstract class vector_space_t <F, V> extends abelian_group_t <V> {
 
   scale_field_add_distr (a: F, b: F, x: V) {
     eqv (
-      this,
+      this.vector.elements,
       this.scale (this.field.add (a, b), x),
       this.add (
         this.scale (a, x),
