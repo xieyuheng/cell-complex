@@ -1,7 +1,10 @@
 - "do not use subclass" in mathematical structures
+- optimize matrix_t and vector_t by not using ndarray
 * panel-data
-- data_t slice
+- frame_t.act & series_t.trans
+- chain_t.boundary
 - smith normal form of matrix to calculate homology group
+- data_t slice
 * cell-complex
 - homology group of cell-complex
 - abelian_group_t

@@ -298,6 +298,13 @@ class matrix_t {
     return matrix
   }
 
+  update_scale (a: number): matrix_t {
+    for (let [i, j, v] of this.entries ()) {
+      this.set (i, j, v * a)
+    }
+    return this
+  }
+
   scale (a: number): matrix_t {
     return this.map (n => n * a)
   }
