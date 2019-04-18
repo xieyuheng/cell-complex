@@ -39,10 +39,6 @@
   - logic programming interface
   - class with multi-inheritance
 
-## Docs
-
-- [API](http://api.cicada.surge.sh)
-
 ## Community
 
 - We enforce C4 as collaboration protocol -- [The C4 RFC](https://rfc.zeromq.org/spec:42/C4)

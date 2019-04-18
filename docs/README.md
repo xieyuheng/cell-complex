@@ -1,2 +1,3 @@
-# Introduction
-
+- I do not use typedoc,
+  because typedoc does not use the latest version of typescript
+  : https://github.com/TypeStrong/typedoc/issues/880
