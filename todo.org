@@ -1,4 +1,5 @@
-- optimize matrix_t and vector_t by not using ndarray
+- optimize matrix_t and vector_t by not using nd.array_t
+- optimize frame_t and series_t by not using data_t
 * panel-data
 - frame_t.act & series_t.trans
 - chain_t.boundary
@@ -14,24 +15,23 @@
     generalize this algebraic structure for 3-dim cell-complex
   - we also want to study group representation
     i.e. find matrix group iso to given group
+- `hl.chain_t.boundary ()`
 - glob_t
-- chain_t
-  - `chain_t.boundary ()`
-- homotopical_chain_t
+- ht.chain_t
   - `.boundary ()`
   - `.as_group ()` -- formalize presentation of group
-  - `.as_groupoid ()` -- presentation of groupoid with `homotopical_chain_t`
-  - abelianization of `homotopical_chain_t` to get homology theory
+  - `.as_groupoid ()` -- presentation of groupoid with `ht.chain_t`
+  - abelianization of `ht.chain_t` to get homology theory
     abelianization 时如何获得定向 ?
   - `.glue ()`
-    我们所要处理的代数结构中的元素是 homotopical_chain_t
+    我们所要处理的代数结构中的元素是 ht.chain_t
     这在于
     元素是有类型的 (或者说是有边界的)
     我们的代数结构类似於 groupoid 而不是 group
     元素之间的复合不是简单地左右相乘
     而是 沿着边界 glue
     - 我们可以从 presentation of a groupoid 入手
-      研究 groupoid 对 homotopical_chain_t 的需要
+      研究 groupoid 对 ht.chain_t 的需要
       也就是说
       1. 放宽对元素联通性的要求
       2. 丰富 compose 为 glue
