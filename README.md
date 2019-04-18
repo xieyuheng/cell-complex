@@ -30,13 +30,7 @@
   - `frame_t` -- 1d `data_t`
   - `series_t` -- 2d `data_t`
 
-- formalized abstract mathematical structures (in typescript):
-  - `set_t`
-  - `group_t`, `abelian_group_t`
-  - `field_t`
-  - `vector_space_t`, `affine_space_t`
-
-- euclidean-space -- `affine_space_t` with dot product
+- euclidean-space -- affine-space with dot product
   - contains `matrix_t`, `vector_t` and `point_t`
 
 - permutation -- `permutation_t` and `symmetric_group_t`

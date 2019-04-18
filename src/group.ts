@@ -1,11 +1,23 @@
-import { set_t } from "./set"
-import { eqv } from "./eqv"
+import { set_t, eqv } from "./set"
 
 export
-abstract class group_t <G> extends set_t <G> {
-  abstract id: G
-  abstract mul (x: G, y: G): G
-  abstract inv (x: G): G
+class group_t <G> {
+  readonly elements: set_t <G>
+  readonly id: G
+  readonly mul: (x: G, y: G) => G
+  readonly inv: (x: G) => G
+
+  constructor (the: {
+    elements: set_t <G>,
+    id: G,
+    mul: (x: G, y: G) => G,
+    inv: (x: G) => G,
+  }) {
+    this.elements = the.elements
+    this.id = the.id
+    this.mul = the.mul
+    this.inv = the.inv
+  }
 
   div (x: G, y: G): G {
     return this.mul (x, this.inv (y))
@@ -13,7 +25,7 @@ abstract class group_t <G> extends set_t <G> {
 
   assoc (x: G, y: G, z: G) {
     eqv (
-      this,
+      this.elements,
       this.mul (this.mul (x, y), z),
       this.mul (x, this.mul (y, z)),
     )
@@ -21,7 +33,7 @@ abstract class group_t <G> extends set_t <G> {
 
   id_left (x: G) {
     eqv (
-      this,
+      this.elements,
       this.mul (this.id, x),
       x,
     )
@@ -29,7 +41,7 @@ abstract class group_t <G> extends set_t <G> {
 
   id_right (x: G) {
     eqv (
-      this,
+      this.elements,
       this.mul (x, this.id),
       x,
     )
@@ -37,7 +49,7 @@ abstract class group_t <G> extends set_t <G> {
 
   id_inv (x: G) {
     eqv (
-      this,
+      this.elements,
       this.mul (x, this.inv (x)),
       this.id,
     )
@@ -45,51 +57,27 @@ abstract class group_t <G> extends set_t <G> {
 }
 
 export
-abstract class abelian_group_t <A> extends group_t <A> {
-  abstract add (x: A, y: A): A
-  abstract neg (x: A): A
+class abelian_group_t <G> {
+  readonly elements: set_t <G>
+  readonly group: group_t <G>
 
-  sub (x: A, y: A): A {
-    return this.add (x, this.neg (y))
+  constructor (the: {
+    group: group_t <G>,
+  }) {
+    this.group = the.group
+    this.elements = the.group.elements
   }
 
-  commu (x: A, y: A) {
+  commu (x: G, y: G) {
     eqv (
-      this,
-      this.add (x, y),
-      this.add (y, x),
+      this.elements,
+      this.group.mul (x, y),
+      this.group.mul (y, x),
     )
   }
 
-  // changing name
-
-  id_neg = this.id_inv
-  mul = this.add
-  inv = this.neg
-}
-
-namespace composition_version {
-  /**
-   * The following composition_version also make sense,
-   * but if `abelian_group_t` does not extend `group_t`,
-   * why should `group_t` extend `set_t` ?
-   */
-  export
-  abstract class abelian_group_t <A> {
-    group: group_t <A>
-
-    constructor (
-      group: group_t <A>
-    ) {
-      this.group = group
-    }
-
-    commu (x: A, y: A) {
-      eqv (
-        this.group,
-        this.group.mul (x, y),
-        this.group.mul (y, x),
-      )
-    }
-  }
+  add = this.group.mul
+  sub = this.group.div
+  neg = this.group.inv
+  id_neg = this.group.id_inv
 }

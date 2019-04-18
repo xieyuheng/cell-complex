@@ -2,10 +2,8 @@ import * as _ from "lodash"
 import assert from "assert"
 
 import * as ut from "./util"
-
-import { set_t } from "./set"
+import { set_t, eqv } from "./set"
 import { group_t } from "./group"
-import { eqv } from "./eqv"
 
 export
 class permutation_t {
@@ -138,30 +136,24 @@ class permutation_t {
  * is the symmetric group of M.
  * The term permutation group means
  * a subgroup of the symmetric group.
-*/
+ */
+
 export
-class symmetric_group_t
-extends group_t <permutation_t> {
+class symmetric_group_t {
   readonly size: number
+  readonly group: group_t <permutation_t>
 
-  constructor (size: number) {
-    super ()
+  constructor (
+    size: number,
+  ) {
     this.size = size
-  }
-
-  get id (): permutation_t {
-    return permutation_t.identity (this.size)
-  }
-
-  eq (x: permutation_t, y: permutation_t) {
-    return x.eq (y)
-  }
-
-  mul (x: permutation_t, y: permutation_t) {
-    return x.mul (y)
-  }
-
-  inv (x: permutation_t) {
-    return x.inv ()
+    this.group = new group_t ({
+      elements: new set_t ({
+        eq: (x, y) => x.eq (y)
+      }),
+      id: permutation_t.identity (size),
+      mul: (x, y) => x.mul (y),
+      inv: (x) => x.inv (),
+    })
   }
 }
