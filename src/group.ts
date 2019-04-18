@@ -76,6 +76,11 @@ class abelian_group_t <G> {
     )
   }
 
+  id = this.group.id
+  mul = this.group.mul
+  inv = this.group.inv
+  div = this.group.div
+
   add = this.group.mul
   sub = this.group.div
   neg = this.group.inv
