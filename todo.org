@@ -1,21 +1,42 @@
+* optimize
 - optimize matrix_t and vector_t by not using nd.array_t
 - optimize frame_t and series_t by not using data_t
 * panel-data
 - frame_t.act & series_t.trans
 - chain_t.boundary
-- smith normal form of matrix to calculate homology group
 - data_t slice
+* euclidean-space
+- matrix_t.solve -- what API should be ?
+  - we need image-space (col-space)
+    and kernel-space (null-space)
+  - we specify subspace by vectors that span the subspace
+    - col-space -- pivot col -- rank
+    - null-space -- special solution -- (n - rank)
+      - where [m, n] = shape
+      - special solution are calculated by free cols
+        special solution can be read off in reduced_row_echelon_form
+- hermite normal form -- for integer matrix
+- smith normal form -- to calculate homology group
+- test euclidean-space by affine-space
+- use euclidean-space to re-imp hackenbush
 * cell-complex
 - homology group of cell-complex
+  - we will need quotient of vector_space_t (abelian_group_t)
+    because homology group = quo (img (boun (n)), ker (boun (n+1)))
 - abelian_group_t
-  - classification (normalization)
+  - classification finite generated abelian_group_t
+    is the same as normalization of integer matrix
+  - quotient space is needed,
+    quotient space == redefine `.eq`,
+    to make `.eq` normalize-able,
+    we can use yoneda embedding
+- `hl.chain_t.boundary ()`
 - presentation of groupoid is the same as 2-dim cell-complex
   - by which we can calculate homology group of groupoid
   - my first aim is to
     generalize this algebraic structure for 3-dim cell-complex
   - we also want to study group representation
     i.e. find matrix group iso to given group
-- `hl.chain_t.boundary ()`
 - glob_t
 - ht.chain_t
   - `.boundary ()`
@@ -61,9 +82,7 @@
   - the boundary of the boundary of a cell_complex_t should be zero
     even if the cell_complex_t is not a bounfold_t
 * geometry
-- test euclidean_space_t
 - quaternion
-- use euclidean-space to re-imp hackenbush
 - clifford-algebra
 - polytope
   - a set of n >= 0 points is affinely independent
