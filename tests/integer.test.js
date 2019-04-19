@@ -18,32 +18,41 @@ test ("gcd", t => {
   t.true (int.gcd (-1071, 462) === 21)
 })
 
-test ("gcd_of_array", t => {
-  t.true (int.gcd_of_array ([6, 7, 1]) === 1)
-  t.true (int.gcd_of_array ([1, 7, 1]) === 1)
-  t.true (int.gcd_of_array ([0, 7, 3]) === 1)
-  t.true (int.gcd_of_array ([6, 6, 2]) === 2)
-  t.true (int.gcd_of_array ([1071, 462, 20]) === 1)
-  t.true (int.gcd_of_array ([1071, 462, 3]) === 3)
-  t.true (int.gcd_of_array ([1071, -462, 15]) === 3)
-  t.true (int.gcd_of_array ([-1071, 462, 11]) === 1)
+test ("array_gcd", t => {
+  t.true (int.array_gcd ([6, 7, 1]) === 1)
+  t.true (int.array_gcd ([1, 7, 1]) === 1)
+  t.true (int.array_gcd ([0, 7, 3]) === 1)
+  t.true (int.array_gcd ([6, 6, 2]) === 2)
+  t.true (int.array_gcd ([1071, 462, 20]) === 1)
+  t.true (int.array_gcd ([1071, 462, 3]) === 3)
+  t.true (int.array_gcd ([1071, -462, 15]) === 3)
+  t.true (int.array_gcd ([-1071, 462, 11]) === 1)
 })
 
-function test_extended_gcd (t, x, y) {
-  let res = int.extended_gcd (x, y)
+function test_gcd_ext (t, x, y) {
+  let res = int.gcd_ext (x, y)
   // ut.log ([x, y, res])
-  t.true (int.extended_gcd_p (x, y, res))
+  t.true (int.gcd_ext_p (x, y, res))
 }
 
-test ("extended_gcd", t => {
-  test_extended_gcd (t, 6, 7)
-  test_extended_gcd (t, 1, 7)
-  test_extended_gcd (t, 0, 7)
-  test_extended_gcd (t, 6, 6)
-  test_extended_gcd (t, 1071, 462)
-  test_extended_gcd (t, -1071, -462)
-  test_extended_gcd (t, -1071, 462)
-  test_extended_gcd (t, -1071, 0)
-  test_extended_gcd (t, 0, 123)
-  test_extended_gcd (t, 0, -123)
+test ("gcd_ext", t => {
+  test_gcd_ext (t, 6, 7)
+  test_gcd_ext (t, 1, 7)
+  test_gcd_ext (t, 0, 7)
+  test_gcd_ext (t, 6, 6)
+  test_gcd_ext (t, 1071, 462)
+  test_gcd_ext (t, -1071, -462)
+  test_gcd_ext (t, -1071, 462)
+  test_gcd_ext (t, -1071, 0)
+  test_gcd_ext (t, 0, 123)
+  test_gcd_ext (t, 0, -123)
+})
+
+function test_array_gcd_ext (t, array) {
+  let res = int.array_gcd_ext (array)
+  t.true (int.array_gcd_ext_p (array, res))
+}
+
+test ("array_gcd_ext", t => {
+  test_array_gcd_ext (t, [12, 27, 18, 13])
 })

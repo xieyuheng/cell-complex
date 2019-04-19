@@ -636,11 +636,37 @@ class matrix_t {
    * The Hermite normal form is an analogue
    * of reduced echelon form for matrices over integers.
    */
-  hermite_normal_form (): matrix_t {
-    let matrix = this.copy ()
-
-    return matrix
-  }
+  // hermite_normal_form (): matrix_t {
+  //   let matrix = this.copy ()
+  //   let [m, n] = this.shape
+  //   let h = 0 // init pivot row
+  //   let k = 0 // init pivot column
+  //   while (h < m && k < n) {
+  //     // find the next pivot
+  //     let piv = argmax (h, m, (i) => Math.abs (matrix.get (i, k)))
+  //     if (epsilon_p (matrix.get (piv, k))) {
+  //       // no pivot in this column, pass to next column
+  //       k += 1
+  //     } else {
+  //       if (h !== piv) {
+  //         matrix.update_swap_rows (h, piv)
+  //       }
+  //       // for all rows below pivot
+  //       for (let i = h + 1; i < m; i++) {
+  //         let f = matrix.get (i, k) / matrix.get (h, k)
+  //         matrix.set (i, k, 0)
+  //         // for all remaining elements in current row
+  //         for (let j = k + 1; j < n; j++) {
+  //           let v = matrix.get (i, j) - matrix.get (h, j) * f
+  //           matrix.set (i, j, v)
+  //         }
+  //       }
+  //       h += 1
+  //       k += 1
+  //     }
+  //   }
+  //   return matrix
+  // }
 }
 
 export

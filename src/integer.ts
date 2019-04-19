@@ -43,14 +43,14 @@ function gcd (
 }
 
 export
-function gcd_of_array (
+function array_gcd (
   array: Array <number>
 ): number {
   return array.reduce ((acc, cur) => gcd (acc, cur))
 }
 
 export
-function extended_gcd (
+function gcd_ext (
   x: number,
   y: number,
 ): [number, [number, number]] {
@@ -87,11 +87,52 @@ function extended_gcd (
 }
 
 export
-function extended_gcd_p (
+function gcd_ext_p (
   x: number,
   y: number,
   res: [number, [number, number]],
 ): boolean {
   let [d, [s, t]] = res
   return (gcd (x, y) === d) && (s*x + t*y === d)
+}
+
+export
+function array_dot (
+  x: Array <number>,
+  y: Array <number>,
+): number {
+  assert (x.length === y.length)
+  let sum = 0
+  for (let i of ut.range (0, x.length)) {
+    sum += x [i] * y [i]
+  }
+  return sum
+}
+
+export
+function array_gcd_ext_p (
+  array: Array <number>,
+  res: [number, Array <number>],
+): boolean {
+  let [d, ext] = res
+  return ((array_gcd (array) === d) &&
+          (array_dot (array, ext) === d))
+}
+
+export
+function array_gcd_ext (
+  array: Array <number>
+): [number, Array <number>] {
+  let ext = new Array ()
+  let d = array.reduce ((acc, cur) => {
+    let [d, [s, t]] = gcd_ext (acc, cur)
+    if (ext.length === 0) {
+      ext = [s, t]
+    } else {
+      ext = ext.map (x => x * s)
+      ext.push (t)
+    }
+    return d
+  })
+  return [d, ext]
 }
