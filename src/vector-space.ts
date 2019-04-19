@@ -21,7 +21,7 @@ class vector_space_t <F, V> {
   add = this.vector.add
   eq = this.vector.elements.eq
   id = this.vector.id
-  neg = this.vector.neg  
+  neg = this.vector.neg
 
   field_id_action (x: V) {
     eqv (

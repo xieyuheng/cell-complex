@@ -5,13 +5,6 @@ import * as nd from "./ndarray"
 import { permutation_t } from "./permutation"
 
 /**
- * We can not define matrix_t as subclass of nd.array_t,
- * because methods such as `proj` and `slice` on nd.array_t
- * return nd.array_t instead of matrix_t,
- * such methods can not be generic over nd.array_t's subclasses.
- */
-
-/**
  * Due to the lack of dependent type,
  * dimension is checked at runtime.
  */
@@ -637,6 +630,16 @@ class matrix_t {
 
   epsilon_p (): boolean {
     return this.every (epsilon_p)
+  }
+
+  /**
+   * The Hermite normal form is an analogue
+   * of reduced echelon form for matrices over integers.
+   */
+  hermite_normal_form (): matrix_t {
+    let matrix = this.copy ()
+
+    return matrix
   }
 }
 
