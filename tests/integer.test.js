@@ -55,4 +55,5 @@ function test_array_gcd_ext (t, array) {
 
 test ("array_gcd_ext", t => {
   test_array_gcd_ext (t, [12, 27, 18, 13])
+  test_array_gcd_ext (t, [12, 27, 18, -13])  
 })

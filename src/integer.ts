@@ -93,7 +93,8 @@ function gcd_ext_p (
   res: [number, [number, number]],
 ): boolean {
   let [d, [s, t]] = res
-  return (gcd (x, y) === d) && (s*x + t*y === d)
+  return ((gcd (x, y) === d) &&
+          (s*x + t*y === d))
 }
 
 export
