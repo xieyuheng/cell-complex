@@ -21,7 +21,7 @@ function bench (a, b, n) {
 }
 
 // time should under 1000 when n is 1000
-bench (c0, c1, 10)
-bench (f0, f1, 10)
-bench (c0, f1, 10)
-bench (f0, c1, 10)
+bench (c0, c1, 100)
+bench (f0, f1, 100)
+bench (c0, f1, 100)
+bench (f0, c1, 100)

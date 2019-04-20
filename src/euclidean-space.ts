@@ -65,26 +65,92 @@ function epsilon_p (x: number): boolean {
 export
 class matrix_t {
   readonly array: nd.array_t
-  readonly shape: Array <number>
+  readonly shape: [number, number]
+  readonly size: number
 
   constructor (array: nd.array_t) {
     if (array.order !== 2) {
       throw new Error ("array order should be 2")
     }
-    this.array = array
-    this.shape = array.shape
+    this.array = array.copy ()
+    this.shape = array.shape.slice () as [number, number]
+    this.size = array.size
   }
 
   static from_array (array: nd.Array2d): matrix_t {
     return new matrix_t (nd.array_t.from_2darray (array))
   }
 
+  get_linear_index (x: number, y: number): number {
+    return (this.array.offset +
+            x * this.array.strides [0] +
+            y * this.array.strides [1])
+  }
+
   get (x: number, y: number): number {
-    return this.array.get ([x, y])
+    let i = this.get_linear_index (x, y)
+    return this.array.linear_get (i)
   }
 
   set (x: number, y: number, v: number): matrix_t {
-    this.array.set ([x, y], v)
+    let i = this.get_linear_index (x, y)
+    this.array.linear_set (i, v)
+    return this
+  }
+
+  static *indexes_of_shape ([m, n]: [number, number]) {
+    for (let i = 0; i < m; i++) {
+      for (let j = 0; j < n; j++) {
+        yield [i, j] as [number, number]
+      }
+    }
+  }
+
+  *indexes () {
+    for (let [i, j] of matrix_t.indexes_of_shape (this.shape)) {
+      yield [i, j] as [number, number]
+    }
+  }
+
+  *entries () {
+    for (let [i, j] of this.indexes ()) {
+      let v = this.get (i, j)
+      yield [i, j, v] as [number, number, number]
+    }
+  }
+
+  *values () {
+    for (let [i, j] of this.indexes ()) {
+      let v = this.get (i, j)
+      yield v as number
+    }
+  }
+
+  update_op1 (
+    op: (x: number) => number,
+  ): matrix_t {
+    let [m, n] = this.shape
+    for (let i = 0; i < m; i++) {
+      for (let j = 0; j < n; j++) {
+        let v = op (this.get (i, j))
+        this.set (i, j, v)
+      }
+    }
+    return this
+  }
+
+  update_op2 (
+    that: matrix_t,
+    op: (x: number, y: number) => number,
+  ): matrix_t {
+    assert (this.same_shape_p (that))
+    let [m, n] = this.shape
+    for (let i = 0; i < m; i++) {
+      for (let j = 0; j < n; j++) {
+        let v = op (this.get (i, j), that.get (i, j))
+        this.set (i, j, v)
+      }
+    }
     return this
   }
 
@@ -194,28 +260,6 @@ class matrix_t {
     return this
   }
 
-  *entries () {
-    for (let e of this.array.entries ()) {
-      let [[i, j], v] = e
-      yield [i, j, v] as [number, number, number]
-    }
-  }
-
-  *indexes () {
-    for (let index of this.array.indexes ()) {
-      assert (index.length === 2)
-      yield index as [number, number]
-    }
-  }
-
-  *values () {
-    for (let row of this.rows ()) {
-      for (let v of row.values ()) {
-        yield v
-      }
-    }
-  }
-
   reduce_with (
     init: number,
     f: (acc: number, cur: number) => number,
@@ -251,11 +295,7 @@ class matrix_t {
   }
 
   update_add (that: matrix_t): matrix_t {
-    assert (this.same_shape_p (that))
-    for (let [i, j, v] of that.entries ()) {
-      this.update_at (i, j, x => x + v)
-    }
-    return this
+    return this.update_op2 (that, (x, y) => x + y)
   }
 
   add (that: matrix_t): matrix_t {
@@ -263,11 +303,7 @@ class matrix_t {
   }
 
   update_sub (that: matrix_t): matrix_t {
-    assert (this.same_shape_p (that))
-    for (let [i, j, v] of that.entries ()) {
-      this.update_at (i, j, x => x - v)
-    }
-    return this
+    return this.update_op2 (that, (x, y) => x - y)
   }
 
   sub (that: matrix_t): matrix_t {
@@ -283,10 +319,7 @@ class matrix_t {
   }
 
   update_scale (a: number): matrix_t {
-    for (let [i, j, v] of this.entries ()) {
-      this.set (i, j, v * a)
-    }
-    return this
+    return this.update_op1 (x => x * a)
   }
 
   scale (a: number): matrix_t {

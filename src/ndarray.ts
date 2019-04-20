@@ -68,12 +68,23 @@ class array_t {
     return linear_index
   }
 
+  linear_get (i: number): number {
+    return this.buffer [i]
+  }
+
+  linear_set (i: number, v: number): array_t {
+    this.buffer [i] = v
+    return this
+  }
+
   get (index: index_t): number {
-    return this.buffer [this.get_linear_index (index)]
+    let i = this.get_linear_index (index)
+    return this.linear_get (i)
   }
 
   set (index: index_t, x: number): array_t {
-    this.buffer [this.get_linear_index (index)] = x
+    let i = this.get_linear_index (index)
+    this.linear_set (i, x)
     return this
   }
 
@@ -152,8 +163,7 @@ class array_t {
     let shape = this.shape.slice ()
     let offset = this.offset
     for (let [k, v] of index.entries ()) {
-      if (v === null) {
-      } else {
+      if (v !== null) {
         let [start, end] = v
         shape [k] = end - start
         offset += start * this.strides [k]
@@ -262,8 +272,8 @@ class array_t {
   }
 
   static from_buffer (
-    shape: Array <number>,
     buffer: Float64Array,
+    shape: Array <number>,
   ): array_t {
     let strides = array_t.init_strides (shape)
     return new array_t (buffer, shape, strides)
