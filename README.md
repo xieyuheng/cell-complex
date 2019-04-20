@@ -19,7 +19,7 @@
 
 ## Docs
 
-- [API](http://api.cicada.surge.sh/)
+- [API](https://api.cicada-lang.now.sh)
 
 ### Contents
 

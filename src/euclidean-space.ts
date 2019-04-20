@@ -6,11 +6,6 @@ import * as int from "./integer"
 import { permutation_t } from "./permutation"
 
 /**
- * Due to the lack of dependent type,
- * dimension is checked at runtime.
- */
-
-/**
  * Find the first max index,
  * in left close, right open integer interval.
  */
@@ -70,6 +65,7 @@ class matrix_t {
 
   // TODO
   // matrix_t should not copy nd.array_t
+  // should use its own shape, strides and offset
   constructor (array: nd.array_t) {
     if (array.order !== 2) {
       throw new Error ("array order should be 2")
