@@ -9,7 +9,9 @@
 - Questions are welcome, Your voices will guide me to solve the right problems.
   - [issues](https://github.com/xieyuheng/cicada/issues)
 
-## Contents
+## Docs
+
+- [API](http://api.cicada.surge.sh/)
 
 - combinatorial-game -- a game engine for n-player perfect information games
   - example games:

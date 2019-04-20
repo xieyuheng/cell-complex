@@ -16,7 +16,10 @@
     "web-watch": "parcel web/index.html -d web/dist",
     "web-up": "surge web/dist cicada.surge.sh",
     "web": "npm run web-build; npm run web-up",
-    "up": "git commit -m 'up'; npm run build; npm version patch; git push; npm publish"
+    "api-local": "typedoc src --out docs/api --mode modules --ignoreCompilerErrors",
+    "api-up": "surge docs/api api.cicada.surge.sh",
+    "api": "npm run api-local; npm run api-up",
+    "up": "git commit -m 'up'; npm run build; npm run api; npm version patch; git push; npm publish"
   },
   "devDependencies": {
     "@babel/core": "^7.4.3",
@@ -24,6 +27,7 @@
     "ava": "^1.4.1",
     "parcel-bundler": "^1.12.3",
     "surge": "^0.20.3",
+    "typedoc": "^0.14.2",
     "typescript": "^3.4.3"
   },
   "dependencies": {

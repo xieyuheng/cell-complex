@@ -68,6 +68,8 @@ class matrix_t {
   readonly shape: [number, number]
   readonly size: number
 
+  // TODO
+  // matrix_t should not copy nd.array_t
   constructor (array: nd.array_t) {
     if (array.order !== 2) {
       throw new Error ("array order should be 2")

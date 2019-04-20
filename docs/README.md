@@ -1,3 +1,3 @@
-- I do not use typedoc,
+- use `--ignoreCompilerErrors` for typedoc,
   because typedoc does not use the latest version of typescript
   : https://github.com/TypeStrong/typedoc/issues/880
