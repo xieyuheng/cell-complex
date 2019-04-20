@@ -10,7 +10,6 @@ function log <T> (x: T) {
  */
 export
 function* range (lo: number, hi: number) {
-  assert (hi - lo >= 1)
   let i = lo
   while (i < hi) {
     yield i

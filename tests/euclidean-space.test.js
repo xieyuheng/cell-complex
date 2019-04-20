@@ -461,3 +461,20 @@ test ("eu.matrix_t.det", t => {
     m.det () * m.inv () .det () === 1
   )
 })
+
+test ("hermite_normal_form", t => {
+  let m = eu.matrix ([
+    [2, 3, 6, 2],
+    [5, 6, 1, 6],
+    [8, 3, 1, 1],
+  ])
+  let n = eu.matrix ([
+    [3, 3, 1, 4],
+    [0, 1, 0, 0],
+    [0, 0, 19, 16],
+    [0, 0, 0, 3],
+  ])
+  m.hermite_normal_form () .print ()
+  // n.hermite_normal_form () .print ()  
+  t.pass ()
+})

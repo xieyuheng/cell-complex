@@ -2,6 +2,7 @@ import assert from "assert"
 
 import * as ut from "./util"
 import * as nd from "./ndarray"
+import * as int from "./integer"
 import { permutation_t } from "./permutation"
 
 /**
@@ -19,7 +20,6 @@ function argmax (
   hi: number,
   f: (i: number) => number,
 ): number {
-  assert (hi - lo >= 1)
   let max = lo
   let cur = f (lo)
   for (let i = lo; i < hi; i++) {
@@ -38,7 +38,6 @@ function argfirst (
   hi: number,
   p: (i: number) => boolean,
 ): number | null {
-  assert (hi - lo >= 1)
   for (let i = lo; i < hi; i++) {
     if (p (i)) {
       return i
@@ -380,8 +379,7 @@ class matrix_t {
         if (j > i) {
           let arg = sub.argfirst (x => x === 1)
           if (arg !== null) {
-            let pivot = sub.get (arg)
-            let x = matrix.get (i, j)
+            let x = matrix.get (i, arg)
             if (! epsilon_p (x)) {
               row.update_add (sub.scale (-x))
             }
@@ -633,40 +631,81 @@ class matrix_t {
   }
 
   /**
-   * The Hermite normal form is an analogue
-   * of reduced echelon form for matrices over integers.
+   * The Hermite form is an analogue
+   * of echelon form for matrices over integers.
    */
-  // hermite_normal_form (): matrix_t {
-  //   let matrix = this.copy ()
-  //   let [m, n] = this.shape
-  //   let h = 0 // init pivot row
-  //   let k = 0 // init pivot column
-  //   while (h < m && k < n) {
-  //     // find the next pivot
-  //     let piv = argmax (h, m, (i) => Math.abs (matrix.get (i, k)))
-  //     if (epsilon_p (matrix.get (piv, k))) {
-  //       // no pivot in this column, pass to next column
-  //       k += 1
-  //     } else {
-  //       if (h !== piv) {
-  //         matrix.update_swap_rows (h, piv)
-  //       }
-  //       // for all rows below pivot
-  //       for (let i = h + 1; i < m; i++) {
-  //         let f = matrix.get (i, k) / matrix.get (h, k)
-  //         matrix.set (i, k, 0)
-  //         // for all remaining elements in current row
-  //         for (let j = k + 1; j < n; j++) {
-  //           let v = matrix.get (i, j) - matrix.get (h, j) * f
-  //           matrix.set (i, j, v)
-  //         }
-  //       }
-  //       h += 1
-  //       k += 1
-  //     }
-  //   }
-  //   return matrix
-  // }
+  hermite_form (): matrix_t {
+    let matrix = this.copy ()
+    let [m, n] = this.shape
+    let h = 0 // init pivot row
+    let k = 0 // init pivot column
+    while (h < m && k < n) {
+      // find the next pivot
+      let max = argmax (h, m, (i) => Math.abs (matrix.get (i, k)))
+      if (epsilon_p (matrix.get (max, k))) {
+        // no pivot in this column, pass to next column
+        k += 1
+      } else {
+        let array = new Array ()
+        for (let i of ut.range (0, m)) {
+          if (i < h) {
+            array.push (0)
+          } else {
+            array.push (matrix.get (i, k))
+          }
+        }
+        let [d, ext] = int.array_gcd_ext (array)
+
+        let ext_row_matrix = matrix_t.from_array ([ext])
+        let gcd_row_matrix = ext_row_matrix.mul (matrix)
+        let gcd_row = gcd_row_matrix.row (0)
+
+        matrix.print ()
+        console.log (d, ext, array)
+        gcd_row.print ()
+
+        if (ext.reduce ((acc, cur) => acc + cur) === 1) {
+          let piv = argfirst (
+            0, ext.length, (i) => ext [i] === 1
+          ) as number
+          matrix.update_swap_rows (h, piv)
+        } else {
+          matrix.set_row (h, gcd_row)
+        }
+
+        for (let i of ut.range (h + 1, m)) {
+          let f = matrix.get (i, k) / d
+          let new_row = matrix.row (i) .sub (gcd_row.scale (f))
+          matrix.set_row (i, new_row)
+        }
+        h += 1
+        k += 1
+      }
+    }
+    let i = Math.min (m, n) - 1
+    let d = int.array_gcd (
+      Array.from (matrix.row (i) .values ())
+    )
+    matrix.set_row (i, matrix.row (i) .scale (1/d))
+    return matrix
+  }
+
+  hermite_normal_form (): matrix_t {
+    let matrix = this.hermite_form ()
+    for (let [i, row] of matrix.row_entries ()) {
+      for (let [j, sub] of matrix.row_entries ()) {
+        if (j > i) {
+          let arg = sub.argfirst (x => ! epsilon_p (x))
+          if (arg !== null) {
+            let pivot = sub.get (arg)
+            let x = matrix.get (i, arg)
+            row.update_sub (sub.scale (int.pos_div (x, pivot)))
+          }
+        }
+      }
+    }
+    return matrix
+  }
 }
 
 export

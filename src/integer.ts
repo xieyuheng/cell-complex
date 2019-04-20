@@ -19,6 +19,27 @@ function mod (
 }
 
 export
+function pos_mod (
+  x: number,
+  y: number,
+): number {
+  let m = mod (x, y)
+  if (m < 0) {
+    return m + Math.abs (y)
+  } else {
+    return m
+  }
+}
+
+export
+function pos_div (
+  x: number,
+  y: number,
+): number {
+  return (x - pos_mod (x, y)) / y
+}
+
+export
 function divmod (
   x: number,
   y: number,
