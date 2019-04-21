@@ -87,7 +87,7 @@ class matrix_t {
     return x * y
   }
 
-  static init_strides (
+  static shape_to_strides (
     [x, y]: [number, number]
   ): [number, number] {
     return [y, 1]
@@ -97,7 +97,7 @@ class matrix_t {
     buffer: Float64Array,
     shape: [number, number],
   ): matrix_t {
-    let strides = matrix_t.init_strides (shape)
+    let strides = matrix_t.shape_to_strides (shape)
     return new matrix_t (buffer, shape, strides)
   }
 
@@ -244,7 +244,12 @@ class matrix_t {
   }
 
   row (i: number): vector_t {
-    return new vector_t (this.to_array () .proj ([i, null]))
+    let [m, n] = this.shape
+    let buffer = new Float64Array (n)
+    for (let j of ut.range (0, n)) {
+      buffer [j] = this.get (i, j)
+    }
+    return new vector_t (buffer)
   }
 
   set_row (i: number, src: vector_t): matrix_t {
@@ -287,8 +292,13 @@ class matrix_t {
     return this
   }
 
-  col (i: number): vector_t {
-    return new vector_t (this.to_array () .proj ([null, i]))
+  col (j: number): vector_t {
+    let [m, n] = this.shape
+    let buffer = new Float64Array (m)
+    for (let i of ut.range (0, m)) {
+      buffer [i] = this.get (i, j)
+    }
+    return new vector_t (buffer)
   }
 
   set_col (j: number, src: vector_t): matrix_t {
@@ -523,7 +533,7 @@ class matrix_t {
           if (arg !== null) {
             let x = matrix.get (i, arg)
             if (! epsilon_p (x)) {
-              row.update_add (sub.scale (-x))
+              matrix.set_row (i, row.update_add (sub.scale (-x)))
             }
           }
         }
@@ -797,11 +807,7 @@ class matrix_t {
     return this.every (epsilon_p)
   }
 
-  /**
-   * The Hermite form is an analogue
-   * of echelon form for matrices over integers.
-   */
-  row_hermite_form (): matrix_t {
+  row_hermite_normal_form (): matrix_t {
     let matrix = this.copy ()
     let [m, n] = this.shape
     let h = 0 // init pivot row
@@ -857,24 +863,8 @@ class matrix_t {
     return matrix
   }
 
-  row_hermite_normal_form (): matrix_t {
-    let matrix = this.row_hermite_form ()
-    for (let [i, row] of matrix.row_entries ()) {
-      for (let [j, sub] of matrix.row_entries ()) {
-        if (j > i) {
-          let arg = sub.argfirst (x => ! epsilon_p (x))
-          if (arg !== null) {
-            let pivot = sub.get (arg)
-            let x = matrix.get (i, arg)
-            row.update_sub (sub.scale (int.pos_div (x, pivot)))
-          }
-        }
-      }
-    }
-    return matrix
-  }
-
-  // col_smith_normal
+  // TODO
+  // smith_normal
 }
 
 export
@@ -889,34 +879,33 @@ function matrix (array: nd.Array2d): matrix_t {
  *
  * `A x` is a combination of the columns of `A`.
  */
-
 export
 class vector_t {
-  readonly array: nd.array_t
-  readonly shape: Array <number>
+  protected buffer: Float64Array
+  readonly shape: [number]
   readonly dim: number
   readonly size: number
 
-  constructor (array: nd.array_t) {
-    if (array.order !== 1) {
-      throw new Error ("array order should be 1")
-    }
-    this.array = array
-    this.shape = array.shape
-    this.dim = array.size
-    this.size = array.size
+  constructor (
+    buffer: Float64Array,
+  ) {
+    this.buffer = buffer
+    let size = buffer.length
+    this.size = size
+    this.dim = size
+    this.shape = [size]
   }
 
-  static from_array (array: nd.Array1d): vector_t {
-    return new vector_t (nd.array_t.from_1darray (array))
+  static from_array (array: Array1d): vector_t {
+    return new vector_t (new Float64Array (array))
   }
 
   get (i: number): number {
-    return this.array.get ([i])
+    return this.buffer [i]
   }
 
   set (i: number, v: number): vector_t {
-    this.array.set ([i], v)
+    this.buffer [i] = v
     return this
   }
 
@@ -939,31 +928,30 @@ class vector_t {
 
   print () {
     console.log ("vector:")
-    this.array.print ()
+    console.table (this.buffer)
   }
 
-  slice (i: [number, number]): vector_t {
-    return new vector_t (this.array.slice ([i]))
+  slice ([start, end]: [number, number]): vector_t {
+    return new vector_t (this.buffer.subarray (start, end))
   }
 
   copy (): vector_t {
-    return new vector_t (this.array.copy ())
+    return new vector_t (new Float64Array (this.buffer))
   }
 
   eq (that: vector_t): boolean {
-    return this.array.eq (that.array.copy ())
+    return _.isEqual (this.buffer, that.buffer)
   }
 
   *values () {
-    for (let x of this.array.values ()) {
+    for (let x of this.buffer.values ()) {
       yield x
     }
   }
 
   *entries () {
-    for (let [k, v] of this.array.entries ()) {
-      let [i] = k
-      yield [i, v]
+    for (let e of this.buffer.entries ()) {
+      yield e
     }
   }
 
@@ -977,7 +965,7 @@ class vector_t {
   }
 
   map (f: (n: number) => number): vector_t {
-    return new vector_t (this.array.map (f))
+    return new vector_t (this.buffer.map (f))
   }
 
   scale (a: number): vector_t {
@@ -1053,12 +1041,9 @@ class vector_t {
     return vector
   }
 
-  act (p: point_t): point_t {
-    return p.trans (this)
-  }
-
   static numbers (n: number, dim: number): vector_t {
-    return new vector_t (nd.array_t.numbers (n, [dim]))
+    let buffer = new Float64Array (dim) .fill (n)
+    return new vector_t (buffer)
   }
 
   static zeros (dim: number): vector_t {
@@ -1073,7 +1058,11 @@ class vector_t {
     init: number,
     f: (acc: number, cur: number) => number,
   ): number {
-    return this.array.reduce_with (init, f)
+    let acc = init
+    for (let v of this.values ()) {
+      acc = f (acc, v)
+    }
+    return acc
   }
 
   reduce (
@@ -1110,8 +1099,11 @@ class vector_t {
   }
 
   append (that: vector_t): vector_t {
-    let vector = new vector_t (this.array.append (0, that.array))
-    return vector
+    let buffer = Float64Array.from ([
+      ...this.buffer,
+      ...that.buffer,
+    ])
+    return new vector_t (buffer)
   }
 
   toArray (): Array <number> {
@@ -1121,97 +1113,9 @@ class vector_t {
     }
     return array
   }
-
-  as_point (): point_t {
-    return new point_t (this.array)
-  }
 }
 
 export
 function vector (array: nd.Array1d): vector_t {
   return vector_t.from_array (array)
-}
-
-export
-class point_t {
-  array: nd.array_t
-  readonly shape: Array <number>
-  readonly dim: number
-
-  constructor (array: nd.array_t) {
-    if (array.order !== 1) {
-      throw new Error ("array order should be 1")
-    }
-    this.array = array
-    this.shape = array.shape
-    this.dim = array.size
-  }
-
-  static from_array (array: nd.Array1d): point_t {
-    return new point_t (nd.array_t.from_1darray (array))
-  }
-
-  get (i: number): number {
-    return this.array.get ([i])
-  }
-
-  set (i: number, v: number) {
-    this.array.set ([i], v)
-  }
-
-  print () {
-    console.log ("point:")
-    this.array.print ()
-  }
-
-  slice (i: [number, number]): point_t {
-    return new point_t (this.array.slice ([i]))
-  }
-
-  copy (): point_t {
-    return new point_t (this.array.copy ())
-  }
-
-  eq (that: point_t): boolean {
-    return this.array.eq (that.array.copy ())
-  }
-
-  *values () {
-    for (let x of this.array.values ()) {
-      yield x
-    }
-  }
-
-  *entries () {
-    let i = 0
-    for (let x of this.array.values ()) {
-      yield [i, x]
-      i += 1
-    }
-  }
-
-  trans (v: vector_t): point_t {
-    let p = this.copy ()
-    for (let [i, y] of v.entries ()) {
-      p.set (i, p.get (i) + y)
-    }
-    return p
-  }
-
-  diff (that: point_t): vector_t {
-    return this.as_vector () .sub (that.as_vector ())
-  }
-
-  map (f: (n: number) => number): point_t {
-    return new point_t (this.array.map (f))
-  }
-
-  as_vector (): vector_t {
-    return new vector_t (this.array)
-  }
-}
-
-export
-function point (array: nd.Array1d): point_t {
-  return point_t.from_array (array)
 }

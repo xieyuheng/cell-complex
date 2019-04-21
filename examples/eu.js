@@ -110,5 +110,10 @@ let ut = require ("../lib/util")
     ]))
   )
 
-  m.mul (n) .print ()
+  // m.mul (n) .print ()
+
+  // m.print ()
+  // m.row (0) .print ()
+  // m.row (1) .print ()
+  // m.row (2) .print ()
 }

@@ -4,15 +4,15 @@ import * as nd from "../lib/ndarray"
 import { permutation_t } from "../lib/permutation"
 import * as ut from "../lib/util"
 
-test ("init_strides", t => {
+test ("shape_to_strides", t => {
   let shape = [2, 3, 4]
-  let strides = nd.array_t.init_strides (shape)
+  let strides = nd.array_t.shape_to_strides (shape)
   t.deepEqual (strides, [12, 4, 1])
 })
 
 test ("new nd.array_t", t => {
   let shape = [3, 4]
-  let strides = nd.array_t.init_strides (shape)
+  let strides = nd.array_t.shape_to_strides (shape)
   let buffer = new Float64Array (12)
   let x = new nd.array_t (buffer, shape, strides)
   t.true (x.get ([1, 2]) === 0)
@@ -22,7 +22,7 @@ test ("new nd.array_t", t => {
 
   t.throws (() => {
     let shape = [3, 4]
-    let strides = nd.array_t.init_strides (shape)
+    let strides = nd.array_t.shape_to_strides (shape)
     let buffer = new Float64Array (11)
     let x = new nd.array_t (buffer, shape, strides)
   })

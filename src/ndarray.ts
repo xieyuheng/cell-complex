@@ -45,7 +45,7 @@ class array_t {
     return shape.reduce ((acc, cur) => acc * cur)
   }
 
-  static init_strides (
+  static shape_to_strides (
     shape: Array <number>
   ): Array <number> {
     let strides: Array <number> = []
@@ -131,7 +131,7 @@ class array_t {
     let buffer = new Float64Array (this.size)
     let array = new array_t (
       buffer, this.shape,
-      array_t.init_strides (this.shape))
+      array_t.shape_to_strides (this.shape))
     for (let [i, x] of this.entries ()) {
       array.set (i, x)
     }
@@ -219,7 +219,7 @@ class array_t {
   static from_1darray (array: Array1d): array_t {
     let buffer = Float64Array.from (array)
     let shape = [array.length]
-    let strides = array_t.init_strides (shape)
+    let strides = array_t.shape_to_strides (shape)
     return new array_t (buffer, shape, strides)
   }
 
@@ -237,7 +237,7 @@ class array_t {
     }
     let buffer = Float64Array.from (array.flat ())
     let shape = [y_length, x_length]
-    let strides = array_t.init_strides (shape)
+    let strides = array_t.shape_to_strides (shape)
     return new array_t (buffer, shape, strides)
   }
 
@@ -267,7 +267,7 @@ class array_t {
     }
     let buffer = Float64Array.from (array.flat (2))
     let shape = [z_length, y_length, x_length]
-    let strides = array_t.init_strides (shape)
+    let strides = array_t.shape_to_strides (shape)
     return new array_t (buffer, shape, strides)
   }
 
@@ -275,7 +275,7 @@ class array_t {
     buffer: Float64Array,
     shape: Array <number>,
   ): array_t {
-    let strides = array_t.init_strides (shape)
+    let strides = array_t.shape_to_strides (shape)
     return new array_t (buffer, shape, strides)
   }
 
@@ -283,7 +283,7 @@ class array_t {
     let size = array_t.shape_to_size (shape)
     let buffer = new Float64Array (size)
     buffer.fill (n)
-    let strides = array_t.init_strides (shape)
+    let strides = array_t.shape_to_strides (shape)
     return new array_t (buffer, shape, strides)
   }
 
@@ -417,7 +417,7 @@ class array_t {
     let buffer = new Float64Array (this.size)
     let array = new array_t (
       buffer, this.shape,
-      array_t.init_strides (this.shape))
+      array_t.shape_to_strides (this.shape))
     for (let [i, x] of this.entries ()) {
       array.set (i, f (x))
     }
@@ -441,7 +441,7 @@ class array_t {
     let shape = this.shape.slice ()
     shape [k] = this.shape [k] + that.shape [k]
     let buffer = new Float64Array (array_t.shape_to_size (shape))
-    let strides = array_t.init_strides (shape)
+    let strides = array_t.shape_to_strides (shape)
     let array = new array_t (buffer, shape, strides)
     let offset = this.shape [k]
     for (let i of array.indexes ()) {
@@ -510,7 +510,7 @@ class array_t {
     })
     let size = array_t.shape_to_size (shape)
     let buffer = new Float64Array (size)
-    let strides = array_t.init_strides (shape)
+    let strides = array_t.shape_to_strides (shape)
     let array = new array_t (buffer, shape, strides)
     let split_index = (
       index: index_t
@@ -542,7 +542,7 @@ class array_t {
     let buffer = new Float64Array (size)
     let higher = new array_t (
       buffer, shape,
-      array_t.init_strides (shape))
+      array_t.shape_to_strides (shape))
     for (let i of ut.range (0, lower.length)) {
       let array = lower [i]
       assert (_.isEqual (array.shape, first_shape))

@@ -93,15 +93,6 @@ test ("eu.matrix_t transpose", t => {
   }
 })
 
-test ("eu.point_t trans", t => {
-  let p = eu.point ([1, 1, 1])
-  let v = eu.vector ([1, 2, 4])
-  let q = eu.point ([2, 3, 5])
-
-  t.true (p.trans (v) .eq (q))
-  t.true (p.trans (v) .eq (v.act (p)))
-})
-
 test ("eu.vector_t dot", t => {
   let v = eu.vector ([1, 2, 4])
   let w = eu.vector ([1, 2, 4])
@@ -167,8 +158,13 @@ test ("reduced_row_echelon_form", t => {
     [1, 1, -1, 1],
     [3, 11, 5, 35],
   ])
-  m.row_echelon_form ()
-  m.unit_row_echelon_form ()
+
+  // console.log (">>>")
+  // m.print ()
+  // m.row_echelon_form () .print ()
+  // m.unit_row_echelon_form () .print ()
+  // m.reduced_row_echelon_form () .print ()
+
   t.true (
     m.reduced_row_echelon_form () .eq (eu.matrix ([
       [1, 0, -2, -3],
@@ -294,6 +290,20 @@ test ("inv", t => {
     ])
     t.true (m.inv_maybe () === null)
   }
+
+
+  let m = eu.matrix ([
+    [2, -1, 0],
+    [-1, 2, -1],
+    [0, -1, 2],
+  ])
+
+  let [_n, n] = m.shape
+
+  // console.log (">>>")
+  // m .print ()
+  // m.inv () .print ()
+  // m.mul (m.inv ()) .print ()
 
   test_inv (t, eu.matrix ([
     [2, -1, 0],

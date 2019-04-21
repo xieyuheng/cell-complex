@@ -1,5 +1,4 @@
 * optimize
-- optimize vector_t by not using nd.array_t
 - optimize frame_t and series_t by not using data_t
 * panel-data
 - frame_t.act & series_t.trans
@@ -20,6 +19,7 @@
         special solution can be read off in reduced_row_echelon_form
 - hermite normal form -- for integer matrix
 - smith normal form -- to calculate homology group
+- `point_t`
 - use euclidean-space to re-imp hackenbush
 * cell-complex
 - homology group of cell-complex
