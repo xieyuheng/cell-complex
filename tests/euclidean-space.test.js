@@ -172,6 +172,14 @@ test ("reduced_row_echelon_form", t => {
       [0, 0, 0, 0],
     ]))
   )
+
+  t.true (
+    m.row_canonical_form () .eq (eu.matrix ([
+      [1, 0, -2, -3],
+      [0, 1, 1, 4],
+      [0, 0, 0, 0],
+    ]))
+  )
 })
 
 function test_lower_upper_permu (t, m) {

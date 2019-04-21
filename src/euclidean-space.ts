@@ -465,7 +465,7 @@ class matrix_t {
   }
 
   update_swap_rows (i: number, j: number): matrix_t {
-    let x = this.row (i) .copy ()
+    let x = this.row (i)
     let y = this.row (j)
     this.set_row (i, y)
     this.set_row (j, x)
@@ -805,6 +805,48 @@ class matrix_t {
 
   epsilon_p (): boolean {
     return this.every (epsilon_p)
+  }
+
+
+  /**
+   * The same as `reduced_row_echelon_form`.
+   */
+  row_canonical_form (): matrix_t {
+    let matrix = this.copy ()
+    let [m, n] = this.shape
+    let i = 0
+    let j = 0
+    while (i < m && j < n) {
+      let k = argmax (i, m, (k) => Math.abs (matrix.get (k, i)))
+      if (epsilon_p (matrix.get (k, j))) {
+        j += 1
+      } else {
+        if (k !== i) {
+          matrix.update_swap_rows (i, k)
+        }
+        let row = matrix.row (i) .scale (1 / matrix.get (i, j))
+        matrix.set_row (i, row)
+        for (let k of ut.range (i + 1, m)) {
+          let v = matrix.get (k, j)
+          if (v !== 0) {
+            let row = matrix.row (k)
+              .sub (matrix.row (i) .scale (v))
+            matrix.set_row (k, row)
+          }
+        }
+        for (let k of ut.range (0, i)) {
+          let v = matrix.get (k, j)
+          if (v !== 0) {
+            let row = matrix.row (k)
+              .sub (matrix.row (i) .scale (v))
+            matrix.set_row (k, row)
+          }
+        }
+      }
+      i += 1
+      j += 1
+    }
+    return matrix
   }
 
   row_hermite_normal_form (): matrix_t {
