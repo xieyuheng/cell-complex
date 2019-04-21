@@ -1,12 +1,15 @@
 * optimize
-- optimize matrix_t and vector_t by not using nd.array_t
+- optimize vector_t by not using nd.array_t
 - optimize frame_t and series_t by not using data_t
 * panel-data
 - frame_t.act & series_t.trans
 - chain_t.boundary
 - data_t slice
 * euclidean-space
-- matrix_t.solve -- what API should be ?
+- `.ker ()`
+- `.img ()`
+- matrix_t.solve
+  - the API should be null or solution + (null or ker)
   - we need image-space (col-space)
     and kernel-space (null-space)
   - we specify subspace by vectors that span the subspace
@@ -17,7 +20,6 @@
         special solution can be read off in reduced_row_echelon_form
 - hermite normal form -- for integer matrix
 - smith normal form -- to calculate homology group
-- test euclidean-space by affine-space
 - use euclidean-space to re-imp hackenbush
 * cell-complex
 - homology group of cell-complex

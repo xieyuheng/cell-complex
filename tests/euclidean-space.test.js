@@ -462,7 +462,7 @@ test ("eu.matrix_t.det", t => {
   )
 })
 
-test ("hermite_normal_form", t => {
+test ("row_hermite_normal_form", t => {
   let m = eu.matrix ([
     [2, 3, 6, 2],
     [5, 6, 1, 6],
@@ -474,7 +474,7 @@ test ("hermite_normal_form", t => {
     [0, 0, 19, 16],
     [0, 0, 0, 3],
   ])
-  m.hermite_normal_form () .print ()
-  // n.hermite_normal_form () .print ()
+  m.row_hermite_normal_form () .print ()
+  // n.row_hermite_normal_form () .print ()
   t.pass ()
 })
