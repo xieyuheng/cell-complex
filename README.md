@@ -56,9 +56,9 @@
 
 - permutation -- `permutation_t` and `symmetric_group_t`
 
-- [todo] cicada -- a dependently-typed programming language with game semantics
+- [todo] cicada -- a dependently-typed programming language
+  - game semantics
   - logic programming interface
-  - class with multi-inheritance
 
 ## License
 
