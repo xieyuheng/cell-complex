@@ -2,8 +2,7 @@
 - optimize matrix_t and vector_t by not using nd.array_t
 - optimize frame_t and series_t by not using data_t
 * mathematical structures
-- ring.ts
-- commutative-ring.ts
+
 - module.ts
 * panel-data
 - frame_t.act & series_t.trans
