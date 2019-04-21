@@ -1,6 +1,6 @@
 import assert from "assert"
 
-import { set_t, eqv } from "./set"
+import { set_t, eqv, not_eqv } from "./set"
 import { abelian_group_t } from "./group"
 
 export
@@ -18,17 +18,17 @@ class field_t <F> {
     this.elements = the.addition.elements
   }
 
-  add_id = this.addition.id
+  zero = this.addition.id    
   add = this.addition.add
   neg = this.addition.neg
   sub = this.addition.sub
 
-  mul_id = this.multiplication.id
+  one = this.multiplication.id  
   mul = this.multiplication.mul
   pure_inv = this.multiplication.inv
 
   inv (x: F): F {
-    assert (! this.elements.eq (x, this.add_id))
+    not_eqv (this.elements, x, this.zero)
     return this.pure_inv (x)
   }
 

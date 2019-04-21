@@ -1,6 +1,6 @@
 import assert from "assert"
 
-import { set_t, eqv } from "./set"
+import { set_t, eqv, not_eqv } from "./set"
 import { abelian_group_t, monoid_t } from "./group"
 
 export
@@ -18,12 +18,12 @@ class ring_t <R> {
     this.elements = the.addition.elements
   }
 
-  add_id = this.addition.id
+  zero = this.addition.id
   add = this.addition.add
   neg = this.addition.neg
   sub = this.addition.sub
 
-  mul_id = this.multiplication.id
+  one = this.multiplication.id
   mul = this.multiplication.mul
 
   left_distr (x: R, y: R, z: R) {
@@ -59,12 +59,10 @@ class commutative_ring_t <R> {
     this.multiplication = the.ring.multiplication
   }
 
-  add_id = this.addition.id
   add = this.addition.add
   neg = this.addition.neg
   sub = this.addition.sub
 
-  mul_id = this.multiplication.id
   mul = this.multiplication.mul
 
   commu (x: R, y: R) {
@@ -76,4 +74,39 @@ class commutative_ring_t <R> {
   }
 
   distr = this.ring.left_distr
+}
+
+export
+class integral_domain_t <R> {
+  readonly elements: set_t <R>
+  readonly ring: commutative_ring_t <R>
+  readonly addition: abelian_group_t <R>
+  readonly multiplication: monoid_t <R>
+
+  constructor (the: {
+    ring: commutative_ring_t <R>
+  }) {
+    this.ring = the.ring
+    this.elements = the.ring.elements
+    this.addition = the.ring.addition
+    this.multiplication = the.ring.multiplication
+  }
+
+  zero = this.addition.id
+  add = this.addition.add
+  neg = this.addition.neg
+  sub = this.addition.sub
+
+  one = this.multiplication.id
+  mul = this.multiplication.mul
+
+  nonzero_product (x: R, y: R) {
+    not_eqv (this.elements, x, this.zero)
+    not_eqv (this.elements, y, this.zero)
+    not_eqv (
+      this.elements,
+      this.mul (x, y),
+      this.zero,
+    )
+  }
 }

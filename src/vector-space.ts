@@ -26,7 +26,7 @@ class vector_space_t <F, V> {
   field_id_action (x: V) {
     eqv (
       this.vector.elements,
-      this.scale (this.field.mul_id, x),
+      this.scale (this.field.one, x),
       x,
     )
   }
