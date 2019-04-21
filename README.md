@@ -23,6 +23,15 @@
 
 ### Contents
 
+- mathematical structures:
+  - set -- `set_t`, `eqv_t`, `not_eqv_t`
+  - group -- `group_t`, `abelian_group_t`, `monoid_t`
+  - field -- `field_t`
+  - ring -- `ring_t`, `commutative_ring_t`, `integral_domain_t`
+  - module -- `module_t`
+  - vector-space -- `vector_space_t`
+  - affine-space -- `affine_space_t`
+
 - combinatorial-game -- a game engine for n-player perfect information games
   - example games:
     - tic-tac-toe
