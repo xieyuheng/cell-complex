@@ -18,18 +18,17 @@ class field_t <F> {
     this.elements = the.addition.elements
   }
 
-  zero = this.addition.id    
+  zero = this.addition.id
   add = this.addition.add
   neg = this.addition.neg
   sub = this.addition.sub
 
-  one = this.multiplication.id  
+  one = this.multiplication.id
   mul = this.multiplication.mul
-  pure_inv = this.multiplication.inv
 
   inv (x: F): F {
     not_eqv (this.elements, x, this.zero)
-    return this.pure_inv (x)
+    return this.multiplication.inv (x)
   }
 
   div (x: F, y: F): F {
