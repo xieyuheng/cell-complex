@@ -38,8 +38,6 @@
     - hackenbush -- [demo](http://hackenbush.combinatorial-game.surge.sh/)
 
 - cell-complex -- cell-complex based low dimensional algebraic topology library
-  - "Investigations into cell complex", by Xie Yuheng, 2019
-    -- [paper](https://xieyuheng.github.io/writing/investigations-into-cell-complex.html)
   - example cell complexes:
     - torus
 
