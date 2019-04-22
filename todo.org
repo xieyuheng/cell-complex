@@ -1,5 +1,4 @@
 * euclidean-space
-- row_hermite_decomposition
 - `.ker ()`
 - `.img ()`
 - matrix_t.solve_int

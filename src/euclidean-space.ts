@@ -147,6 +147,13 @@ function epsilon_p (x: number): boolean {
 }
 
 export
+function non_epsilon_p (x: number): boolean {
+  return Math.abs (x) >= config.epsilon
+}
+
+
+
+export
 class matrix_t {
   protected buffer: Float64Array
   readonly shape: [number, number]
@@ -800,6 +807,12 @@ class matrix_t {
     return this.rank () < n
   }
 
+  non_singular_p (): boolean {
+    return ! this.singular_p ()
+  }
+
+  invertible_p = this.non_singular_p
+
   inv_maybe (): matrix_t | null {
     assert (this.square_p ())
     let [_m, n] = this.shape
@@ -939,6 +952,64 @@ class matrix_t {
     }
   }
 
+  zeros_rows_at_bottom_p (r: number): boolean {
+    let [m, n] = this.shape
+    for (let i of ut.range (r, m)) {
+      let row = this.row (i)
+      if (! row.every (epsilon_p)) {
+        return false
+      }
+    }
+    return true
+  }
+
+  has_row_pivots_p (): boolean {
+    let r = this.rank ()
+    if (! this.zeros_rows_at_bottom_p (r)) { return false }
+    let j = 0
+    for (let i of ut.range (0, r)) {
+      let arg = this.row (i) .argfirst (non_epsilon_p)
+      if (arg === null) {
+        return false
+      } else if (arg >= j) {
+        j = arg
+      } else {
+        return false
+      }
+    }
+    return true
+  }
+
+  *row_pivot_indexes () {
+    assert (this.has_row_pivots_p ())
+    let r = this.rank ()
+    for (let i of ut.range (0, r)) {
+      let arg = this.row (i) .argfirst (non_epsilon_p)
+      if (arg === null) {
+        assert (false)
+      } else {
+        yield [i, arg] as [number, number]
+      }
+    }
+  }
+
+  /**
+   * (1) zeros rows at bottom
+   * (2) non zeros has leading pivots from left to right
+   * (3) in pivot columns all other elements are zeros
+   */
+  row_canonical_p (): boolean {
+    if (! this.has_row_pivots_p ()) { return false }
+    for (let [i, j] of this.row_pivot_indexes ()) {
+      for (let k of ut.range (0, i)) {
+        if (! epsilon_p (this.get (k, j))) {
+          return false
+        }
+      }
+    }
+    return true
+  }
+
   row_hermite_normal_form (): matrix_t {
     let matrix = this.copy ()
     let [m, n] = this.shape
@@ -994,6 +1065,53 @@ class matrix_t {
       }
     }
     return matrix
+  }
+
+  integer_p (): boolean {
+    return this.every (Number.isInteger)
+  }
+
+  /**
+   * (1) zeros rows at bottom
+   * (2) non zeros has leading pivots from left to right
+   * (3) in pivot columns all other elements are less than pivot
+   */
+  row_hermite_p () {
+    if (! this.integer_p ()) { return false }
+    if (! this.has_row_pivots_p ()) { return false }
+    for (let [i, j] of this.row_pivot_indexes ()) {
+      for (let k of ut.range (0, i)) {
+        if (! (this.get (k, j) < this.get (i, j))) {
+          return false
+        }
+      }
+    }
+    return true
+  }
+
+  unimodular_p () {
+    if (! this.integer_p ()) { return false }
+    if (! this.invertible_p ()) { return false }
+    if (! epsilon_p (Math.abs (this.det ()) - 1)) {
+      return false
+    }
+    return true
+  }
+
+  /**
+   * `row_trans.mul (this) .eq (hermite)`
+   */
+  row_hermite_decomposition (): {
+    row_trans: matrix_t,
+    hermite: matrix_t,
+  } {
+    let [m, n] = this.shape
+    let augmented = this.append_cols (matrix_t.identity (m))
+    let echelon = augmented.row_hermite_normal_form ()
+    return {
+      row_trans: echelon.slice (null, [n, n + m]),
+      hermite: echelon.slice (null, [0, n]),
+    }
   }
 
   // TODO

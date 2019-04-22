@@ -251,6 +251,7 @@ function test_row_canonical_decomposition (t, m) {
     row_trans, canonical
   } = m.row_canonical_decomposition ()
   t.true (canonical.upper_p ())
+  t.true (canonical.row_canonical_p ())
   t.true (
     row_trans.mul (m) .sub (canonical) .epsilon_p ()
   )
@@ -609,6 +610,50 @@ test ("row_hermite_normal_form", t => {
       ])
     )
   )
+
+  t.pass ()
+})
+
+function test_row_hermite_decomposition (t, m) {
+  let {
+    row_trans, hermite
+  } = m.row_hermite_decomposition ()
+  t.true (hermite.upper_p ())
+  t.true (hermite.row_hermite_p ())
+  t.true (row_trans.unimodular_p ())
+  t.true (
+    row_trans.mul (m) .sub (hermite) .epsilon_p ()
+  )
+}
+
+test ("row_hermite_decomposition", t => {
+  test_row_hermite_decomposition (t, eu.matrix ([
+    [2, 3, 6, 2],
+    [5, 6, 1, 6],
+    [8, 3, 1, 1],
+  ]))
+
+  test_row_hermite_decomposition (t, eu.matrix ([
+    [3, 3, 1, 4],
+    [0, 1, 0, 0],
+    [0, 0, 19, 16],
+    [0, 0, 0, 3],
+  ]))
+
+  test_row_hermite_decomposition (t, eu.matrix ([
+    [9, -36, 30],
+    [-36, 192, -180],
+    [30, -180, 180],
+  ]))
+
+  test_row_hermite_decomposition (t, eu.matrix ([
+    [0, 0, 5, 0, 1, 4],
+    [0, 0, 0, -1, -4, 99],
+    [0, 0, 0, 20, 19, 16],
+    [0, 0, 0, 0, 2, 1],
+    [0, 0, 0, 0, 0, 3],
+    [0, 0, 0, 0, 0, 0],
+  ]))
 
   t.pass ()
 })
