@@ -1,5 +1,4 @@
 * euclidean-space
-- row_canonical_decomposition
 - row_hermite_decomposition
 - `.ker ()`
 - `.img ()`

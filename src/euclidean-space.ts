@@ -719,7 +719,9 @@ class matrix_t {
   }
 
   /**
-   * P * A = L * U, (singular matrixes allowed)
+   * P * A = L * U,
+   * `permu.mul (this) .eq (lower.mul (upper))`,
+   * (singular matrixes allowed)
    */
   lower_upper_decomposition (): {
     lower: matrix_t,
@@ -919,6 +921,22 @@ class matrix_t {
       }
     }
     return matrix
+  }
+
+  /**
+   * `row_trans.mul (this) .eq (canonical)`
+   */
+  row_canonical_decomposition (): {
+    row_trans: matrix_t,
+    canonical: matrix_t,
+  } {
+    let [m, n] = this.shape
+    let augmented = this.append_cols (matrix_t.identity (m))
+    let echelon = augmented.row_canonical_form ()
+    return {
+      row_trans: echelon.slice (null, [n, n + m]),
+      canonical: echelon.slice (null, [0, n]),
+    }
   }
 
   row_hermite_normal_form (): matrix_t {

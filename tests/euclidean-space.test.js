@@ -188,7 +188,9 @@ function test_lower_upper_decomposition (t, m) {
   } = m.lower_upper_decomposition ()
   t.true (lower.lower_p ())
   t.true (upper.upper_p ())
-  t.true (permu.mul (m) .eq (lower.mul (upper)))
+  t.true (
+    permu.mul (m) .eq (lower.mul (upper))
+  )
 }
 
 test ("lower_upper_decomposition", t => {
@@ -238,6 +240,69 @@ test ("lower_upper_decomposition", t => {
   ]))
 
   test_lower_upper_decomposition (t, eu.matrix ([
+    [-2, 2, -3],
+    [-1, 1, 3],
+    [2, 0, -1],
+  ]))
+})
+
+function test_row_canonical_decomposition (t, m) {
+  let {
+    row_trans, canonical
+  } = m.row_canonical_decomposition ()
+  t.true (canonical.upper_p ())
+  t.true (
+    row_trans.mul (m) .sub (canonical) .epsilon_p ()
+  )
+}
+
+test ("row_canonical_decomposition", t => {
+  test_row_canonical_decomposition (t, eu.matrix ([
+    [1, 3, 1],
+    [1, 1, -1],
+    [3, 11, 5],
+  ]))
+
+  test_row_canonical_decomposition (t, eu.matrix ([
+    [1, 3, 1],
+    [1, 1, -1],
+    [3, 11, 5],
+  ]) .transpose ())
+
+  test_row_canonical_decomposition (t, eu.matrix ([
+    [1, 3, 1],
+    [1, 1, -1],
+    [3, 11, 5000],
+  ]))
+
+  test_row_canonical_decomposition (t, eu.matrix ([
+    [4, 3],
+    [6, 3],
+  ]))
+
+  test_row_canonical_decomposition (t, eu.matrix ([
+    [4, 3],
+    [6, 3],
+  ]) .inv ())
+
+  test_row_canonical_decomposition (t, eu.matrix ([
+    [-2, 3],
+    [-1, 3],
+  ]))
+
+  test_inv (t, eu.matrix ([
+    [2, 2, 100],
+    [0, 0, 3],
+    [2, 1, 1],
+  ]))
+
+  test_row_canonical_decomposition (t, eu.matrix ([
+    [2, 2, 100],
+    [0, 0, 3],
+    [2, 1, 1],
+  ]))
+
+  test_row_canonical_decomposition (t, eu.matrix ([
     [-2, 2, -3],
     [-1, 1, 3],
     [2, 0, -1],
