@@ -719,26 +719,14 @@ class matrix_t {
   }
 
   /**
-   * Returns [L, U, P], where P * A = L * U.
-   * (singular matrixes allowed)
+   * P * A = L * U, (singular matrixes allowed)
    */
-  lower_upper_permu_decomposition (
-  ): [matrix_t, matrix_t, matrix_t] {
-    let [
-      lower,
-      upper,
-      permu,
-      inver,
-    ] = this.lower_upper_permu_inver_decomposition ()
-    return [
-      lower,
-      upper,
-      permu,
-    ]
-  }
-
-  lower_upper_permu_inver_decomposition (
-  ): [matrix_t, matrix_t, matrix_t, number] {
+  lower_upper_decomposition (): {
+    lower: matrix_t,
+    upper: matrix_t,
+    permu: matrix_t,
+    inver: number,
+  } {
     let matrix = this.copy ()
     let [m, n] = this.shape
     assert (m === n)
@@ -775,12 +763,12 @@ class matrix_t {
         k += 1
       }
     }
-    return [
-      record.update_add (matrix_t.identity (n)),
-      matrix,
+    return {
+      lower: record.update_add (matrix_t.identity (n)),
+      upper: matrix,
       permu,
       inver,
-    ]
+    }
   }
 
   rank (): number {
@@ -845,9 +833,9 @@ class matrix_t {
 
   det (): number {
     assert (this.square_p ())
-    let [
+    let {
       lower, upper, permu, inver
-    ] = this.lower_upper_permu_inver_decomposition ()
+    } = this.lower_upper_decomposition ()
     let sign: number
     console.log ("inver:", inver)
     permu.print ()

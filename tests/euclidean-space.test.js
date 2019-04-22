@@ -182,45 +182,45 @@ test ("reduced_row_echelon_form", t => {
   )
 })
 
-function test_lower_upper_permu (t, m) {
-  let [
+function test_lower_upper_decomposition (t, m) {
+  let {
     lower, upper, permu
-  ] = m.lower_upper_permu_decomposition ()
+  } = m.lower_upper_decomposition ()
   t.true (lower.lower_p ())
   t.true (upper.upper_p ())
   t.true (permu.mul (m) .eq (lower.mul (upper)))
 }
 
-test ("lower_upper_permu_decomposition", t => {
-  test_lower_upper_permu (t, eu.matrix ([
+test ("lower_upper_decomposition", t => {
+  test_lower_upper_decomposition (t, eu.matrix ([
     [1, 3, 1],
     [1, 1, -1],
     [3, 11, 5],
   ]))
 
-  test_lower_upper_permu (t, eu.matrix ([
+  test_lower_upper_decomposition (t, eu.matrix ([
     [1, 3, 1],
     [1, 1, -1],
     [3, 11, 5],
   ]) .transpose ())
 
-  test_lower_upper_permu (t, eu.matrix ([
+  test_lower_upper_decomposition (t, eu.matrix ([
     [1, 3, 1],
     [1, 1, -1],
     [3, 11, 5000],
   ]))
 
-  test_lower_upper_permu (t, eu.matrix ([
+  test_lower_upper_decomposition (t, eu.matrix ([
     [4, 3],
     [6, 3],
   ]))
 
-  test_lower_upper_permu (t, eu.matrix ([
+  test_lower_upper_decomposition (t, eu.matrix ([
     [4, 3],
     [6, 3],
   ]) .inv ())
 
-  test_lower_upper_permu (t, eu.matrix ([
+  test_lower_upper_decomposition (t, eu.matrix ([
     [-2, 3],
     [-1, 3],
   ]))
@@ -231,13 +231,13 @@ test ("lower_upper_permu_decomposition", t => {
     [2, 1, 1],
   ]))
 
-  test_lower_upper_permu (t, eu.matrix ([
+  test_lower_upper_decomposition (t, eu.matrix ([
     [2, 2, 100],
     [0, 0, 3],
     [2, 1, 1],
   ]))
 
-  test_lower_upper_permu (t, eu.matrix ([
+  test_lower_upper_decomposition (t, eu.matrix ([
     [-2, 2, -3],
     [-1, 1, 3],
     [2, 0, -1],
