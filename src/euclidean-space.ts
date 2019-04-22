@@ -959,7 +959,6 @@ class matrix_t {
           }
           if (matrix.get (i, j) < 0) {
             let s = matrix.get (k, j)
-            console.log (">>> i, j, k, s:", i, j, k, s)
             let row = matrix.row (i) .scale (-1)
             matrix.set_row (i, row)
           }

@@ -17,7 +17,6 @@
       - where [m, n] = shape
       - special solution are calculated by free cols
         special solution can be read off in reduced_row_echelon_form
-- hermite normal form -- for integer matrix
 - smith normal form -- to calculate homology group
 - `point_t`
 - use euclidean-space to re-imp hackenbush
