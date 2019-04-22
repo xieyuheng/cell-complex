@@ -2,7 +2,6 @@ import * as _ from "lodash"
 import assert from "assert"
 
 import * as ut from "./util"
-import * as nd from "./ndarray"
 import * as int from "./integer"
 import { permutation_t } from "./permutation"
 
@@ -190,7 +189,7 @@ class matrix_t {
     return new matrix_t (buffer, shape, strides)
   }
 
-  static from_array (array: Array2d): matrix_t {
+  static fromArray2d (array: Array2d): matrix_t {
     let y_length = array.length
     let x_length = array[0].length
     for (let a of array) {
@@ -223,15 +222,6 @@ class matrix_t {
     f: (v: number) => number,
   ): matrix_t {
     return this.set (i, j, f (this.get (i, j)))
-  }
-
-  to_array (): nd.array_t {
-    return new nd.array_t (
-      this.buffer,
-      this.shape,
-      this.strides,
-      this.offset,
-    )
   }
 
   toArray2d (): Array2d {
@@ -1118,8 +1108,8 @@ class matrix_t {
 }
 
 export
-function matrix (array: nd.Array2d): matrix_t {
-  return matrix_t.from_array (array)
+function matrix (array: Array2d): matrix_t {
+  return matrix_t.fromArray2d (array)
 }
 
 /**
@@ -1156,7 +1146,7 @@ class vector_t {
     return new vector_t (buffer, [buffer.length], [1])
   }
 
-  static from_array (array: Array1d): vector_t {
+  static fromArray (array: Array1d): vector_t {
     return vector_t.from_buffer (new Float64Array (array))
   }
 
@@ -1412,6 +1402,6 @@ class vector_t {
 }
 
 export
-function vector (array: nd.Array1d): vector_t {
-  return vector_t.from_array (array)
+function vector (array: Array1d): vector_t {
+  return vector_t.fromArray (array)
 }
