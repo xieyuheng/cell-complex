@@ -15,7 +15,7 @@ test ("new eu.matrix_t", t => {
 
 test ("new eu.vector_t", t => {
   let x = eu.vector ([1, 2, 4])
-  t.deepEqual (x.dim, 3)
+  t.deepEqual (x.size, 3)
 })
 
 test ("eu.matrix_t row & col", t => {
