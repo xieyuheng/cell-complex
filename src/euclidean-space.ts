@@ -151,8 +151,6 @@ function non_epsilon_p (x: number): boolean {
   return Math.abs (x) >= config.epsilon
 }
 
-
-
 export
 class matrix_t {
   protected buffer: Float64Array
@@ -894,7 +892,6 @@ class matrix_t {
     return this.every (epsilon_p)
   }
 
-
   /**
    * The same as `reduced_row_echelon_form`.
    */
@@ -1115,6 +1112,12 @@ class matrix_t {
   }
 
   // TODO
+  // img ()
+
+  // TODO
+  // ker ()
+
+  // TODO
   // smith_normal
 }
 
@@ -1134,7 +1137,6 @@ export
 class vector_t {
   protected buffer: Float64Array
   readonly shape: [number]
-  readonly dim: number
   readonly size: number
 
   constructor (
@@ -1143,7 +1145,6 @@ class vector_t {
     this.buffer = buffer
     let size = buffer.length
     this.size = size
-    this.dim = size
     this.shape = [size]
   }
 
@@ -1161,7 +1162,7 @@ class vector_t {
   }
 
   *indexes () {
-    for (let i of ut.range (0, this.dim)) {
+    for (let i of ut.range (0, this.size)) {
       yield i
     }
   }
@@ -1207,7 +1208,7 @@ class vector_t {
   }
 
   dot (that: vector_t): number {
-    assert (this.dim === that.dim)
+    assert (this.size === that.size)
     let product = 0
     for (let [i, y] of that.entries ()) {
       product += this.get (i) * y
@@ -1229,13 +1230,13 @@ class vector_t {
 
   argmax (f: (x: number) => number): number {
     let lo = 0
-    let hi = this.dim
+    let hi = this.size
     return argmax (lo, hi, i => f (this.get (i)))
   }
 
   argfirst (p: (x: number) => boolean): number | null {
     let lo = 0
-    let hi = this.dim
+    let hi = this.size
     return argfirst (lo, hi, i => p (this.get (i)))
   }
 
@@ -1249,7 +1250,7 @@ class vector_t {
   }
 
   update_add (that: vector_t): vector_t {
-    assert (this.dim === that.dim)
+    assert (this.size === that.size)
     for (let [i, x] of that.entries ()) {
       this.update_at (i, v => v + x)
     }
@@ -1257,7 +1258,7 @@ class vector_t {
   }
 
   add (that: vector_t): vector_t {
-    assert (this.dim === that.dim)
+    assert (this.size === that.size)
     let vector = this.copy ()
     for (let [i, x] of that.entries ()) {
       vector.update_at (i, v => v + x)
@@ -1266,7 +1267,7 @@ class vector_t {
   }
 
   update_sub (that: vector_t): vector_t {
-    assert (this.dim === that.dim)
+    assert (this.size === that.size)
     for (let [i, x] of that.entries ()) {
       this.update_at (i, v => v - x)
     }
@@ -1274,7 +1275,7 @@ class vector_t {
   }
 
   sub (that: vector_t): vector_t {
-    assert (this.dim === that.dim)
+    assert (this.size === that.size)
     let vector = this.copy ()
     for (let [i, x] of that.entries ()) {
       vector.update_at (i, v => v - x)
@@ -1284,7 +1285,7 @@ class vector_t {
 
   trans (matrix: matrix_t): vector_t {
     let [m, n] = matrix.shape
-    assert (n === this.dim)
+    assert (n === this.size)
     let vector = vector_t.zeros (m)
     for (let i of ut.range (0, m)) {
       vector.set (i, this.dot (matrix.row (i)))
@@ -1292,17 +1293,17 @@ class vector_t {
     return vector
   }
 
-  static numbers (n: number, dim: number): vector_t {
-    let buffer = new Float64Array (dim) .fill (n)
+  static numbers (n: number, size: number): vector_t {
+    let buffer = new Float64Array (size) .fill (n)
     return new vector_t (buffer)
   }
 
-  static zeros (dim: number): vector_t {
-    return vector_t.numbers (0, dim)
+  static zeros (size: number): vector_t {
+    return vector_t.numbers (0, size)
   }
 
-  static ones (dim: number): vector_t {
-    return vector_t.numbers (0, dim)
+  static ones (size: number): vector_t {
+    return vector_t.numbers (1, size)
   }
 
   reduce_with (
@@ -1319,12 +1320,12 @@ class vector_t {
   reduce (
     f: (acc: number, cur: number) => number,
   ): number {
-    assert (this.dim > 0)
-    if (this.dim === 1) {
+    assert (this.size > 0)
+    if (this.size === 1) {
       return this.get (0)
     } else {
       let acc = this.get (0)
-      for (let i of ut.range (1, this.dim)) {
+      for (let i of ut.range (1, this.size)) {
         acc = f (acc, this.get (i))
       }
       return acc

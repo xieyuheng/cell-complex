@@ -1,24 +1,28 @@
+- vector_t should be a view of matrix_t -- to allow side effects
+- col version of methods -- by transpose
+* [note]
+- `row_trans`
+  - If we view matrix as linear equations,
+    `row_trans` does not change solution.
+  - If we view matrix as linear map,
+    `row_trans` does not change kernel of the map.
+  - but `row_trans` will change 
+- `col_trans`
+  - If we view matrix as col of bases,
+    `col_trans` does not change the spanned space of the bases.
+  - If we view matrix as linear map,
+    `col_trans` does not change the image of the map.
 * euclidean-space
-- `.ker ()`
-- `.img ()`
-- matrix_t.solve_int
+- matrix_t.ker ()
+- matrix_t.img ()
 - matrix_t.solve
-  - the API should be null or solution + (null or ker)
-  - we need image-space (col-space)
-    and kernel-space (null-space)
-  - we specify subspace by vectors that span the subspace
-    - col-space -- pivot col -- rank
-    - null-space -- special solution -- (n - rank)
-      - where [m, n] = shape
-      - special solution are calculated by free cols
-        special solution can be read off in reduced_row_echelon_form
+- matrix_t.solve_int
 - smith normal form -- to calculate homology group
 - `point_t`
 - use euclidean-space to re-imp hackenbush
 * optimize
 - optimize frame_t and series_t by not using data_t
   but to use matrix_t and vector_t
-- vector_t should be a view of matrix_t -- to do side effect
 * panel-data
 - frame_t.act & series_t.trans
 - chain_t.boundary
