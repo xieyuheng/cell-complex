@@ -156,7 +156,7 @@ class matrix_t {
   protected buffer: Float64Array
   readonly shape: [number, number]
   readonly strides: [number, number]
-  readonly offset: number = 0
+  readonly offset: number
   readonly size: number
 
   constructor (
@@ -334,11 +334,10 @@ class matrix_t {
 
   row (i: number): vector_t {
     let [m, n] = this.shape
-    let buffer = new Float64Array (n)
-    for (let j of ut.range (0, n)) {
-      buffer [j] = this.get (i, j)
-    }
-    return new vector_t (buffer)
+    let [s, t] = this.strides
+    let offset = this.offset + i * s
+    return new vector_t (
+      this.buffer, [n], [t], offset)
   }
 
   set_row (i: number, src: vector_t): matrix_t {
@@ -383,11 +382,10 @@ class matrix_t {
 
   col (j: number): vector_t {
     let [m, n] = this.shape
-    let buffer = new Float64Array (m)
-    for (let i of ut.range (0, m)) {
-      buffer [i] = this.get (i, j)
-    }
-    return new vector_t (buffer)
+    let [s, t] = this.strides
+    let offset = this.offset + j * t
+    return new vector_t (
+      this.buffer, [m], [s], offset)
   }
 
   set_col (j: number, src: vector_t): matrix_t {
@@ -554,7 +552,7 @@ class matrix_t {
   }
 
   update_swap_rows (i: number, j: number): matrix_t {
-    let x = this.row (i)
+    let x = this.row (i) .copy ()
     let y = this.row (j)
     this.set_row (i, y)
     this.set_row (j, x)
@@ -622,7 +620,7 @@ class matrix_t {
           if (arg !== null) {
             let x = matrix.get (i, arg)
             if (! epsilon_p (x)) {
-              matrix.set_row (i, row.update_add (sub.scale (-x)))
+              row.update_add (sub.scale (-x))
             }
           }
         }
@@ -850,8 +848,6 @@ class matrix_t {
       lower, upper, permu, inver
     } = this.lower_upper_decomposition ()
     let sign: number
-    console.log ("inver:", inver)
-    permu.print ()
     if (inver % 2 === 0) {
       sign = +1
     } else {
@@ -1137,33 +1133,50 @@ export
 class vector_t {
   protected buffer: Float64Array
   readonly shape: [number]
+  readonly strides: [number]
+  readonly offset: number
   readonly size: number
 
   constructor (
     buffer: Float64Array,
+    shape: [number],
+    strides: [number],
+    offset: number = 0,
   ) {
     this.buffer = buffer
-    let size = buffer.length
-    this.size = size
-    this.shape = [size]
+    this.shape = shape
+    this.strides = strides
+    this.offset = offset
+    this.size = shape [0]
+  }
+
+  static from_buffer (
+    buffer: Float64Array,
+  ): vector_t {
+    return new vector_t (buffer, [buffer.length], [1])
   }
 
   static from_array (array: Array1d): vector_t {
-    return new vector_t (new Float64Array (array))
+    return vector_t.from_buffer (new Float64Array (array))
+  }
+
+  get_linear_index (x: number): number {
+    return (this.offset +
+            x * this.strides [0])
   }
 
   get (i: number): number {
-    return this.buffer [i]
+    return this.buffer [this.get_linear_index (i)]
   }
 
   set (i: number, v: number): vector_t {
-    this.buffer [i] = v
+    this.buffer [this.get_linear_index (i)] = v
     return this
   }
 
   *indexes () {
     for (let i of ut.range (0, this.size)) {
-      yield i
+      yield i as number
     }
   }
 
@@ -1180,30 +1193,53 @@ class vector_t {
 
   print () {
     console.log ("vector:")
-    console.table (this.buffer)
-  }
-
-  slice ([start, end]: [number, number]): vector_t {
-    return new vector_t (this.buffer.subarray (start, end))
+    console.table (this.toArray ())
   }
 
   copy (): vector_t {
-    return new vector_t (new Float64Array (this.buffer))
+    let buffer = new Float64Array (this.size)
+    let vector = vector_t.from_buffer (buffer)
+    for (let [i, x] of this.entries ()) {
+      vector.set (i, x)
+    }
+    return vector
+  }
+
+  *zip (that: vector_t) {
+    let this_iter = this.values ()
+    let that_iter = that.values ()
+    while (true) {
+      let this_next = this_iter.next ()
+      let that_next = that_iter.next ()
+      if (this_next.done || that_next.done) {
+        return
+      } else {
+        yield [this_next.value, that_next.value]
+      }
+    }
   }
 
   eq (that: vector_t): boolean {
-    return _.isEqual (this.buffer, that.buffer)
+    if (this.size !== that.size) { return false }
+    for (let [x, y] of this.zip (that)) {
+      if (x !== y) {
+        return false
+      }
+    }
+    return true
   }
 
   *values () {
-    for (let x of this.buffer.values ()) {
-      yield x
+    for (let i of ut.range (0, this.size)) {
+      let v = this.buffer [this.get_linear_index (i)]
+      yield v as number
     }
   }
 
   *entries () {
-    for (let e of this.buffer.entries ()) {
-      yield e
+    for (let i of ut.range (0, this.size)) {
+      let v = this.buffer [this.get_linear_index (i)]
+      yield [i, v] as [number, number]
     }
   }
 
@@ -1216,8 +1252,12 @@ class vector_t {
     return product
   }
 
-  map (f: (n: number) => number): vector_t {
-    return new vector_t (this.buffer.map (f))
+  map (f: (v: number) => number): vector_t {
+    let vector = this.copy ()
+    for (let [i, v] of this.entries ()) {
+      vector.update_at (i, f)
+    }
+    return vector
   }
 
   scale (a: number): vector_t {
@@ -1295,7 +1335,7 @@ class vector_t {
 
   static numbers (n: number, size: number): vector_t {
     let buffer = new Float64Array (size) .fill (n)
-    return new vector_t (buffer)
+    return vector_t.from_buffer (buffer)
   }
 
   static zeros (size: number): vector_t {
@@ -1351,11 +1391,15 @@ class vector_t {
   }
 
   append (that: vector_t): vector_t {
-    let buffer = Float64Array.from ([
-      ...this.buffer,
-      ...that.buffer,
-    ])
-    return new vector_t (buffer)
+    let buffer = new Float64Array (this.size + that.size)
+    let vector = vector_t.from_buffer (buffer)
+    for (let [i, x] of this.entries ()) {
+      vector.set (i, x)
+    }
+    for (let [i, x] of that.entries ()) {
+      vector.set (i + this.size, x)
+    }
+    return vector
   }
 
   toArray (): Array <number> {

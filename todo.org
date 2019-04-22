@@ -1,4 +1,3 @@
-- vector_t should be a view of matrix_t -- to allow side effects
 - col version of methods -- by transpose
 * [note]
 - `row_trans`
@@ -6,12 +5,13 @@
     `row_trans` does not change solution.
   - If we view matrix as linear map,
     `row_trans` does not change kernel of the map.
-  - but `row_trans` will change 
+  - but `row_trans` can change the col_space
 - `col_trans`
   - If we view matrix as col of bases,
     `col_trans` does not change the spanned space of the bases.
   - If we view matrix as linear map,
     `col_trans` does not change the image of the map.
+  - `col_trans` can not change the col_space
 * euclidean-space
 - matrix_t.ker ()
 - matrix_t.img ()
