@@ -10,10 +10,6 @@ export type Array1d = Array <number>
 export type Array2d = Array <Array <number>>
 export type Array3d = Array <Array <Array <number>>>
 
-/**
- * Find the first max index,
- * in left close, right open integer interval.
- */
 export
 function argmax (
   lo: number,
@@ -33,6 +29,66 @@ function argmax (
 }
 
 export
+function argmax_guard (
+  lo: number,
+  hi: number,
+  f: (i: number) => number,
+  p: (i: number) => boolean,
+): number {
+  let max = lo
+  let cur = f (lo)
+  for (let i = lo; i < hi; i++) {
+    if (p (i)) {
+      let next = f (i)
+      if (cur < next) {
+        max = i
+        cur = next
+      }
+    }
+  }
+  return max
+}
+
+export
+function argmin (
+  lo: number,
+  hi: number,
+  f: (i: number) => number,
+): number {
+  let min = lo
+  let cur = f (lo)
+  for (let i = lo; i < hi; i++) {
+    let next = f (i)
+    if (cur > next) {
+      min = i
+      cur = next
+    }
+  }
+  return min
+}
+
+export
+function argmin_guard (
+  lo: number,
+  hi: number,
+  f: (i: number) => number,
+  p: (i: number) => boolean,
+): number {
+  let min = lo
+  let cur = f (lo)
+  for (let i = lo; i < hi; i++) {
+    if (p (i)) {
+      let next = f (i)
+      if (cur > next) {
+        min = i
+        cur = next
+      }
+    }
+  }
+  return min
+}
+
+export
 function argfirst (
   lo: number,
   hi: number,
@@ -44,6 +100,34 @@ function argfirst (
     }
   }
   return null
+}
+
+export
+function argall (
+  lo: number,
+  hi: number,
+  p: (i: number) => boolean,
+): boolean {
+  for (let i = lo; i < hi; i++) {
+    if (! p (i)) {
+      return false
+    }
+  }
+  return true
+}
+
+export
+function argsome (
+  lo: number,
+  hi: number,
+  p: (i: number) => boolean,
+): boolean {
+  for (let i = lo; i < hi; i++) {
+    if (p (i)) {
+      return true
+    }
+  }
+  return false
 }
 
 export
@@ -817,7 +901,7 @@ class matrix_t {
     let i = 0
     let j = 0
     while (i < m && j < n) {
-      let k = argmax (i, m, (k) => Math.abs (matrix.get (k, i)))
+      let k = argmax (i, m, (k) => Math.abs (matrix.get (k, j)))
       if (epsilon_p (matrix.get (k, j))) {
         j += 1
       } else {
@@ -842,9 +926,9 @@ class matrix_t {
             matrix.set_row (k, row)
           }
         }
+        i += 1
+        j += 1
       }
-      i += 1
-      j += 1
     }
     return matrix
   }
@@ -852,56 +936,58 @@ class matrix_t {
   row_hermite_normal_form (): matrix_t {
     let matrix = this.copy ()
     let [m, n] = this.shape
-    let h = 0 // init pivot row
-    let k = 0 // init pivot column
-    while (h < m && k < n) {
-      // find the next pivot
-      let max = argmax (h, m, (i) => Math.abs (matrix.get (i, k)))
-      if (epsilon_p (matrix.get (max, k))) {
-        // no pivot in this column, pass to next column
-        k += 1
+    let i = 0
+    let j = 0
+    while (i < m && j < n) {
+      if (argall (i, m, (k) => matrix.get (k, j) === 0)) {
+        j += 1
       } else {
-        let array = new Array ()
-        for (let i of ut.range (0, m)) {
-          if (i < h) {
-            array.push (0)
-          } else {
-            array.push (matrix.get (i, k))
+        while (! (
+          matrix.get (i, j) > 0 &&
+            argall (i + 1, m, (k) => matrix.get (k, j) === 0) &&
+            argall (0, i, (k) =>
+                    0 <= matrix.get (k, j) &&
+                    matrix.get (k, j) < matrix.get (i, j))
+        )) {
+          let k = argmin_guard (
+            i, m,
+            (k) => Math.abs (matrix.get (k, j)),
+            (k) => matrix.get (k, j) !== 0,
+          )
+          if (k !== i) {
+            matrix.update_swap_rows (i, k)
+          }
+          if (matrix.get (i, j) < 0) {
+            let s = matrix.get (k, j)
+            console.log (">>> i, j, k, s:", i, j, k, s)
+            let row = matrix.row (i) .scale (-1)
+            matrix.set_row (i, row)
+          }
+          for (let k of ut.range (i + 1, m)) {
+            let q = int.div (
+              matrix.get (k, j),
+              matrix.get (i, j))
+            if (q !== 0) {
+              let row = matrix.row (k)
+                .sub (matrix.row (i) .scale (q))
+              matrix.set_row (k, row)
+            }
+          }
+          for (let k of ut.range (0, i)) {
+            let q = int.div (
+              matrix.get (k, j),
+              matrix.get (i, j))
+            if (q !== 0) {
+              let row = matrix.row (k)
+                .sub (matrix.row (i) .scale (q))
+              matrix.set_row (k, row)
+            }
           }
         }
-        let [d, ext] = int.array_gcd_ext (array)
-
-        let ext_row_matrix = matrix_t.from_array ([ext])
-        let gcd_row_matrix = ext_row_matrix.mul (matrix)
-        let gcd_row = gcd_row_matrix.row (0)
-
-        matrix.print ()
-        console.log (d, ext, array)
-        gcd_row.print ()
-
-        if (ext.reduce ((acc, cur) => acc + cur) === 1) {
-          let piv = argfirst (
-            0, ext.length, (i) => ext [i] === 1
-          ) as number
-          matrix.update_swap_rows (h, piv)
-        } else {
-          matrix.set_row (h, gcd_row)
-        }
-
-        for (let i of ut.range (h + 1, m)) {
-          let f = matrix.get (i, k) / d
-          let new_row = matrix.row (i) .sub (gcd_row.scale (f))
-          matrix.set_row (i, new_row)
-        }
-        h += 1
-        k += 1
+        i += 1
+        j += 1
       }
     }
-    let i = Math.min (m, n) - 1
-    let d = int.array_gcd (
-      Array.from (matrix.row (i) .values ())
-    )
-    matrix.set_row (i, matrix.row (i) .scale (1/d))
     return matrix
   }
 

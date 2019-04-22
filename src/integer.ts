@@ -3,27 +3,11 @@ import assert from "assert"
 import * as ut from "./util"
 
 export
-function div (
-  x: number,
-  y: number,
-): number {
-  return Math.floor (x / y)
-}
-
-export
 function mod (
   x: number,
   y: number,
 ): number {
-  return x % y
-}
-
-export
-function pos_mod (
-  x: number,
-  y: number,
-): number {
-  let m = mod (x, y)
+  let m = x % y
   if (m < 0) {
     return m + Math.abs (y)
   } else {
@@ -32,19 +16,22 @@ function pos_mod (
 }
 
 export
-function pos_div (
-  x: number,
-  y: number,
-): number {
-  return (x - pos_mod (x, y)) / y
-}
-
-export
 function divmod (
   x: number,
   y: number,
 ): [number, number] {
-  return [div (x, y), mod (x, y)]
+  let m = mod (x, y)
+  let d = (x - m) / y
+  return [d, m]
+}
+
+export
+function div (
+  x: number,
+  y: number,
+): number {
+  let m = mod (x, y)
+  return (x - m) / y
 }
 
 export

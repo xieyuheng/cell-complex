@@ -6,6 +6,7 @@ import * as int from "../lib/integer"
 test ("divmod", t => {
   t.deepEqual (int.divmod (17, 4), [4, 1])
   t.deepEqual (int.divmod (19, 30), [0, 19])
+  t.deepEqual (int.divmod (-17, -10), [2, 3])
 })
 
 test ("gcd", t => {
