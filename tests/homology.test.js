@@ -7,7 +7,7 @@ import{ torus_t } from "../lib/torus"
 
 test ("new hl.chain_t", t => {
   let torus = new torus_t ()
-  let chain = hl.chain_t.zeros ("torus edge", 1, torus)
+  let chain = hl.chain_t.zeros (1, torus)
 
   t.pass ()
 })
@@ -22,14 +22,14 @@ test ("hl.chain_t.boundary_of_basis", t => {
   t.pass ()
 })
 
-test ("hl.chain_t.boundary_frame", t => {
+test ("hl.chain_t.boundary_matrix", t => {
   let torus = new torus_t ()
   let square = new cx.polygon_t (4)
 
-  hl.chain_t.boundary_frame (torus, 1)
-    // .print ()
-  hl.chain_t.boundary_frame (square, 1)
-    // .print ()
+  hl.chain_t.boundary_matrix (torus, 1)
+  // .print ()
+  hl.chain_t.boundary_matrix (square, 1)
+  // .print ()
 
   t.pass ()
 })
@@ -48,7 +48,7 @@ test ("hl.chain_t.add", t => {
     )
 
   chain0.add (chain1)
-    // .print ()
+  // .print ()
 
   t.pass ()
 })

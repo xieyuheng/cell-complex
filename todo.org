@@ -1,3 +1,4 @@
+- chain_t.boundary
 - col version of methods -- by transpose
 * [note] row v.s. col
 - `row_trans`
@@ -36,7 +37,6 @@
   but to use matrix_t and vector_t
 * panel-data
 - frame_t.act & series_t.trans
-- chain_t.boundary
 - data_t slice
 * cell-complex
 - homology group of cell-complex

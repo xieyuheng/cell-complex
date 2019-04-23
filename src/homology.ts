@@ -1,51 +1,39 @@
 import assert from "assert"
 
 import { dic_t } from "./dic"
-import * as nd from "./ndarray"
-import * as pd from "./panel-data"
+import * as eu from "./euclidean-space"
 import * as cx from "./cell-complex"
 
 export
 class chain_t {
   readonly dim: number
   readonly com: cx.cell_complex_t
-  series: pd.series_t
-  readonly name: string
+  readonly vector: eu.vector_t
 
   constructor (
     dim: number,
     com: cx.cell_complex_t,
-    series: pd.series_t,
+    vector: eu.vector_t,
   ) {
     this.dim = dim
     this.com = com
-    this.series = series
-    this.name = series.name
+    this.vector = vector
   }
 
   static zeros (
-    name: string,
     dim: number,
     com: cx.cell_complex_t,
   ): chain_t {
-    let axis = pd.axis (
-      Array.from (com.id_in_dim (dim))
-        .map (cx.id_to_str)
-    )
-    let array = nd.array_t.zeros ([com.size_of_dim (dim)])
     return new chain_t (
       dim, com,
-      pd.series (name, axis, array))
+      eu.vector_t.zeros (com.size_of_dim (dim)))
   }
 
   update_at (
     id: cx.id_t,
     f: (v: number) => number,
   ): chain_t {
-    let index = pd.index ([
-      [this.name, id.to_str ()]
-    ])
-    this.series.data.update_at (index, f)
+    this.vector.update_at (id.ser, f)
     return this
   }
 
@@ -53,8 +41,7 @@ class chain_t {
     com: cx.cell_complex_t,
     id: cx.id_t,
   ): chain_t {
-    let name = id.to_str ()
-    let boundary = chain_t.zeros (name, id.dim - 1, com)
+    let boundary = chain_t.zeros (id.dim - 1, com)
     if (id.dim === 0) {
       return boundary
     } else if (id.dim === 1) {
@@ -77,42 +64,34 @@ class chain_t {
     }
   }
 
-  static boundary_frame (
+  static boundary_matrix (
     com: cx.cell_complex_t,
     dim: number,
-  ): pd.frame_t {
-    let array = new Array ()
+  ): eu.matrix_t {
+    let m = com.size_of_dim (dim - 1)
+    let n = com.size_of_dim (dim)
+    let matrix = eu.matrix_t.zeros (m, n)
     for (let id of com.id_in_dim (dim)) {
       let boundary = chain_t.boundary_of_basis (com, id)
-      array.push (boundary.series)
+      matrix.set_col (id.ser, boundary.vector)
     }
-    let row_name = dim.toString ()
-    let col_name = (dim - 1) .toString ()
-    return pd.frame_t.from_cols (
-      row_name,
-      col_name,
-      array,
-    )
+    return matrix
   }
 
-  // TODO
   // boundary (): chain_t {
+    
   // }
 
-  /**
-   * maintain `this.name`
-   */
   add (that: chain_t): chain_t {
     assert (this.dim === that.dim)
-    let series = that.series.rename (this.name)
     return new chain_t (
       this.dim,
       this.com,
-      this.series.add (series))
+      this.vector.add (that.vector))
   }
 
   print () {
     console.log (`dim: ${this.dim}`)
-    this.series.print ()
+    this.vector.print ()
   }
 }
