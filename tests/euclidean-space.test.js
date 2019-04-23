@@ -657,3 +657,19 @@ test ("row_hermite_decomposition", t => {
 
   t.pass ()
 })
+
+test ("eu.matrix_t.image", t => {
+  t.true (
+    eu.matrix ([
+      [1, 2, 1],
+      [2, 4, 2],
+      [3, 0, 3],
+    ]) .image () .eq (
+      eu.matrix ([
+        [1, 0],
+        [2, 0],
+        [0, 1],
+      ])
+    )
+  )
+})

@@ -78,12 +78,29 @@ class chain_t {
     return matrix
   }
 
-  boundary (): chain_t {
-    let matrix = chain_t.boundary_matrix (this.com, this.dim)
+  down (matrix: eu.matrix_t): chain_t {
+    let [m, n] = matrix.shape
+    assert (m === this.com.size_of_dim (this.dim - 1))
+    assert (n === this.com.size_of_dim (this.dim))
     return new chain_t (
       this.com,
       this.dim - 1,
-      this.vector.trans (matrix)
+      this.vector.trans (matrix))
+  }
+
+  up (matrix: eu.matrix_t): chain_t {
+    let [m, n] = matrix.shape
+    assert (m === this.com.size_of_dim (this.dim + 1))
+    assert (n === this.com.size_of_dim (this.dim))
+    return new chain_t (
+      this.com,
+      this.dim + 1,
+      this.vector.trans (matrix))
+  }
+
+  boundary (): chain_t {
+    return this.down (
+      chain_t.boundary_matrix (this.com, this.dim)
     )
   }
 

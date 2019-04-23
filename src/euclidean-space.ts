@@ -1089,11 +1089,21 @@ class matrix_t {
     }
   }
 
-  // TODO
-  // img ()
+  /**
+   * Bases of column space, represented by columns of matrix.
+   */
+  image (): matrix_t {
+    return this.transpose ()
+      .reduced_row_echelon_form ()
+      .transpose ()
+      .slice (null, [0, this.rank ()])
+  }
 
   // TODO
-  // ker ()
+  /**
+   * Bases of null space, represented by columns of matrix.
+   */
+  // kernel ()
 
   // TODO
   // smith_normal

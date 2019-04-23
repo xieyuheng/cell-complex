@@ -24,8 +24,7 @@
   no programming languages allow us
   to formalize abstract mathematical structures intuitively
 * euclidean-space
-- matrix_t.ker ()
-- matrix_t.img ()
+- matrix_t.kernel ()
 - matrix_t.solve
 - matrix_t.solve_int
 - smith normal form -- to calculate homology group
@@ -40,7 +39,7 @@
 * cell-complex
 - homology group of cell-complex
   - we will need quotient of vector_space_t (abelian_group_t)
-    because homology group = quo (img (boun (n)), ker (boun (n+1)))
+    because homology group = quo (ker (boun (n+1)), img (boun (n)))
 - abelian_group_t
   - classification finite generated abelian_group_t
     is the same as normalization of integer matrix
