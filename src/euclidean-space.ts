@@ -589,7 +589,7 @@ class matrix_t {
     matrix.for_each_row_index ((row, i) => {
       let pivot = row.first (x => ! epsilon_p (x))
       if (pivot !== null) {
-        matrix.set_row (i, row.scale (1 / pivot))
+        row.update_scale (1 / pivot)
       }
     })
     return matrix
@@ -894,22 +894,18 @@ class matrix_t {
         if (k !== i) {
           matrix.update_swap_rows (i, k)
         }
-        let row = matrix.row (i) .scale (1 / matrix.get (i, j))
-        matrix.set_row (i, row)
+        matrix.row (i)
+          .update_scale (1 / matrix.get (i, j))
         for (let k of ut.range (i + 1, m)) {
           let v = matrix.get (k, j)
           if (v !== 0) {
-            let row = matrix.row (k)
-              .sub (matrix.row (i) .scale (v))
-            matrix.set_row (k, row)
+            matrix.row (k) .update_sub (matrix.row (i) .scale (v))
           }
         }
         for (let k of ut.range (0, i)) {
           let v = matrix.get (k, j)
           if (v !== 0) {
-            let row = matrix.row (k)
-              .sub (matrix.row (i) .scale (v))
-            matrix.set_row (k, row)
+            matrix.row (k) .update_sub (matrix.row (i) .scale (v))
           }
         }
         i += 1
@@ -1018,18 +1014,15 @@ class matrix_t {
             matrix.update_swap_rows (i, k)
           }
           if (matrix.get (i, j) < 0) {
-            let s = matrix.get (k, j)
-            let row = matrix.row (i) .scale (-1)
-            matrix.set_row (i, row)
+            matrix.row (i) .update_scale (-1)
           }
           for (let k of ut.range (i + 1, m)) {
             let q = int.div (
               matrix.get (k, j),
               matrix.get (i, j))
             if (q !== 0) {
-              let row = matrix.row (k)
-                .sub (matrix.row (i) .scale (q))
-              matrix.set_row (k, row)
+              matrix.row (k)
+                .update_sub (matrix.row (i) .scale (q))
             }
           }
           for (let k of ut.range (0, i)) {
@@ -1037,9 +1030,8 @@ class matrix_t {
               matrix.get (k, j),
               matrix.get (i, j))
             if (q !== 0) {
-              let row = matrix.row (k)
-                .sub (matrix.row (i) .scale (q))
-              matrix.set_row (k, row)
+              matrix.row (k)
+                .update_sub (matrix.row (i) .scale (q))
             }
           }
         }
