@@ -25,7 +25,7 @@
 
 ### Contents
 
-- mathematical structures:
+- mathematical structures (in typescript):
   - set -- `set_t`, `eqv_t`, `not_eqv_t`
   - group -- `group_t`, `abelian_group_t`, `monoid_t`
   - field -- `field_t`

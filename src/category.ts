@@ -2,6 +2,15 @@ import assert from "assert"
 
 import { set_t, eqv, not_eqv } from "./set"
 
+import { group_t } from "./group"
+
+// TODO
+// the following definition is not useful.
+// because we can not define the category_t of all group_t
+// because the objects should be
+//   the set of all `group_t`
+//   instead of the set of `group_t <G>` for some the `G`
+
 export
 class category_t <O, A> {
   readonly objects: set_t <O>

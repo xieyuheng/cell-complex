@@ -58,3 +58,21 @@ export
 function not_eqv <T> (set: set_t <T>, lhs: T, rhs: T) {
   new not_eqv_t (set, lhs, rhs) .check ()
 }
+
+// TODO
+// the following definition is not useful.
+// maybe we can not formalize sub object relation in ts.
+
+export
+class subset_t <T> {
+  readonly set: set_t <T>
+  readonly in: (x: T) => boolean
+
+  constructor (the: {
+    set: set_t <T>,
+    in: (x: T) => boolean,
+  }) {
+    this.set = the.set
+    this.in = the.in
+  }
+}
