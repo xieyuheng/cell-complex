@@ -152,7 +152,7 @@ function non_epsilon_p (x: number): boolean {
 
 export
 class matrix_t {
-  protected buffer: Float64Array
+  readonly buffer: Float64Array
   readonly shape: [number, number]
   readonly strides: [number, number]
   readonly offset: number
@@ -199,6 +199,18 @@ class matrix_t {
     }
     let buffer = Float64Array.from (array.flat ())
     return matrix_t.from_buffer (buffer, [y_length, x_length])
+  }
+
+  static from_row (row: vector_t): matrix_t {
+    let [s] = row.strides
+    return new matrix_t (
+      row.buffer, [1, row.size], [0, s], row.offset)
+  }
+
+  static from_col (col: vector_t): matrix_t {
+    let [t] = col.strides
+    return new matrix_t (
+      col.buffer, [col.size, 1], [t, 0], col.offset)
   }
 
   get_linear_index (x: number, y: number): number {
@@ -1108,8 +1120,25 @@ class matrix_t {
     let r = this.rank ()
     let { row_trans, canonical } = this.transpose ()
       .row_canonical_decomposition ()
-
     return row_trans.transpose () .slice (null, [r, n])
+  }
+
+  solve (b: vector_t): null | vector_t {
+    let [m, n] = this.shape
+    let r = this.rank ()
+    let augmented = this.append_cols (matrix_t.from_col (b))
+      .row_canonical_form ()
+    augmented.print ()
+    for (let i of ut.range (r, m)) {
+      if (non_epsilon_p (augmented.get (i, n))) {
+        return null
+      }
+    }
+    let vector = vector_t.zeros (n)
+    for (let [i, j] of augmented.row_pivot_indexes ()) {
+      vector.set (j, augmented.get (i, n))
+    }
+    return vector
   }
 
   // TODO
@@ -1130,7 +1159,7 @@ function matrix (array: Array2d): matrix_t {
  */
 export
 class vector_t {
-  protected buffer: Float64Array
+  readonly buffer: Float64Array
   readonly shape: [number]
   readonly strides: [number]
   readonly offset: number

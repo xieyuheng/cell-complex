@@ -4,7 +4,7 @@ import * as nd from "../lib/ndarray"
 import * as eu from "../lib/euclidean-space"
 import { log } from "../lib/util"
 
-test ("new eu.matrix_t", t => {
+test ("eu.matrix", t => {
   let x = eu.matrix ([
     [1, 2, 4],
     [4, 5, 6],
@@ -13,12 +13,12 @@ test ("new eu.matrix_t", t => {
   t.deepEqual (x.shape, [3, 3])
 })
 
-test ("new eu.vector_t", t => {
+test ("eu.vector", t => {
   let x = eu.vector ([1, 2, 4])
   t.deepEqual (x.size, 3)
 })
 
-test ("eu.matrix_t row & col", t => {
+test ("eu.matrix_t.row .col", t => {
   let x = eu.matrix ([
     [1, 2, 4],
     [4, 5, 6],
@@ -31,7 +31,7 @@ test ("eu.matrix_t row & col", t => {
   t.true (x.col (0) .eq (c))
 })
 
-test ("eu.matrix_t set_row & set_col", t => {
+test ("eu.matrix_t.set_row .set_col", t => {
   let x = eu.matrix ([
     [1, 2, 4],
     [4, 5, 6],
@@ -44,6 +44,50 @@ test ("eu.matrix_t set_row & set_col", t => {
   let c = eu.vector ([0, 0, 0])
   x.set_col (0, r)
   t.true (x.col (0) .eq (c))
+})
+
+test ("eu.matrix_t.from_row .from_col", t => {
+  let x = eu.matrix ([
+    [1, 2, 4],
+    [4, 5, 6],
+    [7, 8, 9],
+  ])
+  // eu.matrix_t.from_row
+  let r = eu.vector ([1, 2, 4])
+  t.true (x.row (0) .eq (r))
+
+  t.true (
+    eu.matrix_t.from_row (x.row (0)) .eq (
+      eu.matrix_t.from_row (r)
+    )
+  )
+
+  t.true (
+    eu.matrix_t.from_row (x.row (0)) .eq (
+      eu.matrix ([
+        [1, 2, 4],
+      ])
+    )
+  )
+
+  let c = eu.vector ([1, 4, 7])
+  t.true (x.col (0) .eq (c))
+
+  t.true (
+    eu.matrix_t.from_col (x.col (0)) .eq (
+      eu.matrix_t.from_col (c)
+    )
+  )
+
+  t.true (
+    eu.matrix_t.from_col (x.col (0)) .eq (
+      eu.matrix ([
+        [1],
+        [4],
+        [7],
+      ])
+    )
+  )
 })
 
 test ("eu.matrix_t mul", t => {
@@ -392,7 +436,7 @@ test ("inv", t => {
   ]))
 })
 
-test ("append_cols & append_cols", t => {
+test ("eu.matrix_t.append_cols .append_cols", t => {
   let m = eu.matrix ([
     [1, 3, 1],
     [1, 1, -1],
@@ -476,7 +520,7 @@ test ("eu.matrix_t.symmetric_p", t => {
   t.true (m.mul (m.transpose ()) .symmetric_p ())
 })
 
-test ("eu.matrix_t upper & lower", t => {
+test ("eu.matrix_t.upper .lower", t => {
   let m = eu.matrix ([
     [1, 3, 1, 9],
     [1, 1, -1, 1],
@@ -692,6 +736,61 @@ test ("eu.matrix_t.kernel", t => {
     [2, 4, 2],
     [3, 0, 3],
   ]))
+
+  t.pass ()
+})
+
+function test_solve (t, m, b) {
+  t.true (
+    m.mul (m.solve (b)) .sub (b) .epsilon_p ()
+  )
+}
+
+function test_solve_non (t, m, b) {
+  t.true (
+    m.solve (b) === null
+  )
+}
+
+test ("eu.matrix_t.solve", t => {
+  test_solve (
+    t,
+    eu.matrix ([
+      [1, 2, 1],
+      [2, 4, 2],
+      [3, 0, 3],
+    ]),
+    eu.vector ([1, 2, 3]),
+  )
+
+  test_solve (
+    t,
+    eu.matrix ([
+      [1, 2, 1],
+      [2, 4, 2],
+      [3, 0, 3],
+    ]),
+    eu.vector ([1, 2, 4]),
+  )
+
+  test_solve_non (
+    t,
+    eu.matrix ([
+      [1, 2, 1],
+      [2, 4, 2],
+      [3, 0, 3],
+    ]),
+    eu.vector ([1, 3, 3]),
+  )
+
+  test_solve (
+    t,
+    eu.matrix ([
+      [1, 2, 1],
+      [2, 13, 2],
+      [3, -1, 0],
+    ]),
+    eu.vector ([1, 2, 3]))
 
   t.pass ()
 })
