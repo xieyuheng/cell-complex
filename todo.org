@@ -12,6 +12,7 @@
   - If we view matrix as linear map,
     `col_trans` does not change the image of the map.
   - `col_trans` can not change the col_space
+* mathematical structures
 * euclidean-space
 - matrix_t.ker ()
 - matrix_t.img ()
@@ -67,8 +68,6 @@
 - 2-dim manifold classification -- zip of john conway
 - [refine API] auto compatible in morphism_builder_t
 - bounfold_check
-- category_t
-- groupoid_t
 - groupoid of 2-dim cell-complex
   - `as_groupoid ()`
   - what is special about manifold's groupoid
