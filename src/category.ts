@@ -177,6 +177,9 @@ class groupoid_t <O, A> {
   id = this.cat.id
   compose = this.cat.compose
 
+  // `dom` and `cod` of composition are only checked at runtime
+  //   if the `eqv` can report report instead of throw error
+  //   maybe we can use it as semantics of type system
   arrow_iso (f: A) {
     eqv (
       this.arrows,

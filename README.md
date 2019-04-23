@@ -33,6 +33,9 @@
   - module -- `module_t`
   - vector-space -- `vector_space_t`
   - affine-space -- `affine_space_t`
+  - category
+    - `category_t`, `functor_t`, `natural_transformation_t`
+    - `groupoid_t`
 
 - combinatorial-game -- a game engine for n-player perfect information games
   - example games:
