@@ -2,10 +2,11 @@ import test from "ava"
 
 import * as ut from "../lib/util"
 import * as cx from "../lib/cell-complex"
+import * as eu from "../lib/euclidean-space"
 import * as hl from "../lib/homology"
 import{ torus_t } from "../lib/torus"
 
-test ("new hl.chain_t", t => {
+test ("hl.chain_t.zeros", t => {
   let torus = new torus_t ()
   let chain = hl.chain_t.zeros (1, torus)
 
@@ -16,8 +17,8 @@ test ("hl.chain_t.boundary_of_basis", t => {
   let torus = new torus_t ()
   let square = new cx.polygon_t (4)
 
-  hl.chain_t.boundary_of_basis (torus, torus.id ("toro")) .series
-  hl.chain_t.boundary_of_basis (square, new cx.id_t (1, 0)) .series
+  hl.chain_t.boundary_of_basis (torus, torus.id ("toro"))
+  hl.chain_t.boundary_of_basis (square, new cx.id_t (1, 0))
 
   t.pass ()
 })
@@ -48,7 +49,16 @@ test ("hl.chain_t.add", t => {
     )
 
   chain0.add (chain1)
-  // .print ()
+
+  t.pass ()
+})
+
+test ("hl.chain_t.boundary", t => {
+  let torus = new torus_t ()
+  let square = new cx.polygon_t (4)
+
+  let chain = new hl.chain_t (square, 1, eu.vector ([0, 1, 0, 0]))
+  chain.boundary ()
 
   t.pass ()
 })

@@ -6,13 +6,13 @@ import * as cx from "./cell-complex"
 
 export
 class chain_t {
-  readonly dim: number
   readonly com: cx.cell_complex_t
+  readonly dim: number
   readonly vector: eu.vector_t
 
   constructor (
-    dim: number,
     com: cx.cell_complex_t,
+    dim: number,
     vector: eu.vector_t,
   ) {
     this.dim = dim
@@ -25,7 +25,7 @@ class chain_t {
     com: cx.cell_complex_t,
   ): chain_t {
     return new chain_t (
-      dim, com,
+      com, dim,
       eu.vector_t.zeros (com.size_of_dim (dim)))
   }
 
@@ -78,15 +78,20 @@ class chain_t {
     return matrix
   }
 
-  // boundary (): chain_t {
-    
-  // }
+  boundary (): chain_t {
+    let matrix = chain_t.boundary_matrix (this.com, this.dim)
+    return new chain_t (
+      this.com,
+      this.dim - 1,
+      this.vector.trans (matrix)
+    )
+  }
 
   add (that: chain_t): chain_t {
     assert (this.dim === that.dim)
     return new chain_t (
-      this.dim,
       this.com,
+      this.dim,
       this.vector.add (that.vector))
   }
 

@@ -1,4 +1,3 @@
-- chain_t.boundary
 - col version of methods -- by transpose
 * [note] row v.s. col
 - `row_trans`
