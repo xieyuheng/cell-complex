@@ -620,7 +620,7 @@ function test_row_hermite_decomposition (t, m) {
   } = m.row_hermite_decomposition ()
   t.true (hermite.upper_p ())
   t.true (hermite.row_hermite_p ())
-  t.true (row_trans.unimodular_p ())
+  t.true (row_trans.det_one_p ())
   t.true (
     row_trans.mul (m) .sub (hermite) .epsilon_p ()
   )

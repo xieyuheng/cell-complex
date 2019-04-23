@@ -1064,7 +1064,7 @@ class matrix_t {
     return true
   }
 
-  unimodular_p () {
+  det_one_p () {
     if (! this.integer_p ()) { return false }
     if (! this.invertible_p ()) { return false }
     if (! epsilon_p (Math.abs (this.det ()) - 1)) {
