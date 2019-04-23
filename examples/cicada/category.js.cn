@@ -1,0 +1,176 @@
+import { eqv_t } from "./eqv.cn"
+
+import { group_t } from "./group"
+
+// TODO
+// the following definition is not useful.
+// because we can not define the category_t of all group_t
+// because the objects should be
+//   the set of all `group_t`
+//   instead of the set of `group_t <G>` for some the `G`
+
+class category_t {
+  object_t: type
+  arrow_t: type
+
+  dom (f: this.arrow_t): this.object_t
+  cod (f: this.arrow_t): this.object_t
+
+  id (x: this.object_t): this.arrow_t
+
+  compose (
+    f: this.arrow_t,
+    g: this.arrow_t,
+    {
+      this.cod (f) = this.dom (g)
+    },
+  ): {
+    result: this.arrow_t
+    this.dom (result) = this.dom (f)
+    this.cod (result) = this.cod (g)
+    return result
+  }
+
+  // TODO
+
+  id_left (
+    x: this.object_t,
+    y: this.object_t,
+    f: this.arrow_t (dom = x, cod = y),
+  ): eqv_t (
+    this.arrow_t (dom = x, cod = y),
+    this.compose (x, x, y) (this.id (f.dom), f),
+    f,
+  )
+
+  id_right (
+    x: this.object_t,
+    y: this.object_t,
+    f: this.arrow_t (dom = x, cod = y),
+  ): eqv_t (
+    this.arrow_t (dom = x, cod = y),
+    this.compose (x, y, y) (f, this.id (f.cod)),
+    f,
+  )
+
+  assoc (
+    x: this.object_t,
+    y: this.object_t,
+    z: this.object_t,
+    w: this.object_t,
+    f: this.arrow_t (dom = x, cod = y),
+    g: this.arrow_t (dom = y, cod = z),
+    h: this.arrow_t (dom = z, cod = w),
+  ) eqv_t (
+    this.arrow_t (dom = x, cod = w),
+    this.compose (x, z, w) (f, this.compose (y, z, w) (g, h)),
+    this.compose (x, y, w) (this.compose (x, y, z) (f, g), h),
+  )
+}
+
+// TODO
+
+class functor_t <LO, LA, RO, RA> (
+  lcat: category_t <LO, LA>
+  rcat: category_t <RO, RA>
+  map: (x: LO) => RO
+  fmap: (f: LA) => RA
+
+  {
+    this.lcat = the.lcat
+    this.rcat = the.rcat
+    this.map = the.map
+    this.fmap = (f) => {
+      let g = the.fmap (f)
+      eqv (
+        the.rcat.objects,
+        the.map (the.lcat.dom (f)),
+        the.rcat.dom (g),
+      )
+      eqv (
+        the.rcat.objects,
+        the.map (the.lcat.cod (f)),
+        the.rcat.cod (g),
+      )
+      return g
+    }
+  }
+
+  fmap_respect_compose (f: LA, g: LA) {
+    eqv (
+      this.rcat.arrow_t,
+      this.fmap (this.lcat.compose (f, g)),
+      this.rcat.compose (this.fmap (f), this.fmap (g)),
+    )
+  }
+
+  fmap_respect_id (x: LO) {
+    eqv (
+      this.rcat.arrow_t,
+      this.fmap (this.lcat.id (x)),
+      this.rcat.id (this.map (x)),
+    )
+  }
+)
+
+class natural_transformation_t <LO, LA, RO, RA> (
+  lcat: category_t <LO, LA>
+  rcat: category_t <RO, RA>
+  lfun: functor_t <LO, LA, RO, RA>
+  rfun: functor_t <LO, LA, RO, RA>
+  component: (x: LO) => RA
+
+  {
+    // note the use of === here
+    assert (the.lfun.lcat === the.rfun.lcat)
+    assert (the.lfun.rcat === the.rfun.rcat)
+    this.lcat = the.lfun.lcat
+    this.rcat = the.lfun.rcat
+    this.lfun = the.lfun
+    this.rfun = the.rfun
+    this.component = (x) => {
+      let c = the.component (x)
+      eqv (
+        this.rcat.objects,
+        this.rcat.dom (c),
+        this.lfun.map (x),
+      )
+      eqv (
+        this.rcat.objects,
+        this.rcat.cod (c),
+        this.rfun.map (x),
+      )
+      return c
+    }
+  }
+
+  natural (f: LA) {
+    let a = this.lcat.dom (f)
+    let b = this.lcat.cod (f)
+    eqv (
+      this.rcat.arrow_t,
+      this.rcat.compose (
+        this.component (a),
+        this.rfun.fmap (f),
+      ),
+      this.rcat.compose (
+        this.lfun.fmap (f),
+        this.component (b),
+      ),
+    )
+  }
+)
+
+class groupoid_t {
+  cat: category_t
+
+  object_t = this.cat.object_t
+  arrow_t = this.cat.arrow_t
+
+  id = this.cat.id
+  compose = this.cat.compose
+
+  inv (f: this.arrow_t): this.arrow_t
+
+  arrow_iso (f: this.arrow_t): cat.isomorphic_t (iso = f)
+}

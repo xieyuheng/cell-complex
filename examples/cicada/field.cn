@@ -1,17 +1,38 @@
+import { eqv_t } from "./eqv.cn"
+import { abelian_group_t } from "./group.cn"
+
 class field_t (
-  t : type
+  element_t: type
 
-  add_unit : t
-  add (t t) : t
-  neg (t) : t
+  addition: abelian_group_t (
+    element_t = this.element_t
+  )
 
-  mul_unit : t
-  mul (t t) : t
-  inv (t) : t
-) {
-  sub (t t) : t
-  sub (x y) = add (x neg (y))
+  // TODO
+  // only non zero element_t forms an `abelian_group_t`
+  //   how to describe this ?
+  // maybe define `ring_t` first
+  multiplication: abelian_group_t (
+    element_t = this.element_t
+  )
 
-  div (t t) : t
-  div (x y) = mul (x inv (y))
-}
+  zero = this.addition.id
+  add = this.addition.add
+  neg = this.addition.neg
+  sub = this.addition.sub
+
+  one = this.multiplication.id
+  mul = this.multiplication.mul
+  inv = this.multiplication.inv
+  div = this.multiplication.div
+
+  distr (
+    x: this.element_t,
+    y: this.element_t,
+    z: this.element_t,
+  ): eqv_t (
+    this.element_t,
+    this.mul (x, this.add (y, z)),
+    this.add (this.mul (x, y), this.mul (x, z)),
+  )
+)

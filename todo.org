@@ -118,10 +118,19 @@
 - surreal -- the theory of surreal number
   - theory about two-player normal-ending game
 * cicada
-- semantics of cicada in js
-  { type: { field: <type> }, field: <value> }
-- game semantics
-- use babel api to handle the syntax
+- reuse js syntax
+  the syntax of js is enough
+  we only need to do the following extensions
+  - `<f> (<field> = <object>)`
+    function call with named field
+  - `f (a) (b)` == `f (a, b)`
+    auto currying
+  - no `,` in function call
+    maybe we need to limit the use of infix notation
+  - use babel api to handle the syntax
+- compile to js with runtime type information
+  - game semantics
+  - { type: { field: <type> }, field: <value> }
 * dance
 - 3 circle dance
 - 4 circle dance
