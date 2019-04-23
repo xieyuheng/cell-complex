@@ -12,6 +12,8 @@ class category_t (
 
   arrow_t : (o o) -> type
 
+  // arrow_t : interface { dom: this.object_t, cod: this.object_t }
+
   arrow_eqv_t : (
     x : o
     y : o

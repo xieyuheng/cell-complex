@@ -1,5 +1,5 @@
 - col version of methods -- by transpose
-* [note]
+* [note] row v.s. col
 - `row_trans`
   - If we view matrix as linear equations,
     `row_trans` does not change solution.
@@ -12,7 +12,17 @@
   - If we view matrix as linear map,
     `col_trans` does not change the image of the map.
   - `col_trans` can not change the col_space
-* mathematical structures
+* [note] mathematical structures is about reuse
+- in our euclidean-space.ts
+  `row_canonical_form` and `row_hermite_normal_form`
+  are almost the same
+- to factor out this sameness, and to reuse code
+  we need to use matrix over principal ideal integral ring
+- this is the main use of abstract mathematical structures
+  it solve the main problem of compute science
+  but the shame is that
+  no programming languages allow us
+  to formalize abstract mathematical structures intuitively
 * euclidean-space
 - matrix_t.ker ()
 - matrix_t.img ()
