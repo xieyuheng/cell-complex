@@ -673,3 +673,25 @@ test ("eu.matrix_t.image", t => {
     )
   )
 })
+
+function test_kernel (t, m) {
+  t.true (
+    m .mul (m .kernel ()) .epsilon_p ()
+  )
+}
+
+test ("eu.matrix_t.kernel", t => {
+  test_kernel (t, eu.matrix ([
+    [1, 3, 1, 9],
+    [1, 1, -1, 1],
+    [3, 11, 5, 35],
+  ]))
+
+  test_kernel (t, eu.matrix ([
+    [1, 2, 1],
+    [2, 4, 2],
+    [3, 0, 3],
+  ]))
+
+  t.pass ()
+})

@@ -24,7 +24,6 @@
   no programming languages allow us
   to formalize abstract mathematical structures intuitively
 * euclidean-space
-- matrix_t.kernel ()
 - matrix_t.solve
 - matrix_t.solve_int
 - smith normal form -- to calculate homology group

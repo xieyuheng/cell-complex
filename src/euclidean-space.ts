@@ -533,7 +533,8 @@ class matrix_t {
   transpose (): matrix_t {
     let [m, n] = this.shape
     let [s, t] = this.strides
-    return new matrix_t (this.buffer, [n, m], [t, s])
+    return new matrix_t (
+      this.buffer, [n, m], [t, s], this.offset)
   }
 
   square_p (): boolean {
@@ -1099,11 +1100,17 @@ class matrix_t {
       .slice (null, [0, this.rank ()])
   }
 
-  // TODO
   /**
    * Bases of null space, represented by columns of matrix.
    */
-  // kernel ()
+  kernel (): matrix_t {
+    let [m, n] = this.shape
+    let r = this.rank ()
+    let { row_trans, canonical } = this.transpose ()
+      .row_canonical_decomposition ()
+
+    return row_trans.transpose () .slice (null, [r, n])
+  }
 
   // TODO
   // smith_normal
