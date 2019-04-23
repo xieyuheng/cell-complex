@@ -1,7 +1,6 @@
-import { eqv_t } from "./eqv.cn"
-import { abelian_group_t } from "./group.cn"
+import { abelian_group_t } from "./group.cs"
 
-class field_t (
+class field_t {
   element_t: type
 
   addition: abelian_group_t (
@@ -12,6 +11,7 @@ class field_t (
   // only non zero element_t forms an `abelian_group_t`
   //   how to describe this ?
   // maybe define `ring_t` first
+
   multiplication: abelian_group_t (
     element_t = this.element_t
   )
@@ -30,9 +30,6 @@ class field_t (
     x: this.element_t,
     y: this.element_t,
     z: this.element_t,
-  ): eqv_t (
-    this.element_t,
-    this.mul (x, this.add (y, z)),
-    this.add (this.mul (x, y), this.mul (x, z)),
-  )
-)
+  ): this.mul (x, this.add (y, z)) ==
+    this.add (this.mul (x, y), this.mul (x, z))
+}
