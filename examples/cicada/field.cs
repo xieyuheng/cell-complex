@@ -30,6 +30,8 @@ class field_t {
     x: this.element_t,
     y: this.element_t,
     z: this.element_t,
-  ): this.mul (x, this.add (y, z)) ==
-    this.add (this.mul (x, y), this.mul (x, z))
+  ): eqv_t (
+    this.mul (x, this.add (y, z)),
+    this.add (this.mul (x, y), this.mul (x, z)),
+  )
 }

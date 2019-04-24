@@ -22,18 +22,20 @@ class category_t {
 
   id_left (
     f: this.arrow_t,
-  ): this.compose (this.id (f.dom), f) == f
+  ): eqv_t (this.compose (this.id (f.dom), f), f)
 
   id_right (
     f: this.arrow_t,
-  ): this.compose (f, this.id (f.cod)) == f
+  ): eqv_t (this.compose (f, this.id (f.cod)), f)
 
   assoc (
     f: this.arrow_t,
     g: this.arrow_t,
     h: this.arrow_t,
-  ): this.compose (f, this.compose (g, h)) ==
-    this.compose (this.compose (f, g), h)
+  ): eqv_t (
+    this.compose (f, this.compose (g, h)),
+    this.compose (this.compose (f, g), h),
+  )
 }
 
 class iso_t {
@@ -41,8 +43,8 @@ class iso_t {
   iso: cat.arrow_t
   inv: cat.arrow_t
 
-  iso_inv_identity: cat.compose (iso, inv) == cat.id (a)
-  inv_iso_identity: cat.compose (inv, iso) == cat.id (b)
+  iso_inv_identity: eqv_t (cat.compose (iso, inv), cat.id (a))
+  inv_iso_identity: eqv_t (cat.compose (inv, iso), cat.id (b))
 }
 
 class functor_t {
@@ -61,13 +63,17 @@ class functor_t {
   fmap_respect_compose (
     f: this.lcat.arrow_t,
     g: this.lcat.arrow_t,
-  ): this.fmap (this.lcat.compose (f, g)) ==
-    this.rcat.compose (this.fmap (f), this.fmap (g))
+  ): eqv_t (
+    this.fmap (this.lcat.compose (f, g)),
+    this.rcat.compose (this.fmap (f), this.fmap (g)),
+  )
 
   fmap_respect_id (
     x: this.lcat.object_t,
-  ): this.fmap (this.lcat.id (x)) ==
-    this.rcat.id (this.map (x))
+  ): eqv_t (
+    this.fmap (this.lcat.id (x)),
+    this.rcat.id (this.map (x)),
+  )
 }
 
 class natural_transformation_t {
@@ -89,11 +95,14 @@ class natural_transformation_t {
 
   natural (
     f: this.lcat.arrow_t
-  ): this.rcat.compose (
-    this.component (this.lcat.dom (f)),
-    this.rfun.fmap (f),
-  ) == this.rcat.compose (
-    this.lfun.fmap (f),
-    this.component (this.lcat.cod (f)),
+  ): eqv_t (
+    this.rcat.compose (
+      this.component (this.lcat.dom (f)),
+      this.rfun.fmap (f),
+    ),
+    this.rcat.compose (
+      this.lfun.fmap (f),
+      this.component (this.lcat.cod (f)),
+    ),
   )
 }

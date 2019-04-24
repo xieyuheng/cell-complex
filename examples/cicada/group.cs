@@ -11,20 +11,22 @@ class group_t {
     x: this.element_t,
     y: this.element_t,
     z: this.element_t,
-  ): this.mul (this.mul (x, y), z) ==
-    this.mul (x, this.mul (y, z))
+  ): eqv_t (
+    this.mul (this.mul (x, y), z),
+    this.mul (x, this.mul (y, z)),
+  )
 
   id_left (
     x: this.element_t,
-  ): this.mul (this.id, x) == x
+  ): eqv_t (this.mul (this.id, x), x)
 
   id_right (
     x: this.element_t,
-  ): this.mul (x, this.id) == x
+  ): eqv_t (this.mul (x, this.id), x)
 
   id_inv (
     x: this.element_t,
-  ): this.mul (x, this.inv (x)) == this.id
+  ): eqv_t (this.mul (x, this.inv (x)), this.id)
 
   div (
     x: this.element_t,

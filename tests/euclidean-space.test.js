@@ -894,5 +894,12 @@ test ("eu.matrix_t.smith_normal_form", t => {
     [0, 0, 0, 0, 0, 0],
   ]) .smith_normal_form () .print ()
 
+
+  eu.matrix ([
+    [1, 0, 0],
+    [0, 4, 0],
+    [0, 0, 6],
+  ]) .smith_normal_form () .print ()
+
   t.pass ()
 })
