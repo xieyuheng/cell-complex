@@ -15,16 +15,16 @@ function argmax (
   hi: number,
   f: (i: number) => number,
 ): number {
-  let max = lo
+  let arg = lo
   let cur = f (lo)
   for (let i = lo; i < hi; i++) {
     let next = f (i)
     if (cur < next) {
-      max = i
+      arg = i
       cur = next
     }
   }
-  return max
+  return arg
 }
 
 export
@@ -34,18 +34,21 @@ function argmax_guard (
   f: (i: number) => number,
   p: (i: number) => boolean,
 ): number {
-  let max = lo
+  let arg = argfirst (lo, hi, p)
+  if (arg === null) {
+    throw new Error ("no such arg")
+  }
   let cur = f (lo)
   for (let i = lo; i < hi; i++) {
     if (p (i)) {
       let next = f (i)
       if (cur < next) {
-        max = i
+        arg = i
         cur = next
       }
     }
   }
-  return max
+  return arg
 }
 
 export
@@ -54,16 +57,16 @@ function argmin (
   hi: number,
   f: (i: number) => number,
 ): number {
-  let min = lo
+  let arg = lo
   let cur = f (lo)
   for (let i = lo; i < hi; i++) {
     let next = f (i)
     if (cur > next) {
-      min = i
+      arg = i
       cur = next
     }
   }
-  return min
+  return arg
 }
 
 export
@@ -73,18 +76,21 @@ function argmin_guard (
   f: (i: number) => number,
   p: (i: number) => boolean,
 ): number {
-  let min = lo
+  let arg = argfirst (lo, hi, p)
+  if (arg === null) {
+    throw new Error ("no such arg")
+  }
   let cur = f (lo)
   for (let i = lo; i < hi; i++) {
     if (p (i)) {
       let next = f (i)
       if (cur > next) {
-        min = i
+        arg = i
         cur = next
       }
     }
   }
-  return min
+  return arg
 }
 
 export
@@ -554,11 +560,23 @@ class matrix_t {
     return x === y
   }
 
+  // TODO
+  // avoid `vector_t.copy ()`
+  // for `update_swap_rows` & `update_swap_cols`
+
   update_swap_rows (i: number, j: number): matrix_t {
     let x = this.row (i) .copy ()
     let y = this.row (j)
     this.set_row (i, y)
     this.set_row (j, x)
+    return this
+  }
+
+  update_swap_cols (i: number, j: number): matrix_t {
+    let x = this.col (i) .copy ()
+    let y = this.col (j)
+    this.set_col (i, y)
+    this.set_col (j, x)
     return this
   }
 
@@ -835,9 +853,12 @@ class matrix_t {
     }
   }
 
+  /**
+   * The main diag.
+   */
   diag (): vector_t {
-    assert (this.square_p ())
-    let [_n, n] = this.shape
+    let [m, n] = this.shape
+    n = Math.min (m, n)
     let vector = vector_t.zeros (n)
     for (let i of ut.range (0, n)) {
       vector.set (i, this.get (i, i))
@@ -907,8 +928,7 @@ class matrix_t {
         if (k !== i) {
           matrix.update_swap_rows (i, k)
         }
-        matrix.row (i)
-          .update_scale (1 / matrix.get (i, j))
+        matrix.row (i) .update_scale (1 / matrix.get (i, j))
         for (let k of ut.ranges ([[0, i], [i + 1, m]])) {
           let v = matrix.get (k, j)
           if (v !== 0) {
@@ -1006,11 +1026,10 @@ class matrix_t {
         j += 1
       } else {
         while (! (
-          matrix.get (i, j) > 0 &&
-            argall (i + 1, m, (k) => matrix.get (k, j) === 0) &&
-            argall (0, i, (k) =>
-                    0 <= matrix.get (k, j) &&
-                    matrix.get (k, j) < matrix.get (i, j))
+          (argall (i + 1, m, (k) => matrix.get (k, j) === 0) &&
+           argall (0, i, (k) =>
+                   0 <= matrix.get (k, j) &&
+                   matrix.get (k, j) < matrix.get (i, j)))
         )) {
           let k = argmin_guard (
             i, m,
@@ -1126,8 +1145,86 @@ class matrix_t {
     return vector
   }
 
-  // TODO
-  // smith_normal_form (): matrix_t {}
+  smith_normal_form (): matrix_t {
+    let matrix = this.copy ()
+    let [m, n] = this.shape
+    let i = 0
+    let j = 0
+    while (i < m && j < n) {
+      if (
+        (argall (i, m, (k) => matrix.get (k, j) === 0) &&
+         argall (j, n, (k) => matrix.get (i, k) === 0))
+      ) {
+        i += 1
+        j += 1
+      } else {
+        while (! (
+          (argall (i + 1, m, (k) => matrix.get (k, j) === 0) &&
+           argall (j + 1, n, (k) => matrix.get (i, k) === 0))
+        )) {
+          // console.log ("main loop")
+          while (
+            ! argall (i + 1, m, (k) => matrix.get (k, j) === 0)
+          ) {
+            // console.log ("row elimination loop")
+            let k = argmin_guard (
+              i, m,
+              (k) => Math.abs (matrix.get (k, j)),
+              (k) => matrix.get (k, j) !== 0,
+            )
+            if (k !== i) {
+              matrix.update_swap_rows (i, k)
+            }
+            if (matrix.get (i, j) < 0) {
+              matrix.row (i) .update_scale (-1)
+            }
+            for (let k of ut.range (i + 1, m)) {
+              let q = int.div (
+                matrix.get (k, j),
+                matrix.get (i, j))
+              if (q !== 0) {
+                matrix.row (k)
+                  .update_sub (matrix.row (i) .scale (q))
+              }
+            }
+          }
+          while (
+            ! argall (j + 1, n, (k) => matrix.get (i, k) === 0)
+          ) {
+            // console.log ("col elimination loop")
+            let k = argmin_guard (
+              j, n,
+              (k) => Math.abs (matrix.get (i, k)),
+              (k) => matrix.get (i, k) !== 0,
+            )
+            if (k !== j) {
+              matrix.update_swap_cols (j, k)
+            }
+            if (matrix.get (i, j) < 0) {
+              matrix.col (j) .update_scale (-1)
+            }
+            for (let k of ut.range (j + 1, n)) {
+              let q = int.div (
+                matrix.get (i, k),
+                matrix.get (i, j))
+              if (q !== 0) {
+                matrix.col (k)
+                  .update_sub (matrix.col (j) .scale (q))
+              }
+            }
+          }
+        }
+        i += 1
+        j += 1
+      }
+    }
+    // we need to handled the last pivot specially.
+    // because for a full rank matrix,
+    //   the last pivot is not handled by
+    //   the row or col elimination loops
+    matrix.update_at (i - 1, j - 1, Math.abs)
+    return matrix
+  }
 }
 
 export

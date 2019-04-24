@@ -590,7 +590,7 @@ test ("eu.matrix_t.det", t => {
   )
 })
 
-test ("row_hermite_normal_form", t => {
+test ("eu.matrix_t.row_hermite_normal_form", t => {
   t.true (
     eu.matrix ([
       [2, 3, 6, 2],
@@ -670,7 +670,7 @@ function test_row_hermite_decomposition (t, m) {
   )
 }
 
-test ("row_hermite_decomposition", t => {
+test ("eu.matrix_t.row_hermite_decomposition", t => {
   test_row_hermite_decomposition (t, eu.matrix ([
     [2, 3, 6, 2],
     [5, 6, 1, 6],
@@ -791,6 +791,108 @@ test ("eu.matrix_t.solve", t => {
       [3, -1, 0],
     ]),
     eu.vector ([1, 2, 3]))
+
+  t.pass ()
+})
+
+test ("eu.matrix_t.smith_normal_form", t => {
+  eu.matrix ([
+    [2, 4, 4],
+    [-6, 6, 12],
+    [10, -4, -16],
+  ]) .smith_normal_form () .print ()
+
+  // t.true (
+  //   eu.matrix ([
+  //     [2, 3, 6, 2],
+  //     [5, 6, 1, 6],
+  //     [8, 3, 1, 1],
+  //   ]) .row_hermite_normal_form () .eq (
+  //     eu.matrix ([
+  //       [1, 0, 50, -11],
+  //       [0, 3, 28, -2],
+  //       [0, 0, 61, -13],
+  //     ])
+  //   )
+  // )
+
+  eu.matrix ([
+    [2, 3, 6, 2],
+    [5, 6, 1, 6],
+    [8, 3, 1, 1],
+  ]) .smith_normal_form () .print ()
+
+  // t.true (
+  //   eu.matrix ([
+  //     [3, 3, 1, 4],
+  //     [0, 1, 0, 0],
+  //     [0, 0, 19, 16],
+  //     [0, 0, 0, 3],
+  //   ]) .row_hermite_normal_form () .eq (
+  //     eu.matrix ([
+  //       [3, 0, 1, 1],
+  //       [0, 1, 0, 0],
+  //       [0, 0, 19, 1],
+  //       [0, 0, 0, 3],
+  //     ])
+  //   )
+  // )
+
+  eu.matrix ([
+    [3, 3, 1, 4],
+    [0, 1, 0, 0],
+    [0, 0, 19, 16],
+    [0, 0, 0, 3],
+  ]) .smith_normal_form () .print ()
+
+  // t.true (
+  //   eu.matrix ([
+  //     [9, -36, 30],
+  //     [-36, 192, -180],
+  //     [30, -180, 180],
+  //   ]) .row_hermite_normal_form () .eq (
+  //     eu.matrix ([
+  //       [3, 0, 30],
+  //       [0, 12, 0],
+  //       [0, 0, 60],
+  //     ])
+  //   )
+  // )
+
+  eu.matrix ([
+    [9, -36, 30],
+    [-36, 192, -180],
+    [30, -180, 180],
+  ]) .smith_normal_form () .print ()
+
+  // t.true (
+  //   eu.matrix ([
+  //     [0, 0, 5, 0, 1, 4],
+  //     [0, 0, 0, -1, -4, 99],
+  //     [0, 0, 0, 20, 19, 16],
+  //     [0, 0, 0, 0, 2, 1],
+  //     [0, 0, 0, 0, 0, 3],
+  //     [0, 0, 0, 0, 0, 0],
+  //   ]) .row_hermite_normal_form () .eq (
+  //     eu.matrix ([
+  //       [0, 0, 5, 0, 0, 2],
+  //       [0, 0, 0, 1, 0, 1],
+  //       [0, 0, 0, 0, 1, 2],
+  //       [0, 0, 0, 0, 0, 3],
+  //       [0, 0, 0, 0, 0, 0],
+  //       [0, 0, 0, 0, 0, 0],
+  //     ])
+  //   )
+  // )
+
+  eu.matrix ([
+    [0, 0, 5, 0, 1, 4],
+    [0, 0, 0, -1, -4, 99],
+    [0, 0, 0, 20, 19, 16],
+    [0, 0, 0, 0, 2, 1],
+    [0, 0, 0, 0, 0, 3],
+    [0, 0, 0, 0, 0, 0],
+  ]) .smith_normal_form () .print ()
 
   t.pass ()
 })

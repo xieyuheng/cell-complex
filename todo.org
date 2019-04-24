@@ -25,7 +25,11 @@
 * mathematical structures in cicada
 - ring.cs substructure and ideal_t
 * euclidean-space
-- smith normal form -- to calculate homology group
+- smith_normal_form -- to calculate homology group
+- test smith_normal_form
+  - invariant factors
+  - determinantal divisors
+  - elementary divisors
 - `point_t`
 - use euclidean-space to re-imp hackenbush
 * optimize
