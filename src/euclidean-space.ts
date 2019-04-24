@@ -1163,6 +1163,8 @@ class matrix_t {
            argall (j + 1, n, (k) => matrix.get (i, k) === 0))
         )) {
           // console.log ("main loop")
+          // It is amazing that this loop converges.
+          // It is like kneading dough.
           while (
             ! argall (i + 1, m, (k) => matrix.get (k, j) === 0)
           ) {
