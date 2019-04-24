@@ -295,7 +295,7 @@ function test_row_canonical_decomposition (t, m) {
     row_trans, canonical
   } = m.row_canonical_decomposition ()
   t.true (canonical.upper_p ())
-  t.true (canonical.row_canonical_p ())
+  t.true (canonical.row_canonical_form_p ())
   t.true (
     row_trans.mul (m) .sub (canonical) .epsilon_p ()
   )
@@ -663,8 +663,8 @@ function test_row_hermite_decomposition (t, m) {
     row_trans, hermite
   } = m.row_hermite_decomposition ()
   t.true (hermite.upper_p ())
-  t.true (hermite.row_hermite_p ())
-  t.true (row_trans.det_one_p ())
+  t.true (hermite.row_hermite_form_p ())
+  t.true (row_trans.det_abs_one_p ())
   t.true (
     row_trans.mul (m) .sub (hermite) .epsilon_p ()
   )
@@ -795,111 +795,71 @@ test ("eu.matrix_t.solve", t => {
   t.pass ()
 })
 
+function test_smith_normal_form (t, m) {
+  t.true (
+    m .smith_normal_form ()
+      .smith_normal_form_p ()
+  )
+}
+
 test ("eu.matrix_t.smith_normal_form", t => {
-  eu.matrix ([
+  test_smith_normal_form (t, eu.matrix ([
     [2, 4, 4],
     [-6, 6, 12],
     [10, -4, -16],
-  ]) .smith_normal_form () .print ()
+  ]))
 
-  // t.true (
-  //   eu.matrix ([
-  //     [2, 3, 6, 2],
-  //     [5, 6, 1, 6],
-  //     [8, 3, 1, 1],
-  //   ]) .row_hermite_normal_form () .eq (
-  //     eu.matrix ([
-  //       [1, 0, 50, -11],
-  //       [0, 3, 28, -2],
-  //       [0, 0, 61, -13],
-  //     ])
-  //   )
-  // )
-
-  eu.matrix ([
+  test_smith_normal_form (t, eu.matrix ([
     [2, 3, 6, 2],
     [5, 6, 1, 6],
     [8, 3, 1, 1],
-  ]) .smith_normal_form () .print ()
+  ]))
 
-  // t.true (
-  //   eu.matrix ([
-  //     [3, 3, 1, 4],
-  //     [0, 1, 0, 0],
-  //     [0, 0, 19, 16],
-  //     [0, 0, 0, 3],
-  //   ]) .row_hermite_normal_form () .eq (
-  //     eu.matrix ([
-  //       [3, 0, 1, 1],
-  //       [0, 1, 0, 0],
-  //       [0, 0, 19, 1],
-  //       [0, 0, 0, 3],
-  //     ])
-  //   )
-  // )
-
-  eu.matrix ([
+  test_smith_normal_form (t, eu.matrix ([
     [3, 3, 1, 4],
     [0, 1, 0, 0],
     [0, 0, 19, 16],
     [0, 0, 0, 3],
-  ]) .smith_normal_form () .print ()
+  ]))
 
-  // t.true (
-  //   eu.matrix ([
-  //     [9, -36, 30],
-  //     [-36, 192, -180],
-  //     [30, -180, 180],
-  //   ]) .row_hermite_normal_form () .eq (
-  //     eu.matrix ([
-  //       [3, 0, 30],
-  //       [0, 12, 0],
-  //       [0, 0, 60],
-  //     ])
-  //   )
-  // )
-
-  eu.matrix ([
+  test_smith_normal_form (t, eu.matrix ([
     [9, -36, 30],
     [-36, 192, -180],
     [30, -180, 180],
-  ]) .smith_normal_form () .print ()
+  ]))
 
-  // t.true (
-  //   eu.matrix ([
-  //     [0, 0, 5, 0, 1, 4],
-  //     [0, 0, 0, -1, -4, 99],
-  //     [0, 0, 0, 20, 19, 16],
-  //     [0, 0, 0, 0, 2, 1],
-  //     [0, 0, 0, 0, 0, 3],
-  //     [0, 0, 0, 0, 0, 0],
-  //   ]) .row_hermite_normal_form () .eq (
-  //     eu.matrix ([
-  //       [0, 0, 5, 0, 0, 2],
-  //       [0, 0, 0, 1, 0, 1],
-  //       [0, 0, 0, 0, 1, 2],
-  //       [0, 0, 0, 0, 0, 3],
-  //       [0, 0, 0, 0, 0, 0],
-  //       [0, 0, 0, 0, 0, 0],
-  //     ])
-  //   )
-  // )
-
-  eu.matrix ([
+  test_smith_normal_form (t, eu.matrix ([
     [0, 0, 5, 0, 1, 4],
     [0, 0, 0, -1, -4, 99],
     [0, 0, 0, 20, 19, 16],
     [0, 0, 0, 0, 2, 1],
     [0, 0, 0, 0, 0, 3],
     [0, 0, 0, 0, 0, 0],
-  ]) .smith_normal_form () .print ()
+  ]))
 
-
-  eu.matrix ([
+  test_smith_normal_form (t, eu.matrix ([
     [1, 0, 0],
     [0, 4, 0],
     [0, 0, 6],
-  ]) .smith_normal_form () .print ()
+  ]))
+
+  test_smith_normal_form (t, eu.matrix ([
+    [0, 0, 0],
+    [0, 0, 0],
+    [0, 0, 0],
+  ]))
+
+  test_smith_normal_form (t, eu.matrix ([
+    [0, 0, 0],
+    [0, 4, 3],
+    [0, 1, 6],
+  ]))
+
+  test_smith_normal_form (t, eu.matrix ([
+    [0, 0, 0],
+    [0, 4, 0],
+    [0, 0, 6],
+  ]))
 
   t.pass ()
 })

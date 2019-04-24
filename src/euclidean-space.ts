@@ -1004,7 +1004,7 @@ class matrix_t {
    * (2) non zeros has leading pivots from left to right
    * (3) in pivot columns all other elements are zeros
    */
-  row_canonical_p (): boolean {
+  row_canonical_form_p (): boolean {
     if (! this.has_row_pivots_p ()) { return false }
     for (let [i, j] of this.row_pivot_indexes ()) {
       for (let k of ut.range (0, i)) {
@@ -1068,7 +1068,7 @@ class matrix_t {
    * (2) non zeros has leading pivots from left to right
    * (3) in pivot columns all other elements are less than pivot
    */
-  row_hermite_p () {
+  row_hermite_form_p () {
     if (! this.integer_p ()) { return false }
     if (! this.has_row_pivots_p ()) { return false }
     for (let [i, j] of this.row_pivot_indexes ()) {
@@ -1081,7 +1081,7 @@ class matrix_t {
     return true
   }
 
-  det_one_p () {
+  det_abs_one_p () {
     if (! this.integer_p ()) { return false }
     if (! this.invertible_p ()) { return false }
     if (! epsilon_p (Math.abs (this.det ()) - 1)) {
@@ -1132,7 +1132,6 @@ class matrix_t {
     let r = this.rank ()
     let augmented = this.append_cols (matrix_t.from_col (b))
       .row_canonical_form ()
-    augmented.print ()
     for (let i of ut.range (r, m)) {
       if (non_epsilon_p (augmented.get (i, n))) {
         return null
@@ -1145,8 +1144,8 @@ class matrix_t {
     return vector
   }
 
-  smith_normal_form (): matrix_t {
-    let matrix = this.copy ()
+  smith_update (): matrix_t {
+    let matrix = this
     let [m, n] = this.shape
     let i = 0
     let j = 0
@@ -1220,12 +1219,71 @@ class matrix_t {
         j += 1
       }
     }
-    // we need to handled the last pivot specially.
-    // because for a full rank matrix,
-    //   the last pivot is not handled by
-    //   the row or col elimination loops
-    matrix.update_at (i - 1, j - 1, Math.abs)
     return matrix
+  }
+
+  invariant_factor_update (): matrix_t {
+    let matrix = this
+    let [m, n] = this.shape
+    m = Math.min (m, n)
+    let i = 0
+    while (i < m) {
+      if (matrix.get (i, i) === 0) {
+        for (let k of ut.range (i, m)) {
+          matrix.set (k, k, matrix.get (k+1, k+1))
+        }
+        matrix.set (m-1, m-1, 0)
+        m -= 1
+      } else {
+        let x = matrix.get (i, i)
+        for (let k of ut.range (i+1, m)) {
+          let y = matrix.get (k, k)
+          if (y % x !== 0) {
+            matrix.set (k, i, matrix.get (k, k))
+            matrix.smith_update ()
+          }
+        }
+        i += 1
+      }
+    }
+    return matrix
+  }
+
+  diag_abs_update (): matrix_t {
+    let matrix = this
+    let [m, n] = this.shape
+    m = Math.min (m, n)
+    for (let i of ut.range (0, m)) {
+      matrix.update_at (i, i, x => Math.abs (x))
+    }
+    return matrix
+  }
+
+  diagonal_p (): boolean {
+    let [m, n] = this.shape
+    for (let i of ut.range (0, m)) {
+      for (let j of ut.range (0, n)) {
+        if (i !== j) {
+          if (non_epsilon_p (this.get (i, j))) {
+            return false
+          }
+        }
+      }
+    }
+    return true
+  }
+
+  smith_normal_form_p (): boolean {
+    if (! this.diagonal_p ()) { return false }
+    if (! this.diag () .invariant_factors_p ()) { return false }
+    return true
+  }
+
+  smith_normal_form (): matrix_t {
+    return this.copy ()
+      .smith_update ()
+      .invariant_factor_update ()
+      .diag_abs_update ()
   }
 }
 
@@ -1520,6 +1578,21 @@ class vector_t {
       array.push (this.get (i))
     }
     return array
+  }
+
+  invariant_factors_p (): boolean {
+    for (let i of ut.range (0, this.size)) {
+      let x = this.get (i)
+      if (x !== 0) {
+        for (let k of ut.range (i+1, this.size)) {
+          let y = this.get (k)
+          if (y % x !== 0) {
+            return false
+          }
+        }
+      }
+    }
+    return true
   }
 }
 

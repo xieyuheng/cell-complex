@@ -25,10 +25,9 @@
 * mathematical structures in cicada
 - ring.cs substructure and ideal_t
 * euclidean-space
-- test smith_normal_form
-  - invariant factors
-  - determinantal divisors
-  - elementary divisors
+- `primary_decomposition` -- elementary divisors
+  - [rank, [[p0, n0], [p1, n1], ...]]
+- chinese_remainder_theorem
 - `point_t`
 - use euclidean-space to re-imp hackenbush
 * optimize
@@ -39,8 +38,15 @@
 - data_t slice
 * cell-complex
 - homology group of cell-complex
-  - we will need quotient of vector_space_t (abelian_group_t)
-    because homology group = quo (ker (boun (n+1)), img (boun (n)))
+  - image (boundary (n))
+    is subgroup of
+    kernel (boundary (n+1))
+  - homology group =
+    quotient (kernel (boundary (n+1)), image (boundary (n)))
+  - use bases of
+    kernel (boundary (n+1))
+    to represent bases of
+    image  (boundary (n))
 - abelian_group_t
   - classification finite generated abelian_group_t
     is the same as normalization of integer matrix
