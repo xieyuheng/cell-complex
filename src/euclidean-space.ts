@@ -909,13 +909,7 @@ class matrix_t {
         }
         matrix.row (i)
           .update_scale (1 / matrix.get (i, j))
-        for (let k of ut.range (i + 1, m)) {
-          let v = matrix.get (k, j)
-          if (v !== 0) {
-            matrix.row (k) .update_sub (matrix.row (i) .scale (v))
-          }
-        }
-        for (let k of ut.range (0, i)) {
+        for (let k of ut.ranges ([[0, i], [i + 1, m]])) {
           let v = matrix.get (k, j)
           if (v !== 0) {
             matrix.row (k) .update_sub (matrix.row (i) .scale (v))
@@ -1029,16 +1023,7 @@ class matrix_t {
           if (matrix.get (i, j) < 0) {
             matrix.row (i) .update_scale (-1)
           }
-          for (let k of ut.range (i + 1, m)) {
-            let q = int.div (
-              matrix.get (k, j),
-              matrix.get (i, j))
-            if (q !== 0) {
-              matrix.row (k)
-                .update_sub (matrix.row (i) .scale (q))
-            }
-          }
-          for (let k of ut.range (0, i)) {
+          for (let k of ut.ranges ([[0, i], [i + 1, m]])) {
             let q = int.div (
               matrix.get (k, j),
               matrix.get (i, j))
@@ -1142,7 +1127,7 @@ class matrix_t {
   }
 
   // TODO
-  // smith_normal
+  // smith_normal_form (): matrix_t {}
 }
 
 export

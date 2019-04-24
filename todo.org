@@ -11,7 +11,7 @@
   - If we view matrix as linear map,
     `col_trans` does not change the image of the map.
   - `col_trans` can not change the col_space
-* [note] mathematical structures is about reuse
+* [note] mathematical structures is about code reuse
 - in our euclidean-space.ts
   `row_canonical_form` and `row_hermite_normal_form`
   are almost the same
@@ -22,6 +22,8 @@
   but the shame is that
   no programming languages allow us
   to formalize abstract mathematical structures intuitively
+* mathematical structures in cicada
+- ring.cs substructure and ideal_t
 * euclidean-space
 - smith normal form -- to calculate homology group
 - `point_t`

@@ -18,6 +18,15 @@ function* range (lo: number, hi: number) {
 }
 
 export
+function* ranges (array: Array <[number, number]>) {
+  for (let [lo, hi] of array) {
+    for (let i of range (lo, hi)) {
+      yield i
+    }
+  }
+}
+
+export
 function repeats <T> (x: T, n: number): Array <T> {
   let array = new Array ()
   for (let _ of range (0, n)) {
