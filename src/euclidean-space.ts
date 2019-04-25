@@ -1016,6 +1016,44 @@ class matrix_t {
     return true
   }
 
+  /**
+   * Bases of column space, represented by columns of matrix.
+   */
+  image (): matrix_t {
+    return this.transpose ()
+      .row_canonical_form ()
+      .transpose ()
+      .slice (null, [0, this.rank ()])
+  }
+
+  /**
+   * Bases of null space, represented by columns of matrix.
+   */
+  kernel (): matrix_t {
+    let [m, n] = this.shape
+    let r = this.rank ()
+    let { row_trans } = this.transpose ()
+      .row_canonical_decomposition ()
+    return row_trans.transpose () .slice (null, [r, n])
+  }
+
+  solve (b: vector_t): null | vector_t {
+    let [m, n] = this.shape
+    let r = this.rank ()
+    let augmented = this.append_cols (matrix_t.from_col (b))
+      .row_canonical_form ()
+    for (let i of ut.range (r, m)) {
+      if (non_epsilon_p (augmented.get (i, n))) {
+        return null
+      }
+    }
+    let vector = vector_t.zeros (n)
+    for (let [i, j] of augmented.row_pivot_indexes ()) {
+      vector.set (j, augmented.get (i, n))
+    }
+    return vector
+  }
+
   row_hermite_normal_form (): matrix_t {
     let matrix = this.copy ()
     let [m, n] = this.shape
@@ -1106,42 +1144,19 @@ class matrix_t {
     }
   }
 
-  /**
-   * Bases of column space, represented by columns of matrix.
-   */
-  image (): matrix_t {
+  int_image (): matrix_t {
     return this.transpose ()
-      .reduced_row_echelon_form ()
+      .row_hermite_normal_form ()
       .transpose ()
       .slice (null, [0, this.rank ()])
   }
 
-  /**
-   * Bases of null space, represented by columns of matrix.
-   */
-  kernel (): matrix_t {
+  int_kernel (): matrix_t {
     let [m, n] = this.shape
     let r = this.rank ()
-    let { row_trans, canonical } = this.transpose ()
-      .row_canonical_decomposition ()
+    let { row_trans } = this.transpose ()
+      .row_hermite_decomposition ()
     return row_trans.transpose () .slice (null, [r, n])
-  }
-
-  solve (b: vector_t): null | vector_t {
-    let [m, n] = this.shape
-    let r = this.rank ()
-    let augmented = this.append_cols (matrix_t.from_col (b))
-      .row_canonical_form ()
-    for (let i of ut.range (r, m)) {
-      if (non_epsilon_p (augmented.get (i, n))) {
-        return null
-      }
-    }
-    let vector = vector_t.zeros (n)
-    for (let [i, j] of augmented.row_pivot_indexes ()) {
-      vector.set (j, augmented.get (i, n))
-    }
-    return vector
   }
 
   smith_update (): matrix_t {
@@ -1597,6 +1612,10 @@ class vector_t {
 
   zero_p (): boolean {
     return this.every (x => x === 0)
+  }
+
+  one_p (): boolean {
+    return this.every (x => x === 1)
   }
 
   epsilon_p (): boolean {

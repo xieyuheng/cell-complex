@@ -46,6 +46,8 @@
   - example cell complexes:
     - torus
 
+- homology -- cellular homology of cell-complex
+
 - ndarray
   - `array_t` -- strides based row-major ndarray of number
 

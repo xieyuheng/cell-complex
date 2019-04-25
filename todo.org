@@ -24,11 +24,16 @@
   to formalize abstract mathematical structures intuitively
 * mathematical structures in cicada
 - ring.cs substructure and ideal_t
+* graph
+- reuse cell_complex_t
+- find cycles of graph by spanning tree's complement edges
+  - homology of general graph
 * euclidean-space
-- `primary_decomposition` -- elementary divisors
-  - [rank, [[p0, n0], [p1, n1], ...]]
+- linear diophantine equations with mod -- finite field
+- convert invariant_factors to elementary_divisors
+- primary_decomposition -- [rank, [[p0, n0], [p1, n1], ...]]
 - chinese_remainder_theorem
-- `point_t`
+- point_t
 - use euclidean-space to re-imp hackenbush
 * optimize
 - optimize frame_t and series_t by not using data_t
