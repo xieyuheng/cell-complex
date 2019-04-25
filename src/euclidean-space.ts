@@ -1151,6 +1151,7 @@ class matrix_t {
       .slice (null, [0, this.rank ()])
   }
 
+  // TODO
   int_kernel (): matrix_t {
     let [m, n] = this.shape
     let r = this.rank ()
@@ -1158,6 +1159,10 @@ class matrix_t {
       .row_hermite_decomposition ()
     return row_trans.transpose () .slice (null, [r, n])
   }
+
+  // int_solve (b: vector_t): null | vector_t {
+  // TODO  
+  // }
 
   smith_update (): matrix_t {
     let matrix = this
@@ -1176,13 +1181,18 @@ class matrix_t {
           (argall (i + 1, m, (k) => matrix.get (k, j) === 0) &&
            argall (j + 1, n, (k) => matrix.get (i, k) === 0))
         )) {
-          // console.log ("main loop")
+          // { // debug
+          //   console.log ("main loop")
+          //   matrix.print ()
+          // }
           // It is amazing that this loop converges.
           // It is like kneading dough.
           while (
             ! argall (i + 1, m, (k) => matrix.get (k, j) === 0)
           ) {
-            // console.log ("row elimination loop")
+            // { // debug
+            //   console.log ("row elimination loop")
+            // }
             let k = argmin_guard (
               i, m,
               (k) => Math.abs (matrix.get (k, j)),
@@ -1207,7 +1217,9 @@ class matrix_t {
           while (
             ! argall (j + 1, n, (k) => matrix.get (i, k) === 0)
           ) {
-            // console.log ("col elimination loop")
+            // { // debug
+            //   console.log ("col elimination loop")
+            // }
             let k = argmin_guard (
               j, n,
               (k) => Math.abs (matrix.get (i, k)),
