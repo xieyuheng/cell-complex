@@ -17,8 +17,15 @@ test ("hl.chain_t.boundary_of_basis", t => {
   let torus = new torus_t ()
   let square = new cx.polygon_t (4)
 
-  hl.chain_t.boundary_of_basis (torus, torus.id ("toro"))
-  hl.chain_t.boundary_of_basis (square, new cx.id_t (1, 0))
+  t.true (
+    hl.chain_t.boundary_of_basis (torus, torus.id ("toro"))
+      .cycle_p ()
+  )
+
+  t.true (
+    hl.chain_t.boundary_of_basis (square, new cx.id_t (1, 0))
+      .cycle_p ()
+  )
 
   t.pass ()
 })
@@ -48,7 +55,9 @@ test ("hl.chain_t.add", t => {
       square, new cx.id_t (1, 1)
     )
 
-  chain0.add (chain1)
+  t.true (
+    chain0.add (chain1) .cycle_p ()
+  )
 
   t.pass ()
 })

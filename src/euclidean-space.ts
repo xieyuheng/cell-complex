@@ -1594,6 +1594,14 @@ class vector_t {
     }
     return true
   }
+
+  zero_p (): boolean {
+    return this.every (x => x === 0)
+  }
+
+  epsilon_p (): boolean {
+    return this.every (epsilon_p)
+  }
 }
 
 export

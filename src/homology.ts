@@ -112,6 +112,14 @@ class chain_t {
       this.vector.add (that.vector))
   }
 
+  zero_p (): boolean {
+    return this.vector.zero_p ()
+  }
+
+  cycle_p (): boolean {
+    return this.boundary () .zero_p ()
+  }
+
   print () {
     console.log (`dim: ${this.dim}`)
     this.vector.print ()
