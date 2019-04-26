@@ -2,8 +2,6 @@ import * as _ from "lodash"
 import assert from "assert"
 
 import * as ut from "./util"
-import { set_t, eqv } from "./set"
-import { group_t } from "./group"
 
 export
 class permutation_t {
@@ -92,11 +90,11 @@ class permutation_t {
     }
   }
 
-  lteq (that: permutation_t): boolean {
-    return this.lteq_after (that, 0)
+  lte (that: permutation_t): boolean {
+    return this.lte_after (that, 0)
   }
 
-  private lteq_after (that: permutation_t, n: number): boolean {
+  private lte_after (that: permutation_t, n: number): boolean {
     if (n >= this.size) {
       return true
     }
@@ -107,7 +105,7 @@ class permutation_t {
     if (x < y) {
       return true
     } else if (x === y) {
-      return this.lteq_after (that, n + 1)
+      return this.lte_after (that, n + 1)
     } else {
       return false
     }
@@ -117,8 +115,8 @@ class permutation_t {
     return that.lt (this)
   }
 
-  gteq (that: permutation_t): boolean {
-    return that.lteq (this)
+  gte (that: permutation_t): boolean {
+    return that.lte (this)
   }
 
   static id (size: number): permutation_t {
@@ -149,31 +147,4 @@ class permutation_t {
 
   // TODO
   // lehmer_code (): Array <number>
-}
-
-/**
- * The group of all permutations of a set M
- * is the symmetric group of M.
- * The term permutation group means
- * a subgroup of the symmetric group.
- */
-
-export
-class symmetric_group_t {
-  readonly size: number
-  readonly group: group_t <permutation_t>
-
-  constructor (
-    size: number,
-  ) {
-    this.size = size
-    this.group = new group_t ({
-      elements: new set_t ({
-        eq: (x, y) => x.eq (y)
-      }),
-      id: permutation_t.identity (size),
-      mul: (x, y) => x.mul (y),
-      inv: (x) => x.inv (),
-    })
-  }
 }

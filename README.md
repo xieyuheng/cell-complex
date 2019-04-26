@@ -2,10 +2,8 @@
 
 ## Aims
 
-- Formalize mathematical structures in existing languages
-- Design new formal languages to formalize mathematical structures
-  - Intuitive to use
-  - Approachable for both mathematicians and programmers
+- Implement and test mathematical theories in existing languages.
+- Design new languages to formalize abstract mathematical structures.
 - Questions are welcome, Your voices will guide me to solve the right problems.
   - [issues](https://github.com/xieyuheng/cicada/issues)
 
@@ -25,18 +23,6 @@
 
 ### Contents
 
-- mathematical structures (in typescript):
-  - set -- `set_t`, `eqv_t`, `not_eqv_t`
-  - group -- `group_t`, `abelian_group_t`, `monoid_t`
-  - field -- `field_t`
-  - ring -- `ring_t`, `commutative_ring_t`, `integral_domain_t`
-  - module -- `module_t`
-  - vector-space -- `vector_space_t`
-  - affine-space -- `affine_space_t`
-  - category
-    - `category_t`, `functor_t`, `natural_transformation_t`
-    - `groupoid_t`
-
 - combinatorial-game -- a game engine for n-player perfect information games
   - example games:
     - tic-tac-toe
@@ -48,18 +34,10 @@
 
 - homology -- cellular homology of cell-complex
 
-- ndarray
-  - `array_t` -- strides based row-major ndarray of number
-
-- panel-data
-  - `data_t` -- ndarray with named axes, where an axis maps labels to indexes
-  - `frame_t` -- 1d `data_t`
-  - `series_t` -- 2d `data_t`
-
 - euclid -- affine-space with dot product
   - contains `matrix_t`, `vector_t` and `point_t`
 
-- permutation -- `permutation_t` and `symmetric_group_t`
+- permutation -- `permutation_t`
 
 - [todo] cicada -- a dependently-typed programming language
   - game semantics

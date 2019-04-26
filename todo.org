@@ -1,4 +1,3 @@
-- no mathematical structures in ts
 - number.ts replace integer.ts
 - generic matrix_t and vector_t
 - test with decimal.js -- test K1
