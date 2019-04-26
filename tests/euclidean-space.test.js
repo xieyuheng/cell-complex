@@ -892,7 +892,7 @@ test ("eu.matrix_t.kernel", t => {
 
 function test_solve (t, m, b) {
   t.true (
-    m.mul (m.solve (b)) .sub (b) .epsilon_p ()
+    m.act (m.solve (b)) .sub (b) .epsilon_p ()
   )
 }
 
@@ -1176,7 +1176,7 @@ function test_int_solve (t, m, b) {
   let solution = m.int_solve (b)
 
   t.true (
-    m.mul (solution) .sub (b) .epsilon_p ()
+    m.act (solution) .sub (b) .epsilon_p ()
   )
 }
 
