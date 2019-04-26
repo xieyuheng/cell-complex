@@ -44,6 +44,9 @@
 - frame_t.act & series_t.trans
 - data_t slice
 * cell-complex
+- can we fully encode the information of cell-complex
+  by the matrix of boundary operators
+- integral-module.ts
 - homology group of cell-complex
   - image (boundary (n))
     is subgroup of

@@ -102,8 +102,8 @@ test ("example_graph_t", t => {
   matrix.row_hermite_normal_form () .print ()
 
   matrix.print ()
-  matrix.image () .print ()
-  matrix.kernel () .print ()
+  matrix.int_image () .print ()
+  matrix.int_kernel () .print ()
 
   t.pass ()
 })
