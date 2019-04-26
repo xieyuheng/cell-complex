@@ -2,7 +2,7 @@ import * as _ from "lodash"
 import assert from "assert"
 
 import * as ut from "./util"
-import * as int from "./integer"
+import * as num from "./number"
 import { permutation_t } from "./permutation"
 
 export type Array1d = Array <number>
@@ -1091,7 +1091,7 @@ class matrix_t {
             matrix.row (i) .update_scale (-1)
           }
           for (let k of ut.ranges ([[0, i], [i + 1, m]])) {
-            let q = int.div (
+            let q = num.div (
               matrix.get (k, j),
               matrix.get (i, j))
             if (q !== 0) {
@@ -1187,7 +1187,7 @@ class matrix_t {
         }
       } else {
         if (x % y === 0) {
-          vector.set (i, int.div (x, y))
+          vector.set (i, num.div (x, y))
         } else {
           return null
         }
@@ -1237,7 +1237,7 @@ class matrix_t {
               matrix.row (i) .update_scale (-1)
             }
             for (let k of ut.range (i + 1, m)) {
-              let q = int.div (
+              let q = num.div (
                 matrix.get (k, j),
                 matrix.get (i, j))
               if (q !== 0) {
@@ -1264,7 +1264,7 @@ class matrix_t {
               matrix.col (j) .update_scale (-1)
             }
             for (let k of ut.range (j + 1, n)) {
-              let q = int.div (
+              let q = num.div (
                 matrix.get (i, k),
                 matrix.get (i, j))
               if (q !== 0) {
@@ -1414,7 +1414,7 @@ class matrix_t {
               row_trans.row (i) .update_scale (-1)
             }
             for (let k of ut.range (i + 1, m)) {
-              let q = int.div (
+              let q = num.div (
                 matrix.get (k, j),
                 matrix.get (i, j))
               if (q !== 0) {
@@ -1443,7 +1443,7 @@ class matrix_t {
               col_trans.col (j) .update_scale (-1)
             }
             for (let k of ut.range (j + 1, n)) {
-              let q = int.div (
+              let q = num.div (
                 matrix.get (i, k),
                 matrix.get (i, j))
               if (q !== 0) {
