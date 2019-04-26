@@ -1258,7 +1258,7 @@ class matrix_t {
   }
 
   tuck_col (i: number, j: number): matrix_t {
-    let [n] = this.shape
+    let [m, n] = this.shape
     let col_trans = matrix_t.col_trans (
       permutation_t.id (n) .tuck (i, j)
     )
@@ -1433,28 +1433,24 @@ class matrix_t {
     col_trans: matrix_t,
     smith: matrix_t,
   } {
-    let matrix = the.smith
     let [m, n] = the.smith.shape
-    let row_trans = the.row_trans
-    let col_trans = the.col_trans
     m = Math.min (m, n)
     let i = 0
     while (i < m) {
-      if (matrix.get (i, i) === 0) {
-        for (let k of ut.range (i, m)) {
-          matrix.set (k, k, matrix.get (k+1, k+1))
-        }
-        matrix.set (m-1, m-1, 0)
+      if (the.smith.get (i, i) === 0) {
+        the.smith = the.smith.tuck_row (i, m) .tuck_col (i, m)
+        the.row_trans = the.row_trans.tuck_row (i, m)
+        the.col_trans = the.col_trans.tuck_col (i, m)
         m -= 1
       } else {
-        let x = matrix.get (i, i)
+        let x = the.smith.get (i, i)
         for (let k of ut.range (i+1, m)) {
-          let y = matrix.get (k, k)
+          let y = the.smith.get (k, k)
           if (y % x !== 0) {
-            matrix.set_col (
-              i, matrix.col (i) .add (matrix.col (k)))
-            col_trans.set_col (
-              i, col_trans.col (i) .add (col_trans.col (k)))
+            the.smith.col (i)
+              .update_add (the.smith.col (k))
+            the.col_trans.col (i)
+              .update_add (the.col_trans.col (k))
             matrix_t.smith_update_ext (the)
           }
         }
