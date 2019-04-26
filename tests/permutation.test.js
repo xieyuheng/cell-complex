@@ -60,3 +60,13 @@ test ("symmetric_group_t", t => {
   )
   t.pass ()
 })
+
+test ("tuck", t => {
+  let x = permutation_t.id (4)
+
+  t.true (
+    x.tuck (0, 2) .eq (
+      new permutation_t ([1, 2, 0, 3])
+    )
+  )
+})

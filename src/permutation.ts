@@ -8,7 +8,7 @@ import { group_t } from "./group"
 export
 class permutation_t {
   /**
-   * a permutation is encoded by
+   * A permutation is encoded by
    * the result of its action on [1, 2, ..., n].
    * I call this result "sequence".
    */
@@ -119,6 +119,26 @@ class permutation_t {
 
   gteq (that: permutation_t): boolean {
     return that.lteq (this)
+  }
+
+  static id (size: number): permutation_t {
+    return new permutation_t (
+      Array.from (ut.range (0, size))
+    )
+  }
+
+  tuck (i: number, j: number): permutation_t {
+    let sequence = new Array ()
+    for (let k of ut.range (0, this.size)) {
+      if (i <= k && k < j) {
+        sequence [k] = this.get (k+1)
+      } else if (k === j) {
+        sequence [k] = this.get (i)
+      } else {
+        sequence [k] = this.get (k)
+      }
+    }
+    return new permutation_t (sequence)
   }
 
   // TODO

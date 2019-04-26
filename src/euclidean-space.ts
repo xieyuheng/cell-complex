@@ -1161,7 +1161,7 @@ class matrix_t {
   }
 
   // int_solve (b: vector_t): null | vector_t {
-  // TODO  
+  // TODO
   // }
 
   smith_update (): matrix_t {
@@ -1249,6 +1249,9 @@ class matrix_t {
     return matrix
   }
 
+  // tuck_row ()
+  // tuck_col ()
+
   invariant_factor_update (): matrix_t {
     let matrix = this
     let [m, n] = this.shape
@@ -1267,6 +1270,8 @@ class matrix_t {
           let y = matrix.get (k, k)
           if (y % x !== 0) {
             matrix.set (k, i, matrix.get (k, k))
+            // matrix.set_col (
+            //   i, matrix.col (i) .add (matrix.col (k)))
             matrix.smith_update ()
           }
         }
@@ -1311,6 +1316,180 @@ class matrix_t {
       .smith_update ()
       .invariant_factor_update ()
       .diag_abs_update ()
+  }
+
+  static smith_update_ext (the: {
+    row_trans: matrix_t,
+    col_trans: matrix_t,
+    smith: matrix_t,
+  }): {
+    row_trans: matrix_t,
+    col_trans: matrix_t,
+    smith: matrix_t,
+  } {
+    let matrix = the.smith
+    let [m, n] = the.smith.shape
+    let row_trans = the.row_trans
+    let col_trans = the.col_trans
+    let i = 0
+    let j = 0
+    while (i < m && j < n) {
+      if (
+        (argall (i, m, (k) => matrix.get (k, j) === 0) &&
+         argall (j, n, (k) => matrix.get (i, k) === 0))
+      ) {
+        i += 1
+        j += 1
+      } else {
+        while (! (
+          (argall (i + 1, m, (k) => matrix.get (k, j) === 0) &&
+           argall (j + 1, n, (k) => matrix.get (i, k) === 0))
+        )) {
+          // row_trans
+          while (
+            ! argall (i + 1, m, (k) => matrix.get (k, j) === 0)
+          ) {
+            let k = argmin_guard (
+              i, m,
+              (k) => Math.abs (matrix.get (k, j)),
+              (k) => matrix.get (k, j) !== 0,
+            )
+            if (k !== i) {
+              matrix.update_swap_rows (i, k)
+              row_trans.update_swap_rows (i, k)
+            }
+            if (matrix.get (i, j) < 0) {
+              matrix.row (i) .update_scale (-1)
+              row_trans.row (i) .update_scale (-1)
+            }
+            for (let k of ut.range (i + 1, m)) {
+              let q = int.div (
+                matrix.get (k, j),
+                matrix.get (i, j))
+              if (q !== 0) {
+                matrix.row (k)
+                  .update_sub (matrix.row (i) .scale (q))
+                row_trans.row (k)
+                  .update_sub (row_trans.row (i) .scale (q))
+              }
+            }
+          }
+          // col_trans
+          while (
+            ! argall (j + 1, n, (k) => matrix.get (i, k) === 0)
+          ) {
+            let k = argmin_guard (
+              j, n,
+              (k) => Math.abs (matrix.get (i, k)),
+              (k) => matrix.get (i, k) !== 0,
+            )
+            if (k !== j) {
+              matrix.update_swap_cols (j, k)
+              col_trans.update_swap_cols (j, k)
+            }
+            if (matrix.get (i, j) < 0) {
+              matrix.col (j) .update_scale (-1)
+              col_trans.col (j) .update_scale (-1)
+            }
+            for (let k of ut.range (j + 1, n)) {
+              let q = int.div (
+                matrix.get (i, k),
+                matrix.get (i, j))
+              if (q !== 0) {
+                matrix.col (k)
+                  .update_sub (matrix.col (j) .scale (q))
+                col_trans.col (k)
+                  .update_sub (col_trans.col (j) .scale (q))
+              }
+            }
+          }
+        }
+        i += 1
+        j += 1
+      }
+    }
+    return the
+  }
+
+  static invariant_factor_update_ext (the: {
+    row_trans: matrix_t,
+    col_trans: matrix_t,
+    smith: matrix_t,
+  }): {
+    row_trans: matrix_t,
+    col_trans: matrix_t,
+    smith: matrix_t,
+  } {
+    let matrix = the.smith
+    let [m, n] = the.smith.shape
+    let row_trans = the.row_trans
+    let col_trans = the.col_trans
+    m = Math.min (m, n)
+    let i = 0
+    while (i < m) {
+      if (matrix.get (i, i) === 0) {
+        for (let k of ut.range (i, m)) {
+          matrix.set (k, k, matrix.get (k+1, k+1))
+        }
+        matrix.set (m-1, m-1, 0)
+        m -= 1
+      } else {
+        let x = matrix.get (i, i)
+        for (let k of ut.range (i+1, m)) {
+          let y = matrix.get (k, k)
+          if (y % x !== 0) {
+            matrix.set_col (
+              i, matrix.col (i) .add (matrix.col (k)))
+            col_trans.set_col (
+              i, col_trans.col (i) .add (col_trans.col (k)))
+            matrix_t.smith_update_ext (the)
+          }
+        }
+        i += 1
+      }
+    }
+    return the
+  }
+
+  /**
+   * `row_trans.mul (this) .mul (col_trans) .eq (smith)`
+   */
+  smith_decomposition (): {
+    row_trans: matrix_t,
+    col_trans: matrix_t,
+    smith: matrix_t,
+  } {
+    let [m, n] = this.shape
+    let the = {
+      row_trans: matrix_t.identity (m),
+      col_trans: matrix_t.identity (n),
+      smith: this.copy (),
+    }
+    the = matrix_t.smith_update_ext (the)
+    the = matrix_t.invariant_factor_update_ext (the)
+    return the
+  }
+
+  static row_trans (
+    permutation: permutation_t
+  ): matrix_t {
+    let n = permutation.size
+    let matrix = matrix_t.zeros (n, n)
+    for (let [i, v] of permutation.pairs ()) {
+      matrix.set (i, v, 1)
+    }
+    return matrix
+  }
+
+  static col_trans (
+    permutation: permutation_t
+  ): matrix_t {
+    let n = permutation.size
+    let matrix = matrix_t.zeros (n, n)
+    for (let [i, v] of permutation.pairs ()) {
+      matrix.set (v, i, 1)
+    }
+    return matrix
   }
 }
 
