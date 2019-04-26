@@ -36,6 +36,23 @@ class group_t {
   }
 }
 
+class group_isomorphic_t {
+  // TODO
+}
+
+let group_cat = category_t (
+  object_t = group_t
+  arrow_t = group_isomorphic_t
+  // TODO
+  dom
+  cod
+  id
+  compose
+  id_left
+  id_right
+  assoc
+)
+
 class abelian_group_t {
   group: group_t
 
@@ -54,25 +71,7 @@ class abelian_group_t {
     x: this.element_t,
     y: this.element_t,
   ): eqv_t (
-    this.element_t,
     this.mul (x, y),
     this.mul (y, x),
   )
 }
-
-class isomorphic_t {
-  // TODO
-}
-
-let group_cat = category_t (
-  object_t = group_t
-  arrow_t = isomorphic_t
-  // TODO
-  dom
-  cod
-  id
-  compose
-  id_left
-  id_right
-  assoc
-)

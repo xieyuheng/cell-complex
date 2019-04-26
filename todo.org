@@ -24,6 +24,9 @@
   but the shame is that
   no programming languages allow us
   to formalize abstract mathematical structures intuitively
+* computational-science
+- stiffness matrix
+- circulant matrix
 * mathematical structures in cicada
 - ring.cs substructure and ideal_t
 * graph

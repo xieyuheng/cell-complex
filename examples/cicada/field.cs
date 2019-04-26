@@ -1,4 +1,5 @@
 import { abelian_group_t } from "./group.cs"
+import { monoid_t } from "./monoid.cs"
 
 class field_t {
   element_t: type
@@ -11,6 +12,10 @@ class field_t {
   // only non zero element_t forms an `abelian_group_t`
   //   how to describe this ?
   // maybe define `ring_t` first
+
+  multiplication: monoid_t (
+    element_t = this.element_t
+  )
 
   multiplication: abelian_group_t (
     element_t = this.element_t
