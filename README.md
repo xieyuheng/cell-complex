@@ -37,8 +37,6 @@
 - euclid -- affine-space with dot product
   - contains `matrix_t`, `vector_t` and `point_t`
 
-- permutation -- `permutation_t`
-
 - [todo] cicada -- a dependently-typed programming language
   - game semantics
   - logic programming interface
