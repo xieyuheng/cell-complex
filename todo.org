@@ -1,4 +1,3 @@
-- tuck_row & tuck_col
 - fix int_kernel -- by smith_decomposition
 - int_solve
 - if the number goes beyond `number`, we will need generic `matrix_t <F>`

@@ -1249,8 +1249,21 @@ class matrix_t {
     return matrix
   }
 
-  // tuck_row ()
-  // tuck_col ()
+  tuck_row (i: number, j: number): matrix_t {
+    let [m, n] = this.shape
+    let row_trans = matrix_t.row_trans (
+      permutation_t.id (m) .tuck (i, j)
+    )
+    return row_trans.mul (this)
+  }
+
+  tuck_col (i: number, j: number): matrix_t {
+    let [n] = this.shape
+    let col_trans = matrix_t.col_trans (
+      permutation_t.id (n) .tuck (i, j)
+    )
+    return this.mul (col_trans)
+  }
 
   invariant_factor_update (): matrix_t {
     let matrix = this

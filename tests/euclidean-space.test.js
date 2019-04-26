@@ -124,7 +124,7 @@ test ("eu.matrix_t.row_trans", t => {
   t.pass ()
 })
 
-test ("eu.matrix_t mul", t => {
+test ("eu.matrix_t.mul", t => {
   {
     let x = eu.matrix ([
       [0, 1],
@@ -246,6 +246,26 @@ test ("eu.matrix_t mul", t => {
       row_trans.mul (x) .mul (col_trans) .eq (y)
     )
   }
+})
+
+test ("eu.matrix_t.tuck_row .tuck_col", t => {
+  let x = eu.matrix ([
+    [0, 0, 0, 0],
+    [0, 20, 30, 40],
+    [0, 200, 300, 400],
+  ])
+
+  let y = eu.matrix ([
+    [20, 30, 0, 40],
+    [200, 300, 0, 400],
+    [0, 0, 0, 0],
+  ])
+
+  t.true (
+    x .tuck_row (0, 2)
+      .tuck_col (0, 2)
+      .eq (y)
+  )
 })
 
 test ("eu.matrix_t transpose", t => {
