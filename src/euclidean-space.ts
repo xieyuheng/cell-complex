@@ -1097,7 +1097,7 @@ class matrix_t {
     return matrix
   }
 
-  integer_p (): boolean {
+  integral_p (): boolean {
     return this.every (Number.isInteger)
   }
 
@@ -1107,7 +1107,7 @@ class matrix_t {
    * (3) in pivot columns all other elements are less than pivot
    */
   row_hermite_form_p () {
-    if (! this.integer_p ()) { return false }
+    if (! this.integral_p ()) { return false }
     if (! this.has_row_pivots_p ()) { return false }
     for (let [i, j] of this.row_pivot_indexes ()) {
       for (let k of ut.range (0, i)) {
@@ -1120,7 +1120,7 @@ class matrix_t {
   }
 
   det_abs_one_p () {
-    if (! this.integer_p ()) { return false }
+    if (! this.integral_p ()) { return false }
     if (! this.invertible_p ()) { return false }
     if (! epsilon_p (Math.abs (this.det ()) - 1)) {
       return false
@@ -1151,18 +1151,40 @@ class matrix_t {
       .slice (null, [0, this.rank ()])
   }
 
-  // TODO
   int_kernel (): matrix_t {
     let [m, n] = this.shape
     let r = this.rank ()
-    let { row_trans } = this.transpose ()
-      .row_hermite_decomposition ()
-    return row_trans.transpose () .slice (null, [r, n])
+    let { col_trans } = this.smith_decomposition ()
+    return col_trans.slice (null, [r, n])
   }
 
-  // int_solve (b: vector_t): null | vector_t {
-  // TODO
-  // }
+  int_solve (b: vector_t): null | vector_t {
+    let [m, n] = this.shape
+    let r = this.rank ()
+    let {
+      row_trans,
+      col_trans,
+      smith,
+    } = this.smith_decomposition ()
+    let c = b.trans (row_trans)
+    let vector = vector_t.zeros (n)
+    for (let i of ut.range (0, c.size)) {
+      let x = c.get (i)
+      let y = smith.get (i, i)
+      if (x === 0) {
+        if (y !== 0) {
+          return null
+        }
+      } else {
+        if (x % y === 0) {
+          vector.set (i, int.div (x, y))
+        } else {
+          return null
+        }
+      }
+    }
+    return vector.trans (col_trans)
+  }
 
   smith_update (): matrix_t {
     let matrix = this
@@ -1320,6 +1342,7 @@ class matrix_t {
 
   smith_normal_form_p (): boolean {
     if (! this.diagonal_p ()) { return false }
+    if (! this.every (x => x >= 0)) { return false }
     if (! this.diag () .invariant_factors_p ()) { return false }
     return true
   }
@@ -1460,6 +1483,26 @@ class matrix_t {
     return the
   }
 
+  static diag_abs_update_ext (the: {
+    row_trans: matrix_t,
+    col_trans: matrix_t,
+    smith: matrix_t,
+  }): {
+    row_trans: matrix_t,
+    col_trans: matrix_t,
+    smith: matrix_t,
+  } {
+    let [m, n] = the.smith.shape
+    m = Math.min (m, n)
+    for (let i of ut.range (0, m)) {
+      if (the.smith.get (i, i) < 0) {
+        the.smith.set (i, i, - the.smith.get (i, i))
+        the.row_trans.row (i) .update_scale (-1)
+      }
+    }
+    return the
+  }
+
   /**
    * `row_trans.mul (this) .mul (col_trans) .eq (smith)`
    */
@@ -1476,6 +1519,7 @@ class matrix_t {
     }
     the = matrix_t.smith_update_ext (the)
     the = matrix_t.invariant_factor_update_ext (the)
+    the = matrix_t.diag_abs_update_ext (the)
     return the
   }
 
@@ -1820,6 +1864,10 @@ class vector_t {
 
   epsilon_p (): boolean {
     return this.every (epsilon_p)
+  }
+
+  integral_p (): boolean {
+    return this.every (Number.isInteger)
   }
 }
 

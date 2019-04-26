@@ -1,5 +1,5 @@
-- fix int_kernel -- by smith_decomposition
-- int_solve
+- fix *_update interfaces
+- int_solve -- by smith_decomposition
 - if the number goes beyond `number`, we will need generic `matrix_t <F>`
 * [note] row v.s. col
 - `row_trans`

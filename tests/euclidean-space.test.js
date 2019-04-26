@@ -346,7 +346,7 @@ test ("eu.matrix_t.diag", t => {
   t.true (m.diag () .eq (v))
 })
 
-test ("reduced_row_echelon_form", t => {
+test ("eu.matrix_t.reduced_row_echelon_form", t => {
   let m = eu.matrix ([
     [1, 3, 1, 9],
     [1, 1, -1, 1],
@@ -387,7 +387,7 @@ function test_lower_upper_decomposition (t, m) {
   )
 }
 
-test ("lower_upper_decomposition", t => {
+test ("eu.matrix_t.lower_upper_decomposition", t => {
   test_lower_upper_decomposition (t, eu.matrix ([
     [1, 3, 1],
     [1, 1, -1],
@@ -451,7 +451,7 @@ function test_row_canonical_decomposition (t, m) {
   )
 }
 
-test ("row_canonical_decomposition", t => {
+test ("eu.matrix_t.row_canonical_decomposition", t => {
   test_row_canonical_decomposition (t, eu.matrix ([
     [1, 3, 1],
     [1, 1, -1],
@@ -504,7 +504,7 @@ test ("row_canonical_decomposition", t => {
   ]))
 })
 
-test ("rank", t => {
+test ("eu.matrix_t.rank", t => {
   {
     let m = eu.matrix ([
       [1, 3, 1, 9],
@@ -540,7 +540,7 @@ function test_inv (t, m) {
   )
 }
 
-test ("inv", t => {
+test ("eu.matrix_t.inv", t => {
   {
     let m = eu.matrix ([
       [1, 3, 1],
@@ -1138,9 +1138,77 @@ test ("eu.matrix_t.smith_decomposition", t => {
   ]))
 
   // LIMITATION
-  // the integers in `row_trans` and `col_trans`
-  // exceed the upper bound that `number` can encode.
+  //   the integers in `row_trans` and `col_trans`
+  //   exceed the upper bound that `number` can encode.
   // test_smith_decomposition (t, INTEGER_MATRICES.R1)
+
+  t.pass ()
+})
+
+function test_int_kernel (t, m) {
+  let int_kernel = m.int_kernel ()
+
+  t.true (
+    int_kernel.integral_p ()
+  )
+
+  t.true (
+    m.mul (int_kernel) .epsilon_p ()
+  )
+}
+
+test ("eu.matrix_t.int_kernel", t => {
+  let A = eu.matrix ([
+    [1, 2, 3, 4, 5, 6, 7],
+    [1, 0, 1, 0, 1, 0, 1],
+    [2, 4, 5, 6, 1, 1, 1],
+    [1, 4, 2, 5, 2, 0, 0],
+    [0, 0, 1, 1, 2, 2, 3],
+  ])
+
+  test_int_kernel (t, A)
+})
+
+function test_int_solve (t, m, b) {
+  t.true (m.integral_p ())
+  t.true (b.integral_p ())
+
+  let solution = m.int_solve (b)
+
+  t.true (
+    m.mul (solution) .sub (b) .epsilon_p ()
+  )
+}
+
+function test_int_solve_non (t, m, b) {
+  t.true (m.integral_p ())
+  t.true (b.integral_p ())
+
+  let solution = m.int_solve (b)
+
+  t.true (
+    solution === null
+  )
+}
+
+test ("eu.matrix_t.int_solve", t => {
+  let A = eu.matrix ([
+    [1, 2, 3, 4, 5, 6, 7],
+    [1, 0, 1, 0, 1, 0, 1],
+    [2, 4, 5, 6, 1, 1, 1],
+    [1, 4, 2, 5, 2, 0, 0],
+    [0, 0, 1, 1, 2, 2, 3],
+  ])
+
+  let b = eu.vector ([
+    28,
+    4,
+    20,
+    14,
+    9,
+  ])
+
+  test_int_solve (t, A, b)
 
   t.pass ()
 })
