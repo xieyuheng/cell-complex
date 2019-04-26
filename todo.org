@@ -1,8 +1,9 @@
-- euclidean-space -> euclid
 - no mathematical structures in ts
 - number.ts replace integer.ts
 - generic matrix_t and vector_t
-- test with decimal.js
+- test with decimal.js -- test K1
+- understand int_solve -- own study
+- understand quotient module -- own study
 * [bug] limitation
 - if the number goes beyond `number`, we will need generic `matrix_t <F>`
 * [note] row v.s. col

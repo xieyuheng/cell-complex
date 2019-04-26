@@ -1,7 +1,7 @@
 import test from "ava"
 
 import * as nd from "../lib/ndarray"
-import * as eu from "../lib/euclidean-space"
+import * as eu from "../lib/euclid"
 import { permutation_t } from "../lib/permutation"
 import { log } from "../lib/util"
 

@@ -1,6 +1,6 @@
 let assert = require ("assert")
 
-let eu = require ("../lib/euclidean-space")
+let eu = require ("../lib/euclid")
 let ut = require ("../lib/util")
 
 {

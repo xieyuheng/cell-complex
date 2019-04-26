@@ -1,7 +1,7 @@
 import assert from "assert"
 
 import { dic_t } from "./dic"
-import * as eu from "./euclidean-space"
+import * as eu from "./euclid"
 import * as cx from "./cell-complex"
 import { integral_module_t } from "./integral-module"
 

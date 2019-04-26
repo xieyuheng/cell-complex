@@ -56,7 +56,7 @@
   - `frame_t` -- 1d `data_t`
   - `series_t` -- 2d `data_t`
 
-- euclidean-space -- affine-space with dot product
+- euclid -- affine-space with dot product
   - contains `matrix_t`, `vector_t` and `point_t`
 
 - permutation -- `permutation_t` and `symmetric_group_t`

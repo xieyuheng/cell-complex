@@ -1,4 +1,4 @@
-let eu = require ("../lib/euclidean-space")
+let eu = require ("../lib/euclid")
 
 let f0 = eu.matrix_t.zeros (512, 512) .transpose ()
 let f1 = eu.matrix_t.zeros (512, 512) .transpose ()
