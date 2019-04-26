@@ -340,6 +340,16 @@ class matrix_t {
     return matrix
   }
 
+  update_copy (that: matrix_t): matrix_t {
+    let [m, n] = this.shape
+    for (let i of ut.range (0, m)) {
+      for (let j of ut.range (0, n)) {
+        this.set (i, j, that.get (i, j))
+      }
+    }
+    return this
+  }
+
   row (i: number): vector_t {
     let [m, n] = this.shape
     let [s, t] = this.strides
@@ -1287,6 +1297,16 @@ class matrix_t {
     return this.mul (col_trans)
   }
 
+  update_tuck_row (i: number, j: number): matrix_t {
+    this.update_copy (this.tuck_row (i, j))
+    return this
+  }
+
+  update_tuck_col (i: number, j: number): matrix_t {
+    this.update_copy (this.tuck_col (i, j))
+    return this
+  }
+
   invariant_factor_update (): matrix_t {
     let matrix = this
     let [m, n] = this.shape
@@ -1354,17 +1374,12 @@ class matrix_t {
       .diag_abs_update ()
   }
 
-  static smith_update_ext (the: {
+  smith_update_ext (the: {
     row_trans: matrix_t,
     col_trans: matrix_t,
-    smith: matrix_t,
-  }): {
-    row_trans: matrix_t,
-    col_trans: matrix_t,
-    smith: matrix_t,
-  } {
-    let matrix = the.smith
-    let [m, n] = the.smith.shape
+  }) {
+    let matrix = this
+    let [m, n] = this.shape
     let row_trans = the.row_trans
     let col_trans = the.col_trans
     let i = 0
@@ -1444,63 +1459,50 @@ class matrix_t {
         j += 1
       }
     }
-    return the
   }
 
-  static invariant_factor_update_ext (the: {
+  invariant_factor_update_ext (the: {
     row_trans: matrix_t,
     col_trans: matrix_t,
-    smith: matrix_t,
-  }): {
-    row_trans: matrix_t,
-    col_trans: matrix_t,
-    smith: matrix_t,
-  } {
-    let [m, n] = the.smith.shape
+  }) {
+    let [m, n] = this.shape
     m = Math.min (m, n)
     let i = 0
     while (i < m) {
-      if (the.smith.get (i, i) === 0) {
-        the.smith = the.smith.tuck_row (i, m) .tuck_col (i, m)
-        the.row_trans = the.row_trans.tuck_row (i, m)
-        the.col_trans = the.col_trans.tuck_col (i, m)
+      if (this.get (i, i) === 0) {
+        this.update_tuck_row (i, m)
+        this.update_tuck_col (i, m)
+        the.row_trans.update_tuck_row (i, m)
+        the.col_trans.update_tuck_col (i, m)
         m -= 1
       } else {
-        let x = the.smith.get (i, i)
+        let x = this.get (i, i)
         for (let k of ut.range (i+1, m)) {
-          let y = the.smith.get (k, k)
+          let y = this.get (k, k)
           if (y % x !== 0) {
-            the.smith.col (i)
-              .update_add (the.smith.col (k))
+            this.col (i)
+              .update_add (this.col (k))
             the.col_trans.col (i)
               .update_add (the.col_trans.col (k))
-            matrix_t.smith_update_ext (the)
+            this.smith_update_ext (the)
           }
         }
         i += 1
       }
     }
-    return the
   }
 
-  static diag_abs_update_ext (the: {
+  diag_abs_update_ext (the: {
     row_trans: matrix_t,
-    col_trans: matrix_t,
-    smith: matrix_t,
-  }): {
-    row_trans: matrix_t,
-    col_trans: matrix_t,
-    smith: matrix_t,
-  } {
-    let [m, n] = the.smith.shape
+  }) {
+    let [m, n] = this.shape
     m = Math.min (m, n)
     for (let i of ut.range (0, m)) {
-      if (the.smith.get (i, i) < 0) {
-        the.smith.set (i, i, - the.smith.get (i, i))
+      if (this.get (i, i) < 0) {
+        this.set (i, i, - this.get (i, i))
         the.row_trans.row (i) .update_scale (-1)
       }
     }
-    return the
   }
 
   /**
@@ -1512,15 +1514,15 @@ class matrix_t {
     smith: matrix_t,
   } {
     let [m, n] = this.shape
+    let smith = this.copy ()
     let the = {
       row_trans: matrix_t.identity (m),
       col_trans: matrix_t.identity (n),
-      smith: this.copy (),
     }
-    the = matrix_t.smith_update_ext (the)
-    the = matrix_t.invariant_factor_update_ext (the)
-    the = matrix_t.diag_abs_update_ext (the)
-    return the
+    smith.smith_update_ext (the)
+    smith.invariant_factor_update_ext (the)
+    smith.diag_abs_update_ext (the)
+    return { ...the, smith }
   }
 
   static row_trans (
