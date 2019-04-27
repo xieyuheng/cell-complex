@@ -5,9 +5,9 @@ import { abelian_group_t, monoid_t } from "./group"
 
 export
 class ring_t <R> {
-  readonly elements: set_t <R>
-  readonly addition: abelian_group_t <R>
-  readonly multiplication: monoid_t <R>
+  elements: set_t <R>
+  addition: abelian_group_t <R>
+  multiplication: monoid_t <R>
 
   constructor (the: {
     addition: abelian_group_t <R>,
@@ -44,27 +44,7 @@ class ring_t <R> {
 }
 
 export
-class commutative_ring_t <R> {
-  readonly elements: set_t <R>
-  readonly ring: ring_t <R>
-  readonly addition: abelian_group_t <R>
-  readonly multiplication: monoid_t <R>
-
-  constructor (the: {
-    ring: ring_t <R>
-  }) {
-    this.ring = the.ring
-    this.elements = the.ring.elements
-    this.addition = the.ring.addition
-    this.multiplication = the.ring.multiplication
-  }
-
-  add = this.addition.add
-  neg = this.addition.neg
-  sub = this.addition.sub
-
-  mul = this.multiplication.mul
-
+class commutative_ring_t <R> extends ring_t <R> {
   commu (x: R, y: R) {
     eqv (
       this.elements,
@@ -73,33 +53,11 @@ class commutative_ring_t <R> {
     )
   }
 
-  distr = this.ring.left_distr
+  distr = this.left_distr
 }
 
 export
-class integral_domain_t <R> {
-  readonly elements: set_t <R>
-  readonly ring: commutative_ring_t <R>
-  readonly addition: abelian_group_t <R>
-  readonly multiplication: monoid_t <R>
-
-  constructor (the: {
-    ring: commutative_ring_t <R>
-  }) {
-    this.ring = the.ring
-    this.elements = the.ring.elements
-    this.addition = the.ring.addition
-    this.multiplication = the.ring.multiplication
-  }
-
-  zero = this.addition.id
-  add = this.addition.add
-  neg = this.addition.neg
-  sub = this.addition.sub
-
-  one = this.multiplication.id
-  mul = this.multiplication.mul
-
+class integral_domain_t <R> extends commutative_ring_t <R> {
   nonzero_product (x: R, y: R) {
     not_eqv (this.elements, x, this.zero)
     not_eqv (this.elements, y, this.zero)
@@ -108,5 +66,40 @@ class integral_domain_t <R> {
       this.mul (x, y),
       this.zero,
     )
+  }
+}
+
+export
+class euclidean_domain_t <R> extends integral_domain_t <R> {
+  degree: (x: R) => number
+
+  constructor (the: {
+    addition: abelian_group_t <R>,
+    multiplication: monoid_t <R>,
+    degree: (x: R) => number,
+  }) {
+    super (the)
+    this.degree = the.degree
+  }
+}
+
+export
+class field_t <R> extends integral_domain_t <R> {
+  inv: (x: R) => R
+
+  constructor (the: {
+    addition: abelian_group_t <R>,
+    multiplication: monoid_t <R>,
+    inv: (x: R) => R,
+  }) {
+    super (the)
+    this.inv = (x) => {
+      not_eqv (this.elements, x, this.zero)
+      return the.inv (x)
+    }
+  }
+
+  div (x: R, y: R): R {
+    return this.mul (x, this.inv (y))
   }
 }

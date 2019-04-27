@@ -5,6 +5,8 @@ import * as ut from "./util"
 import * as num from "./number"
 import { permutation_t } from "./permutation"
 
+import { euclidean_domain_t } from "./abstract/ring"
+
 export type Array1d = Array <number>
 export type Array2d = Array <Array <number>>
 export type Array3d = Array <Array <Array <number>>>

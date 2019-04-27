@@ -1,14 +1,14 @@
 import { set_t, eqv } from "./set"
-import { field_t } from "./field"
 import { abelian_group_t } from "./group"
-import { vector_space_t } from "./vector-space"
+import { field_t } from "./ring"
+import { vector_space_t } from "./module"
 
 export
 class affine_space_t <F, V, P> {
-  readonly points: set_t <P>
-  readonly vectors: vector_space_t <F, V>
-  readonly trans: (p: P, v: V) => P
-  readonly diff: (p: P, q: P) => V
+  points: set_t <P>
+  vectors: vector_space_t <F, V>
+  trans: (p: P, v: V) => P
+  diff: (p: P, q: P) => V
 
   constructor (the: {
     points: set_t <P>,

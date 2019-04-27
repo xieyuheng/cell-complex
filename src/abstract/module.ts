@@ -1,12 +1,12 @@
 import { set_t, eqv, not_eqv } from "./set"
 import { abelian_group_t } from "./group"
-import { ring_t } from "./ring"
+import { field_t, ring_t } from "./ring"
 
 export
 class module_t <R, V> {
-  readonly ring: ring_t <R>
-  readonly vector: abelian_group_t <V>
-  readonly scale: (a: R, x: V) => V
+  ring: ring_t <R>
+  vector: abelian_group_t <V>
+  scale: (a: R, x: V) => V
 
   constructor (the: {
     ring: ring_t <R>,
@@ -59,5 +59,22 @@ class module_t <R, V> {
         this.scale (b, x),
       ),
     )
+  }
+}
+
+export
+class vector_space_t <R, V> extends module_t <R, V> {
+  field: field_t <R>
+
+  constructor (the: {
+    field: field_t <R>,
+    vector: abelian_group_t <V>,
+    scale: (a: R, x: V) => V,
+  }) {
+    super ({
+      ...the,
+      ring: the.field,
+    })
+    this.field = the.field
   }
 }

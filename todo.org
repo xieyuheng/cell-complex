@@ -1,5 +1,4 @@
 - big.js decimal.js examples
-
 - generic matrix_t and vector_t
   - number.ts
 - generic matrix_t algos
