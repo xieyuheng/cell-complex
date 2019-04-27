@@ -3,7 +3,7 @@ import assert from "assert"
 import { dic_t } from "./dic"
 import * as eu from "./euclid"
 import * as cx from "./cell-complex"
-// import { integral_module_t } from "./integral-module"
+import { integral_module_t } from "./integral-module"
 
 export
 class chain_t {
@@ -38,47 +38,6 @@ class chain_t {
     return this
   }
 
-  static boundary_of_basis (
-    com: cx.cell_complex_t,
-    id: cx.id_t,
-  ): chain_t {
-    let boundary = chain_t.zeros (id.dim - 1, com)
-    if (id.dim === 0) {
-      return boundary
-    } else if (id.dim === 1) {
-      let edge = com.get_edge (id)
-      boundary.update_at (edge.start, n => n - 1)
-      boundary.update_at (edge.end, n => n + 1)
-      return boundary
-    } else if (id.dim === 2) {
-      let face = com.get_face (id)
-      for (let e of face.circuit) {
-        if (e instanceof cx.rev_id_t) {
-          boundary.update_at (e.rev (), n => n - 1)
-        } else {
-          boundary.update_at (e, n => n + 1)
-        }
-      }
-      return boundary
-    } else {
-      throw new Error ("can only calculate dim 0, 1, 2 yet")
-    }
-  }
-
-  static boundary_matrix (
-    com: cx.cell_complex_t,
-    dim: number,
-  ): eu.matrix_t {
-    let m = com.size_of_dim (dim - 1)
-    let n = com.size_of_dim (dim)
-    let matrix = eu.matrix_t.zeros (m, n)
-    for (let id of com.id_in_dim (dim)) {
-      let boundary = chain_t.boundary_of_basis (com, id)
-      matrix.set_col (id.ser, boundary.vector)
-    }
-    return matrix
-  }
-
   down (matrix: eu.matrix_t): chain_t {
     let [m, n] = matrix.shape
     assert (m === this.com.size_of_dim (this.dim - 1))
@@ -101,7 +60,7 @@ class chain_t {
 
   boundary (): chain_t {
     return this.down (
-      chain_t.boundary_matrix (this.com, this.dim)
+      boundary_matrix (this.com, this.dim)
     )
   }
 
@@ -124,5 +83,77 @@ class chain_t {
   print () {
     console.log (`dim: ${this.dim}`)
     this.vector.print ()
+  }
+}
+
+export
+function boundary_of_basis (
+  com: cx.cell_complex_t,
+  id: cx.id_t,
+): chain_t {
+  let boundary = chain_t.zeros (id.dim - 1, com)
+  if (id.dim === 0) {
+    return boundary
+  } else if (id.dim === 1) {
+    let edge = com.get_edge (id)
+    boundary.update_at (edge.start, n => n - 1)
+    boundary.update_at (edge.end, n => n + 1)
+    return boundary
+  } else if (id.dim === 2) {
+    let face = com.get_face (id)
+    for (let e of face.circuit) {
+      if (e instanceof cx.rev_id_t) {
+        boundary.update_at (e.rev (), n => n - 1)
+      } else {
+        boundary.update_at (e, n => n + 1)
+      }
+    }
+    return boundary
+  } else {
+    throw new Error ("can only calculate dim 0, 1, 2 yet")
+  }
+}
+
+export
+function boundary_matrix (
+  com: cx.cell_complex_t,
+  dim: number,
+): eu.matrix_t {
+  let m = com.size_of_dim (dim - 1)
+  let n = com.size_of_dim (dim)
+  let matrix = eu.matrix_t.zeros (m, n)
+  for (let id of com.id_in_dim (dim)) {
+    let boundary = boundary_of_basis (com, id)
+    matrix.set_col (id.ser, boundary.vector)
+  }
+  return matrix
+}
+
+export
+function homology_group (
+  com: cx.cell_complex_t,
+  dim: number,
+): integral_module_t {
+  let low = boundary_matrix (com, dim)
+  let high = boundary_matrix (com, dim + 1)
+  let kernel = low.int_kernel ()
+  let image = high.int_image ()
+  let matrix = kernel.int_solve_matrix (image)
+
+  // console.log ("kernel:")
+  // kernel.print ()
+  // console.log ("image:")
+  // image.print ()
+  // console.log ("solution:")
+  // matrix.print ()
+
+  matrix.transpose () .int_kernel () .print ()
+
+  if (matrix === null) {
+    throw new Error ("[internal] int_solve_matrix fail")
+  } else {
+    return integral_module_t.from_smith_normal_form (
+      matrix.smith_normal_form ()
+    )
   }
 }

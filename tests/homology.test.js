@@ -19,30 +19,30 @@ test ("hl.chain_t.zeros", t => {
   t.pass ()
 })
 
-test ("hl.chain_t.boundary_of_basis", t => {
+test ("hl.boundary_of_basis", t => {
   let torus = new torus_t ()
   let square = new cx.polygon_t (4)
 
   t.true (
-    hl.chain_t.boundary_of_basis (torus, torus.id ("toro"))
+    hl.boundary_of_basis (torus, torus.id ("toro"))
       .cycle_p ()
   )
 
   t.true (
-    hl.chain_t.boundary_of_basis (square, new cx.id_t (1, 0))
+    hl.boundary_of_basis (square, new cx.id_t (1, 0))
       .cycle_p ()
   )
 
   t.pass ()
 })
 
-test ("hl.chain_t.boundary_matrix", t => {
+test ("hl.boundary_matrix", t => {
   let torus = new torus_t ()
   let square = new cx.polygon_t (4)
 
-  hl.chain_t.boundary_matrix (torus, 1)
+  hl.boundary_matrix (torus, 1)
   // .print ()
-  hl.chain_t.boundary_matrix (square, 1)
+  hl.boundary_matrix (square, 1)
   // .print ()
 
   t.pass ()
@@ -52,12 +52,12 @@ test ("hl.chain_t.add", t => {
   let square = new cx.polygon_t (4)
 
   let chain0 =
-    hl.chain_t.boundary_of_basis (
+    hl.boundary_of_basis (
       square, new cx.id_t (1, 0)
     )
 
   let chain1 =
-    hl.chain_t.boundary_of_basis (
+    hl.boundary_of_basis (
       square, new cx.id_t (1, 1)
     )
 
@@ -104,9 +104,9 @@ class example_graph_t extends cx.cell_complex_t {
 
 test ("example_graph_t", t => {
   let com = new example_graph_t ()
-  let b0 = hl.chain_t.boundary_matrix (com, 0)
-  let b1 = hl.chain_t.boundary_matrix (com, 1)
-  let b2 = hl.chain_t.boundary_matrix (com, 2)
+  let b0 = hl.boundary_matrix (com, 0)
+  let b1 = hl.boundary_matrix (com, 1)
+  let b2 = hl.boundary_matrix (com, 2)
 
   // {
   //   b2.print ()
@@ -144,15 +144,15 @@ class example_complex_t extends cx.cell_complex_t {
 
 test ("example_complex_t", t => {
   let com = new example_complex_t ()
-  let b0 = hl.chain_t.boundary_matrix (com, 0)
-  let b1 = hl.chain_t.boundary_matrix (com, 1)
-  let b2 = hl.chain_t.boundary_matrix (com, 2)
+  let b0 = hl.boundary_matrix (com, 0)
+  let b1 = hl.boundary_matrix (com, 1)
+  let b2 = hl.boundary_matrix (com, 2)
 
-  {
-    b2.print ()
-    b2.int_image () .print ()
-    b1.int_kernel () .print ()
-  }
+  // {
+  //   b2.print ()
+  //   b2.int_image () .print ()
+  //   b1.int_kernel () .print ()
+  // }
 
   t.pass ()
 })
@@ -160,9 +160,9 @@ test ("example_complex_t", t => {
 test ("four-ways-to-glue-a-square", t => {
   {
     let com = new sphere_t ()
-    let b0 = hl.chain_t.boundary_matrix (com, 0)
-    let b1 = hl.chain_t.boundary_matrix (com, 1)
-    let b2 = hl.chain_t.boundary_matrix (com, 2)
+    let b0 = hl.boundary_matrix (com, 0)
+    let b1 = hl.boundary_matrix (com, 1)
+    let b2 = hl.boundary_matrix (com, 2)
 
     // b1.print ()
     // b1.int_kernel () .print ()
@@ -171,9 +171,9 @@ test ("four-ways-to-glue-a-square", t => {
 
   {
     let com = new torus_t ()
-    let b0 = hl.chain_t.boundary_matrix (com, 0)
-    let b1 = hl.chain_t.boundary_matrix (com, 1)
-    let b2 = hl.chain_t.boundary_matrix (com, 2)
+    let b0 = hl.boundary_matrix (com, 0)
+    let b1 = hl.boundary_matrix (com, 1)
+    let b2 = hl.boundary_matrix (com, 2)
 
     // b1.print ()
     // b1.int_kernel () .print ()
@@ -182,24 +182,28 @@ test ("four-ways-to-glue-a-square", t => {
 
   {
     let com = new klein_bottle_t ()
-    let b0 = hl.chain_t.boundary_matrix (com, 0)
-    let b1 = hl.chain_t.boundary_matrix (com, 1)
-    let b2 = hl.chain_t.boundary_matrix (com, 2)
+    let b0 = hl.boundary_matrix (com, 0)
+    let b1 = hl.boundary_matrix (com, 1)
+    let b2 = hl.boundary_matrix (com, 2)
 
     // b1.print ()
     // b1.int_kernel () .print ()
     // b2.int_image () .print ()
+
+    hl.homology_group (com, 1) .print ()
   }
 
   {
     let com = new projective_plane_t ()
-    let b0 = hl.chain_t.boundary_matrix (com, 0)
-    let b1 = hl.chain_t.boundary_matrix (com, 1)
-    let b2 = hl.chain_t.boundary_matrix (com, 2)
+    let b0 = hl.boundary_matrix (com, 0)
+    let b1 = hl.boundary_matrix (com, 1)
+    let b2 = hl.boundary_matrix (com, 2)
 
     // b1.print ()
     // b1.int_kernel () .print ()
     // b2.int_image () .print ()
+
+    hl.homology_group (com, 1) .print ()
   }
 
   t.pass ()

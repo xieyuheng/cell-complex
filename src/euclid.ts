@@ -1200,6 +1200,7 @@ class matrix_t {
 
   int_solve (b: vector_t): null | vector_t {
     let [m, n] = this.shape
+    assert (b.size === m)
     let r = this.rank ()
     let {
       row_trans,
@@ -1224,6 +1225,24 @@ class matrix_t {
       }
     }
     return vector.trans (col_trans)
+  }
+
+  int_solve_matrix (matrix: matrix_t): null | matrix_t {
+    assert (this.integral_p)
+    assert (matrix.integral_p)
+    let [m, n] = this.shape
+    let [p, q] = matrix.shape
+    assert (p === m)
+    let solution = matrix_t.zeros (n, q)
+    for (let [i, col] of matrix.col_entries ()) {
+      let x = this.int_solve (col)
+      if (x === null) {
+        return null
+      } else {
+        solution.set_col (i, x)
+      }
+    }
+    return solution
   }
 
   smith_update (): matrix_t {
