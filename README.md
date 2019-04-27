@@ -23,21 +23,27 @@
 
 ### Contents
 
-- combinatorial-game -- a game engine for n-player perfect information games
+- euclid
+  - euclidean space -- affine space with dot product
+    - `matrix_t`, `vector_t` and `point_t`
+  - module over euclidean domain -- for generic algorithms
+
+- combinatorial-game
+  - a game engine for n-player perfect information games
   - example games:
     - tic-tac-toe
     - hackenbush -- [demo](http://hackenbush.combinatorial-game.surge.sh/)
 
-- cell-complex -- cell-complex based low dimensional algebraic topology library
+- cell-complex
+  - cell-complex based low dimensional algebraic topology library
   - example cell complexes:
     - torus
 
-- homology -- cellular homology of cell-complex
+- homology
+  - cellular homology of cell-complex
 
-- euclid -- affine-space with dot product
-  - contains `matrix_t`, `vector_t` and `point_t`
-
-- [todo] cicada -- a dependently-typed programming language
+- [todo] cicada
+  - a dependently-typed programming language
   - game semantics
   - logic programming interface
 

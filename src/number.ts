@@ -145,15 +145,3 @@ function array_gcd_ext (
   })
   return [d, ext]
 }
-
-declare global {
-  interface Number {
-    six: number
-  }
-}
-
-Number.prototype.six = 666
-
-let x = 10000
-
-console.log (x.six)

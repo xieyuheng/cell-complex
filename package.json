@@ -23,8 +23,8 @@
     "up": "git commit -m 'up'; npm run build; npm run api; npm version patch; git push; npm publish"
   },
   "devDependencies": {
-    "@babel/core": "^7.4.3",
-    "@babel/plugin-transform-runtime": "^7.4.3",
+    "@babel/core": "^7.4.4",
+    "@babel/plugin-transform-runtime": "^7.4.4",
     "ava": "^1.4.1",
     "parcel-bundler": "^1.12.3",
     "surge": "^0.20.4",
@@ -32,9 +32,12 @@
     "typescript": "^3.4.5"
   },
   "dependencies": {
-    "@babel/runtime-corejs2": "^7.4.3",
+    "@babel/runtime-corejs2": "^7.4.4",
     "@types/assert": "^1.4.2",
+    "@types/big.js": "^4.0.5",
     "@types/lodash": "^4.14.123",
+    "big.js": "^5.2.2",
+    "decimal.js": "^10.1.1",
     "lodash": "^4.17.11"
   }
 }
