@@ -1,5 +1,4 @@
 - change of bases
-- test image and kernel by "four ways to glue a square"
 - homology group of cell-complex
   - image (boundary (n))
     is subgroup of
