@@ -147,8 +147,6 @@ function homology_group (
   // console.log ("solution:")
   // matrix.print ()
 
-  matrix.transpose () .int_kernel () .print ()
-
   if (matrix === null) {
     throw new Error ("[internal] int_solve_matrix fail")
   } else {
