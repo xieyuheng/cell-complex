@@ -1,4 +1,6 @@
 - generic matrix_t and vector_t
+  - domain_t interface
+  - number.ts
 - test with decimal.js -- test K1
 - understand int_solve -- own study
 - understand quotient module -- own study
