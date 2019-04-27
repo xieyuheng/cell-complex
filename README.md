@@ -20,7 +20,7 @@
 
 - [API](https://api.cicada-lang.now.sh)
 
-### Contents
+### Modules
 
 - euclid
   - euclidean space -- affine space with dot product
