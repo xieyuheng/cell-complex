@@ -71,16 +71,17 @@ export
 class projective_plane_t extends cx.cell_complex_t {
   constructor () {
     let bui = new cx.cell_complex_builder_t ()
-    let origin = bui.inc_one_point ()
-    let left_rim = bui.attach_edge (origin, origin)
-    let right_rim = bui.attach_edge (origin, origin)
+    let [start, end] = bui.inc_points (2)
+    let left_rim = bui.attach_edge (start, end)
+    let right_rim = bui.attach_edge (end, start)
     let surf = bui.attach_face ([
       left_rim, right_rim,
       left_rim, right_rim,
     ])
     super (bui)
     this
-      .define_point ("origin", origin)
+      .define_point ("start", start)
+      .define_point ("end", end)
       .define_edge ("left_rim", left_rim)
       .define_edge ("right_rim", right_rim)
       .define_face ("surf", surf)

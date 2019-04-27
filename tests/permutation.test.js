@@ -23,7 +23,7 @@ test ("mul", t => {
   let x = new permutation_t ([0, 2, 3, 1])
   t.true (
     x.mul (x.inv ())
-      .eq (permutation_t.identity (x.sequence.length))
+      .eq (permutation_t.id (x.sequence.length))
   )
 })
 

@@ -59,11 +59,6 @@ class permutation_t {
     return new permutation_t (sequence)
   }
 
-  static identity (n: number): permutation_t {
-    let sequence = Array.from (ut.range (0, n))
-    return new permutation_t (sequence)
-  }
-
   eq (that: permutation_t): boolean {
     return _.isEqual (this.sequence, that.sequence)
   }

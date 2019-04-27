@@ -190,7 +190,7 @@ test ("four-ways-to-glue-a-square", t => {
     // b1.int_kernel () .print ()
     // b2.int_image () .print ()
 
-    hl.homology_group (com, 1) .print ()
+    // hl.homology_group (com, 1) .print ()
   }
 
   {
@@ -199,11 +199,12 @@ test ("four-ways-to-glue-a-square", t => {
     let b1 = hl.boundary_matrix (com, 1)
     let b2 = hl.boundary_matrix (com, 2)
 
-    // b1.print ()
-    // b1.int_kernel () .print ()
-    // b2.int_image () .print ()
+    b1.print ()
+    b1.int_kernel () .print ()
+    b2.print ()
+    b2.int_image () .print ()
 
-    hl.homology_group (com, 1) .print ()
+    // hl.homology_group (com, 1) .print ()
   }
 
   t.pass ()

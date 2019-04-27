@@ -535,7 +535,7 @@ function test_inv (t, m) {
   let [_n, n] = m.shape
   t.true (
     m.mul (m.inv ()) .sub (
-      eu.matrix_t.identity (n)
+      eu.matrix_t.id (n)
     ) .epsilon_p ()
   )
 }
@@ -548,6 +548,17 @@ test ("eu.matrix_t.inv", t => {
       [3, 11, 5],
     ])
     t.true (m.inv_maybe () === null)
+  }
+
+  {
+    let m = eu.matrix ([
+      [2, -1, 0, 0],
+      [-1, 2, -1, 0],
+      [0, -1, 2, -1],
+      [0, 0, -1, 2],
+    ])
+
+    test_inv (t, m)
   }
 
   {
@@ -635,8 +646,8 @@ test ("eu.vector_t.reduce", t => {
   )
 })
 
-test ("eu.matrix_t.identity", t => {
-  let v = eu.matrix_t.identity (3)
+test ("eu.matrix_t.id", t => {
+  let v = eu.matrix_t.id (3)
 
   t.true (
     v.eq (eu.matrix ([

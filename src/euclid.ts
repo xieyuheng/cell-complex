@@ -797,7 +797,7 @@ class matrix_t {
     let [m, n] = this.shape
     assert (m === n)
     let record = matrix_t.zeros (m, n)
-    let permu = matrix_t.identity (n)
+    let permu = matrix_t.id (n)
     let h = 0 // init pivot row
     let k = 0 // init pivot column
     let inver = 0
@@ -830,7 +830,7 @@ class matrix_t {
       }
     }
     return {
-      lower: record.update_add (matrix_t.identity (n)),
+      lower: record.update_add (matrix_t.id (n)),
       upper: matrix,
       permu,
       inver,
@@ -873,7 +873,7 @@ class matrix_t {
   inv_maybe (): matrix_t | null {
     assert (this.square_p ())
     let [_m, n] = this.shape
-    let augmented = this.append_cols (matrix_t.identity (n))
+    let augmented = this.append_cols (matrix_t.id (n))
     let echelon = augmented.reduced_row_echelon_form ()
     let upper = echelon.slice (null, [0, n])
     let inv = echelon.slice (null, [n, n + n])
@@ -936,7 +936,7 @@ class matrix_t {
     return matrix_t.numbers (1, x, y)
   }
 
-  static identity (n: number): matrix_t {
+  static id (n: number): matrix_t {
     let matrix = matrix_t.zeros (n, n)
     for (let i of ut.range (0, n)) {
       matrix.set (i, i, 1)
@@ -990,7 +990,7 @@ class matrix_t {
     canonical: matrix_t,
   } {
     let [m, n] = this.shape
-    let augmented = this.append_cols (matrix_t.identity (m))
+    let augmented = this.append_cols (matrix_t.id (m))
     let echelon = augmented.row_canonical_form ()
     return {
       row_trans: echelon.slice (null, [n, n + m]),
@@ -1176,7 +1176,7 @@ class matrix_t {
     hermite: matrix_t,
   } {
     let [m, n] = this.shape
-    let augmented = this.append_cols (matrix_t.identity (m))
+    let augmented = this.append_cols (matrix_t.id (m))
     let echelon = augmented.row_hermite_normal_form ()
     return {
       row_trans: echelon.slice (null, [n, n + m]),
@@ -1191,11 +1191,19 @@ class matrix_t {
       .slice (null, [0, this.rank ()])
   }
 
+  // int_kernel (): matrix_t {
+  //   let [m, n] = this.shape
+  //   let r = this.rank ()
+  //   let { col_trans } = this.smith_decomposition ()
+  //   return col_trans.slice (null, [r, n])
+  // }
+
   int_kernel (): matrix_t {
     let [m, n] = this.shape
     let r = this.rank ()
-    let { col_trans } = this.smith_decomposition ()
-    return col_trans.slice (null, [r, n])
+    let { row_trans } = this.transpose ()
+      .smith_decomposition ()
+    return row_trans.transpose () .slice (null, [r, n])
   }
 
   int_solve (b: vector_t): null | vector_t {
@@ -1565,8 +1573,8 @@ class matrix_t {
     let [m, n] = this.shape
     let smith = this.copy ()
     let the = {
-      row_trans: matrix_t.identity (m),
-      col_trans: matrix_t.identity (n),
+      row_trans: matrix_t.id (m),
+      col_trans: matrix_t.id (n),
     }
     smith.smith_update_ext (the)
     smith.invariant_factor_update_ext (the)
