@@ -5,7 +5,35 @@ import * as ut from "./util"
 import * as num from "./number"
 import { permutation_t } from "./permutation"
 
+import { set_t } from "./abstract/set"
+import { monoid_t, abelian_group_t } from "./abstract/group"
 import { euclidean_domain_t } from "./abstract/ring"
+
+export
+function domain <R> (the: {
+  elements: set_t <R>,
+  zero: R,
+  add: (x: R, y: R) => R,
+  neg: (x: R) => R,
+  one: R,
+  mul: (x: R, y: R) => R,
+  degree: (x: R) => number,
+}): euclidean_domain_t <R> {
+  return new euclidean_domain_t ({
+    addition: new abelian_group_t ({
+      elements: the.elements,
+      id: the.zero,
+      add: the.add,
+      neg: the.neg,
+    }),
+    multiplication: new monoid_t ({
+      elements: the.elements,
+      id: the.one,
+      mul: the.mul,
+    }),
+    degree: the.degree,
+  })
+}
 
 export type Array1d = Array <number>
 export type Array2d = Array <Array <number>>
