@@ -1,6 +1,6 @@
 import * as _ from "lodash"
 
-import * as cg from "./combinatorial-game"
+import * as cg from "../combinatorial-game"
 
 type player_t = "X" | "O"
 

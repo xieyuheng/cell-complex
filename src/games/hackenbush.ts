@@ -1,8 +1,8 @@
 import {
   id_t, vertex_t, edge_t, graph_t
-} from "./graph"
+} from "../graph"
 
-import * as cg from "./combinatorial-game"
+import * as cg from "../combinatorial-game"
 
 export
 type player_t = "blue" | "red"
