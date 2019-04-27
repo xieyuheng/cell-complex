@@ -22,23 +22,23 @@
 
 ### Modules
 
-- `eu` -- euclid
+- `eu` euclid
   - euclidean space -- affine space with dot product
     - `matrix_t`, `vector_t` and `point_t`
   - module over euclidean domain -- for generic algorithms
 
-- `cg` -- combinatorial-game
+- `cg` combinatorial-game
   - a game engine for n-player perfect information games
   - example games:
     - tic-tac-toe
     - hackenbush -- [demo](http://hackenbush.combinatorial-game.surge.sh/)
 
-- `cx` -- cell-complex
+- `cx` cell-complex
   - cell-complex based low dimensional algebraic topology library
   - example cell complexes:
     - torus
 
-- `hl` -- homology
+- `hl` homology
   - cellular homology of cell-complex
 
 - [todo] cicada
