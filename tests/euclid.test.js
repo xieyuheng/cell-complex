@@ -1210,5 +1210,53 @@ test ("eu.matrix_t.int_solve", t => {
 
   test_int_solve (t, A, b)
 
+  {
+    let A = eu.matrix ([
+      [1, 0],
+      [0, 1],
+    ])
+
+    let b = eu.vector ([
+      2,
+      2,
+    ])
+
+    test_int_solve (t, A, b)
+
+    t.true (
+      A.int_solve (b) .eq (
+        eu.vector ([2, 2])
+      )
+    )
+  }
+
+  {
+    let A = eu.matrix ([
+      [1, 1],
+      [1, 1],
+      [0, 1],
+      [1, 0],
+    ])
+
+    let b = eu.vector ([
+      0,
+      0,
+      1,
+        -1,
+    ])
+
+    test_int_solve (t, A, b)
+
+    t.true (
+      A.act (eu.vector ([-1, 1])) .eq (b)
+    )
+
+    t.true (
+      A.int_solve (b) .eq (
+        eu.vector ([-1, 1])
+      )
+    )
+  }
+
   t.pass ()
 })

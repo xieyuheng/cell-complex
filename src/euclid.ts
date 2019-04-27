@@ -1210,9 +1210,9 @@ class matrix_t {
     let vector = vector_t.zeros (n)
     for (let i of ut.range (0, c.size)) {
       let x = c.get (i)
-      let y = smith.get (i, i)
-      if (x === 0) {
-        if (y !== 0) {
+      let y = i < r ? smith.get (i, i) : 0
+      if (y === 0) {
+        if (x !== 0) {
           return null
         }
       } else {

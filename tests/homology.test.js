@@ -89,8 +89,6 @@ class example_graph_t extends cx.cell_complex_t {
     let b = bui.attach_edge (y, z)
     let c = bui.attach_edge (z, x)
     let d = bui.attach_edge (z, x)
-    let f = bui.attach_face ([ c, d.rev () ])
-    let g = bui.attach_face ([ a, b, c ])
 
     super (bui)
     this
@@ -101,8 +99,6 @@ class example_graph_t extends cx.cell_complex_t {
       .define_edge ("b", b)
       .define_edge ("c", c)
       .define_edge ("d", d)
-      .define_face ("f", f)
-      .define_face ("g", g)
   }
 }
 
@@ -117,6 +113,46 @@ test ("example_graph_t", t => {
   //   b2.int_image () .print ()
   //   b1.int_kernel () .print ()
   // }
+
+  t.pass ()
+})
+
+class example_complex_t extends cx.cell_complex_t {
+  constructor () {
+    let bui = new cx.cell_complex_builder_t ()
+    let [x, y, z] = bui.inc_points (3)
+    let a = bui.attach_edge (x, y)
+    let b = bui.attach_edge (y, z)
+    let c = bui.attach_edge (z, x)
+    let d = bui.attach_edge (z, x)
+    let front = bui.attach_face ([ c, d.rev () ])
+    let back = bui.attach_face ([ d.rev (), c ])
+
+    super (bui)
+    this
+      .define_point ("x", x)
+      .define_point ("y", y)
+      .define_point ("z", z)
+      .define_edge ("a", a)
+      .define_edge ("b", b)
+      .define_edge ("c", c)
+      .define_edge ("d", d)
+      .define_face ("front", front)
+      .define_face ("back", back)
+  }
+}
+
+test ("example_complex_t", t => {
+  let com = new example_complex_t ()
+  let b0 = hl.chain_t.boundary_matrix (com, 0)
+  let b1 = hl.chain_t.boundary_matrix (com, 1)
+  let b2 = hl.chain_t.boundary_matrix (com, 2)
+
+  {
+    b2.print ()
+    b2.int_image () .print ()
+    b1.int_kernel () .print ()
+  }
 
   t.pass ()
 })

@@ -50,8 +50,8 @@ class klein_bottle_t extends cx.cell_complex_t {
   constructor () {
     let bui = new cx.cell_complex_builder_t ()
     let origin = bui.inc_one_point ()
-    let cross = bui.attach_edge (origin, origin)
     let toro = bui.attach_edge (origin, origin)
+    let cross = bui.attach_edge (origin, origin)
     let surf = bui.attach_face ([
       toro,
       cross,
