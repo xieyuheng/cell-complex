@@ -4,8 +4,7 @@
 
 - Implement and test mathematical theories in existing languages.
 - Design new languages to formalize abstract mathematical structures.
-- Questions are welcome, Your voices will guide me to solve the right problems.
-  - [issues](https://github.com/xieyuheng/cicada/issues)
+- Questions are welcome -- [issues](https://github.com/xieyuheng/cicada/issues)
 
 ## Community
 
