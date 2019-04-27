@@ -2,7 +2,7 @@ import test from "ava"
 
 import { dic_t } from "../lib/dic"
 import * as cx from "../lib/cell-complex"
-import { torus_t } from "../lib/torus"
+import { torus_t } from "../lib/complexes/torus"
 import { log } from "../lib/util"
 
 test ("from_exp", t => {

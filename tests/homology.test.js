@@ -4,7 +4,13 @@ import * as ut from "../lib/util"
 import * as cx from "../lib/cell-complex"
 import * as eu from "../lib/euclid"
 import * as hl from "../lib/homology"
-import{ torus_t } from "../lib/torus"
+
+import {
+  sphere_t,
+  torus_t,
+  klein_bottle_t,
+  projective_plane_t,
+} from "../lib/complexes/four-ways-to-glue-a-square"
 
 test ("hl.chain_t.zeros", t => {
   let torus = new torus_t ()
@@ -101,10 +107,10 @@ class example_graph_t extends cx.cell_complex_t {
 }
 
 test ("example_graph_t", t => {
-  let graph = new example_graph_t ()
-  let b0 = hl.chain_t.boundary_matrix (graph, 0)
-  let b1 = hl.chain_t.boundary_matrix (graph, 1)
-  let b2 = hl.chain_t.boundary_matrix (graph, 2)
+  let com = new example_graph_t ()
+  let b0 = hl.chain_t.boundary_matrix (com, 0)
+  let b1 = hl.chain_t.boundary_matrix (com, 1)
+  let b2 = hl.chain_t.boundary_matrix (com, 2)
 
   // {
   //   b2.print ()
@@ -115,17 +121,50 @@ test ("example_graph_t", t => {
   t.pass ()
 })
 
-test ("torus_t", t => {
-  let torus = new torus_t ()
-  let b0 = hl.chain_t.boundary_matrix (torus, 0)
-  let b1 = hl.chain_t.boundary_matrix (torus, 1)
-  let b2 = hl.chain_t.boundary_matrix (torus, 2)
+test ("four-ways-to-glue-a-square", t => {
+  {
+    let com = new sphere_t ()
+    let b0 = hl.chain_t.boundary_matrix (com, 0)
+    let b1 = hl.chain_t.boundary_matrix (com, 1)
+    let b2 = hl.chain_t.boundary_matrix (com, 2)
 
-  // {
-  //   b1.print ()
-  //   b1.int_kernel () .print ()
-  //   b0.int_image () .print ()
-  // }
+    // b1.print ()
+    // b1.int_kernel () .print ()
+    // b2.int_image () .print ()
+  }
+
+  {
+    let com = new torus_t ()
+    let b0 = hl.chain_t.boundary_matrix (com, 0)
+    let b1 = hl.chain_t.boundary_matrix (com, 1)
+    let b2 = hl.chain_t.boundary_matrix (com, 2)
+
+    // b1.print ()
+    // b1.int_kernel () .print ()
+    // b2.int_image () .print ()
+  }
+
+  {
+    let com = new klein_bottle_t ()
+    let b0 = hl.chain_t.boundary_matrix (com, 0)
+    let b1 = hl.chain_t.boundary_matrix (com, 1)
+    let b2 = hl.chain_t.boundary_matrix (com, 2)
+
+    // b1.print ()
+    // b1.int_kernel () .print ()
+    // b2.int_image () .print ()
+  }
+
+  {
+    let com = new projective_plane_t ()
+    let b0 = hl.chain_t.boundary_matrix (com, 0)
+    let b1 = hl.chain_t.boundary_matrix (com, 1)
+    let b2 = hl.chain_t.boundary_matrix (com, 2)
+
+    // b1.print ()
+    // b1.int_kernel () .print ()
+    // b2.int_image () .print ()
+  }
 
   t.pass ()
 })

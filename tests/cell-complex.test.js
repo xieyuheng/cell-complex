@@ -1,7 +1,7 @@
 import test from "ava"
 
 import * as cx from "../lib/cell-complex"
-import { torus_t } from "../lib/torus"
+import { torus_t } from "../lib/complexes/torus"
 import * as ut from "../lib/util"
 
 test ("cell_complex_t eq", t => {
