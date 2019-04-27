@@ -1,11 +1,29 @@
+- change of bases
+- homology group of cell-complex
+  - image (boundary (n))
+    is subgroup of
+    kernel (boundary (n+1))
+  - homology group =
+    quotient (kernel (boundary (n+1)), image (boundary (n)))
+  - use bases of
+    kernel (boundary (n+1))
+    to represent bases of
+    image  (boundary (n))
+- abelian_group_t
+  - classification finite generated abelian_group_t
+    is the same as normalization of integer matrix
+  - quotient space is needed,
+    quotient space == redefine `.eq`,
+    to make `.eq` normalize-able,
+    we can use yoneda embedding
+* [bug] limitation
+- if the number goes beyond `number`, we will need generic `matrix_t <F>`
 - generic matrix_t and vector_t
 - number.ts
 - generic matrix_t algos
 - test with decimal.js -- test K1
 - understand int_solve -- own study
 - understand quotient module -- own study
-* [bug] limitation
-- if the number goes beyond `number`, we will need generic `matrix_t <F>`
 * [note] row v.s. col
 - `row_trans`
   - If we view matrix as linear equations,
@@ -54,26 +72,8 @@
 - data_t slice
 * cell-complex
 - can we fully encode the information of cell-complex
-  by the matrix of boundary operators
+  by the matrix of boundary operators ?
 - integral-module.ts
-- homology group of cell-complex
-  - image (boundary (n))
-    is subgroup of
-    kernel (boundary (n+1))
-  - homology group =
-    quotient (kernel (boundary (n+1)), image (boundary (n)))
-  - use bases of
-    kernel (boundary (n+1))
-    to represent bases of
-    image  (boundary (n))
-- abelian_group_t
-  - classification finite generated abelian_group_t
-    is the same as normalization of integer matrix
-  - quotient space is needed,
-    quotient space == redefine `.eq`,
-    to make `.eq` normalize-able,
-    we can use yoneda embedding
-- `hl.chain_t.boundary ()`
 - presentation of groupoid is the same as 2-dim cell-complex
   - by which we can calculate homology group of groupoid
   - my first aim is to

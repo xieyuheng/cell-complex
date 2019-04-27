@@ -1,8 +1,6 @@
 import assert from "assert"
 
 import { dic_t } from "./dic"
-import * as nd from "./ndarray"
-import * as pd from "./panel-data"
 
 /**
  * In the context of a [[cell_complex_t]],

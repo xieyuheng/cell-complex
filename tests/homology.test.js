@@ -83,6 +83,9 @@ class example_graph_t extends cx.cell_complex_t {
     let b = bui.attach_edge (y, z)
     let c = bui.attach_edge (z, x)
     let d = bui.attach_edge (z, x)
+    let f = bui.attach_face ([ c, d.rev () ])
+    let g = bui.attach_face ([ a, b, c ])
+
     super (bui)
     this
       .define_point ("x", x)
@@ -92,18 +95,37 @@ class example_graph_t extends cx.cell_complex_t {
       .define_edge ("b", b)
       .define_edge ("c", c)
       .define_edge ("d", d)
+      .define_face ("f", f)
+      .define_face ("g", g)
   }
 }
 
 test ("example_graph_t", t => {
   let graph = new example_graph_t ()
-  let matrix = hl.chain_t.boundary_matrix (graph, 1)
+  let b0 = hl.chain_t.boundary_matrix (graph, 0)
+  let b1 = hl.chain_t.boundary_matrix (graph, 1)
+  let b2 = hl.chain_t.boundary_matrix (graph, 2)
 
-  matrix.row_hermite_normal_form () .print ()
+  // {
+  //   b2.print ()
+  //   b2.int_image () .print ()
+  //   b1.int_kernel () .print ()
+  // }
 
-  matrix.print ()
-  matrix.int_image () .print ()
-  matrix.int_kernel () .print ()
+  t.pass ()
+})
+
+test ("torus_t", t => {
+  let torus = new torus_t ()
+  let b0 = hl.chain_t.boundary_matrix (torus, 0)
+  let b1 = hl.chain_t.boundary_matrix (torus, 1)
+  let b2 = hl.chain_t.boundary_matrix (torus, 2)
+
+  // {
+  //   b1.print ()
+  //   b1.int_kernel () .print ()
+  //   b0.int_image () .print ()
+  // }
 
   t.pass ()
 })
