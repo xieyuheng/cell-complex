@@ -69,14 +69,12 @@ assert (
 - [cellular homology](https://en.wikipedia.org/wiki/Cellular_homology) of cell-complex
 
 - `examples/four-ways-to-glue-a-square.ts`:
+  - ![Flatsurfaces.svg](https://github.com/xieyuheng/image-link/blob/master/homology/Flatsurfaces.svg)
+  - ![Spherecycles1.svg](https://github.com/xieyuheng/image-link/blob/master/homology/Spherecycles1.svg)
+  - ![Toruscycles1.svg](https://github.com/xieyuheng/image-link/blob/master/homology/Toruscycles1.svg)
+  - ![Kleincycles1.svg](https://github.com/xieyuheng/image-link/blob/master/homology/Kleincycles1.svg)
+  - ![Projectivecycles1.svg](https://github.com/xieyuheng/image-link/blob/master/homology/Projectivecycles1.svg)
   - Pictures by Guy Inchbald a.k.a. [Steelpillow](https://commons.wikimedia.org/wiki/User:Steelpillow)
-  - ![dom-dom](./dom-dom.gif)
-
-![Flatsurfaces.svg](https://github.com/xieyuheng/image-link/blob/master/homology/Flatsurfaces.svg)
-![Spherecycles1.svg](https://github.com/xieyuheng/image-link/blob/master/homology/Spherecycles1.svg)
-![Toruscycles1.svg](https://github.com/xieyuheng/image-link/blob/master/homology/Toruscycles1.svg)
-![Kleincycles1.svg](https://github.com/xieyuheng/image-link/blob/master/homology/Kleincycles1.svg)
-![Projectivecycles1.svg](https://github.com/xieyuheng/image-link/blob/master/homology/Projectivecycles1.svg)
 
 ``` typescript
 import * as cx from "cicada-lang/lib/cell-complex"
