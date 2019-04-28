@@ -341,11 +341,11 @@ class cell_complex_t {
   protected name_dic: dic_t <string, id_t>
 
   constructor (
-    bui: cell_complex_builder_t =
+    builder: cell_complex_builder_t =
       new cell_complex_builder_t ()
   ) {
-    this.cell_dic = bui.cell_dic.copy ()
-    this.name_dic = bui.name_dic.copy ()
+    this.cell_dic = builder.cell_dic.copy ()
+    this.name_dic = builder.name_dic.copy ()
   }
 
   get dim (): number {
@@ -418,9 +418,9 @@ class cell_complex_t {
   }
 
   as_builder (): cell_complex_builder_t {
-    let bui = new cell_complex_builder_t ()
-    bui.cell_dic = this.cell_dic.copy ()
-    return bui
+    let builder = new cell_complex_builder_t ()
+    builder.cell_dic = this.cell_dic.copy ()
+    return builder
   }
 
   copy (): cell_complex_t {
@@ -436,15 +436,15 @@ class cell_complex_t {
   }
 
   static from_exp (exp: cell_complex_exp_t): cell_complex_t {
-    let bui = new cell_complex_builder_t ()
+    let builder = new cell_complex_builder_t ()
     let iter = Object.entries (exp)
       .filter (([k, _]) => id_t.valid_id_str (k))
     for (let [k, v] of iter) {
       let id = id_t.parse (k)
       let cell = cell_t.from_exp (v)
-      bui.set (id, cell)
+      builder.set (id, cell)
     }
-    return bui.build ()
+    return builder.build ()
   }
 
   eq (that: cell_complex_t): boolean {
@@ -906,12 +906,12 @@ class vertex_figure_t extends cell_complex_t {
       return c.to_str () + ", " + p.to_str ()
     }
     let idx_dic = new dic_t <[id_t, id_t], id_t> (index_to_str)
-    let bui = new cell_complex_builder_t ()
+    let builder = new cell_complex_builder_t ()
 
     for (let [id, cell] of com.in_dim (1)) {
       for (let p of cell.dom.points ()) {
         if (cell.dic.get (p) .id.eq (vertex)) {
-          idx_dic.set ([id, p], bui.inc_one_point ())
+          idx_dic.set ([id, p], builder.inc_one_point ())
         }
       }
     }
@@ -931,7 +931,7 @@ class vertex_figure_t extends cell_complex_t {
             im2.id,
             im2.cell.dic.get (p2) .id,
           ])
-          idx_dic.set ([id, p], bui.attach_edge (start, end))
+          idx_dic.set ([id, p], builder.attach_edge (start, end))
         }
       }
     }
@@ -944,7 +944,7 @@ class vertex_figure_t extends cell_complex_t {
       }
     }
 
-    super (bui)
+    super (builder)
     this.com = com
     this.vertex = vertex
     this.idx_dic = idx_dic
@@ -1059,9 +1059,9 @@ class discrete_complex_t extends cell_complex_t {
   readonly size: number
 
   constructor (size: number) {
-    let bui = new cell_complex_builder_t ()
-    bui.inc_points (size)
-    super (bui)
+    let builder = new cell_complex_builder_t ()
+    builder.inc_points (size)
+    super (builder)
     this.size = size
   }
 
@@ -1103,12 +1103,12 @@ class edge_t extends cell_t {
   endpoints: endpoints_t
 
   constructor (
-    bui: cell_complex_builder_t,
+    builder: cell_complex_builder_t,
     start: id_t,
     end: id_t,
   ) {
     let endpoints = new endpoints_t ()
-    let cod = bui.skeleton (0)
+    let cod = builder.skeleton (0)
     let dic = new morphism_builder_t (
       endpoints, cod
     ) .point (endpoints.id ("start"), start)
@@ -1125,11 +1125,11 @@ export
 class interval_t extends cell_complex_t {
   constructor () {
     let endpoints = new endpoints_t ()
-    let bui = endpoints.as_builder ()
+    let builder = endpoints.as_builder ()
     let start = endpoints.id ("start")
     let end = endpoints.id ("end")
-    let inter = bui.attach_edge (start, end)
-    super (bui)
+    let inter = builder.attach_edge (start, end)
+    super (builder)
     this
       .define_point ("start", start)
       .define_point ("end", end)
@@ -1144,22 +1144,22 @@ class polygon_t extends cell_complex_t {
   readonly side_id_array: Array <id_t>
 
   constructor (size: number) {
-    let bui = new cell_complex_builder_t ()
+    let builder = new cell_complex_builder_t ()
     let side_id_array = []
-    let vertex_id_array = bui.inc_points (size)
+    let vertex_id_array = builder.inc_points (size)
     let i = 0
     while (i < size - 1) {
       side_id_array.push (
-        bui.attach_edge (
+        builder.attach_edge (
           vertex_id_array [i],
           vertex_id_array [i + 1]))
       i += 1
     }
     side_id_array.push (
-      bui.attach_edge (
+      builder.attach_edge (
         vertex_id_array [size - 1],
         vertex_id_array [0]))
-    super (bui)
+    super (builder)
     this.size = size
     this.vertex_id_array = vertex_id_array
     this.side_id_array = side_id_array
@@ -1191,7 +1191,7 @@ function polygon_zip_circuit (
   circuit: circuit_t,
 ): im_dic_t {
   let size = polygon.size
-  let bui = new morphism_builder_t (polygon, cod)
+  let builder = new morphism_builder_t (polygon, cod)
   for (let i = 0; i < size; i += 1) {
     let src_id = polygon.side_id_array [i]
     let tar_id = circuit [i]
@@ -1199,17 +1199,17 @@ function polygon_zip_circuit (
     if (tar_id instanceof rev_id_t) {
       tar_id = tar_id.rev ()
       let tar = cod.get_edge (tar_id)
-      bui.point (src.start, tar.end)
-      bui.point (src.end, tar.start)
-      bui.edge_rev (src_id, tar_id)
+      builder.point (src.start, tar.end)
+      builder.point (src.end, tar.start)
+      builder.edge_rev (src_id, tar_id)
     } else {
       let tar = cod.get_edge (tar_id)
-      bui.point (src.start, tar.start)
-      bui.point (src.end, tar.end)
-      bui.edge (src_id, tar_id)
+      builder.point (src.start, tar.start)
+      builder.point (src.end, tar.end)
+      builder.edge (src_id, tar_id)
     }
   }
-  return bui.build_im_dic ()
+  return builder.build_im_dic ()
 }
 
 export
@@ -1218,12 +1218,12 @@ class face_t extends cell_t {
   polygon: polygon_t
 
   constructor (
-    bui: cell_complex_builder_t,
+    builder: cell_complex_builder_t,
     circuit: circuit_t,
   ) {
     let size = circuit.length
     let polygon = new polygon_t (size)
-    let cod = bui.skeleton (1)
+    let cod = builder.skeleton (1)
     let dic = polygon_zip_circuit (polygon, cod, circuit)
     super (polygon, cod, dic)
     this.circuit = circuit

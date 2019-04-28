@@ -83,14 +83,14 @@ test ("hl.chain_t.boundary", t => {
 
 class example_graph_t extends cx.cell_complex_t {
   constructor () {
-    let bui = new cx.cell_complex_builder_t ()
-    let [x, y, z] = bui.inc_points (3)
-    let k = bui.inc_one_point ()
-    let a = bui.attach_edge (x, y)
-    let b = bui.attach_edge (y, z)
-    let c = bui.attach_edge (z, x)
-    let d = bui.attach_edge (z, x)
-    super (bui)
+    let builder = new cx.cell_complex_builder_t ()
+    let [x, y, z] = builder.inc_points (3)
+    let k = builder.inc_one_point ()
+    let a = builder.attach_edge (x, y)
+    let b = builder.attach_edge (y, z)
+    let c = builder.attach_edge (z, x)
+    let d = builder.attach_edge (z, x)
+    super (builder)
   }
 }
 
@@ -104,15 +104,15 @@ test ("example_graph_t", t => {
 
 class example_complex_t extends cx.cell_complex_t {
   constructor () {
-    let bui = new cx.cell_complex_builder_t ()
-    let [x, y, z] = bui.inc_points (3)
-    let a = bui.attach_edge (x, y)
-    let b = bui.attach_edge (y, z)
-    let c = bui.attach_edge (z, x)
-    let d = bui.attach_edge (z, x)
-    let front = bui.attach_face ([ c, d.rev () ])
-    let back = bui.attach_face ([ d.rev (), c ])
-    super (bui)
+    let builder = new cx.cell_complex_builder_t ()
+    let [x, y, z] = builder.inc_points (3)
+    let a = builder.attach_edge (x, y)
+    let b = builder.attach_edge (y, z)
+    let c = builder.attach_edge (z, x)
+    let d = builder.attach_edge (z, x)
+    let front = builder.attach_face ([ c, d.rev () ])
+    let back = builder.attach_face ([ d.rev (), c ])
+    super (builder)
   }
 }
 
