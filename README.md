@@ -18,10 +18,7 @@
 
 ## Modules
 
-``` sh
-npm install cicada-lang
-```
-
+- `npm install cicada-lang`
 - [API Docs](https://api.cicada-lang.now.sh)
 
 ### `eu` euclid
