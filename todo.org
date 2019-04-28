@@ -1,5 +1,6 @@
 - num.ts
 - int.ts
+- euclid-tobe.ts
 * [bug] limitation
 - if the number goes beyond `number`, we will need generic `matrix_t <F>`
 - generic matrix_t and vector_t
@@ -32,8 +33,6 @@
 * computational-science
 - stiffness matrix
 - circulant matrix
-* mathematical structures in cicada
-- ring.cs substructure and ideal_t
 * graph
 - reuse cell_complex_t
 - find cycles of graph by spanning tree's complement edges
@@ -124,7 +123,11 @@
 - (paper) investigations into game semantics of logic
 - surreal -- the theory of surreal number
   - theory about two-player normal-ending game
-* cicada
+* cicada-core
+- compile to js with runtime type information
+  - game semantics
+  - { type: { field: <type> }, field: <value> }
+* cicadascript
 - reuse js syntax
   the syntax of js is enough
   we only need to do the following extensions
@@ -135,12 +138,8 @@
   - no `,` in function call
     maybe we need to limit the use of infix notation
   - use babel api to handle the syntax
-- compile to js with runtime type information
-  - game semantics
-  - { type: { field: <type> }, field: <value> }
+* mathematical structures in cicada
+- ring.cs substructure and ideal_t
 * dance
 - 3 circle dance
 - 4 circle dance
-* principle about subclass
-- we need a principle for the use of subclass,
-  and the simplest principle is "do not use subclass".

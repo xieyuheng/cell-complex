@@ -31,7 +31,8 @@
   - [combinatorial-game](#cg-combinatorial-game)
   - [cell-complex](#cx-cell-complex)
   - [homology](#hl-homology)
-  - [cicada](#cicada)
+  - [cicada-core](#cc-cicada-core)
+  - [cicadascript](#cs-cicadascript)
 
 ### `eu` euclid
 
@@ -204,12 +205,17 @@ ut.log (report)
 
 - Pictures by Guy Inchbald, a.k.a. [Steelpillow](https://commons.wikimedia.org/wiki/User:Steelpillow)
 
-### cicada
+### `cc` cicada-core
 
 - [work in progress]
 - a dependently-typed programming language
 - game semantics
 - logic programming interface
+
+### `cs` cicadascript
+
+- [work in progress]
+- js syntax frontend of cicada-core
 
 ## License
 
