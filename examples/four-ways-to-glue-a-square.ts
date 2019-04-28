@@ -73,7 +73,8 @@ let report: any = {
 
 ut.log (report)
 
-{ sphere:
+let expected_report = {
+  sphere:
   { '0': { betti_number: 1, torsion_coefficients: [] },
     '1': { betti_number: 0, torsion_coefficients: [] },
     '2': { betti_number: 1, torsion_coefficients: [] },
@@ -92,4 +93,5 @@ ut.log (report)
   { '0': { betti_number: 1, torsion_coefficients: [] },
     '1': { betti_number: 0, torsion_coefficients: [ 2 ] },
     '2': { betti_number: 0, torsion_coefficients: [] },
-    euler_characteristic: 1 } }
+    euler_characteristic: 1 }
+}
