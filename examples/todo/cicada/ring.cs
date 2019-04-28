@@ -56,8 +56,8 @@ class commutative_ring_t extends ring_t {
 
 class integral_domain_t extends commutative_ring_t {
   nonzero_product (
-    x: this.element_t, { not_eqv_t (x, this.zero) }
-    y: this.element_t, { not_eqv_t (y, this.zero) }
+    x: this.element_t, not_eqv_t (x, this.zero),
+    y: this.element_t, not_eqv_t (y, this.zero),
   ): not_eqv_t (this.mul (x, y), this.zero)
 }
 
