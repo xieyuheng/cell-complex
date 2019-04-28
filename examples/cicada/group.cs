@@ -1,11 +1,10 @@
 import { category_t } from "./category.cs"
 
-class group_t {
+class monoid_t {
   element_t: type
 
   id: this.element_t
   mul (x: this.element_t, y: this.element_t): this.element_t
-  inv (x: this.element_t): this.element_t
 
   assoc (
     x: this.element_t,
@@ -23,6 +22,10 @@ class group_t {
   id_right (
     x: this.element_t,
   ): eqv_t (this.mul (x, this.id), x)
+}
+
+class group_t extends monoid_t {
+  inv (x: this.element_t): this.element_t
 
   id_inv (
     x: this.element_t,
@@ -53,25 +56,16 @@ let group_cat = category_t (
   assoc
 )
 
-class abelian_group_t {
-  group: group_t
-
-  element_t = this.group.element_t
-
-  id = this.group.id
-  mul = this.group.mul
-  inv = this.group.inv
-  div = this.group.div
-
-  add = this.group.mul
-  sub = this.group.div
-  neg = this.group.inv
+class abelian_group_t extends group_t {
+  add = this.mul
+  sub = this.div
+  neg = this.inv
 
   commu (
     x: this.element_t,
     y: this.element_t,
   ): eqv_t (
-    this.mul (x, y),
-    this.mul (y, x),
+    this.add (x, y),
+    this.add (y, x),
   )
 }

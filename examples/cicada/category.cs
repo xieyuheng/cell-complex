@@ -106,3 +106,13 @@ class natural_transformation_t {
     ),
   )
 }
+
+class groupoid_t extends category_t {
+  inv (f: this.arrow_t): this.arrow_t
+
+  arrow_iso (f: this.arrow_t): iso_t (
+    cat = this,
+    iso = f,
+    inv = this.inv (f),
+  )
+}

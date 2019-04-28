@@ -1,5 +1,7 @@
-import { abelian_group_t } from "./group.cs"
-import { monoid_t } from "./monoid.cs"
+import {
+  abelian_group_t,
+  monoid_t,
+} from "./group.cs"
 
 class ring_t {
   element_t: type
@@ -37,4 +39,41 @@ class ring_t {
     this.mul (this.add (y, z), x),
     this.add (this.mul (y, x), this.mul (z, x)),
   )
+}
+
+export
+class commutative_ring_t extends ring_t {
+  commu (
+    x: this.element_t,
+    y: this.element_t,
+  ): eqv_t (
+    this.mul (x, y),
+    this.mul (y, x),
+  )
+
+  distr = this.left_distr
+}
+
+class integral_domain_t extends commutative_ring_t {
+  nonzero_product (
+    x: this.element_t, { not_eqv_t (x, this.zero) }
+    y: this.element_t, { not_eqv_t (y, this.zero) }
+  ): not_eqv_t (this.mul (x, y), this.zero)
+}
+
+class euclidean_domain_t extends integral_domain_t {
+  degree: (x: this.element_t) => number
+
+  // TODO
+}
+
+class field_t extends integral_domain_t {
+  inv (x: this.element_t): this.element_t
+
+  div (
+    x: this.element_t,
+    y: this.element_t,
+  ): this.element_t {
+    return this.mul (x, this.inv (y))
+  }
 }

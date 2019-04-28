@@ -50,15 +50,18 @@
 * panel-data
 - frame_t.act & series_t.trans
 - data_t slice
-* cell-complex
-- can we fully encode the information of cell-complex
-  by the matrix of boundary operators ?
+* homology
+- what is the meaning of 1 torsion_coefficients ?
+* homotopy
 - presentation of groupoid is the same as 2-dim cell-complex
   - by which we can calculate homology group of groupoid
   - my first aim is to
     generalize this algebraic structure for 3-dim cell-complex
   - we also want to study group representation
     i.e. find matrix group iso to given group
+- groupoid of 2-dim cell-complex
+  - `as_groupoid ()`
+  - what is special about manifold's groupoid
 - glob_t
 - ht.chain_t
   - `.boundary ()`
@@ -78,13 +81,13 @@
       也就是说
       1. 放宽对元素联通性的要求
       2. 丰富 compose 为 glue
+- higher_groupoid_t
+* cell-complex
+- can we fully encode the information of cell-complex
+  by the matrix of boundary operators ?
 - 2-dim manifold classification -- zip of john conway
 - [refine API] auto compatible in morphism_builder_t
 - bounfold_check
-- groupoid of 2-dim cell-complex
-  - `as_groupoid ()`
-  - what is special about manifold's groupoid
-- higher_groupoid_t
 - cell_check -- is im_dic_compatible_p enough ?
 - can we encode cell-complex by graph ?
   - what is "encode something by graph" ?
