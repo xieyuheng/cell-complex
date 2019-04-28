@@ -69,18 +69,18 @@ assert (
 - [cellular homology](https://en.wikipedia.org/wiki/Cellular_homology) of cell-complex
 
 - `examples/four-ways-to-glue-a-square.ts`:
-  - ![Flatsurfaces.svg](https://github.com/xieyuheng/image-link/blob/master/homology/Flatsurfaces.svg)
-  - ![Spherecycles1.svg](https://github.com/xieyuheng/image-link/blob/master/homology/Spherecycles1.svg)
-  - ![Toruscycles1.svg](https://github.com/xieyuheng/image-link/blob/master/homology/Toruscycles1.svg)
-  - ![Kleincycles1.svg](https://github.com/xieyuheng/image-link/blob/master/homology/Kleincycles1.svg)
-  - ![Projectivecycles1.svg](https://github.com/xieyuheng/image-link/blob/master/homology/Projectivecycles1.svg)
-  - Pictures by Guy Inchbald a.k.a. [Steelpillow](https://commons.wikimedia.org/wiki/User:Steelpillow)
+
+![Flatsurfaces.svg](https://github.com/xieyuheng/image-link/blob/master/homology/Flatsurfaces.svg)
 
 ``` typescript
 import * as cx from "cicada-lang/lib/cell-complex"
 import * as hl from "cicada-lang/lib/homology"
 import * as ut from "cicada-lang/lib/util"
+```
 
+![Spherecycles1.svg](https://github.com/xieyuheng/image-link/blob/master/homology/Spherecycles1.svg)
+
+``` typescript
 class sphere_t extends cx.cell_complex_t {
   constructor () {
     let bui = new cx.cell_complex_builder_t ()
@@ -96,7 +96,11 @@ class sphere_t extends cx.cell_complex_t {
     super (bui)
   }
 }
+```
 
+![Toruscycles1.svg](https://github.com/xieyuheng/image-link/blob/master/homology/Toruscycles1.svg)
+
+``` typescript
 class torus_t extends cx.cell_complex_t {
   constructor () {
     let bui = new cx.cell_complex_builder_t ()
@@ -112,7 +116,11 @@ class torus_t extends cx.cell_complex_t {
     super (bui)
   }
 }
+```
 
+![Kleincycles1.svg](https://github.com/xieyuheng/image-link/blob/master/homology/Kleincycles1.svg)
+
+``` typescript
 class klein_bottle_t extends cx.cell_complex_t {
   constructor () {
     let bui = new cx.cell_complex_builder_t ()
@@ -128,7 +136,11 @@ class klein_bottle_t extends cx.cell_complex_t {
     super (bui)
   }
 }
+```
 
+![Projectivecycles1.svg](https://github.com/xieyuheng/image-link/blob/master/homology/Projectivecycles1.svg)
+
+``` typescript
 class projective_plane_t extends cx.cell_complex_t {
   constructor () {
     let bui = new cx.cell_complex_builder_t ()
@@ -142,7 +154,11 @@ class projective_plane_t extends cx.cell_complex_t {
     super (bui)
   }
 }
+```
 
+Calculate [Homology groups](https://en.wikipedia.org/wiki/Homology_(mathematics)):
+
+``` typescript
 let report: any = {
   "sphere": hl.homology_group_report (new sphere_t ()),
   "torus": hl.homology_group_report (new torus_t ()),
@@ -173,6 +189,8 @@ ut.log (report)
      '2': { betti_number: 0, torsion_coefficients: [] },
      euler_characteristic: 1 } }
 ```
+
+- Pictures by Guy Inchbald a.k.a. [Steelpillow](https://commons.wikimedia.org/wiki/User:Steelpillow)
 
 ### cicada [work in progress]
 
