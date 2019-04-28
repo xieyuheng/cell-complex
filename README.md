@@ -28,7 +28,7 @@
 
 - module over euclidean domain -- for generic algorithms
 
-#### `examples/linear-algebra.ts`
+#### [`examples/linear-algebra.ts`](https://github.com/xieyuheng/cicada/blob/master/examples/linear-algebra.ts)
 
 ``` typescript
 import assert from "assert"
@@ -68,7 +68,7 @@ assert (
 
 - [cellular homology](https://en.wikipedia.org/wiki/Cellular_homology) of cell-complex
 
-#### `examples/four-ways-to-glue-a-square.ts`
+#### [`examples/four-ways-to-glue-a-square.ts`](https://github.com/xieyuheng/cicada/blob/master/examples/four-ways-to-glue-a-square.ts)
 
 ![Flatsurfaces.svg](https://github.com/xieyuheng/image-link/blob/master/homology/Flatsurfaces.svg)
 
