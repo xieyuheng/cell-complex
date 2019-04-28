@@ -20,26 +20,33 @@
 
 - [API](https://api.cicada-lang.now.sh)
 
-### Modules
+## Modules
 
-- `eu` euclid
-  - euclidean space -- affine space with dot product
-    - `matrix_t`, `vector_t` and `point_t`
-  - module over euclidean domain -- for generic algorithms
+### euclid (`eu`)
 
-- `cg` combinatorial-game
-  - a game engine for n-player perfect information games
-  - example games:
-    - tic-tac-toe
-    - hackenbush -- [demo](http://hackenbush.combinatorial-game.surge.sh/)
+- euclidean space -- affine space with dot product
+  - `matrix_t`, `vector_t` and `point_t`
 
-- `cx` cell-complex
-  - cell-complex based low dimensional algebraic topology library
-  - example cell complexes:
-    - torus
+- module over euclidean domain -- for generic algorithms
 
-- `hl` homology
-  - cellular homology of cell-complex
+### combinatorial-game (`cg`)
+
+- a game engine for n-player perfect information games
+- example games:
+  - tic-tac-toe
+  - hackenbush -- [demo](http://hackenbush.combinatorial-game.surge.sh/)
+
+### cell-complex (`cx`)
+
+- cell-complex based low dimensional algebraic topology library
+- example cell complexes:
+  - torus
+
+### homology (`hl`)
+
+- cellular homology of cell-complex
+
+- `examples/hl.ts`:
 
 ``` typescript
 import * as cx from "cicada-lang/lib/cell-complex"
@@ -116,12 +123,36 @@ let report: any = {
 }
 
 ut.log (report)
+
+// ==>
+
+{ sphere:
+   { '0': { betti_number: 1, torsion_coefficients: [] },
+     '1': { betti_number: 0, torsion_coefficients: [] },
+     '2': { betti_number: 1, torsion_coefficients: [] },
+     euler_characteristic: 2 },
+  torus:
+   { '0': { betti_number: 1, torsion_coefficients: [] },
+     '1': { betti_number: 2, torsion_coefficients: [] },
+     '2': { betti_number: 1, torsion_coefficients: [] },
+     euler_characteristic: 0 },
+  klein_bottle:
+   { '0': { betti_number: 1, torsion_coefficients: [] },
+     '1': { betti_number: 1, torsion_coefficients: [ 2 ] },
+     '2': { betti_number: 0, torsion_coefficients: [] },
+     euler_characteristic: 0 },
+  projective_plane:
+   { '0': { betti_number: 1, torsion_coefficients: [] },
+     '1': { betti_number: 0, torsion_coefficients: [ 2 ] },
+     '2': { betti_number: 0, torsion_coefficients: [] },
+     euler_characteristic: 1 } }
 ```
 
-- [todo] cicada
-  - a dependently-typed programming language
-  - game semantics
-  - logic programming interface
+### cicada
+
+- a dependently-typed programming language
+- game semantics
+- logic programming interface
 
 ## License
 

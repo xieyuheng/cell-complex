@@ -72,3 +72,26 @@ let report: any = {
 }
 
 ut.log (report)
+
+// ==>
+
+{ sphere:
+  { '0': { betti_number: 1, torsion_coefficients: [] },
+    '1': { betti_number: 0, torsion_coefficients: [] },
+    '2': { betti_number: 1, torsion_coefficients: [] },
+    euler_characteristic: 2 },
+  torus:
+  { '0': { betti_number: 1, torsion_coefficients: [] },
+    '1': { betti_number: 2, torsion_coefficients: [] },
+    '2': { betti_number: 1, torsion_coefficients: [] },
+    euler_characteristic: 0 },
+  klein_bottle:
+  { '0': { betti_number: 1, torsion_coefficients: [] },
+    '1': { betti_number: 1, torsion_coefficients: [ 2 ] },
+    '2': { betti_number: 0, torsion_coefficients: [] },
+    euler_characteristic: 0 },
+  projective_plane:
+  { '0': { betti_number: 1, torsion_coefficients: [] },
+    '1': { betti_number: 0, torsion_coefficients: [ 2 ] },
+    '2': { betti_number: 0, torsion_coefficients: [] },
+    euler_characteristic: 1 } }
