@@ -19,7 +19,12 @@
 ## Modules
 
 - `npm install cicada-lang`
+
 - [API Docs](https://api.cicada-lang.now.sh)
+
+- Try [examples](https://github.com/xieyuheng/cicada/tree/master/examples)
+  - use [`node`](https://github.com/nodejs/node) to run examples written in javascript
+  - use [`ts-node`](https://github.com/TypeStrong/ts-node) to run examples written in typescript
 
 ### `eu` euclid
 
