@@ -1191,19 +1191,11 @@ class matrix_t {
       .slice (null, [0, this.rank ()])
   }
 
-  // int_kernel (): matrix_t {
-  //   let [m, n] = this.shape
-  //   let r = this.rank ()
-  //   let { col_trans } = this.smith_decomposition ()
-  //   return col_trans.slice (null, [r, n])
-  // }
-
   int_kernel (): matrix_t {
     let [m, n] = this.shape
     let r = this.rank ()
-    let { row_trans } = this.transpose ()
-      .smith_decomposition ()
-    return row_trans.transpose () .slice (null, [r, n])
+    let { col_trans } = this.smith_decomposition ()
+    return col_trans.slice (null, [r, n])
   }
 
   int_solve (b: vector_t): null | vector_t {
@@ -1527,10 +1519,10 @@ class matrix_t {
     let i = 0
     while (i < m) {
       if (this.get (i, i) === 0) {
-        this.update_tuck_row (i, m)
-        this.update_tuck_col (i, m)
-        the.row_trans.update_tuck_row (i, m)
-        the.col_trans.update_tuck_col (i, m)
+        this.update_tuck_row (i, m-1)
+        this.update_tuck_col (i, m-1)
+        the.row_trans.update_tuck_row (i, m-1)
+        the.col_trans.update_tuck_col (i, m-1)
         m -= 1
       } else {
         let x = this.get (i, i)
@@ -1577,8 +1569,14 @@ class matrix_t {
       col_trans: matrix_t.id (n),
     }
     smith.smith_update_ext (the)
+    assert (the.row_trans.invertible_p ())
+    assert (the.col_trans.invertible_p ())
     smith.invariant_factor_update_ext (the)
+    assert (the.row_trans.invertible_p ())
+    assert (the.col_trans.invertible_p ())
     smith.diag_abs_update_ext (the)
+    assert (the.row_trans.invertible_p ())
+    assert (the.col_trans.invertible_p ())
     return { ...the, smith }
   }
 

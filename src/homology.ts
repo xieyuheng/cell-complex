@@ -139,14 +139,6 @@ function homology_group (
   let kernel = low.int_kernel ()
   let image = high.int_image ()
   let matrix = kernel.int_solve_matrix (image)
-
-  // console.log ("kernel:")
-  // kernel.print ()
-  // console.log ("image:")
-  // image.print ()
-  // console.log ("solution:")
-  // matrix.print ()
-
   if (matrix === null) {
     throw new Error ("[internal] int_solve_matrix fail")
   } else {
