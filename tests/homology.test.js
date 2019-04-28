@@ -85,34 +85,19 @@ class example_graph_t extends cx.cell_complex_t {
   constructor () {
     let bui = new cx.cell_complex_builder_t ()
     let [x, y, z] = bui.inc_points (3)
+    let k = bui.inc_one_point ()
     let a = bui.attach_edge (x, y)
     let b = bui.attach_edge (y, z)
     let c = bui.attach_edge (z, x)
     let d = bui.attach_edge (z, x)
-
     super (bui)
-    this
-      .define_point ("x", x)
-      .define_point ("y", y)
-      .define_point ("z", z)
-      .define_edge ("a", a)
-      .define_edge ("b", b)
-      .define_edge ("c", c)
-      .define_edge ("d", d)
   }
 }
 
 test ("example_graph_t", t => {
-  let com = new example_graph_t ()
-  let b0 = hl.boundary_matrix (com, 0)
-  let b1 = hl.boundary_matrix (com, 1)
-  let b2 = hl.boundary_matrix (com, 2)
+  let report = hl.homology_group_report (new example_graph_t ())
 
-  // {
-  //   b2.print ()
-  //   b2.int_image () .print ()
-  //   b1.int_kernel () .print ()
-  // }
+  ut.log (report)
 
   t.pass ()
 })
@@ -127,89 +112,27 @@ class example_complex_t extends cx.cell_complex_t {
     let d = bui.attach_edge (z, x)
     let front = bui.attach_face ([ c, d.rev () ])
     let back = bui.attach_face ([ d.rev (), c ])
-
     super (bui)
-    this
-      .define_point ("x", x)
-      .define_point ("y", y)
-      .define_point ("z", z)
-      .define_edge ("a", a)
-      .define_edge ("b", b)
-      .define_edge ("c", c)
-      .define_edge ("d", d)
-      .define_face ("front", front)
-      .define_face ("back", back)
   }
 }
 
 test ("example_complex_t", t => {
-  let com = new example_complex_t ()
-  let b0 = hl.boundary_matrix (com, 0)
-  let b1 = hl.boundary_matrix (com, 1)
-  let b2 = hl.boundary_matrix (com, 2)
+  let report = hl.homology_group_report (new example_complex_t ())
 
-  // {
-  //   b2.print ()
-  //   b2.int_image () .print ()
-  //   b1.int_kernel () .print ()
-  // }
+  ut.log (report)
 
   t.pass ()
 })
 
 test ("four-ways-to-glue-a-square", t => {
-  {
-    let com = new sphere_t ()
-    let b0 = hl.boundary_matrix (com, 0)
-    let b1 = hl.boundary_matrix (com, 1)
-    let b2 = hl.boundary_matrix (com, 2)
-
-    // b1.print ()
-    // b1.int_kernel () .print ()
-    // b2.int_image () .print ()
-
-    hl.homology_group (com, 1) .print ()
+  let report = {
+    "sphere": hl.homology_group_report (new sphere_t ()),
+    "torus": hl.homology_group_report (new torus_t ()),
+    "klein_bottle": hl.homology_group_report (new klein_bottle_t ()),
+    "projective_plane": hl.homology_group_report (new projective_plane_t ()),
   }
 
-  {
-    let com = new torus_t ()
-    let b0 = hl.boundary_matrix (com, 0)
-    let b1 = hl.boundary_matrix (com, 1)
-    let b2 = hl.boundary_matrix (com, 2)
-
-    // b1.print ()
-    // b1.int_kernel () .print ()
-    // b2.int_image () .print ()
-
-    hl.homology_group (com, 1) .print ()
-  }
-
-  {
-    let com = new klein_bottle_t ()
-    let b0 = hl.boundary_matrix (com, 0)
-    let b1 = hl.boundary_matrix (com, 1)
-    let b2 = hl.boundary_matrix (com, 2)
-
-    // b1.print ()
-    // b1.int_kernel () .print ()
-    // b2.int_image () .print ()
-
-    hl.homology_group (com, 1) .print ()
-  }
-
-  {
-    let com = new projective_plane_t ()
-    let b0 = hl.boundary_matrix (com, 0)
-    let b1 = hl.boundary_matrix (com, 1)
-    let b2 = hl.boundary_matrix (com, 2)
-
-    // b1.print ()
-    // b1.int_kernel () .print ()
-    // b2.print ()
-    // b2.int_image () .print ()
-
-    hl.homology_group (com, 1) .print ()
-  }
+  ut.log (report)
 
   t.pass ()
 })

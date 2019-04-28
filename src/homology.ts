@@ -1,5 +1,6 @@
 import assert from "assert"
 
+import * as ut from "./util"
 import { dic_t } from "./dic"
 import * as eu from "./euclid"
 import * as cx from "./cell-complex"
@@ -146,4 +147,35 @@ function homology_group (
       matrix.smith_normal_form ()
     )
   }
+}
+
+export
+function euler_characteristic (
+  com: cx.cell_complex_t,
+): number {
+  let n = 0
+  for (let d of ut.range (0, com.dim + 1)) {
+    if (d % 2 === 0) {
+      n += homology_group (com, d) .rank ()
+    } else {
+      n -= homology_group (com, d) .rank ()
+    }
+  }
+  return n
+}
+
+export
+function homology_group_report (
+  com: cx.cell_complex_t,
+) {
+  let obj: any = {}
+  for (let d of ut.range (0, com.dim + 1)) {
+    let report = homology_group (com, d) .report ()
+    obj [d] = {
+      betti_number: report.rank,
+      torsion_coefficients: report.torsion_coefficients,
+    }
+  }
+  obj ["euler_characteristic"] = euler_characteristic (com)
+  return obj
 }

@@ -1,3 +1,4 @@
+import * as ut from "./util"
 import * as eu from "./euclid"
 
 /**
@@ -6,13 +7,12 @@ import * as eu from "./euclid"
 
 export
 class integral_module_t {
-  // readonly invariant_factors: eu.vector_t
-  readonly smith_normal_form: eu.matrix_t
+  readonly smith_normal_form: () => eu.matrix_t
 
   constructor (the: {
     smith_normal_form: eu.matrix_t,
   }) {
-    this.smith_normal_form = the.smith_normal_form
+    this.smith_normal_form = () => the.smith_normal_form
   }
 
   static from_smith_normal_form (
@@ -23,15 +23,31 @@ class integral_module_t {
     })
   }
 
-  // static from_invariant_factors (
-  //   invariant_factors: eu.vector_t
-  // ): integral_module_t {
-  //   return new integral_module_t ({
-  //     invariant_factors
-  //   })
-  // }
+  invariant_factors (): eu.vector_t {
+    return this.smith_normal_form () .diag ()
+  }
 
-  print () {
-    this.smith_normal_form.print ()
+  rank (): number {
+    let [m, n] = this.smith_normal_form () .shape
+    let r = this.smith_normal_form () .rank ()
+    return m - r
+  }
+
+  torsion_coefficients (): Array <number> {
+    let array = new Array ()
+    let invariant_factors = this.invariant_factors ()
+    for (let v of invariant_factors.values ()) {
+      if (v !== 0 && v !== 1) {
+        array.push (v)
+      }
+    }
+    return array
+  }
+
+  report () {
+    return {
+      rank: this.rank (),
+      torsion_coefficients: this.torsion_coefficients (),
+    }
   }
 }
