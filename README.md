@@ -16,15 +16,13 @@
 - CI -- [gitlab-ci](https://gitlab.com/xieyuheng/cicada/pipelines)
 - [cicada-rs](http://github.com/xieyuheng/cicada-rs) -- an old cicada attempt in rust
 
-## Docs
-
-- [API](https://api.cicada-lang.now.sh)
-
 ## Modules
 
 ``` sh
 npm install cicada-lang
 ```
+
+- [API Docs](https://api.cicada-lang.now.sh)
 
 ### `eu` euclid
 
@@ -32,6 +30,31 @@ npm install cicada-lang
   - `matrix_t`, `vector_t` and `point_t`
 
 - module over euclidean domain -- for generic algorithms
+
+- `examples/linear-algebra.ts`
+
+``` typescript
+import assert from "assert"
+
+import * as ut from "cicada-lang/lib/util"
+import * as eu from "cicada-lang/lib/euclid"
+
+let A = eu.matrix ([
+  [1, 3, 1, 9],
+  [1, 1, -1, 1],
+  [3, 11, 5, 35],
+])
+
+let B = eu.matrix ([
+  [1, 0, -2, -3],
+  [0, 1, 1, 4],
+  [0, 0, 0, 0],
+])
+
+assert (
+  A.reduced_row_echelon_form () .eq (B)
+)
+```
 
 ### `cg` combinatorial-game
 
