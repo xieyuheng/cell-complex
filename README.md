@@ -39,14 +39,12 @@
 ### cell-complex (`cx`)
 
 - cell-complex based low dimensional algebraic topology library
-- example cell complexes:
-  - torus
 
 ### homology (`hl`)
 
 - cellular homology of cell-complex
 
-- `examples/hl.ts`:
+- `examples/four-ways-to-glue-a-square.ts`:
 
 ``` typescript
 import * as cx from "cicada-lang/lib/cell-complex"
