@@ -1,4 +1,5 @@
-- number.ts
+- num.ts
+- int.ts
 * [bug] limitation
 - if the number goes beyond `number`, we will need generic `matrix_t <F>`
 - generic matrix_t and vector_t
