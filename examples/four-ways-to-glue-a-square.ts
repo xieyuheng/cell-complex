@@ -73,8 +73,6 @@ let report: any = {
 
 ut.log (report)
 
-// ==>
-
 { sphere:
   { '0': { betti_number: 1, torsion_coefficients: [] },
     '1': { betti_number: 0, torsion_coefficients: [] },
