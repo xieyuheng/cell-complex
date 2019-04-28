@@ -26,6 +26,13 @@
   - use [`node`](https://github.com/nodejs/node) to run examples written in javascript
   - use [`ts-node`](https://github.com/TypeStrong/ts-node) to run examples written in typescript
 
+- Contents:
+  - [euclid](#eu-euclid)
+  - [combinatorial-game](#cg-combinatorial-game)
+  - [cell-complex](#cx-cell-complex)
+  - [homology](#hl-homology)
+  - [cicada](#cicada)
+
 ### `eu` euclid
 
 - euclidean space -- affine space with dot product
@@ -197,8 +204,9 @@ ut.log (report)
 
 - Pictures by Guy Inchbald, a.k.a. [Steelpillow](https://commons.wikimedia.org/wiki/User:Steelpillow)
 
-### cicada [work in progress]
+### cicada
 
+- [work in progress]
 - a dependently-typed programming language
 - game semantics
 - logic programming interface
