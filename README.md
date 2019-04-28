@@ -22,25 +22,29 @@
 
 ## Modules
 
-### euclid (`eu`)
+``` sh
+npm install cicada-lang
+```
+
+### `eu` euclid
 
 - euclidean space -- affine space with dot product
   - `matrix_t`, `vector_t` and `point_t`
 
 - module over euclidean domain -- for generic algorithms
 
-### combinatorial-game (`cg`)
+### `cg` combinatorial-game
 
 - a game engine for n-player perfect information games
 - example games:
   - tic-tac-toe
   - hackenbush -- [demo](http://hackenbush.combinatorial-game.surge.sh/)
 
-### cell-complex (`cx`)
+### `cx` cell-complex
 
 - cell-complex based low dimensional algebraic topology library
 
-### homology (`hl`)
+### `hl` homology
 
 - cellular homology of cell-complex
 
@@ -146,7 +150,7 @@ ut.log (report)
      euler_characteristic: 1 } }
 ```
 
-### cicada
+### cicada [work in progress]
 
 - a dependently-typed programming language
 - game semantics
