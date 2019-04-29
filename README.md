@@ -36,8 +36,8 @@
 
 ### `eu` euclid
 
-- [module theory](https://en.wikipedia.org/wiki/Module_(mathematics)) over euclidean domain
-  - with matrix generic algorithms
+- [module theory](https://en.wikipedia.org/wiki/Module_(mathematics)) over [euclidean domain](https://en.wikipedia.org/wiki/Euclidean_domain)
+  - for generic matrix algorithms
 
 #### [`examples/linear-algebra.ts`](https://github.com/xieyuheng/cicada/blob/master/examples/linear-algebra.ts):
 
