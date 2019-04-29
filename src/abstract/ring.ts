@@ -26,6 +26,16 @@ class ring_t <R> {
   one = this.multiplication.id
   mul = this.multiplication.mul
 
+  eq = this.elements.eq
+
+  zero_p (x: R): boolean {
+    return this.eq (x, this.zero)
+  }
+
+  one_p (x: R): boolean {
+    return this.eq (x, this.one)
+  }
+
   left_distr (x: R, y: R, z: R) {
     eqv (
       this.elements,
@@ -71,15 +81,85 @@ class integral_domain_t <R> extends commutative_ring_t <R> {
 
 export
 class euclidean_domain_t <R> extends integral_domain_t <R> {
-  degree: (x: R) => number
+  degree_lt: (x: R, y: R) => boolean
+  divmod: (x: R, y: R) => [R, R]
 
   constructor (the: {
     addition: abelian_group_t <R>,
     multiplication: monoid_t <R>,
-    degree: (x: R) => number,
+    degree_lt: (x: R, y: R) => boolean,
+    divmod: (x: R, y: R) => [R, R],
   }) {
     super (the)
-    this.degree = the.degree
+    this.degree_lt = the.degree_lt
+    this.divmod = the.divmod
+  }
+
+  euclidean_divmod (x: R, y: R) {
+    not_eqv (this.elements, y, this.zero)
+    let [q, r] = this.divmod (x, y)
+    eqv (this.elements, x, this.add (this.mul (y, q), r))
+    assert (this.eq (r, this.zero) ||
+            this.degree_lt (r, y))
+  }
+
+  div (x: R, y: R): R {
+    let [q, r] = this.divmod (x, y)
+    return q
+  }
+
+  mod (x: R, y: R): R {
+    let [q, r] = this.divmod (x, y)
+    return r
+  }
+
+  gcd (x: R, y: R): R {
+    while (! this.eq (y, this.zero)) {
+      if (this.degree_lt (x, y)) {
+        [x, y] = [y, x];
+      } else {
+        let r = this.mod (x, y);
+        [x, y] = [y, r];
+      }
+    }
+    return x
+  }
+
+  gcd_ext (x: R, y: R): [R, [R, R]] {
+    let old_s = this.one
+    let old_t = this.zero
+    let old_r = x
+
+    let s = this.zero
+    let t = this.one
+    let r = y
+
+    while (! this.zero_p (r)) {
+      if (this.degree_lt (old_r, r)) {
+        [
+          s, t, r,
+          old_s, old_t, old_r,
+        ] = [
+          old_s, old_t, old_r,
+          s, t, r,
+        ]
+      } else {
+        let q = this.div (old_r, r);
+        [old_r, r] = [r, this.sub (old_r, this.mul (q, r))];
+        [old_s, s] = [s, this.sub (old_s, this.mul (q, s))];
+        [old_t, t] = [t, this.sub (old_t, this.mul (q, t))];
+      }
+    }
+
+    return [old_r, [old_s, old_t]]
+  }
+
+  gcd_ext_p (x: R, y: R, res: [R, [R, R]]): boolean {
+    let [d, [s, t]] = res
+    return (this.eq (d, this.gcd (x, y)) &&
+            this.eq (d, this.add (
+              this.mul (s, x),
+              this.mul (t, y))))
   }
 }
 

@@ -1,4 +1,3 @@
-- num.ts
 - int.ts
 - euclid-tobe.ts
 * [bug] limitation

@@ -47,7 +47,7 @@ function gcd (
       [x, y] = [y, r];
     }
   }
-  return Math.abs (x)
+  return x
 }
 
 export
@@ -86,12 +86,7 @@ function gcd_ext (
       [old_t, t] = [t, old_t - q * t];
     }
   }
-
-  if (old_r < 0) {
-    return [-old_r, [-old_s, -old_t]]
-  } else {
-    return [old_r, [old_s, old_t]]
-  }
+  return [old_r, [old_s, old_t]]
 }
 
 export

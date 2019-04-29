@@ -17,7 +17,8 @@ function domain <R> (the: {
   neg: (x: R) => R,
   one: R,
   mul: (x: R, y: R) => R,
-  degree: (x: R) => number,
+  degree_lt: (x: R, y: R) => boolean,
+  divmod: (x: R, y: R) => [R, R],
 }): euclidean_domain_t <R> {
   return new euclidean_domain_t ({
     addition: new abelian_group_t ({
@@ -31,7 +32,8 @@ function domain <R> (the: {
       id: the.one,
       mul: the.mul,
     }),
-    degree: the.degree,
+    degree_lt: the.degree_lt,
+    divmod: the.divmod,
   })
 }
 
