@@ -167,24 +167,21 @@ class natural_transformation_t <LO, LA, RO, RA> {
 }
 
 export
-class groupoid_t <O, A> {
-  readonly cat: category_t <O, A>
+class groupoid_t <O, A> extends category_t <O, A> {
   readonly inv: (f: A) => A
 
   constructor (the: {
-    cat: category_t <O, A>,
+    objects: set_t <O>,
+    arrows: set_t <A>,
+    dom: (f: A) => O,
+    cod: (f: A) => O,
+    id: (x: O) => A,
+    compose: (f: A, g: A) => A,
     inv: (f: A) => A,
   }) {
-    this.cat = the.cat
+    super (the)
     this.inv = the.inv
   }
-
-  objects = this.cat.objects
-  arrows = this.cat.arrows
-  dom = this.cat.dom
-  cod = this.cat.cod
-  id = this.cat.id
-  compose = this.cat.compose
 
   // `dom` and `cod` of composition are only checked at runtime
   //   if the `eqv` can report report instead of throw error

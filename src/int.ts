@@ -5,6 +5,7 @@ import * as eu from "./euclid-tobe"
 import { set_t, eqv, not_eqv } from "./abstract/set"
 import { euclidean_domain_t } from "./abstract/ring"
 
+export
 let ints = new set_t <bigint> ({
   eq: (x, y) => x === y
 })
@@ -47,6 +48,7 @@ function abs_lt (x: bigint, y: bigint): boolean {
   return abs (x) < abs (y)
 }
 
+export
 let domain = eu.domain <bigint> ({
   elements: ints,
   zero: 0n,

@@ -18,15 +18,15 @@ class ring_t <R> {
     this.elements = the.addition.elements
   }
 
-  zero = this.addition.id
-  add = this.addition.add
-  neg = this.addition.neg
-  sub = this.addition.sub
+  get zero (): R { return this.addition.id }
+  add (x: R, y: R): R { return this.addition.add (x, y) }
+  neg (x: R): R { return this.addition.neg (x) }
+  sub (x: R, y: R): R { return this.addition.sub (x, y) }
 
-  one = this.multiplication.id
-  mul = this.multiplication.mul
+  get one (): R { return this.multiplication.id }
+  mul (x: R, y: R): R { return this.multiplication.mul (x, y) }
 
-  eq = this.elements.eq
+  eq (x: R, y: R): boolean { return this.elements.eq (x, y) }
 
   zero_p (x: R): boolean {
     return this.eq (x, this.zero)
@@ -63,7 +63,10 @@ class commutative_ring_t <R> extends ring_t <R> {
     )
   }
 
-  distr = this.left_distr
+  distr (x: R, y: R, z: R) {
+    this.left_distr (x, y, z)
+    this.right_distr (x, y, z)
+  }
 }
 
 export

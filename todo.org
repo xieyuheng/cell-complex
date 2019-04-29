@@ -1,4 +1,3 @@
-- int.ts
 - euclid-tobe.ts
 * [bug] limitation
 - if the number goes beyond `number`, we will need generic `matrix_t <F>`

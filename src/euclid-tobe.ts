@@ -20,13 +20,15 @@ function domain <R> (the: {
   degree_lt: (x: R, y: R) => boolean,
   divmod: (x: R, y: R) => [R, R],
 }): euclidean_domain_t <R> {
+  let addition = new abelian_group_t ({
+    elements: the.elements,
+    id: the.zero,
+    add: the.add,
+    neg: the.neg,
+  })
+  // console.log (addition.id)
   return new euclidean_domain_t ({
-    addition: new abelian_group_t ({
-      elements: the.elements,
-      id: the.zero,
-      add: the.add,
-      neg: the.neg,
-    }),
+    addition,
     multiplication: new monoid_t ({
       elements: the.elements,
       id: the.one,

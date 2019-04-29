@@ -18,10 +18,10 @@ class module_t <R, V> {
     this.scale = the.scale
   }
 
-  add = this.vector.add
-  eq = this.vector.elements.eq
-  id = this.vector.id
-  neg = this.vector.neg
+  add (x: V, y: V): V { return this.vector.add (x, y) }
+  eq (x: V, y: V): boolean { return this.vector.elements.eq (x, y) }
+  get id (): V { return this.vector.id }
+  neg (x: V): V { return this.vector.neg (x) }
 
   ring_id_action (x: V) {
     eqv (

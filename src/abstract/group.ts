@@ -88,7 +88,7 @@ class abelian_group_t <G> extends group_t <G> {
     this.neg = the.neg
   }
 
-  sub = this.div
+  sub (x: G, y: G): G { return this.div (x, y) }
 
   commu (x: G, y: G) {
     eqv (

@@ -7,6 +7,7 @@ test ("divmod", t => {
   t.deepEqual (num.divmod (17, 4), [4, 1])
   t.deepEqual (num.divmod (19, 30), [0, 19])
   t.deepEqual (num.divmod (-17, -10), [2, 3])
+  t.deepEqual (num.divmod (7, 1), [7, 0])
 })
 
 test ("gcd", t => {
