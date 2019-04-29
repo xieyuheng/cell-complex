@@ -83,7 +83,7 @@ assert (
 
 #### [`examples/four-ways-to-glue-a-square.ts`](https://github.com/xieyuheng/cicada/blob/master/examples/four-ways-to-glue-a-square.ts):
 
-![Flatsurfaces.svg](https://raw.githubusercontent.com/xieyuheng/image-link/master/homology/Flatsurfaces.svg)
+![Flatsurfaces.svg](https://github.com/xieyuheng/image-link/blob/master/homology/Flatsurfaces.svg)
 
 ``` typescript
 import * as cx from "cicada-lang/lib/cell-complex"
@@ -91,7 +91,7 @@ import * as hl from "cicada-lang/lib/homology"
 import * as ut from "cicada-lang/lib/util"
 ```
 
-![Spherecycles1.svg](https://raw.githubusercontent.com/xieyuheng/image-link/master/homology/Spherecycles1.svg)
+![Spherecycles1.svg](https://github.com/xieyuheng/image-link/blob/master/homology/Spherecycles1.svg)
 
 ``` typescript
 class sphere_t extends cx.cell_complex_t {
@@ -111,7 +111,7 @@ class sphere_t extends cx.cell_complex_t {
 }
 ```
 
-![Toruscycles1.svg](https://raw.githubusercontent.com/xieyuheng/image-link/master/homology/Toruscycles1.svg)
+![Toruscycles1.svg](https://github.com/xieyuheng/image-link/blob/master/homology/Toruscycles1.svg)
 
 ``` typescript
 class torus_t extends cx.cell_complex_t {
@@ -131,7 +131,7 @@ class torus_t extends cx.cell_complex_t {
 }
 ```
 
-![Kleincycles1.svg](https://raw.githubusercontent.com/xieyuheng/image-link/master/homology/Kleincycles1.svg)
+![Kleincycles1.svg](https://github.com/xieyuheng/image-link/blob/master/homology/Kleincycles1.svg)
 
 ``` typescript
 class klein_bottle_t extends cx.cell_complex_t {
@@ -151,7 +151,7 @@ class klein_bottle_t extends cx.cell_complex_t {
 }
 ```
 
-![Projectivecycles1.svg](https://raw.githubusercontent.com/xieyuheng/image-link/master/homology/Projectivecycles1.svg)
+![Projectivecycles1.svg](https://github.com/xieyuheng/image-link/blob/master/homology/Projectivecycles1.svg)
 
 ``` typescript
 class projective_plane_t extends cx.cell_complex_t {
