@@ -36,10 +36,8 @@
 
 ### `eu` euclid
 
-- euclidean space -- affine space with dot product
-  - `matrix_t`, `vector_t` and `point_t`
-
-- module over euclidean domain -- for generic algorithms
+- [module theory](https://en.wikipedia.org/wiki/Module_(mathematics)) over euclidean domain
+  - with matrix generic algorithms
 
 #### [`examples/linear-algebra.ts`](https://github.com/xieyuheng/cicada/blob/master/examples/linear-algebra.ts):
 
