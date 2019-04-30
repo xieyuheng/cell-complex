@@ -1,9 +1,6 @@
 - euclid.ts as euclid-naive.ts, euclid-tobe.ts as euclid.ts
-- diag_canonical_decomposition
-- test int.matrix_t by K1
 - lower_upper_decomposition for num.matrix_t
 - docs for euclid.ts
-  - maybe gitbook
 * [note] row v.s. col
 - `row_trans`
   - If we view matrix as linear equations,

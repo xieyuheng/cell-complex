@@ -175,3 +175,203 @@ test ("int.matrix_t.row_canonical_decomposition", t => {
 
   t.pass ()
 })
+
+
+function test_diag_canonical_form (t, m) {
+  t.true (
+    m.diag_canonical_form () .diag_canonical_form_p ()
+  )
+  t.pass ()
+}
+
+let INTEGER_MATRICES = {
+  // Examples taken from
+  // "INTEGER MATRICES AND ABELIAN GROUPS",
+  // by George Havas and Leon S. Sterling.
+  R1: [
+    [2, 0, -1, 0, -1, 2, 1, -1, 2, -1, -1, 0, -1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [2, 1, -1, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1, -1, -1, -1, 0, -1, 0, 1, -1, 0, 0, 0, 0, 0, -1],
+    [2, 0, -1, 2, -1, 0, -1, 1, 0, 0, 0, 0, -2, 2, 0, 0, 0, 0, 1, -2, 1, 1, -1, 1, -1, 0, 0],
+    [1, -1, 1, 0, 0, 0, -1, 0, -1, 1, 0, 0, 0, 1, 1, -1, 0, 0, 0, 0, 2, -1, 0, 1, 2, 0, -1],
+    [0, 0, 0, 2, -2, 1, 1, -2, -1, 1, 1, 0, 0, 0, -1, 0, 1, -1, 1, 0, 0, 0, 2, 0, 0, -1, 0],
+    [0, 0, 0, 0, 1, 0, 1, -1, 1, -1, -1, -1, -1, -1, 0, 1, 1, 0, 0, 0, 0, -1, 0, -1, -1, 1, 0],
+    [0, 0, 0, 1, -2, 0, 2, -2, 0, 1, 2, 0, 1, 0, 2, 0, -2, 1, 1, -1, -1, -1, 1, 1, -1, 0, 0],
+    [2, 2, 1, -2, 1, 1, 0, 0, 0, 0, 1, 0, 1, -2, 0, 0, -1, -1, 0, 1, -2, 0, 0, -1, 0, 1, -2],
+    [1, 1, 0, 0, -1, 2, -1, 0, 2, -1, -1, -1, -1, -1, 1, -1, 0, 0, 1, 0, 1, 0, -1, 1, 0, 0, -1],
+    [1, -2, -1, 1, 1, 0, 1, -1, 0, 0, -2, -1, 0, 1, 0, 0, 1, 1, 1, -2, 1, -1, 0, 1, 0, 1, 1],
+    [1, 0, 1, 1, -1, 0, -3, 1, 0, 0, 0, 0, -2, -1, 2, -2, 0, 0, 1, 1, 2, -1, -1, 1, 1, 0, -1],
+    [0, 0, 0, 1, -2, 0, -1, 1, 1, 0, 1, 0, 0, 0, 2, 0, -2, 1, 1, -2, 0, 1, -1, 1, -1, 1, 0],
+    [1, 0, 0, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [3, 2, 0, 0, -2, 2, 0, 0, 1, 0, 1, 0, -1, -2, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, -1, -2],
+    [1, 0, -1, 0, -1, 1, 0, 1, 1, 0, 0, 0, -2, -1, 1, 0, 0, 0, 1, -1, 1, -1, -1, 2, -1, 0, 0],
+    [1, 1, -1, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1, -1, -1, -1, 0, 0, 0, 1, -1, 0, 0, 0, 0, 0, -1],
+    [2, -1, 0, -1, 1, 0, 0, 0, 0, -1, -1, 0, -1, -1, 0, -1, 0, -1, 0, 1, 2, -1, -1, 0, 1, -1, 0],
+    [1, 2, 1, -1, 0, 1, -1, 1, 1, 0, 1, 0, -2, -1, 1, 2, 0, -1, 1, 0, 2, 0, 0, -1, 1, 0, -2],
+    [2, 1, 0, -1, 0, 1, 0, -1, -1, 0, 0, 0, -2, 0, -1, -1, 1, -1, 0, 2, 2, 0, 0, -1, 1, -2, -1],
+    [0, 0, 0, 0, 0, 0, 0, 0, 1, 0, -1, 0, 0, 0, 0, -2, 0, 1, 0, -2, -1, 0, -1, 2, -2, 0, 1],
+    [0, 0, -1, 0, -1, 1, 2, -2, 0, 0, -1, 0, -1, -1, 2, 0, 0, 2, 1, -2, 2, -2, 0, 2, 0, 0, 0],
+    [1, 1, 0, 1, -2, 2, 2, -2, 2, -1, 0, 0, -2, -1, 0, 1, 1, -1, 0, 0, 1, 0, 2, -1, -1, -1, -1],
+    [2, -1, 0, 0, 0, 0, 0, 0, 1, -1, 1, 0, -1, -1, -1, 0, 0, -3, 0, 1, 1, 0, 0, -1, 0, 0, 0],
+    [1, 0, 0, 0, 0, -1, -2, -1, -3, 2, 1, 1, 0, 2, 1, -2, 0, 0, -1, 2, 1, 0, -1, -2, 2, 0, -1],
+    [2, 0, 0, 1, -2, 0, 0, -1, -1, 0, 1, 1, -2, 2, 1, -1, -1, 0, -1, 1, 2, 0, 0, -1, 1, -1, -1],
+  ]
+}
+
+test ("int.matrix_t.diag_canonical_form", t => {
+  test_diag_canonical_form (t, int.matrix ([
+    [2, 4, 4],
+    [-6, 6, 12],
+    [10, -4, -16],
+  ]))
+
+  test_diag_canonical_form (t, int.matrix ([
+    [2, 3, 6, 2],
+    [5, 6, 1, 6],
+    [8, 3, 1, 1],
+  ]))
+
+  test_diag_canonical_form (t, int.matrix ([
+    [3, 3, 1, 4],
+    [0, 1, 0, 0],
+    [0, 0, 19, 16],
+    [0, 0, 0, 3],
+  ]))
+
+  test_diag_canonical_form (t, int.matrix ([
+    [9, -36, 30],
+    [-36, 192, -180],
+    [30, -180, 180],
+  ]))
+
+  test_diag_canonical_form (t, int.matrix ([
+    [0, 0, 5, 0, 1, 4],
+    [0, 0, 0, -1, -4, 99],
+    [0, 0, 0, 20, 19, 16],
+    [0, 0, 0, 0, 2, 1],
+    [0, 0, 0, 0, 0, 3],
+    [0, 0, 0, 0, 0, 0],
+  ]))
+
+  test_diag_canonical_form (t, int.matrix ([
+    [1, 0, 0],
+    [0, 4, 0],
+    [0, 0, 6],
+  ]))
+
+  test_diag_canonical_form (t, int.matrix ([
+    [0, 0, 0],
+    [0, 0, 0],
+    [0, 0, 0],
+  ]))
+
+  test_diag_canonical_form (t, int.matrix ([
+    [0, 0, 0],
+    [0, 4, 3],
+    [0, 1, 6],
+  ]))
+
+  test_diag_canonical_form (t, int.matrix ([
+    [0, 0, 0],
+    [0, 4, 0],
+    [0, 0, 6],
+  ]))
+
+  test_diag_canonical_form (t, int.matrix (INTEGER_MATRICES.R1))
+
+  t.pass ()
+})
+
+function test_diag_canonical_decomposition (t, m) {
+  let {
+    row_trans,
+    col_trans,
+    diag_canonical,
+  } = m.diag_canonical_decomposition ()
+
+  let res = row_trans.mul (m) .mul (col_trans) .eq (diag_canonical)
+
+  if (! res) {
+    console.log ("test_diag_canonical_decomposition fail:")
+    console.log ("row_trans:")
+    row_trans.print ()
+    console.log ("col_trans:")
+    col_trans.print ()
+    console.log ("row_trans.mul (m) .mul (col_trans):")
+    row_trans.mul (m) .mul (col_trans) .print ()
+    console.log ("diag_canonical:")
+    diag_canonical.print ()
+  }
+
+  t.true (res)
+
+  t.true (
+    diag_canonical.diag_canonical_form_p ()
+  )
+}
+
+test ("int.matrix_t.diag_canonical_decomposition", t => {
+  test_diag_canonical_decomposition (t, int.matrix ([
+    [2, 4, 4],
+    [-6, 6, 12],
+    [10, -4, -16],
+  ]))
+
+  test_diag_canonical_decomposition (t, int.matrix ([
+    [2, 3, 6, 2],
+    [5, 6, 1, 6],
+    [8, 3, 1, 1],
+  ]))
+
+  test_diag_canonical_decomposition (t, int.matrix ([
+    [3, 3, 1, 4],
+    [0, 1, 0, 0],
+    [0, 0, 19, 16],
+    [0, 0, 0, 3],
+  ]))
+
+  test_diag_canonical_decomposition (t, int.matrix ([
+    [9, -36, 30],
+    [-36, 192, -180],
+    [30, -180, 180],
+  ]))
+
+  test_diag_canonical_decomposition (t, int.matrix ([
+    [0, 0, 5, 0, 1, 4],
+    [0, 0, 0, -1, -4, 99],
+    [0, 0, 0, 20, 19, 16],
+    [0, 0, 0, 0, 2, 1],
+    [0, 0, 0, 0, 0, 3],
+    [0, 0, 0, 0, 0, 0],
+  ]))
+
+  test_diag_canonical_decomposition (t, int.matrix ([
+    [1, 0, 0],
+    [0, 4, 0],
+    [0, 0, 6],
+  ]))
+
+  test_diag_canonical_decomposition (t, int.matrix ([
+    [0, 0, 0],
+    [0, 0, 0],
+    [0, 0, 0],
+  ]))
+
+  test_diag_canonical_decomposition (t, int.matrix ([
+    [0, 0, 0],
+    [0, 4, 3],
+    [0, 1, 6],
+  ]))
+
+  test_diag_canonical_decomposition (t, int.matrix ([
+    [0, 0, 0],
+    [0, 4, 0],
+    [0, 0, 6],
+  ]))
+
+  test_diag_canonical_decomposition (t, int.matrix (
+    INTEGER_MATRICES.R1
+  ))
+
+  t.pass ()
+})

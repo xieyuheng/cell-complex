@@ -1000,7 +1000,7 @@ let INTEGER_MATRICES = {
   // Examples taken from
   // "INTEGER MATRICES AND ABELIAN GROUPS",
   // by George Havas and Leon S. Sterling.
-  R1: eu.matrix ([
+  R1: [
     [2, 0, -1, 0, -1, 2, 1, -1, 2, -1, -1, 0, -1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, -1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0],
     [2, 1, -1, 0, 0, 1, 0, 0, 0, 0, 1, 0, 1, -1, -1, -1, 0, -1, 0, 1, -1, 0, 0, 0, 0, 0, -1],
@@ -1027,7 +1027,7 @@ let INTEGER_MATRICES = {
     [2, -1, 0, 0, 0, 0, 0, 0, 1, -1, 1, 0, -1, -1, -1, 0, 0, -3, 0, 1, 1, 0, 0, -1, 0, 0, 0],
     [1, 0, 0, 0, 0, -1, -2, -1, -3, 2, 1, 1, 0, 2, 1, -2, 0, 0, -1, 2, 1, 0, -1, -2, 2, 0, -1],
     [2, 0, 0, 1, -2, 0, 0, -1, -1, 0, 1, 1, -2, 2, 1, -1, -1, 0, -1, 1, 2, 0, 0, -1, 1, -1, -1],
-  ])
+  ]
 }
 
 test ("eu.matrix_t.smith_normal_form", t => {
@@ -1089,7 +1089,7 @@ test ("eu.matrix_t.smith_normal_form", t => {
     [0, 0, 6],
   ]))
 
-  test_smith_normal_form (t, INTEGER_MATRICES.R1)
+  test_smith_normal_form (t, eu.matrix (INTEGER_MATRICES.R1))
 
   t.pass ()
 })
@@ -1115,7 +1115,7 @@ function test_smith_decomposition (t, m) {
     smith.print ()
   }
 
-  // t.true (res)
+  t.true (res)
 
   t.true (
     smith.smith_normal_form_p ()
@@ -1184,7 +1184,7 @@ test ("eu.matrix_t.smith_decomposition", t => {
   // LIMITATION
   //   the integers in `row_trans` and `col_trans`
   //   exceed the upper bound that `number` can encode.
-  // test_smith_decomposition (t, INTEGER_MATRICES.R1)
+  // test_smith_decomposition (t, eu.matrix (INTEGER_MATRICES.R1))
 
   t.pass ()
 })

@@ -801,10 +801,280 @@ class matrix_t <R> {
    * Generic `smith_normal_form`
    */
 
-  // TODO
-  // diag_canonical_form
-  // TODO
-  // diag_canonical_decomposition
+  diag_canonical_update (): matrix_t <R> {
+    let matrix = this
+    let [m, n] = this.shape
+    let i = 0
+    let j = 0
+    while (i < m && j < n) {
+      if (
+        (argall (i, m, (k) =>
+                 this.ring.zero_p (matrix.get (k, j))) &&
+         argall (j, n, (k) =>
+                 this.ring.zero_p (matrix.get (i, k))))
+      ) {
+        i += 1
+        j += 1
+      } else {
+        // It is amazing that this loop converges.
+        // It is like kneading dough.
+        while (! (
+          (argall (i + 1, m, (k) =>
+                   this.ring.zero_p (matrix.get (k, j))) &&
+           argall (j + 1, n, (k) =>
+                   this.ring.zero_p (matrix.get (i, k))))
+        )) {
+          while (
+            ! argall (i + 1, m, (k) =>
+                      this.ring.zero_p (matrix.get (k, j)))
+          ) {
+            let k = argcmp_guard (
+              i, m,
+              (k, l) => this.ring.degree_lt (
+                matrix.get (k, j),
+                matrix.get (l, j),
+              ),
+              (k) => ! this.ring.zero_p (matrix.get (k, j)),
+            )
+            if (k !== i) {
+              matrix.update_swap_rows (i, k)
+            }
+            for (let k of ut.range (i + 1, m)) {
+              let q = this.ring.div (
+                matrix.get (k, j),
+                matrix.get (i, j))
+              if (! this.ring.zero_p (q)) {
+                matrix.row (k)
+                  .update_sub (matrix.row (i) .scale (q))
+              }
+            }
+          }
+          while (
+            ! argall (j + 1, n, (k) =>
+                      this.ring.zero_p (matrix.get (i, k)))
+          ) {
+            let k = argcmp_guard (
+              j, n,
+              (k, l) => this.ring.degree_lt (
+                matrix.get (i, k),
+                matrix.get (i, l),
+              ),
+              (k) => ! this.ring.zero_p (matrix.get (i, k)),
+            )
+            if (k !== j) {
+              matrix.update_swap_cols (j, k)
+            }
+            for (let k of ut.range (j + 1, n)) {
+              let q = this.ring.div (
+                matrix.get (i, k),
+                matrix.get (i, j))
+              if (! this.ring.zero_p (q)) {
+                matrix.col (k)
+                  .update_sub (matrix.col (j) .scale (q))
+              }
+            }
+          }
+        }
+        i += 1
+        j += 1
+      }
+    }
+    return matrix
+  }
+
+  invariant_factor_update (): matrix_t <R> {
+    let matrix = this
+    let [m, n] = this.shape
+    m = Math.min (m, n)
+    let i = 0
+    while (i < m) {
+      if (this.ring.zero_p (matrix.get (i, i))) {
+        for (let k of ut.range (i, m)) {
+          matrix.set (k, k, matrix.get (k+1, k+1))
+        }
+        matrix.set (m-1, m-1, this.ring.zero)
+        m -= 1
+      } else {
+        let x = matrix.get (i, i)
+        for (let k of ut.range (i+1, m)) {
+          let y = matrix.get (k, k)
+          let [q, r] = this.ring.divmod (y, x)
+          if (! this.ring.zero_p (r)) {
+            matrix.set (k, i, matrix.get (k, k))
+            matrix.diag_canonical_update ()
+          }
+        }
+        i += 1
+      }
+    }
+    return matrix
+  }
+
+  diag_canonical_form (): matrix_t <R> {
+    return this.copy ()
+      .diag_canonical_update ()
+      .invariant_factor_update ()
+  }
+
+  diagonal_p (): boolean {
+    let [m, n] = this.shape
+    for (let i of ut.range (0, m)) {
+      for (let j of ut.range (0, n)) {
+        if (i !== j) {
+          if (! this.ring.zero_p (this.get (i, j))) {
+            return false
+          }
+        }
+      }
+    }
+    return true
+  }
+
+  diag_canonical_form_p (): boolean {
+    if (! this.diagonal_p ()) { return false }
+    if (! this.diag () .invariant_factors_p ()) { return false }
+    return true
+  }
+
+  diag_canonical_update_ext (the: {
+    row_trans: matrix_t <R>,
+    col_trans: matrix_t <R>,
+  }) {
+    let matrix = this
+    let [m, n] = this.shape
+    let row_trans = the.row_trans
+    let col_trans = the.col_trans
+    let i = 0
+    let j = 0
+    while (i < m && j < n) {
+      if (
+        (argall (i, m, (k) =>
+                 this.ring.zero_p (matrix.get (k, j))) &&
+         argall (j, n, (k) =>
+                 this.ring.zero_p (matrix.get (i, k))))
+      ) {
+        i += 1
+        j += 1
+      } else {
+        while (! (
+          (argall (i + 1, m, (k) =>
+                   this.ring.zero_p (matrix.get (k, j))) &&
+           argall (j + 1, n, (k) =>
+                   this.ring.zero_p (matrix.get (i, k))))
+        )) {
+          while (
+            ! argall (i + 1, m, (k) =>
+                      this.ring.zero_p (matrix.get (k, j)))
+          ) {
+            let k = argcmp_guard (
+              i, m,
+              (k, l) => this.ring.degree_lt (
+                matrix.get (k, j),
+                matrix.get (l, j),
+              ),
+              (k) => ! this.ring.zero_p (matrix.get (k, j)),
+            )
+            if (k !== i) {
+              matrix.update_swap_rows (i, k)
+              row_trans.update_swap_rows (i, k)
+            }
+            for (let k of ut.range (i + 1, m)) {
+              let q = this.ring.div (
+                matrix.get (k, j),
+                matrix.get (i, j))
+              if (! this.ring.zero_p (q)) {
+                matrix.row (k)
+                  .update_sub (matrix.row (i) .scale (q))
+                row_trans.row (k)
+                  .update_sub (row_trans.row (i) .scale (q))
+              }
+            }
+          }
+          while (
+            ! argall (j + 1, n, (k) =>
+                      this.ring.zero_p (matrix.get (i, k)))
+          ) {
+            let k = argcmp_guard (
+              j, n,
+              (k, l) => this.ring.degree_lt (
+                matrix.get (i, k),
+                matrix.get (i, l),
+              ),
+              (k) => ! this.ring.zero_p (matrix.get (i, k)),
+            )
+            if (k !== j) {
+              matrix.update_swap_cols (j, k)
+              col_trans.update_swap_cols (j, k)
+            }
+            for (let k of ut.range (j + 1, n)) {
+              let q = this.ring.div (
+                matrix.get (i, k),
+                matrix.get (i, j))
+              if (! this.ring.zero_p (q)) {
+                matrix.col (k)
+                  .update_sub (matrix.col (j) .scale (q))
+                col_trans.col (k)
+                  .update_sub (col_trans.col (j) .scale (q))
+              }
+            }
+          }
+        }
+        i += 1
+        j += 1
+      }
+    }
+  }
+
+  invariant_factor_update_ext (the: {
+    row_trans: matrix_t <R>,
+    col_trans: matrix_t <R>,
+  }) {
+    let [m, n] = this.shape
+    m = Math.min (m, n)
+    let i = 0
+    while (i < m) {
+      if (this.ring.zero_p (this.get (i, i))) {
+        this.update_tuck_row (i, m-1)
+        this.update_tuck_col (i, m-1)
+        the.row_trans.update_tuck_row (i, m-1)
+        the.col_trans.update_tuck_col (i, m-1)
+        m -= 1
+      } else {
+        let x = this.get (i, i)
+        for (let k of ut.range (i+1, m)) {
+          let y = this.get (k, k)
+          let [q, r] = this.ring.divmod (y, x)
+          if (! this.ring.zero_p (r)) {
+            this.col (i)
+              .update_add (this.col (k))
+            the.col_trans.col (i)
+              .update_add (the.col_trans.col (k))
+            this.diag_canonical_update_ext (the)
+          }
+        }
+        i += 1
+      }
+    }
+  }
+
+  /**
+   * `row_trans.mul (this) .mul (col_trans) .eq (diag_canonical)`
+   */
+  diag_canonical_decomposition (): {
+    row_trans: matrix_t <R>,
+    col_trans: matrix_t <R>,
+    diag_canonical: matrix_t <R>,
+  } {
+    let [m, n] = this.shape
+    let diag_canonical = this.copy ()
+    let the = {
+      row_trans: matrix_t.ring_id (this.ring, m),
+      col_trans: matrix_t.ring_id (this.ring, n),
+    }
+    diag_canonical.diag_canonical_update_ext (the)
+    diag_canonical.invariant_factor_update_ext (the)
+    return { ...the, diag_canonical }
+  }
 }
 
 export
@@ -1089,6 +1359,22 @@ class vector_t <R> {
       }
       return acc
     }
+  }
+
+  invariant_factors_p (): boolean {
+    for (let i of ut.range (0, this.size)) {
+      let x = this.get (i)
+      if (! this.ring.zero_p (x)) {
+        for (let k of ut.range (i+1, this.size)) {
+          let y = this.get (k)
+          let [q, r] = this.ring.divmod (y, x)
+          if (! this.ring.zero_p (r)) {
+            return false
+          }
+        }
+      }
+    }
+    return true
   }
 
   // TODO

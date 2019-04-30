@@ -1369,8 +1369,6 @@ class matrix_t {
           let y = matrix.get (k, k)
           if (y % x !== 0) {
             matrix.set (k, i, matrix.get (k, k))
-            // matrix.set_col (
-            //   i, matrix.col (i) .add (matrix.col (k)))
             matrix.smith_update ()
           }
         }
