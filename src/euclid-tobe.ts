@@ -56,6 +56,27 @@ function argsome (
 }
 
 export
+function argcmp_guard (
+  lo: number,
+  hi: number,
+  c: (i: number, j: number) => boolean,
+  p: (i: number) => boolean,
+): number {
+  let arg = argfirst (lo, hi, p)
+  if (arg === null) {
+    throw new Error ("no such arg")
+  }
+  for (let i = arg + 1; i < hi; i++) {
+    if (p (i)) {
+      if (c (i, arg)) {
+        arg = i
+      }
+    }
+  }
+  return arg
+}
+
+export
 function ring <R> (the: {
   elements: set_t <R>,
   zero: R,
@@ -714,11 +735,68 @@ class matrix_t <R> {
   /**
    * Generic `hermite_normal_form`
    */
+  row_canonical_form (): matrix_t <R> {
+    let matrix = this.copy ()
+    let [m, n] = this.shape
+    let i = 0
+    let j = 0
+    while (i < m && j < n) {
+      if (argall (i, m, (k) =>
+                  this.ring.zero_p (matrix.get (k, j)))) {
+        j += 1
+      } else {
+        while (! (
+          (argall (i + 1, m, (k) =>
+                   this.ring.zero_p (matrix.get (k, j))) &&
+           argall (0, i, (k) =>
+                   this.ring.degree_lt (
+                     matrix.get (k, j),
+                     matrix.get (i, j))))
+        )) {
+          let k = argcmp_guard (
+            i, m,
+            (k, l) => this.ring.degree_lt (
+              matrix.get (k, j),
+              matrix.get (l, j)),
+            (k) => ! this.ring.zero_p (matrix.get (k, j)),
+          )
+          if (k !== i) {
+            matrix.update_swap_rows (i, k)
+          }
+          for (let k of ut.ranges ([[0, i], [i + 1, m]])) {
+            let q = this.ring.div (
+              matrix.get (k, j),
+              matrix.get (i, j))
+            if (! this.ring.zero_p (q)) {
+              matrix.row (k)
+                .update_sub (matrix.row (i) .scale (q))
+            }
+          }
+        }
+        i += 1
+        j += 1
+      }
+    }
+    return matrix
+  }
 
-  // TODO
-  // row_canonical_form
-  // TODO
-  // row_canonical_decomposition
+
+  /**
+   * `row_trans.mul (this) .eq (row_canonical)`
+   */
+  row_canonical_decomposition (): {
+    row_trans: matrix_t <R>,
+    row_canonical: matrix_t <R>,
+  } {
+    let [m, n] = this.shape
+    let augmented = this.append_cols (
+      matrix_t.ring_id (this.ring, m))
+    let echelon = augmented.row_canonical_form ()
+    return {
+      row_trans: echelon.slice (null, [n, n + m]),
+      row_canonical: echelon.slice (null, [0, n]),
+    }
+  }
 
   /**
    * Generic `smith_normal_form`

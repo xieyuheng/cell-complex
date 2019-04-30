@@ -39,7 +39,7 @@ function argmax_guard (
     throw new Error ("no such arg")
   }
   let cur = f (lo)
-  for (let i = lo; i < hi; i++) {
+  for (let i = arg + 1; i < hi; i++) {
     if (p (i)) {
       let next = f (i)
       if (cur < next) {
@@ -81,7 +81,7 @@ function argmin_guard (
     throw new Error ("no such arg")
   }
   let cur = f (lo)
-  for (let i = lo; i < hi; i++) {
+  for (let i = arg + 1; i < hi; i++) {
     if (p (i)) {
       let next = f (i)
       if (cur > next) {

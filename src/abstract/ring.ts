@@ -98,6 +98,18 @@ class euclidean_ring_t <R> extends integral_ring_t <R> {
     this.divmod = the.divmod
   }
 
+  degree_lte (x: R, y: R): boolean {
+    return this.eq (x, y) || this.degree_lt (x, y)
+  }
+
+  degree_gt (x: R, y: R): boolean {
+    return this.degree_lt (y, x)
+  }
+
+  degree_gte (x: R, y: R): boolean {
+    return this.eq (x, y) || this.degree_gt (x, y)
+  }
+
   euclidean_divmod (x: R, y: R) {
     not_eqv (this.elements, y, this.zero)
     let [q, r] = this.divmod (x, y)

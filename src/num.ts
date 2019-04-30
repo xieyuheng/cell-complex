@@ -27,6 +27,25 @@ let ring = eu.ring <number> ({
   divmod: (x: number, y: number) => [x / y, 0],
 })
 
+// TODO
+// about epsilon
+
+
+/** TODO
+ * notes about numerical stability
+ */
+
+/**
+ * We have to re-implement `row_echelon_form` again for `num.matrix_t`
+ *   because `float` is not precisely a ring.
+
+ * We also have to re-implement the core algorithm again for the ring of polynomial,
+ *   because there exist more efficient algorithm than the generic algorithm.
+
+ * It is ironic that, after the abstraction,
+ *   to reach useful API, we still have to re-implement the core algorithm.
+ */
+
 export
 class matrix_t extends eu.matrix_t <number> {
   constructor (the: {

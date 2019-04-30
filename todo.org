@@ -1,6 +1,5 @@
 - euclid-tobe.ts
-- euclid-tobe.test.js
-- test with decimal.js -- test K1
+
 * [note] row v.s. col
 - `row_trans`
   - If we view matrix as linear equations,
@@ -28,6 +27,8 @@
 * computational-science
 - stiffness matrix
 - circulant matrix
+* polynomial
+- polynomial.ts -- symbolic algebra
 * graph
 - reuse cell_complex_t
 - find cycles of graph by spanning tree's complement edges

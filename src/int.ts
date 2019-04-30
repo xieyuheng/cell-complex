@@ -100,3 +100,24 @@ class matrix_t extends eu.matrix_t <bigint> {
     return matrix_t.numbers (ring.one, x, y)
   }
 }
+
+export
+function matrix (
+  array: eu.Array2d <bigint | number | string>
+): matrix_t {
+  let bigint_array = new Array <Array <bigint>> ()
+  for (let row of array) {
+    let bigint_row = new Array <bigint> ()
+    for (let x of row) {
+      bigint_row.push (BigInt (x))
+    }
+    bigint_array.push (bigint_row)
+  }
+  return eu.matrix_t.from_ring_Array2d (ring, bigint_array)
+}
+
+
+// export
+// function vector (array: Array1d): vector_t {
+//   return vector_t.fromArray (array)
+// }
