@@ -37,7 +37,7 @@
 ### `eu` euclid
 
 - [work in progress]
-- [module theory](https://en.wikipedia.org/wiki/Module_(mathematics)) over [euclidean domain](https://en.wikipedia.org/wiki/Euclidean_domain)
+- [module theory](https://en.wikipedia.org/wiki/Module_(mathematics)) over [euclidean ring](https://en.wikipedia.org/wiki/Euclidean_ring)
   - for generic matrix algorithms
 
 ### `cg` combinatorial-game

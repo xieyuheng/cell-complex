@@ -54,20 +54,20 @@ class commutative_ring_t extends ring_t {
   distr = this.left_distr
 }
 
-class integral_domain_t extends commutative_ring_t {
+class integral_ring_t extends commutative_ring_t {
   nonzero_product (
     x: this.element_t, not_eqv_t (x, this.zero),
     y: this.element_t, not_eqv_t (y, this.zero),
   ): not_eqv_t (this.mul (x, y), this.zero)
 }
 
-class euclidean_domain_t extends integral_domain_t {
+class euclidean_ring_t extends integral_ring_t {
   degree: (x: this.element_t) => number
 
   // TODO
 }
 
-class field_t extends integral_domain_t {
+class field_t extends integral_ring_t {
   inv (x: this.element_t): this.element_t
 
   div (

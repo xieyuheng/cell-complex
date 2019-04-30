@@ -70,7 +70,7 @@ class commutative_ring_t <R> extends ring_t <R> {
 }
 
 export
-class integral_domain_t <R> extends commutative_ring_t <R> {
+class integral_ring_t <R> extends commutative_ring_t <R> {
   nonzero_product (x: R, y: R) {
     not_eqv (this.elements, x, this.zero)
     not_eqv (this.elements, y, this.zero)
@@ -83,7 +83,7 @@ class integral_domain_t <R> extends commutative_ring_t <R> {
 }
 
 export
-class euclidean_domain_t <R> extends integral_domain_t <R> {
+class euclidean_ring_t <R> extends integral_ring_t <R> {
   degree_lt: (x: R, y: R) => boolean
   divmod: (x: R, y: R) => [R, R]
 
@@ -167,7 +167,7 @@ class euclidean_domain_t <R> extends integral_domain_t <R> {
 }
 
 export
-class field_t <R> extends integral_domain_t <R> {
+class field_t <R> extends integral_ring_t <R> {
   inv: (x: R) => R
 
   constructor (the: {

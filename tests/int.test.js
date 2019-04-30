@@ -11,19 +11,19 @@ test ("int.divmod", t => {
 })
 
 test ("gcd", t => {
-  t.true (int.domain.gcd (BigInt (6), BigInt (7)) === BigInt (1))
-  t.true (int.domain.gcd (BigInt (1), BigInt (7)) === BigInt (1))
-  t.true (int.domain.gcd (BigInt (0), BigInt (7)) === BigInt (7))
-  t.true (int.domain.gcd (BigInt (6), BigInt (6)) === BigInt (6))
-  t.true (int.domain.gcd (BigInt (1071), BigInt (462)) === BigInt (21))
-  t.true (int.domain.gcd (BigInt (1071), BigInt (-462)) === BigInt (21))
-  t.true (int.domain.gcd (BigInt (-1071), BigInt (462)) === BigInt (21))
+  t.true (int.ring.gcd (BigInt (6), BigInt (7)) === BigInt (1))
+  t.true (int.ring.gcd (BigInt (1), BigInt (7)) === BigInt (1))
+  t.true (int.ring.gcd (BigInt (0), BigInt (7)) === BigInt (7))
+  t.true (int.ring.gcd (BigInt (6), BigInt (6)) === BigInt (6))
+  t.true (int.ring.gcd (BigInt (1071), BigInt (462)) === BigInt (21))
+  t.true (int.ring.gcd (BigInt (1071), BigInt (-462)) === BigInt (21))
+  t.true (int.ring.gcd (BigInt (-1071), BigInt (462)) === BigInt (21))
 })
 
 function test_gcd_ext (t, x, y) {
-  let res = int.domain.gcd_ext (x, y)
+  let res = int.ring.gcd_ext (x, y)
   // ut.log ([x, y, res])
-  t.true (int.domain.gcd_ext_p (x, y, res))
+  t.true (int.ring.gcd_ext_p (x, y, res))
 }
 
 test ("gcd_ext", t => {

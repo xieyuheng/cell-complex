@@ -3,7 +3,7 @@ import assert from "assert"
 import * as ut from "./util"
 import * as eu from "./euclid-tobe"
 import { set_t, eqv, not_eqv } from "./abstract/set"
-import { euclidean_domain_t } from "./abstract/ring"
+import { euclidean_ring_t } from "./abstract/ring"
 
 export
 let nums = new set_t <number> ({
@@ -11,7 +11,7 @@ let nums = new set_t <number> ({
 })
 
 export
-let domain = eu.domain <number> ({
+let ring = eu.ring <number> ({
   elements: nums,
   zero: 0,
   add: (x: number, y: number) => x + y,

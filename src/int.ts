@@ -3,7 +3,7 @@ import assert from "assert"
 import * as ut from "./util"
 import * as eu from "./euclid-tobe"
 import { set_t, eqv, not_eqv } from "./abstract/set"
-import { euclidean_domain_t } from "./abstract/ring"
+import { euclidean_ring_t } from "./abstract/ring"
 
 export
 let ints = new set_t <bigint> ({
@@ -49,7 +49,7 @@ function abs_lt (x: bigint, y: bigint): boolean {
 }
 
 export
-let domain = eu.domain <bigint> ({
+let ring = eu.ring <bigint> ({
   elements: ints,
   zero: 0n,
   add: (x: bigint, y: bigint) => x + y,

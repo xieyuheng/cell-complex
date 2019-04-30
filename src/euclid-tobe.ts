@@ -7,14 +7,14 @@ import { permutation_t } from "./permutation"
 
 import { set_t } from "./abstract/set"
 import { monoid_t, abelian_group_t } from "./abstract/group"
-import { euclidean_domain_t } from "./abstract/ring"
+import { euclidean_ring_t } from "./abstract/ring"
 
 export type Array1d <R> = Array <R>
 export type Array2d <R> = Array <Array <R>>
 export type Array3d <R> = Array <Array <Array <R>>>
 
 export
-function domain <R> (the: {
+function ring <R> (the: {
   elements: set_t <R>,
   zero: R,
   add: (x: R, y: R) => R,
@@ -23,8 +23,8 @@ function domain <R> (the: {
   mul: (x: R, y: R) => R,
   degree_lt: (x: R, y: R) => boolean,
   divmod: (x: R, y: R) => [R, R],
-}): euclidean_domain_t <R> {
-  return new euclidean_domain_t ({
+}): euclidean_ring_t <R> {
+  return new euclidean_ring_t ({
     addition: new abelian_group_t ({
       elements: the.elements,
       id: the.zero,
@@ -43,7 +43,7 @@ function domain <R> (the: {
 
 export
 class matrix_t <R> {
-  readonly domain: euclidean_domain_t <R>
+  readonly ring: euclidean_ring_t <R>
   readonly buffer: Array <R>
   readonly shape: [number, number]
   readonly strides: [number, number]
@@ -51,13 +51,13 @@ class matrix_t <R> {
   readonly size: number
 
   constructor (the: {
-    domain: euclidean_domain_t <R>,
+    ring: euclidean_ring_t <R>,
     buffer: Array <R>,
     shape: [number, number],
     strides: [number, number],
     offset?: number,
   }) {
-    this.domain = the.domain
+    this.ring = the.ring
     this.buffer = the.buffer
     this.shape = the.shape
     this.strides = the.strides
@@ -76,16 +76,16 @@ class matrix_t <R> {
   }
 
   static from_buffer <R> (
-    domain: euclidean_domain_t <R>,
+    ring: euclidean_ring_t <R>,
     buffer: Array <R>,
     shape: [number, number],
   ): matrix_t <R> {
     let strides = matrix_t.shape_to_strides (shape)
-    return new matrix_t ({ domain, buffer, shape, strides })
+    return new matrix_t ({ ring, buffer, shape, strides })
   }
 
   static fromArray2d <R> (
-    domain: euclidean_domain_t <R>,
+    ring: euclidean_ring_t <R>,
     array: Array2d <R>,
   ): matrix_t <R> {
     let y_length = array.length
@@ -96,19 +96,19 @@ class matrix_t <R> {
       }
     }
     return matrix_t.from_buffer (
-      domain,
+      ring,
       Array.from (array.flat ()),
       [y_length, x_length],
     )
   }
 
   static from_row <R> (
-    domain: euclidean_domain_t <R>,
+    ring: euclidean_ring_t <R>,
     row: vector_t <R>,
   ): matrix_t <R> {
     let [s] = row.strides
     return new matrix_t ({
-      domain,
+      ring,
       buffer: row.buffer,
       shape: [1, row.size],
       strides: [0, s],
@@ -117,12 +117,12 @@ class matrix_t <R> {
   }
 
   static from_col <R> (
-    domain: euclidean_domain_t <R>,
+    ring: euclidean_ring_t <R>,
     col: vector_t <R>,
   ): matrix_t <R> {
     let [t] = col.strides
     return new matrix_t ({
-      domain,
+      ring,
       buffer: col.buffer,
       shape: [col.size, 1],
       strides: [t, 0],
@@ -232,7 +232,7 @@ class matrix_t <R> {
       offset += start * this.strides [1]
     }
     return new matrix_t ({
-      domain: this.domain,
+      ring: this.ring,
       buffer: this.buffer,
       shape: [m, n],
       strides: this.strides,
@@ -242,7 +242,7 @@ class matrix_t <R> {
 
   copy (): matrix_t <R> {
     let matrix = matrix_t.from_buffer (
-      this.domain,
+      this.ring,
       new Array (this.size),
       this.shape,
     )
@@ -268,7 +268,7 @@ class matrix_t <R> {
 
 export
 class vector_t <R> {
-  readonly domain: euclidean_domain_t <R>
+  readonly ring: euclidean_ring_t <R>
   readonly buffer: Array <R>
   readonly shape: [number]
   readonly strides: [number]
@@ -276,13 +276,13 @@ class vector_t <R> {
   readonly size: number
 
   constructor (the: {
-    domain: euclidean_domain_t <R>,
+    ring: euclidean_ring_t <R>,
     buffer: Array <R>,
     shape: [number],
     strides: [number],
     offset?: number,
   }) {
-    this.domain = the.domain
+    this.ring = the.ring
     this.buffer = the.buffer
     this.shape = the.shape
     this.strides = the.strides
