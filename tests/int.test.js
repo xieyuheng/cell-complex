@@ -400,7 +400,7 @@ function test_solve (t, m, b) {
   let solution = m.solve (b)
 
   t.true (
-    m.act (solution) .sub (b) .zero_p ()
+    m.act (solution) .eq (b)
   )
 }
 

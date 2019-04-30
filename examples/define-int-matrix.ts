@@ -45,20 +45,25 @@ function matrix (
   return eu.matrix_t.from_ring_Array2d (ring, new_array)
 }
 
-let A = matrix ([
-  [2, 4, 4],
-  [-6, 6, 12],
-  [10, -4, -16],
-])
+{
+  /**
+   * generic `diag_canonical_form`
+   *   i.e. `smith_normal_form` for integers
+   */
 
-let S = matrix ([
-  [2, 0, 0],
-  [0, 6, 0],
-  [0, 0, -12],
-])
+  let A = matrix ([
+    [2, 4, 4],
+    [-6, 6, 12],
+    [10, -4, -16],
+  ])
 
-// smith_normal_form
+  let S = matrix ([
+    [2, 0, 0],
+    [0, 6, 0],
+    [0, 0, -12],
+  ])
 
-assert (
-  A.diag_canonical_form () .eq (S)
-)
+  assert (
+    A.diag_canonical_form () .eq (S)
+  )
+}
