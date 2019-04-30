@@ -571,23 +571,25 @@ class matrix_t {
     return x === y
   }
 
-  // TODO
-  // avoid `vector_t.copy ()`
-  // for `update_swap_rows` & `update_swap_cols`
-
   update_swap_rows (i: number, j: number): matrix_t {
-    let x = this.row (i) .copy ()
-    let y = this.row (j)
-    this.set_row (i, y)
-    this.set_row (j, x)
+    let [m, n] = this.shape
+    for (let k of ut.range (0, n)) {
+      let x = this.get (i, k)
+      let y = this.get (j, k)
+      this.set (i, k, y)
+      this.set (j, k, x)
+    }
     return this
   }
 
   update_swap_cols (i: number, j: number): matrix_t {
-    let x = this.col (i) .copy ()
-    let y = this.col (j)
-    this.set_col (i, y)
-    this.set_col (j, x)
+    let [m, n] = this.shape
+    for (let k of ut.range (0, m)) {
+      let x = this.get (k, i)
+      let y = this.get (k, j)
+      this.set (k, i, y)
+      this.set (k, j, x)
+    }
     return this
   }
 
@@ -1631,6 +1633,19 @@ class vector_t {
     return this
   }
 
+  toArray (): Array <number> {
+    let array = []
+    for (let i of ut.range (0, this.size)) {
+      array.push (this.get (i))
+    }
+    return array
+  }
+
+  print () {
+    console.log ("vector:")
+    console.table (this.toArray ())
+  }
+
   *indexes () {
     for (let i of ut.range (0, this.size)) {
       yield i as number
@@ -1648,9 +1663,18 @@ class vector_t {
     return this
   }
 
-  print () {
-    console.log ("vector:")
-    console.table (this.toArray ())
+  *values () {
+    for (let i of ut.range (0, this.size)) {
+      let v = this.buffer [this.get_linear_index (i)]
+      yield v as number
+    }
+  }
+
+  *entries () {
+    for (let i of ut.range (0, this.size)) {
+      let v = this.buffer [this.get_linear_index (i)]
+      yield [i, v] as [number, number]
+    }
   }
 
   copy (): vector_t {
@@ -1686,20 +1710,6 @@ class vector_t {
     return true
   }
 
-  *values () {
-    for (let i of ut.range (0, this.size)) {
-      let v = this.buffer [this.get_linear_index (i)]
-      yield v as number
-    }
-  }
-
-  *entries () {
-    for (let i of ut.range (0, this.size)) {
-      let v = this.buffer [this.get_linear_index (i)]
-      yield [i, v] as [number, number]
-    }
-  }
-
   dot (that: vector_t): number {
     assert (this.size === that.size)
     let product = 0
@@ -1723,6 +1733,29 @@ class vector_t {
 
   update_scale (a: number): vector_t {
     return this.update (n => n * a)
+  }
+
+  static numbers (n: number, size: number): vector_t {
+    let buffer = new Float64Array (size) .fill (n)
+    return vector_t.from_buffer (buffer)
+  }
+
+  static zeros (size: number): vector_t {
+    return vector_t.numbers (0, size)
+  }
+
+  static ones (size: number): vector_t {
+    return vector_t.numbers (1, size)
+  }
+
+  trans (matrix: matrix_t): vector_t {
+    let [m, n] = matrix.shape
+    assert (n === this.size)
+    let vector = vector_t.zeros (m)
+    for (let i of ut.range (0, m)) {
+      vector.set (i, this.dot (matrix.row (i)))
+    }
+    return vector
   }
 
   argmax (f: (x: number) => number): number {
@@ -1780,29 +1813,6 @@ class vector_t {
     return vector
   }
 
-  trans (matrix: matrix_t): vector_t {
-    let [m, n] = matrix.shape
-    assert (n === this.size)
-    let vector = vector_t.zeros (m)
-    for (let i of ut.range (0, m)) {
-      vector.set (i, this.dot (matrix.row (i)))
-    }
-    return vector
-  }
-
-  static numbers (n: number, size: number): vector_t {
-    let buffer = new Float64Array (size) .fill (n)
-    return vector_t.from_buffer (buffer)
-  }
-
-  static zeros (size: number): vector_t {
-    return vector_t.numbers (0, size)
-  }
-
-  static ones (size: number): vector_t {
-    return vector_t.numbers (1, size)
-  }
-
   reduce_with (
     init: number,
     f: (acc: number, cur: number) => number,
@@ -1857,14 +1867,6 @@ class vector_t {
       vector.set (i + this.size, x)
     }
     return vector
-  }
-
-  toArray (): Array <number> {
-    let array = []
-    for (let i of ut.range (0, this.size)) {
-      array.push (this.get (i))
-    }
-    return array
   }
 
   invariant_factors_p (): boolean {

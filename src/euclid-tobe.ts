@@ -262,8 +262,250 @@ class matrix_t <R> {
     return this
   }
 
-  // TODO
-  // row
+  row (i: number): vector_t <R> {
+    let [m, n] = this.shape
+    let [s, t] = this.strides
+    let offset = this.offset + i * s
+    return new vector_t ({
+      ring: this.ring,
+      buffer: this.buffer,
+      shape: [n],
+      strides: [t],
+      offset,
+    })
+  }
+
+  set_row (i: number, src: vector_t <R>): matrix_t <R> {
+    let [m, n] = this.shape
+    for (let j of ut.range (0, n)) {
+      this.set (i, j, src.get (j))
+    }
+    return this
+  }
+
+  *row_entries () {
+    let [m, _n] = this.shape
+    for (let i = 0; i < m; i++) {
+      yield [i, this.row (i)] as [number, vector_t <R>]
+    }
+  }
+
+  *rows () {
+    let [m, _n] = this.shape
+    for (let i = 0; i < m; i++) {
+      yield this.row (i) as vector_t <R>
+    }
+  }
+
+  for_each_row_index (
+    f: (row: vector_t <R>, i: number) => any
+  ): matrix_t <R> {
+    for (let [i, row] of this.row_entries ()) {
+      f (row, i)
+    }
+    return this
+  }
+
+  for_each_row (
+    f: (row: vector_t <R>) => any
+  ): matrix_t <R> {
+    for (let row of this.rows ()) {
+      f (row)
+    }
+    return this
+  }
+
+  col (j: number): vector_t <R> {
+    let [m, n] = this.shape
+    let [s, t] = this.strides
+    let offset = this.offset + j * t
+    return new vector_t ({
+      ring: this.ring,
+      buffer: this.buffer,
+      shape: [m],
+      strides: [s],
+      offset,
+    })
+  }
+
+  set_col (j: number, src: vector_t <R>): matrix_t <R> {
+    let [m, n] = this.shape
+    for (let i of ut.range (0, m)) {
+      this.set (i, j, src.get (i))
+    }
+    return this
+  }
+
+  *col_entries () {
+    let [_m, n] = this.shape
+    for (let i = 0; i < n; i++) {
+      yield [i, this.col (i)] as [number, vector_t <R>]
+    }
+  }
+
+  *cols () {
+    let [_m, n] = this.shape
+    for (let i = 0; i < n; i++) {
+      yield this.col (i) as vector_t <R>
+    }
+  }
+
+  for_each_col_index (
+    f: (col: vector_t <R>, i: number) => any
+  ): matrix_t <R> {
+    for (let [i, col] of this.col_entries ()) {
+      f (col, i)
+    }
+    return this
+  }
+
+  for_each_col (
+    f: (col: vector_t <R>) => any
+  ): matrix_t <R> {
+    for (let col of this.cols ()) {
+      f (col)
+    }
+    return this
+  }
+
+  reduce_with (
+    init: R,
+    f: (acc: R, cur: R) => R,
+  ): R {
+    let acc = init
+    for (let v of this.values ()) {
+      acc = f (acc, v)
+    }
+    return acc
+  }
+
+  every (p: (v: R) => boolean): boolean {
+    for (let v of this.values ()) {
+      if (! p (v)) {
+        return false
+      }
+    }
+    return true
+  }
+
+  some (p: (v: R) => boolean): boolean {
+    for (let v of this.values ()) {
+      if (p (v)) {
+        return true
+      }
+    }
+    return false
+  }
+
+  *zip (that: matrix_t <R>) {
+    let this_iter = this.values ()
+    let that_iter = that.values ()
+    while (true) {
+      let this_next = this_iter.next ()
+      let that_next = that_iter.next ()
+      if (this_next.done || that_next.done) {
+        return
+      } else {
+        yield [this_next.value, that_next.value]
+      }
+    }
+  }
+
+  eq (that: matrix_t <R>): boolean {
+    if (this.size !== that.size) { return false }
+    if (! _.isEqual (this.shape, that.shape)) { return false }
+    for (let [x, y] of this.zip (that)) {
+      if (! this.ring.eq (x, y)) {
+        return false
+      }
+    }
+    return true
+  }
+
+  toArray2d (): Array2d <R> {
+    let array = []
+    let [x, _] = this.shape
+    for (let i = 0; i < x; i++) {
+      array.push (this.row (i) .toArray ())
+    }
+    return array
+  }
+
+  print () {
+    console.log ("matrix:")
+    console.table (this.toArray2d ())
+  }
+
+  update_add (that: matrix_t <R>): matrix_t <R> {
+    return this.update_op2 (that, this.ring.add)
+  }
+
+  add (that: matrix_t <R>): matrix_t <R> {
+    return this.copy () .update_add (that)
+  }
+
+  update_sub (that: matrix_t <R>): matrix_t <R> {
+    return this.update_op2 (that, this.ring.sub)
+  }
+
+  sub (that: matrix_t <R>): matrix_t <R> {
+    return this.copy () .update_sub (that)
+  }
+
+  map (f: (v: R) => R): matrix_t <R> {
+    let matrix = this.copy ()
+    for (let [i, j, v] of this.entries ()) {
+      matrix.update_at (i, j, f)
+    }
+    return matrix
+  }
+
+  update_scale (a: R): matrix_t <R> {
+    return this.update_op1 (x => this.ring.mul (x, a))
+  }
+
+  scale (a: R): matrix_t <R> {
+    return this.map (n => this.ring.mul (n, a))
+  }
+
+  mul (that: matrix_t <R>): matrix_t <R> {
+    let [m, n] = this.shape
+    let [p, q] = that.shape
+    assert (n === p)
+    let shape: [number, number] = [m, q]
+    let size = matrix_t.shape_to_size (shape)
+    let buffer = new Array (size)
+    let matrix = matrix_t.from_buffer (this.ring, buffer, shape)
+    for (let i of ut.range (0, m)) {
+      for (let j of ut.range (0, q)) {
+        let v = this.row (i) .dot (that.col (j))
+        matrix.set (i, j, v)
+      }
+    }
+    return matrix
+  }
+
+  act (v: vector_t <R>): vector_t <R> {
+    return v.trans (this)
+  }
+
+  transpose (): matrix_t <R> {
+    let [m, n] = this.shape
+    let [s, t] = this.strides
+    return new matrix_t ({
+      ring: this.ring,
+      buffer: this.buffer,
+      shape: [n, m],
+      strides: [t, s],
+      offset: this.offset,
+    })
+  }
+
+  square_p (): boolean {
+    let [x, y] = this.shape
+    return x === y
+  }
+
 }
 
 export
@@ -289,4 +531,175 @@ class vector_t <R> {
     this.offset = the.offset === undefined ? 0 : the.offset
     this.size = the.shape [0]
   }
+
+  static from_buffer <R> (
+    ring: euclidean_ring_t <R>,
+    buffer: Array <R>,
+  ): vector_t <R> {
+    return new vector_t ({
+      ring,
+      buffer,
+      shape: [buffer.length],
+      strides: [1],
+    })
+  }
+
+  static fromArray <R> (
+    ring: euclidean_ring_t <R>,
+    array: Array1d <R>,
+  ): vector_t <R> {
+    return vector_t.from_buffer (ring, array)
+  }
+
+  get_linear_index (x: number): number {
+    return (this.offset +
+            x * this.strides [0])
+  }
+
+  get (i: number): R {
+    return this.buffer [this.get_linear_index (i)]
+  }
+
+  set (i: number, v: R): vector_t <R> {
+    this.buffer [this.get_linear_index (i)] = v
+    return this
+  }
+
+  toArray (): Array <R> {
+    let array = []
+    for (let i of ut.range (0, this.size)) {
+      array.push (this.get (i))
+    }
+    return array
+  }
+
+  print () {
+    console.log ("vector:")
+    console.table (this.toArray ())
+  }
+
+  *indexes () {
+    for (let i of ut.range (0, this.size)) {
+      yield i as number
+    }
+  }
+
+  update_at (i: number, f: (v: R) => R): vector_t <R> {
+    return this.set (i, f (this.get (i)))
+  }
+
+  update (f: (v: R) => R): vector_t <R> {
+    for (let i of this.indexes ()) {
+      this.set (i, f (this.get (i)))
+    }
+    return this
+  }
+
+  *values () {
+    for (let i of ut.range (0, this.size)) {
+      let v = this.buffer [this.get_linear_index (i)]
+      yield v as R
+    }
+  }
+
+  *entries () {
+    for (let i of ut.range (0, this.size)) {
+      let v = this.buffer [this.get_linear_index (i)]
+      yield [i, v] as [number, R]
+    }
+  }
+
+  copy (): vector_t <R> {
+    let buffer = new Array (this.size)
+    let vector = vector_t.from_buffer (this.ring, buffer)
+    for (let [i, x] of this.entries ()) {
+      vector.set (i, x)
+    }
+    return vector
+  }
+
+  *zip (that: vector_t <R>) {
+    let this_iter = this.values ()
+    let that_iter = that.values ()
+    while (true) {
+      let this_next = this_iter.next ()
+      let that_next = that_iter.next ()
+      if (this_next.done || that_next.done) {
+        return
+      } else {
+        yield [this_next.value, that_next.value]
+      }
+    }
+  }
+
+  eq (that: vector_t <R>): boolean {
+    if (this.size !== that.size) { return false }
+    for (let [x, y] of this.zip (that)) {
+      if (x !== y) {
+        return false
+      }
+    }
+    return true
+  }
+
+  dot (that: vector_t <R>): R {
+    assert (this.size === that.size)
+    let product = this.ring.zero
+    for (let [i, y] of that.entries ()) {
+      product = this.ring.add (
+        product,
+        this.ring.mul (this.get (i), y))
+    }
+    return product
+  }
+
+  map (f: (v: R) => R): vector_t <R> {
+    let vector = this.copy ()
+    for (let [i, v] of this.entries ()) {
+      vector.update_at (i, f)
+    }
+    return vector
+  }
+
+  scale (a: R): vector_t <R> {
+    return this.map (n => this.ring.mul (n, a))
+  }
+
+  update_scale (a: R): vector_t <R> {
+    return this.update (n => this.ring.mul (n, a))
+  }
+
+  static numbers <R> (
+    ring: euclidean_ring_t <R>,
+    n: R,
+    size: number,
+  ): vector_t <R> {
+    let buffer = new Array (size) .fill (n)
+    return vector_t.from_buffer (ring, buffer)
+  }
+
+  static zeros <R> (
+    ring: euclidean_ring_t <R>,
+    size: number,
+  ): vector_t <R> {
+    return vector_t.numbers (ring, ring.zero, size)
+  }
+
+  static ones <R> (
+    ring: euclidean_ring_t <R>,
+    size: number,
+  ): vector_t <R> {
+    return vector_t.numbers (ring, ring.one, size)
+  }
+
+  trans (matrix: matrix_t <R>): vector_t <R> {
+    let [m, n] = matrix.shape
+    assert (n === this.size)
+    let vector = vector_t.zeros (this.ring, m)
+    for (let i of ut.range (0, m)) {
+      vector.set (i, this.dot (matrix.row (i)))
+    }
+    return vector
+  }
+
 }
