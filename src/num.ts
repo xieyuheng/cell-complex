@@ -2,8 +2,7 @@ import assert from "assert"
 
 import * as ut from "./util"
 import * as eu from "./euclid"
-import { set_t, eqv, not_eqv } from "./abstract/set"
-import { euclidean_ring_t } from "./abstract/ring"
+import { set_t } from "./abstract/set"
 
 export
 let nums = new set_t <number> ({
@@ -29,7 +28,6 @@ let ring = eu.ring <number> ({
 
 // TODO
 // about epsilon
-
 
 /** TODO
  * notes about numerical stability
@@ -59,30 +57,60 @@ class matrix_t extends eu.matrix_t <number> {
       ring,
     })
   }
+}
+
+export
+function matrix (
+  array: eu.Array2d <bigint | number | string>
+): matrix_t {
+  let new_array = new Array <Array <number>> ()
+  for (let row of array) {
+    let new_row = new Array <number> ()
+    for (let x of row) {
+      new_row.push (Number (x))
+    }
+    new_array.push (new_row)
+  }
+  return eu.matrix_t.from_ring_Array2d (ring, new_array)
+}
+
+export
+class vector_t extends eu.vector_t <number> {
+  constructor (the: {
+    buffer: Array <number>,
+    shape: [number],
+    strides: [number],
+    offset?: number,
+  }) {
+    super ({
+      ...the,
+      ring,
+    })
+  }
 
   static numbers (
     n: number,
-    x: number,
-    y: number,
-  ): matrix_t {
-    let shape: [number, number] = [x, y]
-    let size = eu.matrix_t.shape_to_size (shape)
-    let buffer = new Array (size)
-    buffer.fill (n)
-    return eu.matrix_t.from_ring_buffer (ring, buffer, shape)
+    size: number,
+  ): vector_t {
+    return eu.vector_t.ring_numbers (ring, n, size)
   }
 
   static zeros (
-    x: number,
-    y: number,
-  ): matrix_t {
-    return matrix_t.numbers (ring.zero, x, y)
+    size: number,
+  ): vector_t {
+    return eu.vector_t.ring_zeros (ring, size)
   }
 
   static ones (
-    x: number,
-    y: number,
-  ): matrix_t {
-    return matrix_t.numbers (ring.one, x, y)
+    size: number,
+  ): vector_t {
+    return eu.vector_t.ring_ones (ring, size)
   }
+}
+
+export
+function vector (
+  array: eu.Array1d <bigint | number | string>
+): vector_t {
+  return eu.vector_t.from_ring_Array (ring, array.map (Number))
 }

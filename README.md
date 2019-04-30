@@ -28,6 +28,8 @@
 
 - Contents:
   - [euclid](#eu-euclid)
+  - [int](#int)
+  - [num](#num)
   - [combinatorial-game](#cg-combinatorial-game)
   - [cell-complex](#cx-cell-complex)
   - [homology](#hl-homology)
@@ -36,9 +38,89 @@
 
 ### `eu` euclid
 
-- [work in progress]
 - [module theory](https://en.wikipedia.org/wiki/Module_(mathematics)) over [euclidean ring](https://en.wikipedia.org/wiki/Euclidean_ring)
   - for generic matrix algorithms
+
+#### `examples/int-matrix.ts`
+
+``` typescript
+import assert from "assert"
+
+import * as eu from "cicada-lang/lib/euclid"
+import { set_t } from "cicada-lang/lib/abstract/set"
+
+let ints = new set_t <bigint> ({
+  eq: (x, y) => x === y
+})
+
+function abs (x: bigint) {
+  return x < 0n ? -x : x
+}
+
+let ring = eu.ring <bigint> ({
+  elements: ints,
+  zero: 0n,
+  add: (x: bigint, y: bigint) => x + y,
+  neg: (x: bigint) => - x,
+  one: 1n,
+  mul: (x: bigint, y: bigint) => x * y,
+  degree_lt: (x, y) => abs (x) < abs (y),
+  divmod: (x, y) => {
+    let r: bigint = x % y
+    r = r < 0 ? r + abs (y) : r
+    let q: bigint = (x - r) / y
+    return [q, r]
+  },
+})
+
+export
+class matrix_t extends eu.matrix_t <bigint> {}
+
+export
+function matrix (
+  array: eu.Array2d <bigint | number | string>
+): matrix_t {
+  let new_array = new Array <Array <bigint>> ()
+  for (let row of array) {
+    let new_row = new Array <bigint> ()
+    for (let x of row) {
+      new_row.push (BigInt (x))
+    }
+    new_array.push (new_row)
+  }
+  return eu.matrix_t.from_ring_Array2d (ring, new_array)
+}
+
+let A = matrix ([
+  [2, 4, 4],
+  [-6, 6, 12],
+  [10, -4, -16],
+])
+
+let S = matrix ([
+  [2, 0, 0],
+  [0, 6, 0],
+  [0, 0, -12],
+])
+
+// generic `diag_canonical_form`
+//   i.e. `smith_normal_form` for integers
+
+assert (
+  A.diag_canonical_form () .eq (S)
+)
+```
+
+### `int` int
+
+- basic number theory
+  - native js `BigInt`
+
+### `num` num
+
+- basic float number
+  - native js `Number`
+  - `epsilon` for numerical stability
 
 ### `cg` combinatorial-game
 

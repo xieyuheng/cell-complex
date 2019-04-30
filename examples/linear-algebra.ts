@@ -1,15 +1,15 @@
 import assert from "assert"
 
 import * as ut from "cicada-lang/lib/util"
-import * as eu from "cicada-lang/lib/euclid"
+import * as num from "cicada-lang/lib/num"
 
-let A = eu.matrix ([
+let A = num.matrix ([
   [1, 3, 1, 9],
   [1, 1, -1, 1],
   [3, 11, 5, 35],
 ])
 
-let B = eu.matrix ([
+let B = num.matrix ([
   [1, 0, -2, -3],
   [0, 1, 1, 4],
   [0, 0, 0, 0],

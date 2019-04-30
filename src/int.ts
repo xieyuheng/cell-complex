@@ -2,8 +2,7 @@ import assert from "assert"
 
 import * as ut from "./util"
 import * as eu from "./euclid"
-import { set_t, eqv, not_eqv } from "./abstract/set"
-import { euclidean_ring_t } from "./abstract/ring"
+import { set_t } from "./abstract/set"
 
 export
 let ints = new set_t <bigint> ({
@@ -101,15 +100,15 @@ export
 function matrix (
   array: eu.Array2d <bigint | number | string>
 ): matrix_t {
-  let bigint_array = new Array <Array <bigint>> ()
+  let new_array = new Array <Array <bigint>> ()
   for (let row of array) {
-    let bigint_row = new Array <bigint> ()
+    let new_row = new Array <bigint> ()
     for (let x of row) {
-      bigint_row.push (BigInt (x))
+      new_row.push (BigInt (x))
     }
-    bigint_array.push (bigint_row)
+    new_array.push (new_row)
   }
-  return eu.matrix_t.from_ring_Array2d (ring, bigint_array)
+  return eu.matrix_t.from_ring_Array2d (ring, new_array)
 }
 
 export
