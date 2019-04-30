@@ -1,5 +1,5 @@
 import * as ut from "./util"
-import * as eu from "./euclid-naive"
+import * as int from "./int"
 
 /**
  * Representation theory of finitely generated abelian group.
@@ -7,23 +7,23 @@ import * as eu from "./euclid-naive"
 
 export
 class integral_module_t {
-  readonly smith_normal_form: () => eu.matrix_t
+  readonly smith_normal_form: () => int.matrix_t
 
   constructor (the: {
-    smith_normal_form: eu.matrix_t,
+    smith_normal_form: int.matrix_t,
   }) {
     this.smith_normal_form = () => the.smith_normal_form
   }
 
   static from_smith_normal_form (
-    smith_normal_form: eu.matrix_t
+    smith_normal_form: int.matrix_t
   ): integral_module_t {
     return new integral_module_t ({
       smith_normal_form
     })
   }
 
-  invariant_factors (): eu.vector_t {
+  invariant_factors (): int.vector_t {
     return this.smith_normal_form () .diag ()
   }
 
@@ -37,8 +37,8 @@ class integral_module_t {
     let array = new Array ()
     let invariant_factors = this.invariant_factors ()
     for (let v of invariant_factors.values ()) {
-      if (v !== 0 && v !== 1) {
-        array.push (v)
+      if (v !== 0n && v !== 1n) {
+        array.push (Number (int.abs (v)))
       }
     }
     return array

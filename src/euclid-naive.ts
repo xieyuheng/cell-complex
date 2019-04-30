@@ -566,6 +566,10 @@ class matrix_t {
       this.buffer, [n, m], [t, s], this.offset)
   }
 
+  symmetric_p (): boolean {
+    return this.eq (this.transpose ())
+  }
+
   square_p (): boolean {
     let [x, y] = this.shape
     return x === y
@@ -926,7 +930,9 @@ class matrix_t {
     return ! this.singular_p ()
   }
 
-  invertible_p = this.non_singular_p
+  invertible_p (): boolean {
+    return this.non_singular_p ()
+  }
 
   inv_maybe (): matrix_t | null {
     assert (this.square_p ())
@@ -963,10 +969,6 @@ class matrix_t {
       sign = -1
     }
     return sign * upper.diag () .reduce ((acc, cur) => acc * cur)
-  }
-
-  symmetric_p (): boolean {
-    return this.eq (this.transpose ())
   }
 
   epsilon_p (): boolean {

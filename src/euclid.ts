@@ -564,9 +564,17 @@ class matrix_t <R> {
     })
   }
 
+  symmetric_p (): boolean {
+    return this.eq (this.transpose ())
+  }
+
   square_p (): boolean {
     let [x, y] = this.shape
     return x === y
+  }
+
+  zero_p (): boolean {
+    return this.every (x => this.ring.zero_p (x))
   }
 
   update_swap_rows (i: number, j: number): matrix_t <R> {
@@ -800,7 +808,6 @@ class matrix_t <R> {
   /**
    * Generic `smith_normal_form`
    */
-
   diag_canonical_update (): matrix_t <R> {
     let matrix = this
     let [m, n] = this.shape
@@ -1074,6 +1081,77 @@ class matrix_t <R> {
     diag_canonical.diag_canonical_update_ext (the)
     diag_canonical.invariant_factor_update_ext (the)
     return { ...the, diag_canonical }
+  }
+
+  rank (): number {
+    let row_canonical = this.row_canonical_form ()
+    let rank = 0
+    for (let row of row_canonical.rows ()) {
+      if (row.some (v => ! this.ring.zero_p (v))) {
+        rank += 1
+      }
+    }
+    return rank
+  }
+
+  image (): matrix_t <R> {
+    return this.transpose ()
+      .row_canonical_form ()
+      .transpose ()
+      .slice (null, [0, this.rank ()])
+  }
+
+  kernel (): matrix_t <R> {
+    let [m, n] = this.shape
+    let r = this.rank ()
+    let { col_trans } = this.diag_canonical_decomposition ()
+    return col_trans.slice (null, [r, n])
+  }
+
+  solve (b: vector_t <R>): null | vector_t <R> {
+    let [m, n] = this.shape
+    assert (b.size === m)
+    let r = this.rank ()
+    let {
+      row_trans,
+      col_trans,
+      diag_canonical,
+    } = this.diag_canonical_decomposition ()
+    let c = b.trans (row_trans)
+    let vector = vector_t.ring_zeros (this.ring, n)
+    for (let i of ut.range (0, c.size)) {
+      let x = c.get (i)
+      let y = i < r ? diag_canonical.get (i, i) : this.ring.zero
+      if (this.ring.zero_p (y)) {
+        if (! this.ring.zero_p (x)) {
+          return null
+        }
+      } else {
+        let [q, r] = this.ring.divmod (x, y)
+        if (this.ring.zero_p (r)) {
+          vector.set (i, q)
+        } else {
+          return null
+        }
+      }
+    }
+    return vector.trans (col_trans)
+  }
+
+  solve_matrix (matrix: matrix_t <R>): null | matrix_t <R> {
+    let [m, n] = this.shape
+    let [p, q] = matrix.shape
+    assert (p === m)
+    let solution = matrix_t.ring_zeros (this.ring, n, q)
+    for (let [i, col] of matrix.col_entries ()) {
+      let x = this.solve (col)
+      if (x === null) {
+        return null
+      } else {
+        solution.set_col (i, x)
+      }
+    }
+    return solution
   }
 }
 
@@ -1377,6 +1455,11 @@ class vector_t <R> {
     return true
   }
 
-  // TODO
+  zero_p (): boolean {
+    return this.every (x => this.ring.zero_p (x))
+  }
 
+  one_p (): boolean {
+    return this.every (x => this.ring.one_p (x))
+  }
 }

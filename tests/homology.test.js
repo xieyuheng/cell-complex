@@ -1,8 +1,8 @@
 import test from "ava"
 
 import * as ut from "../lib/util"
+import * as int from "../lib/int"
 import * as cx from "../lib/cell-complex"
-import * as eu from "../lib/euclid-naive"
 import * as hl from "../lib/homology"
 
 import {
@@ -72,7 +72,7 @@ test ("hl.chain_t.boundary", t => {
   let torus = new torus_t ()
   let square = new cx.polygon_t (4)
 
-  let chain = new hl.chain_t (square, 1, eu.vector ([0, 1, 0, 0]))
+  let chain = new hl.chain_t (square, 1, int.vector ([0, 1, 0, 0]))
 
   t.true (
     chain.boundary () .cycle_p ()

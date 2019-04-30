@@ -375,3 +375,109 @@ test ("int.matrix_t.diag_canonical_decomposition", t => {
 
   t.pass ()
 })
+
+function test_kernel (t, m) {
+  let kernel = m.kernel ()
+
+  t.true (
+    m.mul (kernel) .zero_p ()
+  )
+}
+
+test ("int.matrix_t.int_kernel", t => {
+  let A = int.matrix ([
+    [1, 2, 3, 4, 5, 6, 7],
+    [1, 0, 1, 0, 1, 0, 1],
+    [2, 4, 5, 6, 1, 1, 1],
+    [1, 4, 2, 5, 2, 0, 0],
+    [0, 0, 1, 1, 2, 2, 3],
+  ])
+
+  test_kernel (t, A)
+})
+
+function test_solve (t, m, b) {
+  let solution = m.solve (b)
+
+  t.true (
+    m.act (solution) .sub (b) .zero_p ()
+  )
+}
+
+function test_solve_non (t, m, b) {
+  let solution = m.solve (b)
+
+  t.true (
+    solution === null
+  )
+}
+
+test ("int.matrix_t.solve", t => {
+  let A = int.matrix ([
+    [1, 2, 3, 4, 5, 6, 7],
+    [1, 0, 1, 0, 1, 0, 1],
+    [2, 4, 5, 6, 1, 1, 1],
+    [1, 4, 2, 5, 2, 0, 0],
+    [0, 0, 1, 1, 2, 2, 3],
+  ])
+
+  let b = int.vector ([
+    28,
+    4,
+    20,
+    14,
+    9,
+  ])
+
+  test_solve (t, A, b)
+
+  {
+    let A = int.matrix ([
+      [1, 0],
+      [0, 1],
+    ])
+
+    let b = int.vector ([
+      2,
+      2,
+    ])
+
+    test_solve (t, A, b)
+
+    t.true (
+      A.solve (b) .eq (
+        int.vector ([2, 2])
+      )
+    )
+  }
+
+  {
+    let A = int.matrix ([
+      [1, 1],
+      [1, 1],
+      [0, 1],
+      [1, 0],
+    ])
+
+    let b = int.vector ([
+      0,
+      0,
+      1,
+        -1,
+    ])
+
+    test_solve (t, A, b)
+
+    t.true (
+      A.act (int.vector ([-1, 1])) .eq (b)
+    )
+
+    t.true (
+      A.solve (b) .eq (
+        int.vector ([-1, 1])
+      )
+    )
+  }
+
+  t.pass ()
+})
