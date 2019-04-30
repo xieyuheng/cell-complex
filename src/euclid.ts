@@ -5,93 +5,13 @@ import * as ut from "./util"
 import * as num from "./number"
 import { permutation_t } from "./permutation"
 
-export type Array1d = Array <number>
-export type Array2d = Array <Array <number>>
-export type Array3d = Array <Array <Array <number>>>
+import { set_t } from "./abstract/set"
+import { monoid_t, abelian_group_t } from "./abstract/group"
+import { euclidean_ring_t } from "./abstract/ring"
 
-export
-function argmax (
-  lo: number,
-  hi: number,
-  f: (i: number) => number,
-): number {
-  let arg = lo
-  let cur = f (lo)
-  for (let i = lo; i < hi; i++) {
-    let next = f (i)
-    if (cur < next) {
-      arg = i
-      cur = next
-    }
-  }
-  return arg
-}
-
-export
-function argmax_guard (
-  lo: number,
-  hi: number,
-  f: (i: number) => number,
-  p: (i: number) => boolean,
-): number {
-  let arg = argfirst (lo, hi, p)
-  if (arg === null) {
-    throw new Error ("no such arg")
-  }
-  let cur = f (lo)
-  for (let i = arg + 1; i < hi; i++) {
-    if (p (i)) {
-      let next = f (i)
-      if (cur < next) {
-        arg = i
-        cur = next
-      }
-    }
-  }
-  return arg
-}
-
-export
-function argmin (
-  lo: number,
-  hi: number,
-  f: (i: number) => number,
-): number {
-  let arg = lo
-  let cur = f (lo)
-  for (let i = lo; i < hi; i++) {
-    let next = f (i)
-    if (cur > next) {
-      arg = i
-      cur = next
-    }
-  }
-  return arg
-}
-
-export
-function argmin_guard (
-  lo: number,
-  hi: number,
-  f: (i: number) => number,
-  p: (i: number) => boolean,
-): number {
-  let arg = argfirst (lo, hi, p)
-  if (arg === null) {
-    throw new Error ("no such arg")
-  }
-  let cur = f (lo)
-  for (let i = arg + 1; i < hi; i++) {
-    if (p (i)) {
-      let next = f (i)
-      if (cur > next) {
-        arg = i
-        cur = next
-      }
-    }
-  }
-  return arg
-}
+export type Array1d <R> = Array <R>
+export type Array2d <R> = Array <Array <R>>
+export type Array3d <R> = Array <Array <Array <R>>>
 
 export
 function argfirst (
@@ -136,45 +56,76 @@ function argsome (
 }
 
 export
-interface config_t {
-  /** for almost degenerated matrix */
-  epsilon: number
+function argcmp_guard (
+  lo: number,
+  hi: number,
+  c: (i: number, j: number) => boolean,
+  p: (i: number) => boolean,
+): number {
+  let arg = argfirst (lo, hi, p)
+  if (arg === null) {
+    throw new Error ("no such arg")
+  }
+  for (let i = arg + 1; i < hi; i++) {
+    if (p (i)) {
+      if (c (i, arg)) {
+        arg = i
+      }
+    }
+  }
+  return arg
 }
 
 export
-let config: config_t = {
-  epsilon: 0.000000001
+function ring <R> (the: {
+  elements: set_t <R>,
+  zero: R,
+  add: (x: R, y: R) => R,
+  neg: (x: R) => R,
+  one: R,
+  mul: (x: R, y: R) => R,
+  degree_lt: (x: R, y: R) => boolean,
+  divmod: (x: R, y: R) => [R, R],
+}): euclidean_ring_t <R> {
+  return new euclidean_ring_t ({
+    addition: new abelian_group_t ({
+      elements: the.elements,
+      id: the.zero,
+      add: the.add,
+      neg: the.neg,
+    }),
+    multiplication: new monoid_t ({
+      elements: the.elements,
+      id: the.one,
+      mul: the.mul,
+    }),
+    degree_lt: the.degree_lt,
+    divmod: the.divmod,
+  })
 }
 
 export
-function epsilon_p (x: number): boolean {
-  return Math.abs (x) < config.epsilon
-}
-
-export
-function non_epsilon_p (x: number): boolean {
-  return Math.abs (x) >= config.epsilon
-}
-
-export
-class matrix_t {
-  readonly buffer: Float64Array
+class matrix_t <R> {
+  readonly ring: euclidean_ring_t <R>
+  readonly buffer: Array <R>
   readonly shape: [number, number]
   readonly strides: [number, number]
   readonly offset: number
   readonly size: number
 
-  constructor (
-    buffer: Float64Array,
+  constructor (the: {
+    ring: euclidean_ring_t <R>,
+    buffer: Array <R>,
     shape: [number, number],
     strides: [number, number],
-    offset: number = 0,
-  ) {
-    this.buffer = buffer
-    this.shape = shape
-    this.strides = strides
-    this.offset = offset
-    this.size = matrix_t.shape_to_size (shape)
+    offset?: number,
+  }) {
+    this.ring = the.ring
+    this.buffer = the.buffer
+    this.shape = the.shape
+    this.strides = the.strides
+    this.offset = the.offset === undefined ? 0 : the.offset
+    this.size = matrix_t.shape_to_size (the.shape)
   }
 
   static shape_to_size ([x, y]: [number, number]): number {
@@ -187,15 +138,19 @@ class matrix_t {
     return [y, 1]
   }
 
-  static from_buffer (
-    buffer: Float64Array,
+  static from_ring_buffer <R> (
+    ring: euclidean_ring_t <R>,
+    buffer: Array <R>,
     shape: [number, number],
-  ): matrix_t {
+  ): matrix_t <R> {
     let strides = matrix_t.shape_to_strides (shape)
-    return new matrix_t (buffer, shape, strides)
+    return new matrix_t ({ ring, buffer, shape, strides })
   }
 
-  static fromArray2d (array: Array2d): matrix_t {
+  static from_ring_Array2d <R> (
+    ring: euclidean_ring_t <R>,
+    array: Array2d <R>,
+  ): matrix_t <R> {
     let y_length = array.length
     let x_length = array[0].length
     for (let a of array) {
@@ -203,20 +158,39 @@ class matrix_t {
         throw new Error ("inner array length mismatch")
       }
     }
-    let buffer = Float64Array.from (array.flat ())
-    return matrix_t.from_buffer (buffer, [y_length, x_length])
+    return matrix_t.from_ring_buffer (
+      ring,
+      Array.from (array.flat ()),
+      [y_length, x_length],
+    )
   }
 
-  static from_row (row: vector_t): matrix_t {
+  static from_ring_row <R> (
+    ring: euclidean_ring_t <R>,
+    row: vector_t <R>,
+  ): matrix_t <R> {
     let [s] = row.strides
-    return new matrix_t (
-      row.buffer, [1, row.size], [0, s], row.offset)
+    return new matrix_t ({
+      ring,
+      buffer: row.buffer,
+      shape: [1, row.size],
+      strides: [0, s],
+      offset: row.offset,
+    })
   }
 
-  static from_col (col: vector_t): matrix_t {
+  static from_ring_col <R> (
+    ring: euclidean_ring_t <R>,
+    col: vector_t <R>,
+  ): matrix_t <R> {
     let [t] = col.strides
-    return new matrix_t (
-      col.buffer, [col.size, 1], [t, 0], col.offset)
+    return new matrix_t ({
+      ring,
+      buffer: col.buffer,
+      shape: [col.size, 1],
+      strides: [t, 0],
+      offset: col.offset,
+    })
   }
 
   get_linear_index (x: number, y: number): number {
@@ -225,11 +199,11 @@ class matrix_t {
             y * this.strides [1])
   }
 
-  get (x: number, y: number): number {
+  get (x: number, y: number): R {
     return this.buffer [this.get_linear_index (x, y)]
   }
 
-  set (x: number, y: number, v: number): matrix_t {
+  set (x: number, y: number, v: R): matrix_t <R> {
     this.buffer [this.get_linear_index (x, y)] = v
     return this
   }
@@ -237,8 +211,8 @@ class matrix_t {
   update_at (
     i: number,
     j: number,
-    f: (v: number) => number,
-  ): matrix_t {
+    f: (v: R) => R,
+  ): matrix_t <R> {
     this.set (i, j, f (this.get (i, j)))
     return this
   }
@@ -260,20 +234,20 @@ class matrix_t {
   *entries () {
     for (let [i, j] of this.indexes ()) {
       let v = this.get (i, j)
-      yield [i, j, v] as [number, number, number]
+      yield [i, j, v] as [number, number, R]
     }
   }
 
   *values () {
     for (let [i, j] of this.indexes ()) {
       let v = this.get (i, j)
-      yield v as number
+      yield v as R
     }
   }
 
   update_op1 (
-    op: (x: number) => number,
-  ): matrix_t {
+    op: (x: R) => R,
+  ): matrix_t <R> {
     let [m, n] = this.shape
     for (let i = 0; i < m; i++) {
       for (let j = 0; j < n; j++) {
@@ -284,15 +258,15 @@ class matrix_t {
     return this
   }
 
-  same_shape_p (that: matrix_t): boolean {
+  same_shape_p (that: matrix_t <R>): boolean {
     return ((this.shape [0] === that.shape [0]) &&
             (this.shape [1] === that.shape [1]))
   }
 
   update_op2 (
-    that: matrix_t,
-    op: (x: number, y: number) => number,
-  ): matrix_t {
+    that: matrix_t <R>,
+    op: (x: R, y: R) => R,
+  ): matrix_t <R> {
     assert (this.same_shape_p (that))
     let [m, n] = this.shape
     for (let i = 0; i < m; i++) {
@@ -307,7 +281,7 @@ class matrix_t {
   slice (
     x: [number, number] | null,
     y: [number, number] | null,
-  ): matrix_t {
+  ): matrix_t <R> {
     let [m, n] = this.shape
     let offset = this.offset
     if (x !== null) {
@@ -320,19 +294,28 @@ class matrix_t {
       n = end - start
       offset += start * this.strides [1]
     }
-    return new matrix_t (this.buffer, [m, n], this.strides, offset)
+    return new matrix_t ({
+      ring: this.ring,
+      buffer: this.buffer,
+      shape: [m, n],
+      strides: this.strides,
+      offset,
+    })
   }
 
-  copy (): matrix_t {
-    let buffer = new Float64Array (this.size)
-    let matrix = matrix_t.from_buffer (buffer, this.shape)
+  copy (): matrix_t <R> {
+    let matrix = matrix_t.from_ring_buffer (
+      this.ring,
+      new Array (this.size),
+      this.shape,
+    )
     for (let [i, j, x] of this.entries ()) {
       matrix.set (i, j, x)
     }
     return matrix
   }
 
-  update_copy (that: matrix_t): matrix_t {
+  update_copy (that: matrix_t <R>): matrix_t <R> {
     let [m, n] = this.shape
     for (let i of ut.range (0, m)) {
       for (let j of ut.range (0, n)) {
@@ -342,15 +325,20 @@ class matrix_t {
     return this
   }
 
-  row (i: number): vector_t {
+  row (i: number): vector_t <R> {
     let [m, n] = this.shape
     let [s, t] = this.strides
     let offset = this.offset + i * s
-    return new vector_t (
-      this.buffer, [n], [t], offset)
+    return new vector_t ({
+      ring: this.ring,
+      buffer: this.buffer,
+      shape: [n],
+      strides: [t],
+      offset,
+    })
   }
 
-  set_row (i: number, src: vector_t): matrix_t {
+  set_row (i: number, src: vector_t <R>): matrix_t <R> {
     let [m, n] = this.shape
     for (let j of ut.range (0, n)) {
       this.set (i, j, src.get (j))
@@ -361,20 +349,20 @@ class matrix_t {
   *row_entries () {
     let [m, _n] = this.shape
     for (let i = 0; i < m; i++) {
-      yield [i, this.row (i)] as [number, vector_t]
+      yield [i, this.row (i)] as [number, vector_t <R>]
     }
   }
 
   *rows () {
     let [m, _n] = this.shape
     for (let i = 0; i < m; i++) {
-      yield this.row (i) as vector_t
+      yield this.row (i) as vector_t <R>
     }
   }
 
   for_each_row_index (
-    f: (row: vector_t, i: number) => any
-  ): matrix_t {
+    f: (row: vector_t <R>, i: number) => any
+  ): matrix_t <R> {
     for (let [i, row] of this.row_entries ()) {
       f (row, i)
     }
@@ -382,23 +370,28 @@ class matrix_t {
   }
 
   for_each_row (
-    f: (row: vector_t) => any
-  ): matrix_t {
+    f: (row: vector_t <R>) => any
+  ): matrix_t <R> {
     for (let row of this.rows ()) {
       f (row)
     }
     return this
   }
 
-  col (j: number): vector_t {
+  col (j: number): vector_t <R> {
     let [m, n] = this.shape
     let [s, t] = this.strides
     let offset = this.offset + j * t
-    return new vector_t (
-      this.buffer, [m], [s], offset)
+    return new vector_t ({
+      ring: this.ring,
+      buffer: this.buffer,
+      shape: [m],
+      strides: [s],
+      offset,
+    })
   }
 
-  set_col (j: number, src: vector_t): matrix_t {
+  set_col (j: number, src: vector_t <R>): matrix_t <R> {
     let [m, n] = this.shape
     for (let i of ut.range (0, m)) {
       this.set (i, j, src.get (i))
@@ -409,20 +402,20 @@ class matrix_t {
   *col_entries () {
     let [_m, n] = this.shape
     for (let i = 0; i < n; i++) {
-      yield [i, this.col (i)] as [number, vector_t]
+      yield [i, this.col (i)] as [number, vector_t <R>]
     }
   }
 
   *cols () {
     let [_m, n] = this.shape
     for (let i = 0; i < n; i++) {
-      yield this.col (i) as vector_t
+      yield this.col (i) as vector_t <R>
     }
   }
 
   for_each_col_index (
-    f: (col: vector_t, i: number) => any
-  ): matrix_t {
+    f: (col: vector_t <R>, i: number) => any
+  ): matrix_t <R> {
     for (let [i, col] of this.col_entries ()) {
       f (col, i)
     }
@@ -430,8 +423,8 @@ class matrix_t {
   }
 
   for_each_col (
-    f: (col: vector_t) => any
-  ): matrix_t {
+    f: (col: vector_t <R>) => any
+  ): matrix_t <R> {
     for (let col of this.cols ()) {
       f (col)
     }
@@ -439,9 +432,9 @@ class matrix_t {
   }
 
   reduce_with (
-    init: number,
-    f: (acc: number, cur: number) => number,
-  ): number {
+    init: R,
+    f: (acc: R, cur: R) => R,
+  ): R {
     let acc = init
     for (let v of this.values ()) {
       acc = f (acc, v)
@@ -449,7 +442,7 @@ class matrix_t {
     return acc
   }
 
-  every (p: (v: number) => boolean): boolean {
+  every (p: (v: R) => boolean): boolean {
     for (let v of this.values ()) {
       if (! p (v)) {
         return false
@@ -458,7 +451,7 @@ class matrix_t {
     return true
   }
 
-  some (p: (v: number) => boolean): boolean {
+  some (p: (v: R) => boolean): boolean {
     for (let v of this.values ()) {
       if (p (v)) {
         return true
@@ -467,7 +460,7 @@ class matrix_t {
     return false
   }
 
-  *zip (that: matrix_t) {
+  *zip (that: matrix_t <R>) {
     let this_iter = this.values ()
     let that_iter = that.values ()
     while (true) {
@@ -481,18 +474,18 @@ class matrix_t {
     }
   }
 
-  eq (that: matrix_t): boolean {
+  eq (that: matrix_t <R>): boolean {
     if (this.size !== that.size) { return false }
     if (! _.isEqual (this.shape, that.shape)) { return false }
     for (let [x, y] of this.zip (that)) {
-      if (x !== y) {
+      if (! this.ring.eq (x, y)) {
         return false
       }
     }
     return true
   }
 
-  toArray2d (): Array2d {
+  toArray2d (): Array2d <R> {
     let array = []
     let [x, _] = this.shape
     for (let i = 0; i < x; i++) {
@@ -506,23 +499,23 @@ class matrix_t {
     console.table (this.toArray2d ())
   }
 
-  update_add (that: matrix_t): matrix_t {
-    return this.update_op2 (that, (x, y) => x + y)
+  update_add (that: matrix_t <R>): matrix_t <R> {
+    return this.update_op2 (that, (x, y) => this.ring.add (x, y))
   }
 
-  add (that: matrix_t): matrix_t {
+  add (that: matrix_t <R>): matrix_t <R> {
     return this.copy () .update_add (that)
   }
 
-  update_sub (that: matrix_t): matrix_t {
-    return this.update_op2 (that, (x, y) => x - y)
+  update_sub (that: matrix_t <R>): matrix_t <R> {
+    return this.update_op2 (that, (x, y) => this.ring.sub (x, y))
   }
 
-  sub (that: matrix_t): matrix_t {
+  sub (that: matrix_t <R>): matrix_t <R> {
     return this.copy () .update_sub (that)
   }
 
-  map (f: (v: number) => number): matrix_t {
+  map (f: (v: R) => R): matrix_t <R> {
     let matrix = this.copy ()
     for (let [i, j, v] of this.entries ()) {
       matrix.update_at (i, j, f)
@@ -530,22 +523,22 @@ class matrix_t {
     return matrix
   }
 
-  update_scale (a: number): matrix_t {
-    return this.update_op1 (x => x * a)
+  update_scale (a: R): matrix_t <R> {
+    return this.update_op1 (x => this.ring.mul (x, a))
   }
 
-  scale (a: number): matrix_t {
-    return this.map (n => n * a)
+  scale (a: R): matrix_t <R> {
+    return this.map (n => this.ring.mul (n, a))
   }
 
-  mul (that: matrix_t): matrix_t {
+  mul (that: matrix_t <R>): matrix_t <R> {
     let [m, n] = this.shape
     let [p, q] = that.shape
     assert (n === p)
     let shape: [number, number] = [m, q]
     let size = matrix_t.shape_to_size (shape)
-    let buffer = new Float64Array (size)
-    let matrix = matrix_t.from_buffer (buffer, shape)
+    let buffer = new Array (size)
+    let matrix = matrix_t.from_ring_buffer (this.ring, buffer, shape)
     for (let i of ut.range (0, m)) {
       for (let j of ut.range (0, q)) {
         let v = this.row (i) .dot (that.col (j))
@@ -555,15 +548,20 @@ class matrix_t {
     return matrix
   }
 
-  act (v: vector_t): vector_t {
+  act (v: vector_t <R>): vector_t <R> {
     return v.trans (this)
   }
 
-  transpose (): matrix_t {
+  transpose (): matrix_t <R> {
     let [m, n] = this.shape
     let [s, t] = this.strides
-    return new matrix_t (
-      this.buffer, [n, m], [t, s], this.offset)
+    return new matrix_t ({
+      ring: this.ring,
+      buffer: this.buffer,
+      shape: [n, m],
+      strides: [t, s],
+      offset: this.offset,
+    })
   }
 
   square_p (): boolean {
@@ -571,7 +569,7 @@ class matrix_t {
     return x === y
   }
 
-  update_swap_rows (i: number, j: number): matrix_t {
+  update_swap_rows (i: number, j: number): matrix_t <R> {
     let [m, n] = this.shape
     for (let k of ut.range (0, n)) {
       let x = this.get (i, k)
@@ -582,7 +580,7 @@ class matrix_t {
     return this
   }
 
-  update_swap_cols (i: number, j: number): matrix_t {
+  update_swap_cols (i: number, j: number): matrix_t <R> {
     let [m, n] = this.shape
     for (let k of ut.range (0, m)) {
       let x = this.get (k, i)
@@ -593,14 +591,14 @@ class matrix_t {
     return this
   }
 
-  append_cols (that: matrix_t): matrix_t {
+  append_cols (that: matrix_t <R>): matrix_t <R> {
     let [m, n] = this.shape
     let [p, q] = that.shape
     assert (m === p)
     let shape: [number, number] = [m, n + q]
     let size = matrix_t.shape_to_size (shape)
-    let buffer = new Float64Array (size)
-    let matrix = matrix_t.from_buffer (buffer, shape)
+    let buffer = new Array (size)
+    let matrix = matrix_t.from_ring_buffer (this.ring, buffer, shape)
     for (let i of ut.range (0, m)) {
       let row = this.row (i) .append (that.row (i))
       matrix.set_row (i, row)
@@ -608,14 +606,14 @@ class matrix_t {
     return matrix
   }
 
-  append_rows (that: matrix_t): matrix_t {
+  append_rows (that: matrix_t <R>): matrix_t <R> {
     let [m, n] = this.shape
     let [p, q] = that.shape
     assert (n === q)
     let shape: [number, number] = [m + p, n]
     let size = matrix_t.shape_to_size (shape)
-    let buffer = new Float64Array (size)
-    let matrix = matrix_t.from_buffer (buffer, shape)
+    let buffer = new Array (size)
+    let matrix = matrix_t.from_ring_buffer (this.ring, buffer, shape)
     for (let i of ut.range (0, n)) {
       let col = this.col (i) .append (that.col (i))
       matrix.set_col (i, col)
@@ -626,526 +624,150 @@ class matrix_t {
   /**
    * The main diag.
    */
-  diag (): vector_t {
+  diag (): vector_t <R> {
     let [m, n] = this.shape
     n = Math.min (m, n)
-    let vector = vector_t.zeros (n)
+    let vector = vector_t.ring_zeros (this.ring, n)
     for (let i of ut.range (0, n)) {
       vector.set (i, this.get (i, i))
     }
     return vector
   }
 
-  static numbers (n: number, x: number, y: number): matrix_t {
+  static ring_numbers <R> (
+    ring: euclidean_ring_t <R>,
+    n: R,
+    x: number,
+    y: number,
+  ): matrix_t <R> {
     let shape: [number, number] = [x, y]
     let size = matrix_t.shape_to_size (shape)
-    let buffer = new Float64Array (size)
+    let buffer = new Array (size)
     buffer.fill (n)
-    return matrix_t.from_buffer (buffer, shape)
+    return matrix_t.from_ring_buffer (ring, buffer, shape)
   }
 
-  static zeros (x: number, y: number): matrix_t {
-    return matrix_t.numbers (0, x, y)
+  static ring_zeros <R> (
+    ring: euclidean_ring_t <R>,
+    x: number,
+    y: number,
+  ): matrix_t <R> {
+    return matrix_t.ring_numbers (ring, ring.zero, x, y)
   }
 
-  static ones (x: number, y: number): matrix_t {
-    return matrix_t.numbers (1, x, y)
+  static ring_ones <R> (
+    ring: euclidean_ring_t <R>,
+    x: number,
+    y: number,
+  ): matrix_t <R> {
+    return matrix_t.ring_numbers (ring, ring.one, x, y)
   }
 
-  static id (n: number): matrix_t {
-    let matrix = matrix_t.zeros (n, n)
+  static ring_id <R> (
+    ring: euclidean_ring_t <R>,
+    n: number,
+  ): matrix_t <R> {
+    let matrix = matrix_t.ring_zeros (ring, n, n)
     for (let i of ut.range (0, n)) {
-      matrix.set (i, i, 1)
+      matrix.set (i, i, ring.one)
     }
     return matrix
   }
 
-  static row_trans (
-    permutation: permutation_t
-  ): matrix_t {
+  static ring_row_trans <R> (
+    ring: euclidean_ring_t <R>,
+    permutation: permutation_t,
+  ): matrix_t <R> {
     let n = permutation.size
-    let matrix = matrix_t.zeros (n, n)
+    let matrix = matrix_t.ring_zeros (ring, n, n)
     for (let [i, v] of permutation.pairs ()) {
-      matrix.set (i, v, 1)
+      matrix.set (i, v, ring.one)
     }
     return matrix
   }
 
-  static col_trans (
-    permutation: permutation_t
-  ): matrix_t {
+  static ring_col_trans <R> (
+    ring: euclidean_ring_t <R>,
+    permutation: permutation_t,
+  ): matrix_t <R> {
     let n = permutation.size
-    let matrix = matrix_t.zeros (n, n)
+    let matrix = matrix_t.ring_zeros (ring, n, n)
     for (let [i, v] of permutation.pairs ()) {
-      matrix.set (v, i, 1)
+      matrix.set (v, i, ring.one)
     }
     return matrix
   }
 
-  tuck_row (i: number, j: number): matrix_t {
+  tuck_row (i: number, j: number): matrix_t <R> {
     let [m, n] = this.shape
-    let row_trans = matrix_t.row_trans (
-      permutation_t.id (m) .tuck (i, j)
+    let row_trans = matrix_t.ring_row_trans (
+      this.ring,
+      permutation_t.id (m) .tuck (i, j),
     )
     return row_trans.mul (this)
   }
 
-  tuck_col (i: number, j: number): matrix_t {
+  tuck_col (i: number, j: number): matrix_t <R> {
     let [m, n] = this.shape
-    let col_trans = matrix_t.col_trans (
-      permutation_t.id (n) .tuck (i, j)
+    let col_trans = matrix_t.ring_col_trans (
+      this.ring,
+      permutation_t.id (n) .tuck (i, j),
     )
     return this.mul (col_trans)
   }
 
-  update_tuck_row (i: number, j: number): matrix_t {
+  update_tuck_row (i: number, j: number): matrix_t <R> {
     this.update_copy (this.tuck_row (i, j))
     return this
   }
 
-  update_tuck_col (i: number, j: number): matrix_t {
+  update_tuck_col (i: number, j: number): matrix_t <R> {
     this.update_copy (this.tuck_col (i, j))
     return this
   }
 
-  row_echelon_form (): matrix_t {
-    let matrix = this.copy ()
-    let [m, n] = this.shape
-    let h = 0 // init pivot row
-    let k = 0 // init pivot column
-    while (h < m && k < n) {
-      // find the next pivot
-      let piv = argmax (h, m, (i) => Math.abs (matrix.get (i, k)))
-      if (epsilon_p (matrix.get (piv, k))) {
-        // no pivot in this column, pass to next column
-        k += 1
-      } else {
-        if (h !== piv) {
-          matrix.update_swap_rows (h, piv)
-        }
-        // for all rows below pivot
-        for (let i = h + 1; i < m; i++) {
-          let f = matrix.get (i, k) / matrix.get (h, k)
-          matrix.set (i, k, 0)
-          // for all remaining elements in current row
-          for (let j = k + 1; j < n; j++) {
-            let v = matrix.get (i, j) - matrix.get (h, j) * f
-            matrix.set (i, j, v)
-          }
-        }
-        h += 1
-        k += 1
-      }
-    }
-    return matrix
-  }
+  /**
+   * I preserve the terms
+   * `hermite_normal_form` and `smith_normal_form`
+   * for matrix_t of integers.
+   */
 
   /**
-   * with all pivots equal to 1.
+   * Generic `hermite_normal_form`
    */
-  unit_row_echelon_form (): matrix_t {
-    let matrix = this.row_echelon_form ()
-    matrix.for_each_row_index ((row, i) => {
-      let pivot = row.first (x => ! epsilon_p (x))
-      if (pivot !== null) {
-        row.update_scale (1 / pivot)
-      }
-    })
-    return matrix
-  }
-
-  /**
-   * unit row echelon form + back substitution
-
-   * The reduced row echelon form of a matrix is unique
-   * i.e. does not depend on the algorithm used to compute it.
-   */
-  reduced_row_echelon_form (): matrix_t {
-    let matrix = this.unit_row_echelon_form ()
-    for (let [i, row] of matrix.row_entries ()) {
-      for (let [j, sub] of matrix.row_entries ()) {
-        if (j > i) {
-          let arg = sub.argfirst (x => x === 1)
-          if (arg !== null) {
-            let x = matrix.get (i, arg)
-            if (! epsilon_p (x)) {
-              row.update_add (sub.scale (-x))
-            }
-          }
-        }
-      }
-    }
-    return matrix
-  }
-
-  upper_p (): boolean {
-    for (let [i, j, v] of this.entries ()) {
-      if (i > j) {
-        if (! epsilon_p (v)) {
-          return false
-        }
-      }
-    }
-    return true
-  }
-
-  lower_p (): boolean {
-    for (let [i, j, v] of this.entries ()) {
-      if (i < j) {
-        if (! epsilon_p (v)) {
-          return false
-        }
-      }
-    }
-    return true
-  }
-
-  upper (): matrix_t {
-    let matrix = this.copy ()
-    for (let [i, j] of this.indexes ()) {
-      if (i > j) {
-        matrix.set (i, j, 0)
-      }
-    }
-    return matrix
-  }
-
-  strict_upper (): matrix_t {
-    let matrix = this.copy ()
-    for (let [i, j] of this.indexes ()) {
-      if (i >= j) {
-        matrix.set (i, j, 0)
-      }
-    }
-    return matrix
-  }
-
-  lower (): matrix_t {
-    let matrix = this.copy ()
-    for (let [i, j] of this.indexes ()) {
-      if (i < j) {
-        matrix.set (i, j, 0)
-      }
-    }
-    return matrix
-  }
-
-  strict_lower (): matrix_t {
-    let matrix = this.copy ()
-    for (let [i, j] of this.indexes ()) {
-      if (i <= j) {
-        matrix.set (i, j, 0)
-      }
-    }
-    return matrix
-  }
-
-  /**
-   * P * A = L * U,
-   * `permu.mul (this) .eq (lower.mul (upper))`,
-   * (singular matrixes allowed)
-   */
-  lower_upper_decomposition (): {
-    lower: matrix_t,
-    upper: matrix_t,
-    permu: matrix_t,
-    inver: number,
-  } {
-    let matrix = this.copy ()
-    let [m, n] = this.shape
-    assert (m === n)
-    let record = matrix_t.zeros (m, n)
-    let permu = matrix_t.id (n)
-    let h = 0 // init pivot row
-    let k = 0 // init pivot column
-    let inver = 0
-    while (h < m && k < n) {
-      // find the next pivot
-      let piv = argmax (h, m, (i) => Math.abs (matrix.get (i, k)))
-      if (epsilon_p (matrix.get (piv, k))) {
-        // no pivot in this column, pass to next column
-        k += 1
-      } else {
-        if (h !== piv) {
-          matrix.update_swap_rows (h, piv)
-          record.update_swap_rows (h, piv)
-          permu.update_swap_rows (h, piv)
-          inver += 1
-        }
-        // for all rows below pivot
-        for (let i = h + 1; i < m; i++) {
-          let f = matrix.get (i, k) / matrix.get (h, k)
-          matrix.set (i, k, 0)
-          record.update_at (i, k, v => v + f)
-          // for all remaining elements in current row
-          for (let j = k + 1; j < n; j++) {
-            let v = matrix.get (i, j) - matrix.get (h, j) * f
-            matrix.set (i, j, v)
-          }
-        }
-        h += 1
-        k += 1
-      }
-    }
-    return {
-      lower: record.update_add (matrix_t.id (n)),
-      upper: matrix,
-      permu,
-      inver,
-    }
-  }
-
-  rank (): number {
-    let echelon = this.row_echelon_form ()
-    let rank = 0
-    for (let row of echelon.rows ()) {
-      if (row.some (v => ! epsilon_p (v))) {
-        rank += 1
-      }
-    }
-    return rank
-  }
-
-  singular_p () {
-    assert (this.square_p ())
-    let [_m, n] = this.shape
-    for (let row of this.rows ()) {
-      if (row.every (x => epsilon_p (x))) {
-        return true
-      }
-    }
-    for (let col of this.cols ()) {
-      if (col.every (x => epsilon_p (x))) {
-        return true
-      }
-    }
-    return this.rank () < n
-  }
-
-  non_singular_p (): boolean {
-    return ! this.singular_p ()
-  }
-
-  invertible_p = this.non_singular_p
-
-  inv_maybe (): matrix_t | null {
-    assert (this.square_p ())
-    let [_m, n] = this.shape
-    let augmented = this.append_cols (matrix_t.id (n))
-    let echelon = augmented.reduced_row_echelon_form ()
-    let upper = echelon.slice (null, [0, n])
-    let inv = echelon.slice (null, [n, n + n])
-    if (upper.singular_p ()) {
-      return null
-    } else {
-      return inv
-    }
-  }
-
-  inv (): matrix_t {
-    let inv = this.inv_maybe ()
-    if (inv === null) {
-      throw new Error ("not invertible")
-    } else {
-      return inv
-    }
-  }
-
-  det (): number {
-    assert (this.square_p ())
-    let {
-      lower, upper, permu, inver
-    } = this.lower_upper_decomposition ()
-    let sign: number
-    if (inver % 2 === 0) {
-      sign = +1
-    } else {
-      sign = -1
-    }
-    return sign * upper.diag () .reduce ((acc, cur) => acc * cur)
-  }
-
-  symmetric_p (): boolean {
-    return this.eq (this.transpose ())
-  }
-
-  epsilon_p (): boolean {
-    return this.every (epsilon_p)
-  }
-
-  /**
-   * The same as `reduced_row_echelon_form`.
-   */
-  row_canonical_form (): matrix_t {
+  row_canonical_form (): matrix_t <R> {
     let matrix = this.copy ()
     let [m, n] = this.shape
     let i = 0
     let j = 0
     while (i < m && j < n) {
-      let k = argmax (i, m, (k) => Math.abs (matrix.get (k, j)))
-      if (epsilon_p (matrix.get (k, j))) {
-        j += 1
-      } else {
-        if (k !== i) {
-          matrix.update_swap_rows (i, k)
-        }
-        matrix.row (i) .update_scale (1 / matrix.get (i, j))
-        for (let k of ut.ranges ([[0, i], [i + 1, m]])) {
-          let v = matrix.get (k, j)
-          if (v !== 0) {
-            matrix.row (k) .update_sub (matrix.row (i) .scale (v))
-          }
-        }
-        i += 1
-        j += 1
-      }
-    }
-    return matrix
-  }
-
-  /**
-   * `row_trans.mul (this) .eq (canonical)`
-   */
-  row_canonical_decomposition (): {
-    row_trans: matrix_t,
-    canonical: matrix_t,
-  } {
-    let [m, n] = this.shape
-    let augmented = this.append_cols (matrix_t.id (m))
-    let echelon = augmented.row_canonical_form ()
-    return {
-      row_trans: echelon.slice (null, [n, n + m]),
-      canonical: echelon.slice (null, [0, n]),
-    }
-  }
-
-  zeros_rows_at_bottom_p (r: number): boolean {
-    let [m, n] = this.shape
-    for (let i of ut.range (r, m)) {
-      let row = this.row (i)
-      if (! row.every (epsilon_p)) {
-        return false
-      }
-    }
-    return true
-  }
-
-  has_row_pivots_p (): boolean {
-    let r = this.rank ()
-    if (! this.zeros_rows_at_bottom_p (r)) { return false }
-    let j = 0
-    for (let i of ut.range (0, r)) {
-      let arg = this.row (i) .argfirst (non_epsilon_p)
-      if (arg === null) {
-        return false
-      } else if (arg >= j) {
-        j = arg
-      } else {
-        return false
-      }
-    }
-    return true
-  }
-
-  *row_pivot_indexes () {
-    assert (this.has_row_pivots_p ())
-    let r = this.rank ()
-    for (let i of ut.range (0, r)) {
-      let arg = this.row (i) .argfirst (non_epsilon_p)
-      if (arg === null) {
-        assert (false)
-      } else {
-        yield [i, arg] as [number, number]
-      }
-    }
-  }
-
-  /**
-   * (1) zeros rows at bottom
-   * (2) non zeros has leading pivots from left to right
-   * (3) in pivot columns all other elements are zeros
-   */
-  row_canonical_form_p (): boolean {
-    if (! this.has_row_pivots_p ()) { return false }
-    for (let [i, j] of this.row_pivot_indexes ()) {
-      for (let k of ut.range (0, i)) {
-        if (! epsilon_p (this.get (k, j))) {
-          return false
-        }
-      }
-    }
-    return true
-  }
-
-  /**
-   * Bases of column space, represented by columns of matrix.
-   */
-  image (): matrix_t {
-    return this.transpose ()
-      .row_canonical_form ()
-      .transpose ()
-      .slice (null, [0, this.rank ()])
-  }
-
-  /**
-   * Bases of null space, represented by columns of matrix.
-   */
-  kernel (): matrix_t {
-    let [m, n] = this.shape
-    let r = this.rank ()
-    let { row_trans } = this.transpose ()
-      .row_canonical_decomposition ()
-    return row_trans.transpose () .slice (null, [r, n])
-  }
-
-  solve (b: vector_t): null | vector_t {
-    let [m, n] = this.shape
-    let r = this.rank ()
-    let augmented = this.append_cols (matrix_t.from_col (b))
-      .row_canonical_form ()
-    for (let i of ut.range (r, m)) {
-      if (non_epsilon_p (augmented.get (i, n))) {
-        return null
-      }
-    }
-    let vector = vector_t.zeros (n)
-    for (let [i, j] of augmented.row_pivot_indexes ()) {
-      vector.set (j, augmented.get (i, n))
-    }
-    return vector
-  }
-
-  row_hermite_normal_form (): matrix_t {
-    let matrix = this.copy ()
-    let [m, n] = this.shape
-    let i = 0
-    let j = 0
-    while (i < m && j < n) {
-      if (argall (i, m, (k) => matrix.get (k, j) === 0)) {
+      if (argall (i, m, (k) =>
+                  this.ring.zero_p (matrix.get (k, j)))) {
         j += 1
       } else {
         while (! (
-          (argall (i + 1, m, (k) => matrix.get (k, j) === 0) &&
+          (argall (i + 1, m, (k) =>
+                   this.ring.zero_p (matrix.get (k, j))) &&
            argall (0, i, (k) =>
-                   0 <= matrix.get (k, j) &&
-                   matrix.get (k, j) < matrix.get (i, j)))
+                   this.ring.degree_lt (
+                     matrix.get (k, j),
+                     matrix.get (i, j))))
         )) {
-          let k = argmin_guard (
+          let k = argcmp_guard (
             i, m,
-            (k) => Math.abs (matrix.get (k, j)),
-            (k) => matrix.get (k, j) !== 0,
+            (k, l) => this.ring.degree_lt (
+              matrix.get (k, j),
+              matrix.get (l, j)),
+            (k) => ! this.ring.zero_p (matrix.get (k, j)),
           )
           if (k !== i) {
             matrix.update_swap_rows (i, k)
           }
-          if (matrix.get (i, j) < 0) {
-            matrix.row (i) .update_scale (-1)
-          }
           for (let k of ut.ranges ([[0, i], [i + 1, m]])) {
-            let q = num.div (
+            let q = this.ring.div (
               matrix.get (k, j),
               matrix.get (i, j))
-            if (q !== 0) {
+            if (! this.ring.zero_p (q)) {
               matrix.row (k)
                 .update_sub (matrix.row (i) .scale (q))
             }
@@ -1158,186 +780,95 @@ class matrix_t {
     return matrix
   }
 
-  integral_p (): boolean {
-    return this.every (Number.isInteger)
-  }
-
   /**
-   * (1) zeros rows at bottom
-   * (2) non zeros has leading pivots from left to right
-   * (3) in pivot columns all other elements are less than pivot
+   * `row_trans.mul (this) .eq (row_canonical)`
    */
-  row_hermite_form_p () {
-    if (! this.integral_p ()) { return false }
-    if (! this.has_row_pivots_p ()) { return false }
-    for (let [i, j] of this.row_pivot_indexes ()) {
-      for (let k of ut.range (0, i)) {
-        if (! (this.get (k, j) < this.get (i, j))) {
-          return false
-        }
-      }
-    }
-    return true
-  }
-
-  det_abs_one_p () {
-    if (! this.integral_p ()) { return false }
-    if (! this.invertible_p ()) { return false }
-    if (! epsilon_p (Math.abs (this.det ()) - 1)) {
-      return false
-    }
-    return true
-  }
-
-  /**
-   * `row_trans.mul (this) .eq (hermite)`
-   */
-  row_hermite_decomposition (): {
-    row_trans: matrix_t,
-    hermite: matrix_t,
+  row_canonical_decomposition (): {
+    row_trans: matrix_t <R>,
+    row_canonical: matrix_t <R>,
   } {
     let [m, n] = this.shape
-    let augmented = this.append_cols (matrix_t.id (m))
-    let echelon = augmented.row_hermite_normal_form ()
+    let augmented = this.append_cols (
+      matrix_t.ring_id (this.ring, m))
+    let echelon = augmented.row_canonical_form ()
     return {
       row_trans: echelon.slice (null, [n, n + m]),
-      hermite: echelon.slice (null, [0, n]),
+      row_canonical: echelon.slice (null, [0, n]),
     }
   }
 
-  int_image (): matrix_t {
-    return this.transpose ()
-      .row_hermite_normal_form ()
-      .transpose ()
-      .slice (null, [0, this.rank ()])
-  }
+  /**
+   * Generic `smith_normal_form`
+   */
 
-  int_kernel (): matrix_t {
-    let [m, n] = this.shape
-    let r = this.rank ()
-    let { col_trans } = this.smith_decomposition ()
-    return col_trans.slice (null, [r, n])
-  }
-
-  int_solve (b: vector_t): null | vector_t {
-    let [m, n] = this.shape
-    assert (b.size === m)
-    let r = this.rank ()
-    let {
-      row_trans,
-      col_trans,
-      smith,
-    } = this.smith_decomposition ()
-    let c = b.trans (row_trans)
-    let vector = vector_t.zeros (n)
-    for (let i of ut.range (0, c.size)) {
-      let x = c.get (i)
-      let y = i < r ? smith.get (i, i) : 0
-      if (y === 0) {
-        if (x !== 0) {
-          return null
-        }
-      } else {
-        if (x % y === 0) {
-          vector.set (i, num.div (x, y))
-        } else {
-          return null
-        }
-      }
-    }
-    return vector.trans (col_trans)
-  }
-
-  int_solve_matrix (matrix: matrix_t): null | matrix_t {
-    assert (this.integral_p)
-    assert (matrix.integral_p)
-    let [m, n] = this.shape
-    let [p, q] = matrix.shape
-    assert (p === m)
-    let solution = matrix_t.zeros (n, q)
-    for (let [i, col] of matrix.col_entries ()) {
-      let x = this.int_solve (col)
-      if (x === null) {
-        return null
-      } else {
-        solution.set_col (i, x)
-      }
-    }
-    return solution
-  }
-
-  smith_update (): matrix_t {
+  diag_canonical_update (): matrix_t <R> {
     let matrix = this
     let [m, n] = this.shape
     let i = 0
     let j = 0
     while (i < m && j < n) {
       if (
-        (argall (i, m, (k) => matrix.get (k, j) === 0) &&
-         argall (j, n, (k) => matrix.get (i, k) === 0))
+        (argall (i, m, (k) =>
+                 this.ring.zero_p (matrix.get (k, j))) &&
+         argall (j, n, (k) =>
+                 this.ring.zero_p (matrix.get (i, k))))
       ) {
         i += 1
         j += 1
       } else {
+        // It is amazing that this loop converges.
+        // It is like kneading dough.
         while (! (
-          (argall (i + 1, m, (k) => matrix.get (k, j) === 0) &&
-           argall (j + 1, n, (k) => matrix.get (i, k) === 0))
+          (argall (i + 1, m, (k) =>
+                   this.ring.zero_p (matrix.get (k, j))) &&
+           argall (j + 1, n, (k) =>
+                   this.ring.zero_p (matrix.get (i, k))))
         )) {
-          // { // debug
-          //   console.log ("main loop")
-          //   matrix.print ()
-          // }
-          // It is amazing that this loop converges.
-          // It is like kneading dough.
           while (
-            ! argall (i + 1, m, (k) => matrix.get (k, j) === 0)
+            ! argall (i + 1, m, (k) =>
+                      this.ring.zero_p (matrix.get (k, j)))
           ) {
-            // { // debug
-            //   console.log ("row elimination loop")
-            // }
-            let k = argmin_guard (
+            let k = argcmp_guard (
               i, m,
-              (k) => Math.abs (matrix.get (k, j)),
-              (k) => matrix.get (k, j) !== 0,
+              (k, l) => this.ring.degree_lt (
+                matrix.get (k, j),
+                matrix.get (l, j),
+              ),
+              (k) => ! this.ring.zero_p (matrix.get (k, j)),
             )
             if (k !== i) {
               matrix.update_swap_rows (i, k)
             }
-            if (matrix.get (i, j) < 0) {
-              matrix.row (i) .update_scale (-1)
-            }
             for (let k of ut.range (i + 1, m)) {
-              let q = num.div (
+              let q = this.ring.div (
                 matrix.get (k, j),
                 matrix.get (i, j))
-              if (q !== 0) {
+              if (! this.ring.zero_p (q)) {
                 matrix.row (k)
                   .update_sub (matrix.row (i) .scale (q))
               }
             }
           }
           while (
-            ! argall (j + 1, n, (k) => matrix.get (i, k) === 0)
+            ! argall (j + 1, n, (k) =>
+                      this.ring.zero_p (matrix.get (i, k)))
           ) {
-            // { // debug
-            //   console.log ("col elimination loop")
-            // }
-            let k = argmin_guard (
+            let k = argcmp_guard (
               j, n,
-              (k) => Math.abs (matrix.get (i, k)),
-              (k) => matrix.get (i, k) !== 0,
+              (k, l) => this.ring.degree_lt (
+                matrix.get (i, k),
+                matrix.get (i, l),
+              ),
+              (k) => ! this.ring.zero_p (matrix.get (i, k)),
             )
             if (k !== j) {
               matrix.update_swap_cols (j, k)
             }
-            if (matrix.get (i, j) < 0) {
-              matrix.col (j) .update_scale (-1)
-            }
             for (let k of ut.range (j + 1, n)) {
-              let q = num.div (
+              let q = this.ring.div (
                 matrix.get (i, k),
                 matrix.get (i, j))
-              if (q !== 0) {
+              if (! this.ring.zero_p (q)) {
                 matrix.col (k)
                   .update_sub (matrix.col (j) .scale (q))
               }
@@ -1351,25 +882,26 @@ class matrix_t {
     return matrix
   }
 
-  invariant_factor_update (): matrix_t {
+  invariant_factor_update (): matrix_t <R> {
     let matrix = this
     let [m, n] = this.shape
     m = Math.min (m, n)
     let i = 0
     while (i < m) {
-      if (matrix.get (i, i) === 0) {
+      if (this.ring.zero_p (matrix.get (i, i))) {
         for (let k of ut.range (i, m)) {
           matrix.set (k, k, matrix.get (k+1, k+1))
         }
-        matrix.set (m-1, m-1, 0)
+        matrix.set (m-1, m-1, this.ring.zero)
         m -= 1
       } else {
         let x = matrix.get (i, i)
         for (let k of ut.range (i+1, m)) {
           let y = matrix.get (k, k)
-          if (y % x !== 0) {
+          let [q, r] = this.ring.divmod (y, x)
+          if (! this.ring.zero_p (r)) {
             matrix.set (k, i, matrix.get (k, k))
-            matrix.smith_update ()
+            matrix.diag_canonical_update ()
           }
         }
         i += 1
@@ -1378,14 +910,10 @@ class matrix_t {
     return matrix
   }
 
-  diag_abs_update (): matrix_t {
-    let matrix = this
-    let [m, n] = this.shape
-    m = Math.min (m, n)
-    for (let i of ut.range (0, m)) {
-      matrix.update_at (i, i, x => Math.abs (x))
-    }
-    return matrix
+  diag_canonical_form (): matrix_t <R> {
+    return this.copy ()
+      .diag_canonical_update ()
+      .invariant_factor_update ()
   }
 
   diagonal_p (): boolean {
@@ -1393,7 +921,7 @@ class matrix_t {
     for (let i of ut.range (0, m)) {
       for (let j of ut.range (0, n)) {
         if (i !== j) {
-          if (non_epsilon_p (this.get (i, j))) {
+          if (! this.ring.zero_p (this.get (i, j))) {
             return false
           }
         }
@@ -1402,23 +930,15 @@ class matrix_t {
     return true
   }
 
-  smith_normal_form_p (): boolean {
+  diag_canonical_form_p (): boolean {
     if (! this.diagonal_p ()) { return false }
-    if (! this.every (x => x >= 0)) { return false }
     if (! this.diag () .invariant_factors_p ()) { return false }
     return true
   }
 
-  smith_normal_form (): matrix_t {
-    return this.copy ()
-      .smith_update ()
-      .invariant_factor_update ()
-      .diag_abs_update ()
-  }
-
-  smith_update_ext (the: {
-    row_trans: matrix_t,
-    col_trans: matrix_t,
+  diag_canonical_update_ext (the: {
+    row_trans: matrix_t <R>,
+    col_trans: matrix_t <R>,
   }) {
     let matrix = this
     let [m, n] = this.shape
@@ -1428,38 +948,41 @@ class matrix_t {
     let j = 0
     while (i < m && j < n) {
       if (
-        (argall (i, m, (k) => matrix.get (k, j) === 0) &&
-         argall (j, n, (k) => matrix.get (i, k) === 0))
+        (argall (i, m, (k) =>
+                 this.ring.zero_p (matrix.get (k, j))) &&
+         argall (j, n, (k) =>
+                 this.ring.zero_p (matrix.get (i, k))))
       ) {
         i += 1
         j += 1
       } else {
         while (! (
-          (argall (i + 1, m, (k) => matrix.get (k, j) === 0) &&
-           argall (j + 1, n, (k) => matrix.get (i, k) === 0))
+          (argall (i + 1, m, (k) =>
+                   this.ring.zero_p (matrix.get (k, j))) &&
+           argall (j + 1, n, (k) =>
+                   this.ring.zero_p (matrix.get (i, k))))
         )) {
-          // row_trans
           while (
-            ! argall (i + 1, m, (k) => matrix.get (k, j) === 0)
+            ! argall (i + 1, m, (k) =>
+                      this.ring.zero_p (matrix.get (k, j)))
           ) {
-            let k = argmin_guard (
+            let k = argcmp_guard (
               i, m,
-              (k) => Math.abs (matrix.get (k, j)),
-              (k) => matrix.get (k, j) !== 0,
+              (k, l) => this.ring.degree_lt (
+                matrix.get (k, j),
+                matrix.get (l, j),
+              ),
+              (k) => ! this.ring.zero_p (matrix.get (k, j)),
             )
             if (k !== i) {
               matrix.update_swap_rows (i, k)
               row_trans.update_swap_rows (i, k)
             }
-            if (matrix.get (i, j) < 0) {
-              matrix.row (i) .update_scale (-1)
-              row_trans.row (i) .update_scale (-1)
-            }
             for (let k of ut.range (i + 1, m)) {
-              let q = num.div (
+              let q = this.ring.div (
                 matrix.get (k, j),
                 matrix.get (i, j))
-              if (q !== 0) {
+              if (! this.ring.zero_p (q)) {
                 matrix.row (k)
                   .update_sub (matrix.row (i) .scale (q))
                 row_trans.row (k)
@@ -1467,28 +990,27 @@ class matrix_t {
               }
             }
           }
-          // col_trans
           while (
-            ! argall (j + 1, n, (k) => matrix.get (i, k) === 0)
+            ! argall (j + 1, n, (k) =>
+                      this.ring.zero_p (matrix.get (i, k)))
           ) {
-            let k = argmin_guard (
+            let k = argcmp_guard (
               j, n,
-              (k) => Math.abs (matrix.get (i, k)),
-              (k) => matrix.get (i, k) !== 0,
+              (k, l) => this.ring.degree_lt (
+                matrix.get (i, k),
+                matrix.get (i, l),
+              ),
+              (k) => ! this.ring.zero_p (matrix.get (i, k)),
             )
             if (k !== j) {
               matrix.update_swap_cols (j, k)
               col_trans.update_swap_cols (j, k)
             }
-            if (matrix.get (i, j) < 0) {
-              matrix.col (j) .update_scale (-1)
-              col_trans.col (j) .update_scale (-1)
-            }
             for (let k of ut.range (j + 1, n)) {
-              let q = num.div (
+              let q = this.ring.div (
                 matrix.get (i, k),
                 matrix.get (i, j))
-              if (q !== 0) {
+              if (! this.ring.zero_p (q)) {
                 matrix.col (k)
                   .update_sub (matrix.col (j) .scale (q))
                 col_trans.col (k)
@@ -1504,14 +1026,14 @@ class matrix_t {
   }
 
   invariant_factor_update_ext (the: {
-    row_trans: matrix_t,
-    col_trans: matrix_t,
+    row_trans: matrix_t <R>,
+    col_trans: matrix_t <R>,
   }) {
     let [m, n] = this.shape
     m = Math.min (m, n)
     let i = 0
     while (i < m) {
-      if (this.get (i, i) === 0) {
+      if (this.ring.zero_p (this.get (i, i))) {
         this.update_tuck_row (i, m-1)
         this.update_tuck_col (i, m-1)
         the.row_trans.update_tuck_row (i, m-1)
@@ -1521,12 +1043,13 @@ class matrix_t {
         let x = this.get (i, i)
         for (let k of ut.range (i+1, m)) {
           let y = this.get (k, k)
-          if (y % x !== 0) {
+          let [q, r] = this.ring.divmod (y, x)
+          if (! this.ring.zero_p (r)) {
             this.col (i)
               .update_add (this.col (k))
             the.col_trans.col (i)
               .update_add (the.col_trans.col (k))
-            this.smith_update_ext (the)
+            this.diag_canonical_update_ext (the)
           }
         }
         i += 1
@@ -1534,87 +1057,67 @@ class matrix_t {
     }
   }
 
-  diag_abs_update_ext (the: {
-    row_trans: matrix_t,
-  }) {
-    let [m, n] = this.shape
-    m = Math.min (m, n)
-    for (let i of ut.range (0, m)) {
-      if (this.get (i, i) < 0) {
-        this.set (i, i, - this.get (i, i))
-        the.row_trans.row (i) .update_scale (-1)
-      }
-    }
-  }
-
   /**
-   * `row_trans.mul (this) .mul (col_trans) .eq (smith)`
+   * `row_trans.mul (this) .mul (col_trans) .eq (diag_canonical)`
    */
-  smith_decomposition (): {
-    row_trans: matrix_t,
-    col_trans: matrix_t,
-    smith: matrix_t,
+  diag_canonical_decomposition (): {
+    row_trans: matrix_t <R>,
+    col_trans: matrix_t <R>,
+    diag_canonical: matrix_t <R>,
   } {
     let [m, n] = this.shape
-    let smith = this.copy ()
+    let diag_canonical = this.copy ()
     let the = {
-      row_trans: matrix_t.id (m),
-      col_trans: matrix_t.id (n),
+      row_trans: matrix_t.ring_id (this.ring, m),
+      col_trans: matrix_t.ring_id (this.ring, n),
     }
-    smith.smith_update_ext (the)
-    assert (the.row_trans.invertible_p ())
-    assert (the.col_trans.invertible_p ())
-    smith.invariant_factor_update_ext (the)
-    assert (the.row_trans.invertible_p ())
-    assert (the.col_trans.invertible_p ())
-    smith.diag_abs_update_ext (the)
-    assert (the.row_trans.invertible_p ())
-    assert (the.col_trans.invertible_p ())
-    return { ...the, smith }
+    diag_canonical.diag_canonical_update_ext (the)
+    diag_canonical.invariant_factor_update_ext (the)
+    return { ...the, diag_canonical }
   }
 }
 
 export
-function matrix (array: Array2d): matrix_t {
-  return matrix_t.fromArray2d (array)
-}
-
-/**
- * Although `Array` in js is written as a row,
- * `vector_t` should be viewed as column vector.
- * (respecting the tradition of mathematics)
- *
- * `A x` is a combination of the columns of `A`.
- */
-export
-class vector_t {
-  readonly buffer: Float64Array
+class vector_t <R> {
+  readonly ring: euclidean_ring_t <R>
+  readonly buffer: Array <R>
   readonly shape: [number]
   readonly strides: [number]
   readonly offset: number
   readonly size: number
 
-  constructor (
-    buffer: Float64Array,
+  constructor (the: {
+    ring: euclidean_ring_t <R>,
+    buffer: Array <R>,
     shape: [number],
     strides: [number],
-    offset: number = 0,
-  ) {
-    this.buffer = buffer
-    this.shape = shape
-    this.strides = strides
-    this.offset = offset
-    this.size = shape [0]
+    offset?: number,
+  }) {
+    this.ring = the.ring
+    this.buffer = the.buffer
+    this.shape = the.shape
+    this.strides = the.strides
+    this.offset = the.offset === undefined ? 0 : the.offset
+    this.size = the.shape [0]
   }
 
-  static from_buffer (
-    buffer: Float64Array,
-  ): vector_t {
-    return new vector_t (buffer, [buffer.length], [1])
+  static from_ring_buffer <R> (
+    ring: euclidean_ring_t <R>,
+    buffer: Array <R>,
+  ): vector_t <R> {
+    return new vector_t ({
+      ring,
+      buffer,
+      shape: [buffer.length],
+      strides: [1],
+    })
   }
 
-  static fromArray (array: Array1d): vector_t {
-    return vector_t.from_buffer (new Float64Array (array))
+  static from_ring_Array <R> (
+    ring: euclidean_ring_t <R>,
+    array: Array1d <R>,
+  ): vector_t <R> {
+    return vector_t.from_ring_buffer (ring, array)
   }
 
   get_linear_index (x: number): number {
@@ -1622,16 +1125,16 @@ class vector_t {
             x * this.strides [0])
   }
 
-  get (i: number): number {
+  get (i: number): R {
     return this.buffer [this.get_linear_index (i)]
   }
 
-  set (i: number, v: number): vector_t {
+  set (i: number, v: R): vector_t <R> {
     this.buffer [this.get_linear_index (i)] = v
     return this
   }
 
-  toArray (): Array <number> {
+  toArray (): Array <R> {
     let array = []
     for (let i of ut.range (0, this.size)) {
       array.push (this.get (i))
@@ -1650,11 +1153,11 @@ class vector_t {
     }
   }
 
-  update_at (i: number, f: (v: number) => number): vector_t {
+  update_at (i: number, f: (v: R) => R): vector_t <R> {
     return this.set (i, f (this.get (i)))
   }
 
-  update (f: (v: number) => number): vector_t {
+  update (f: (v: R) => R): vector_t <R> {
     for (let i of this.indexes ()) {
       this.set (i, f (this.get (i)))
     }
@@ -1664,27 +1167,27 @@ class vector_t {
   *values () {
     for (let i of ut.range (0, this.size)) {
       let v = this.buffer [this.get_linear_index (i)]
-      yield v as number
+      yield v as R
     }
   }
 
   *entries () {
     for (let i of ut.range (0, this.size)) {
       let v = this.buffer [this.get_linear_index (i)]
-      yield [i, v] as [number, number]
+      yield [i, v] as [number, R]
     }
   }
 
-  copy (): vector_t {
-    let buffer = new Float64Array (this.size)
-    let vector = vector_t.from_buffer (buffer)
+  copy (): vector_t <R> {
+    let buffer = new Array (this.size)
+    let vector = vector_t.from_ring_buffer (this.ring, buffer)
     for (let [i, x] of this.entries ()) {
       vector.set (i, x)
     }
     return vector
   }
 
-  *zip (that: vector_t) {
+  *zip (that: vector_t <R>) {
     let this_iter = this.values ()
     let that_iter = that.values ()
     while (true) {
@@ -1698,7 +1201,7 @@ class vector_t {
     }
   }
 
-  eq (that: vector_t): boolean {
+  eq (that: vector_t <R>): boolean {
     if (this.size !== that.size) { return false }
     for (let [x, y] of this.zip (that)) {
       if (x !== y) {
@@ -1708,16 +1211,18 @@ class vector_t {
     return true
   }
 
-  dot (that: vector_t): number {
+  dot (that: vector_t <R>): R {
     assert (this.size === that.size)
-    let product = 0
+    let product = this.ring.zero
     for (let [i, y] of that.entries ()) {
-      product += this.get (i) * y
+      product = this.ring.add (
+        product,
+        this.ring.mul (this.get (i), y))
     }
     return product
   }
 
-  map (f: (v: number) => number): vector_t {
+  map (f: (v: R) => R): vector_t <R> {
     let vector = this.copy ()
     for (let [i, v] of this.entries ()) {
       vector.update_at (i, f)
@@ -1725,40 +1230,50 @@ class vector_t {
     return vector
   }
 
-  scale (a: number): vector_t {
-    return this.map (n => n * a)
+  scale (a: R): vector_t <R> {
+    return this.map (n => this.ring.mul (n, a))
   }
 
-  update_scale (a: number): vector_t {
-    return this.update (n => n * a)
+  update_scale (a: R): vector_t <R> {
+    return this.update (n => this.ring.mul (n, a))
   }
 
-  static numbers (n: number, size: number): vector_t {
-    let buffer = new Float64Array (size) .fill (n)
-    return vector_t.from_buffer (buffer)
+  static ring_numbers <R> (
+    ring: euclidean_ring_t <R>,
+    n: R,
+    size: number,
+  ): vector_t <R> {
+    let buffer = new Array (size) .fill (n)
+    return vector_t.from_ring_buffer (ring, buffer)
   }
 
-  static zeros (size: number): vector_t {
-    return vector_t.numbers (0, size)
+  static ring_zeros <R> (
+    ring: euclidean_ring_t <R>,
+    size: number,
+  ): vector_t <R> {
+    return vector_t.ring_numbers (ring, ring.zero, size)
   }
 
-  static ones (size: number): vector_t {
-    return vector_t.numbers (1, size)
+  static ring_ones <R> (
+    ring: euclidean_ring_t <R>,
+    size: number,
+  ): vector_t <R> {
+    return vector_t.ring_numbers (ring, ring.one, size)
   }
 
-  trans (matrix: matrix_t): vector_t {
+  trans (matrix: matrix_t <R>): vector_t <R> {
     let [m, n] = matrix.shape
     assert (n === this.size)
-    let vector = vector_t.zeros (m)
+    let vector = vector_t.ring_zeros (this.ring, m)
     for (let i of ut.range (0, m)) {
       vector.set (i, this.dot (matrix.row (i)))
     }
     return vector
   }
 
-  append (that: vector_t): vector_t {
-    let buffer = new Float64Array (this.size + that.size)
-    let vector = vector_t.from_buffer (buffer)
+  append (that: vector_t <R>): vector_t <R> {
+    let buffer = new Array (this.size + that.size)
+    let vector = vector_t.from_ring_buffer (this.ring, buffer)
     for (let [i, x] of this.entries ()) {
       vector.set (i, x)
     }
@@ -1768,7 +1283,7 @@ class vector_t {
     return vector
   }
 
-  some (p: (v: number) => boolean): boolean {
+  some (p: (v: R) => boolean): boolean {
     for (let v of this.values ()) {
       if (p (v)) {
         return true
@@ -1777,7 +1292,7 @@ class vector_t {
     return false
   }
 
-  every (p: (v: number) => boolean): boolean {
+  every (p: (v: R) => boolean): boolean {
     for (let v of this.values ()) {
       if (! p (v)) {
         return false
@@ -1786,44 +1301,44 @@ class vector_t {
     return true
   }
 
-  update_add (that: vector_t): vector_t {
+  update_add (that: vector_t <R>): vector_t <R> {
     assert (this.size === that.size)
     for (let [i, x] of that.entries ()) {
-      this.update_at (i, v => v + x)
+      this.update_at (i, v => this.ring.add (v, x))
     }
     return this
   }
 
-  add (that: vector_t): vector_t {
+  add (that: vector_t <R>): vector_t <R> {
     assert (this.size === that.size)
     let vector = this.copy ()
     for (let [i, x] of that.entries ()) {
-      vector.update_at (i, v => v + x)
+      vector.update_at (i, v => this.ring.add (v, x))
     }
     return vector
   }
 
-  update_sub (that: vector_t): vector_t {
+  update_sub (that: vector_t <R>): vector_t <R> {
     assert (this.size === that.size)
     for (let [i, x] of that.entries ()) {
-      this.update_at (i, v => v - x)
+      this.update_at (i, v => this.ring.sub (v, x))
     }
     return this
   }
 
-  sub (that: vector_t): vector_t {
+  sub (that: vector_t <R>): vector_t <R> {
     assert (this.size === that.size)
     let vector = this.copy ()
     for (let [i, x] of that.entries ()) {
-      vector.update_at (i, v => v - x)
+      vector.update_at (i, v => this.ring.sub (v, x))
     }
     return vector
   }
 
   reduce_with (
-    init: number,
-    f: (acc: number, cur: number) => number,
-  ): number {
+    init: R,
+    f: (acc: R, cur: R) => R,
+  ): R {
     let acc = init
     for (let v of this.values ()) {
       acc = f (acc, v)
@@ -1832,8 +1347,8 @@ class vector_t {
   }
 
   reduce (
-    f: (acc: number, cur: number) => number,
-  ): number {
+    f: (acc: R, cur: R) => R,
+  ): R {
     assert (this.size > 0)
     if (this.size === 1) {
       return this.get (0)
@@ -1846,34 +1361,14 @@ class vector_t {
     }
   }
 
-  argfirst (p: (x: number) => boolean): number | null {
-    let lo = 0
-    let hi = this.size
-    return argfirst (lo, hi, i => p (this.get (i)))
-  }
-
-  first (p: (x: number) => boolean): number | null {
-    let arg = this.argfirst (p)
-    if (arg === null) {
-      return null
-    } else {
-      return this.get (arg)
-    }
-  }
-
-  argmax (f: (x: number) => number): number {
-    let lo = 0
-    let hi = this.size
-    return argmax (lo, hi, i => f (this.get (i)))
-  }
-
   invariant_factors_p (): boolean {
     for (let i of ut.range (0, this.size)) {
       let x = this.get (i)
-      if (x !== 0) {
+      if (! this.ring.zero_p (x)) {
         for (let k of ut.range (i+1, this.size)) {
           let y = this.get (k)
-          if (y % x !== 0) {
+          let [q, r] = this.ring.divmod (y, x)
+          if (! this.ring.zero_p (r)) {
             return false
           }
         }
@@ -1882,24 +1377,6 @@ class vector_t {
     return true
   }
 
-  zero_p (): boolean {
-    return this.every (x => x === 0)
-  }
+  // TODO
 
-  one_p (): boolean {
-    return this.every (x => x === 1)
-  }
-
-  epsilon_p (): boolean {
-    return this.every (epsilon_p)
-  }
-
-  integral_p (): boolean {
-    return this.every (Number.isInteger)
-  }
-}
-
-export
-function vector (array: Array1d): vector_t {
-  return vector_t.fromArray (array)
 }

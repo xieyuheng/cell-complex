@@ -1,5 +1,5 @@
 import * as ut from "./util"
-import * as eu from "./euclid"
+import * as eu from "./euclid-naive"
 
 /**
  * Representation theory of finitely generated abelian group.

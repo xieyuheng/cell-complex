@@ -1,4 +1,3 @@
-- euclid.ts as euclid-naive.ts, euclid-tobe.ts as euclid.ts
 - lower_upper_decomposition for num.matrix_t
 - docs for euclid.ts
 * [note] row v.s. col

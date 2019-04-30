@@ -2,7 +2,7 @@ import test from "ava"
 
 import * as ut from "../lib/util"
 import * as cx from "../lib/cell-complex"
-import * as eu from "../lib/euclid"
+import * as eu from "../lib/euclid-naive"
 import * as hl from "../lib/homology"
 
 import {

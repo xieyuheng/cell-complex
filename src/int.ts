@@ -1,7 +1,7 @@
 import assert from "assert"
 
 import * as ut from "./util"
-import * as eu from "./euclid-tobe"
+import * as eu from "./euclid"
 import { set_t, eqv, not_eqv } from "./abstract/set"
 import { euclidean_ring_t } from "./abstract/ring"
 
