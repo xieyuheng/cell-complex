@@ -56,6 +56,21 @@ function argsome (
 }
 
 export
+function argcmp (
+  lo: number,
+  hi: number,
+  c: (i: number, j: number) => boolean,
+): number {
+  let arg = 0
+  for (let i = arg; i < hi; i++) {
+    if (c (i, arg)) {
+      arg = i
+    }
+  }
+  return arg
+}
+
+export
 function argcmp_guard (
   lo: number,
   hi: number,
@@ -1436,6 +1451,21 @@ class vector_t <R> {
         acc = f (acc, this.get (i))
       }
       return acc
+    }
+  }
+
+  argfirst (p: (x: R) => boolean): number | null {
+    let lo = 0
+    let hi = this.size
+    return argfirst (lo, hi, i => p (this.get (i)))
+  }
+
+  first (p: (x: R) => boolean): R | null {
+    let arg = this.argfirst (p)
+    if (arg === null) {
+      return null
+    } else {
+      return this.get (arg)
     }
   }
 

@@ -59,6 +59,24 @@ let ring = eu.ring <number> ({
  */
 
 export
+function argmax (
+  lo: number,
+  hi: number,
+  f: (i: number) => number,
+): number {
+  let arg = lo
+  let cur = f (lo)
+  for (let i = lo; i < hi; i++) {
+    let next = f (i)
+    if (cur < next) {
+      arg = i
+      cur = next
+    }
+  }
+  return arg
+}
+
+export
 class matrix_t extends eu.matrix_t <number> {
   constructor (the: {
     buffer: Array <number>,
@@ -70,6 +88,108 @@ class matrix_t extends eu.matrix_t <number> {
       ...the,
       ring,
     })
+  }
+
+  copy (): matrix_t {
+    return new matrix_t (super.copy ())
+  }
+
+  static numbers (
+    n: number,
+    x: number,
+    y: number,
+  ): matrix_t {
+    return new matrix_t (
+      eu.matrix_t.ring_numbers (ring, n, x, y)
+    )
+  }
+
+  static zeros (
+    x: number,
+    y: number,
+  ): matrix_t {
+    return new matrix_t (
+      eu.matrix_t.ring_zeros (ring, x, y)
+    )
+  }
+
+  static ones (
+    x: number,
+    y: number,
+  ): matrix_t {
+    return new matrix_t (
+      eu.matrix_t.ring_ones (ring, x, y)
+    )
+  }
+
+  row_echelon_form (): matrix_t {
+    let matrix = this.copy ()
+    let [m, n] = this.shape
+    let h = 0 // init pivot row
+    let k = 0 // init pivot column
+    while (h < m && k < n) {
+      // find the next pivot
+      let piv = argmax (h, m, (i) => Math.abs (matrix.get (i, k)))
+      if (epsilon_p (matrix.get (piv, k))) {
+        // no pivot in this column, pass to next column
+        k += 1
+      } else {
+        if (h !== piv) {
+          matrix.update_swap_rows (h, piv)
+        }
+        // for all rows below pivot
+        for (let i = h + 1; i < m; i++) {
+          let f = matrix.get (i, k) / matrix.get (h, k)
+          matrix.set (i, k, 0)
+          // for all remaining elements in current row
+          for (let j = k + 1; j < n; j++) {
+            let v = matrix.get (i, j) - matrix.get (h, j) * f
+            matrix.set (i, j, v)
+          }
+        }
+        h += 1
+        k += 1
+      }
+    }
+    return matrix
+  }
+
+  /**
+   * with all pivots equal to 1.
+   */
+  unit_row_echelon_form (): matrix_t {
+    let matrix = this.row_echelon_form ()
+    matrix.for_each_row_index ((row, i) => {
+      let pivot = row.first (x => ! epsilon_p (x))
+      if (pivot !== null) {
+        row.update_scale (1 / pivot)
+      }
+    })
+    return matrix
+  }
+
+  /**
+   * unit row echelon form + back substitution
+
+   * The reduced row echelon form of a matrix is unique
+   * i.e. does not depend on the algorithm used to compute it.
+   */
+  reduced_row_echelon_form (): matrix_t {
+    let matrix = this.unit_row_echelon_form ()
+    for (let [i, row] of matrix.row_entries ()) {
+      for (let [j, sub] of matrix.row_entries ()) {
+        if (j > i) {
+          let arg = sub.argfirst (x => x === 1)
+          if (arg !== null) {
+            let x = matrix.get (i, arg)
+            if (! epsilon_p (x)) {
+              row.update_add (sub.scale (-x))
+            }
+          }
+        }
+      }
+    }
+    return matrix
   }
 }
 
@@ -85,7 +205,8 @@ function matrix (
     }
     new_array.push (new_row)
   }
-  return eu.matrix_t.from_ring_Array2d (ring, new_array)
+  return new matrix_t (
+    eu.matrix_t.from_ring_Array2d (ring, new_array))
 }
 
 export
@@ -102,23 +223,33 @@ class vector_t extends eu.vector_t <number> {
     })
   }
 
+  copy (): vector_t {
+    return new vector_t (super.copy ())
+  }
+
   static numbers (
     n: number,
     size: number,
   ): vector_t {
-    return eu.vector_t.ring_numbers (ring, n, size)
+    return new vector_t (
+      eu.vector_t.ring_numbers (ring, n, size)
+    )
   }
 
   static zeros (
     size: number,
   ): vector_t {
-    return eu.vector_t.ring_zeros (ring, size)
+    return new vector_t (
+      eu.vector_t.ring_zeros (ring, size)
+    )
   }
 
   static ones (
     size: number,
   ): vector_t {
-    return eu.vector_t.ring_ones (ring, size)
+    return new vector_t (
+      eu.vector_t.ring_ones (ring, size)
+    )
   }
 }
 
@@ -126,5 +257,7 @@ export
 function vector (
   array: eu.Array1d <bigint | number | string>
 ): vector_t {
-  return eu.vector_t.from_ring_Array (ring, array.map (Number))
+  return new vector_t (
+    eu.vector_t.from_ring_Array (ring, array.map (Number))
+  )
 }

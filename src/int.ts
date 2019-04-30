@@ -73,26 +73,36 @@ class matrix_t extends eu.matrix_t <bigint> {
     })
   }
 
+  copy (): matrix_t {
+    return new matrix_t (super.copy ())
+  }
+
   static numbers (
     n: bigint,
     x: number,
     y: number,
   ): matrix_t {
-    return eu.matrix_t.ring_numbers (ring, n, x, y)
+    return new matrix_t (
+      eu.matrix_t.ring_numbers (ring, n, x, y)
+    )
   }
 
   static zeros (
     x: number,
     y: number,
   ): matrix_t {
-    return eu.matrix_t.ring_zeros (ring, x, y)
+    return new matrix_t (
+      eu.matrix_t.ring_zeros (ring, x, y)
+    )
   }
 
   static ones (
     x: number,
     y: number,
   ): matrix_t {
-    return eu.matrix_t.ring_ones (ring, x, y)
+    return new matrix_t (
+      eu.matrix_t.ring_ones (ring, x, y)
+    )
   }
 }
 
@@ -125,23 +135,33 @@ class vector_t extends eu.vector_t <bigint> {
     })
   }
 
+  copy (): vector_t {
+    return new vector_t (super.copy ())
+  }
+
   static numbers (
     n: bigint,
     size: number,
   ): vector_t {
-    return eu.vector_t.ring_numbers (ring, n, size)
+    return new vector_t (
+      eu.vector_t.ring_numbers (ring, n, size)
+    )
   }
 
   static zeros (
     size: number,
   ): vector_t {
-    return eu.vector_t.ring_zeros (ring, size)
+    return new vector_t (
+      eu.vector_t.ring_zeros (ring, size)
+    )
   }
 
   static ones (
     size: number,
   ): vector_t {
-    return eu.vector_t.ring_ones (ring, size)
+    return new vector_t (
+      eu.vector_t.ring_ones (ring, size)
+    )
   }
 }
 
@@ -149,5 +169,7 @@ export
 function vector (
   array: eu.Array1d <bigint | number | string>
 ): vector_t {
-  return eu.vector_t.from_ring_Array (ring, array.map (BigInt))
+  return new vector_t (
+    eu.vector_t.from_ring_Array (ring, array.map (BigInt))
+  )
 }
