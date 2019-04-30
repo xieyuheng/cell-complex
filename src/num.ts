@@ -21,3 +21,8 @@ let domain = eu.domain <number> ({
   degree_lt: (x: number, y: number) => false,
   divmod: (x: number, y: number) => [x / y, 0],
 })
+
+// export
+// class num_matrix_t extends eu.matrix_t <number> {
+
+// }

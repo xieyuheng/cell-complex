@@ -239,21 +239,8 @@ class matrix_t {
     j: number,
     f: (v: number) => number,
   ): matrix_t {
-    return this.set (i, j, f (this.get (i, j)))
-  }
-
-  toArray2d (): Array2d {
-    let array = []
-    let [x, _] = this.shape
-    for (let i = 0; i < x; i++) {
-      array.push (this.row (i) .toArray ())
-    }
-    return array
-  }
-
-  print () {
-    console.log ("matrix:")
-    console.table (this.toArray2d ())
+    this.set (i, j, f (this.get (i, j)))
+    return this
   }
 
   static *indexes_of_shape ([m, n]: [number, number]) {
@@ -295,6 +282,11 @@ class matrix_t {
       }
     }
     return this
+  }
+
+  same_shape_p (that: matrix_t): boolean {
+    return ((this.shape [0] === that.shape [0]) &&
+            (this.shape [1] === that.shape [1]))
   }
 
   update_op2 (
@@ -500,9 +492,18 @@ class matrix_t {
     return true
   }
 
-  same_shape_p (that: matrix_t): boolean {
-    return ((this.shape [0] === that.shape [0]) &&
-            (this.shape [1] === that.shape [1]))
+  toArray2d (): Array2d {
+    let array = []
+    let [x, _] = this.shape
+    for (let i = 0; i < x; i++) {
+      array.push (this.row (i) .toArray ())
+    }
+    return array
+  }
+
+  print () {
+    console.log ("matrix:")
+    console.table (this.toArray2d ())
   }
 
   update_add (that: matrix_t): matrix_t {
