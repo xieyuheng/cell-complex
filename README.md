@@ -163,7 +163,9 @@ function matrix (
     }
     new_array.push (new_row)
   }
-  return eu.matrix_t.from_ring_Array2d (ring, new_array)
+  return new matrix_t (
+    eu.matrix_t.from_ring_Array2d (ring, new_array)
+  )
 }
 
 {

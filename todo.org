@@ -1,4 +1,5 @@
-- lower_upper_decomposition for num.matrix_t
+- try abstract class
+- maybe need `.cons () callback`
 * [note] row v.s. col
 - `row_trans`
   - If we view matrix as linear equations,

@@ -122,6 +122,14 @@ class matrix_t extends eu.matrix_t <number> {
     )
   }
 
+  static id (
+    n: number,
+  ): matrix_t {
+    return new matrix_t (
+      eu.matrix_t.ring_id (ring, n)
+    )
+  }
+
   row_echelon_form (): matrix_t {
     let matrix = this.copy ()
     let [m, n] = this.shape
@@ -191,6 +199,63 @@ class matrix_t extends eu.matrix_t <number> {
     }
     return matrix
   }
+
+  /**
+   * P * A = L * U,
+   * `permu.mul (this) .eq (lower.mul (upper))`,
+   * (singular matrixes allowed)
+   */
+  lower_upper_decomposition (): {
+    lower: matrix_t,
+    upper: matrix_t,
+    permu: matrix_t,
+    inver: number,
+  } {
+    let matrix = this.copy ()
+    let [m, n] = this.shape
+    assert (m === n)
+    let record = matrix_t.zeros (m, n)
+    let permu = matrix_t.id (n)
+    let h = 0 // init pivot row
+    let k = 0 // init pivot column
+    let inver = 0
+    while (h < m && k < n) {
+      // find the next pivot
+      let piv = argmax (h, m, (i) => Math.abs (matrix.get (i, k)))
+      if (epsilon_p (matrix.get (piv, k))) {
+        // no pivot in this column, pass to next column
+        k += 1
+      } else {
+        if (h !== piv) {
+          matrix.update_swap_rows (h, piv)
+          record.update_swap_rows (h, piv)
+          permu.update_swap_rows (h, piv)
+          inver += 1
+        }
+        // for all rows below pivot
+        for (let i = h + 1; i < m; i++) {
+          let f = matrix.get (i, k) / matrix.get (h, k)
+          matrix.set (i, k, 0)
+          record.update_at (i, k, v => v + f)
+          // for all remaining elements in current row
+          for (let j = k + 1; j < n; j++) {
+            let v = matrix.get (i, j) - matrix.get (h, j) * f
+            matrix.set (i, j, v)
+          }
+        }
+        h += 1
+        k += 1
+      }
+    }
+    return {
+      lower: new matrix_t (
+        record.update_add (matrix_t.id (n))
+      ),
+      upper: matrix,
+      permu,
+      inver,
+    }
+  }
 }
 
 export
@@ -206,7 +271,8 @@ function matrix (
     new_array.push (new_row)
   }
   return new matrix_t (
-    eu.matrix_t.from_ring_Array2d (ring, new_array))
+    eu.matrix_t.from_ring_Array2d (ring, new_array)
+  )
 }
 
 export
