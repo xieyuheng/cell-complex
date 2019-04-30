@@ -5,6 +5,27 @@ import * as eu from "./euclid"
 import { set_t } from "./abstract/set"
 
 export
+interface config_t {
+  /** for almost degenerated matrix */
+  epsilon: number
+}
+
+export
+let config: config_t = {
+  epsilon: 0.000000001
+}
+
+export
+function epsilon_p (x: number): boolean {
+  return Math.abs (x) < config.epsilon
+}
+
+export
+function non_epsilon_p (x: number): boolean {
+  return Math.abs (x) >= config.epsilon
+}
+
+export
 let nums = new set_t <number> ({
   eq: (x, y) => x === y
 })
@@ -25,13 +46,6 @@ let ring = eu.ring <number> ({
   degree_lt: abs_lt,
   divmod: (x: number, y: number) => [x / y, 0],
 })
-
-// TODO
-// about epsilon
-
-/** TODO
- * notes about numerical stability
- */
 
 /**
  * We have to re-implement `row_echelon_form` again for `num.matrix_t`

@@ -1,4 +1,6 @@
-- test num.ts for row_canonical_form
+- row_echelon_form for num.matrix_t
+- unit_echelon_form for num.matrix_t
+- reduced_row_echelon_form for num.matrix_t
 - lower_upper_decomposition for num.matrix_t
 * [note] row v.s. col
 - `row_trans`
