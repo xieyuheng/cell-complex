@@ -1848,12 +1848,6 @@ class vector_t {
     }
   }
 
-  argmax (f: (x: number) => number): number {
-    let lo = 0
-    let hi = this.size
-    return argmax (lo, hi, i => f (this.get (i)))
-  }
-
   argfirst (p: (x: number) => boolean): number | null {
     let lo = 0
     let hi = this.size
@@ -1867,6 +1861,12 @@ class vector_t {
     } else {
       return this.get (arg)
     }
+  }
+
+  argmax (f: (x: number) => number): number {
+    let lo = 0
+    let hi = this.size
+    return argmax (lo, hi, i => f (this.get (i)))
   }
 
   invariant_factors_p (): boolean {

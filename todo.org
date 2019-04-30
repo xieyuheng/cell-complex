@@ -1,4 +1,5 @@
 - euclid-tobe.ts
+- euclid-tobe.test.js
 - test with decimal.js -- test K1
 * [note] row v.s. col
 - `row_trans`

@@ -11,6 +11,11 @@ let nums = new set_t <number> ({
 })
 
 export
+function abs_lt (x: number, y: number): boolean {
+  return Math.abs (x) < Math.abs (y)
+}
+
+export
 let ring = eu.ring <number> ({
   elements: nums,
   zero: 0,
@@ -18,11 +23,47 @@ let ring = eu.ring <number> ({
   neg: (x: number) => - x,
   one: 1,
   mul: (x: number, y: number) => x * y,
-  degree_lt: (x: number, y: number) => false,
+  degree_lt: abs_lt,
   divmod: (x: number, y: number) => [x / y, 0],
 })
 
-// export
-// class num_matrix_t extends eu.matrix_t <number> {
+export
+class matrix_t extends eu.matrix_t <number> {
+  constructor (the: {
+    buffer: Array <number>,
+    shape: [number, number],
+    strides: [number, number],
+    offset?: number,
+  }) {
+    super ({
+      ...the,
+      ring,
+    })
+  }
 
-// }
+  static numbers (
+    n: number,
+    x: number,
+    y: number,
+  ): matrix_t {
+    let shape: [number, number] = [x, y]
+    let size = eu.matrix_t.shape_to_size (shape)
+    let buffer = new Array (size)
+    buffer.fill (n)
+    return eu.matrix_t.from_ring_buffer (ring, buffer, shape)
+  }
+
+  static zeros (
+    x: number,
+    y: number,
+  ): matrix_t {
+    return matrix_t.numbers (ring.zero, x, y)
+  }
+
+  static ones (
+    x: number,
+    y: number,
+  ): matrix_t {
+    return matrix_t.numbers (ring.one, x, y)
+  }
+}

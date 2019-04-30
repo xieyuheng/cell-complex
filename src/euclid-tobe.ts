@@ -14,6 +14,48 @@ export type Array2d <R> = Array <Array <R>>
 export type Array3d <R> = Array <Array <Array <R>>>
 
 export
+function argfirst (
+  lo: number,
+  hi: number,
+  p: (i: number) => boolean,
+): number | null {
+  for (let i = lo; i < hi; i++) {
+    if (p (i)) {
+      return i
+    }
+  }
+  return null
+}
+
+export
+function argall (
+  lo: number,
+  hi: number,
+  p: (i: number) => boolean,
+): boolean {
+  for (let i = lo; i < hi; i++) {
+    if (! p (i)) {
+      return false
+    }
+  }
+  return true
+}
+
+export
+function argsome (
+  lo: number,
+  hi: number,
+  p: (i: number) => boolean,
+): boolean {
+  for (let i = lo; i < hi; i++) {
+    if (p (i)) {
+      return true
+    }
+  }
+  return false
+}
+
+export
 function ring <R> (the: {
   elements: set_t <R>,
   zero: R,
@@ -75,7 +117,7 @@ class matrix_t <R> {
     return [y, 1]
   }
 
-  static from_buffer <R> (
+  static from_ring_buffer <R> (
     ring: euclidean_ring_t <R>,
     buffer: Array <R>,
     shape: [number, number],
@@ -84,7 +126,7 @@ class matrix_t <R> {
     return new matrix_t ({ ring, buffer, shape, strides })
   }
 
-  static fromArray2d <R> (
+  static from_ring_Array2d <R> (
     ring: euclidean_ring_t <R>,
     array: Array2d <R>,
   ): matrix_t <R> {
@@ -95,14 +137,14 @@ class matrix_t <R> {
         throw new Error ("inner array length mismatch")
       }
     }
-    return matrix_t.from_buffer (
+    return matrix_t.from_ring_buffer (
       ring,
       Array.from (array.flat ()),
       [y_length, x_length],
     )
   }
 
-  static from_row <R> (
+  static from_ring_row <R> (
     ring: euclidean_ring_t <R>,
     row: vector_t <R>,
   ): matrix_t <R> {
@@ -116,7 +158,7 @@ class matrix_t <R> {
     })
   }
 
-  static from_col <R> (
+  static from_ring_col <R> (
     ring: euclidean_ring_t <R>,
     col: vector_t <R>,
   ): matrix_t <R> {
@@ -241,7 +283,7 @@ class matrix_t <R> {
   }
 
   copy (): matrix_t <R> {
-    let matrix = matrix_t.from_buffer (
+    let matrix = matrix_t.from_ring_buffer (
       this.ring,
       new Array (this.size),
       this.shape,
@@ -437,7 +479,7 @@ class matrix_t <R> {
   }
 
   update_add (that: matrix_t <R>): matrix_t <R> {
-    return this.update_op2 (that, this.ring.add)
+    return this.update_op2 (that, (x, y) => this.ring.add (x, y))
   }
 
   add (that: matrix_t <R>): matrix_t <R> {
@@ -445,7 +487,7 @@ class matrix_t <R> {
   }
 
   update_sub (that: matrix_t <R>): matrix_t <R> {
-    return this.update_op2 (that, this.ring.sub)
+    return this.update_op2 (that, (x, y) => this.ring.sub (x, y))
   }
 
   sub (that: matrix_t <R>): matrix_t <R> {
@@ -475,7 +517,7 @@ class matrix_t <R> {
     let shape: [number, number] = [m, q]
     let size = matrix_t.shape_to_size (shape)
     let buffer = new Array (size)
-    let matrix = matrix_t.from_buffer (this.ring, buffer, shape)
+    let matrix = matrix_t.from_ring_buffer (this.ring, buffer, shape)
     for (let i of ut.range (0, m)) {
       for (let j of ut.range (0, q)) {
         let v = this.row (i) .dot (that.col (j))
@@ -535,7 +577,7 @@ class matrix_t <R> {
     let shape: [number, number] = [m, n + q]
     let size = matrix_t.shape_to_size (shape)
     let buffer = new Array (size)
-    let matrix = matrix_t.from_buffer (this.ring, buffer, shape)
+    let matrix = matrix_t.from_ring_buffer (this.ring, buffer, shape)
     for (let i of ut.range (0, m)) {
       let row = this.row (i) .append (that.row (i))
       matrix.set_row (i, row)
@@ -550,7 +592,7 @@ class matrix_t <R> {
     let shape: [number, number] = [m + p, n]
     let size = matrix_t.shape_to_size (shape)
     let buffer = new Array (size)
-    let matrix = matrix_t.from_buffer (this.ring, buffer, shape)
+    let matrix = matrix_t.from_ring_buffer (this.ring, buffer, shape)
     for (let i of ut.range (0, n)) {
       let col = this.col (i) .append (that.col (i))
       matrix.set_col (i, col)
@@ -564,14 +606,14 @@ class matrix_t <R> {
   diag (): vector_t <R> {
     let [m, n] = this.shape
     n = Math.min (m, n)
-    let vector = vector_t.zeros (this.ring, n)
+    let vector = vector_t.ring_zeros (this.ring, n)
     for (let i of ut.range (0, n)) {
       vector.set (i, this.get (i, i))
     }
     return vector
   }
 
-  static numbers <R> (
+  static ring_numbers <R> (
     ring: euclidean_ring_t <R>,
     n: R,
     x: number,
@@ -581,54 +623,54 @@ class matrix_t <R> {
     let size = matrix_t.shape_to_size (shape)
     let buffer = new Array (size)
     buffer.fill (n)
-    return matrix_t.from_buffer (ring, buffer, shape)
+    return matrix_t.from_ring_buffer (ring, buffer, shape)
   }
 
-  static zeros <R> (
+  static ring_zeros <R> (
     ring: euclidean_ring_t <R>,
     x: number,
     y: number,
   ): matrix_t <R> {
-    return matrix_t.numbers (ring, ring.zero, x, y)
+    return matrix_t.ring_numbers (ring, ring.zero, x, y)
   }
 
-  static ones <R> (
+  static ring_ones <R> (
     ring: euclidean_ring_t <R>,
     x: number,
     y: number,
   ): matrix_t <R> {
-    return matrix_t.numbers (ring, ring.one, x, y)
+    return matrix_t.ring_numbers (ring, ring.one, x, y)
   }
 
-  static id <R> (
+  static ring_id <R> (
     ring: euclidean_ring_t <R>,
     n: number,
   ): matrix_t <R> {
-    let matrix = matrix_t.zeros (ring, n, n)
+    let matrix = matrix_t.ring_zeros (ring, n, n)
     for (let i of ut.range (0, n)) {
       matrix.set (i, i, ring.one)
     }
     return matrix
   }
 
-  static row_trans <R> (
+  static ring_row_trans <R> (
     ring: euclidean_ring_t <R>,
     permutation: permutation_t,
   ): matrix_t <R> {
     let n = permutation.size
-    let matrix = matrix_t.zeros (ring, n, n)
+    let matrix = matrix_t.ring_zeros (ring, n, n)
     for (let [i, v] of permutation.pairs ()) {
       matrix.set (i, v, ring.one)
     }
     return matrix
   }
 
-  static col_trans <R> (
+  static ring_col_trans <R> (
     ring: euclidean_ring_t <R>,
     permutation: permutation_t,
   ): matrix_t <R> {
     let n = permutation.size
-    let matrix = matrix_t.zeros (ring, n, n)
+    let matrix = matrix_t.ring_zeros (ring, n, n)
     for (let [i, v] of permutation.pairs ()) {
       matrix.set (v, i, ring.one)
     }
@@ -637,7 +679,7 @@ class matrix_t <R> {
 
   tuck_row (i: number, j: number): matrix_t <R> {
     let [m, n] = this.shape
-    let row_trans = matrix_t.row_trans (
+    let row_trans = matrix_t.ring_row_trans (
       this.ring,
       permutation_t.id (m) .tuck (i, j),
     )
@@ -646,7 +688,7 @@ class matrix_t <R> {
 
   tuck_col (i: number, j: number): matrix_t <R> {
     let [m, n] = this.shape
-    let col_trans = matrix_t.col_trans (
+    let col_trans = matrix_t.ring_col_trans (
       this.ring,
       permutation_t.id (n) .tuck (i, j),
     )
@@ -663,8 +705,29 @@ class matrix_t <R> {
     return this
   }
 
-  // TODO
+  /**
+   * I preserve the terms
+   * `hermite_normal_form` and `smith_normal_form`
+   * for matrix_t of integers.
+   */
 
+  /**
+   * Generic `hermite_normal_form`
+   */
+
+  // TODO
+  // row_canonical_form
+  // TODO
+  // row_canonical_decomposition
+
+  /**
+   * Generic `smith_normal_form`
+   */
+
+  // TODO
+  // diag_canonical_form
+  // TODO
+  // diag_canonical_decomposition
 }
 
 export
@@ -691,7 +754,7 @@ class vector_t <R> {
     this.size = the.shape [0]
   }
 
-  static from_buffer <R> (
+  static from_ring_buffer <R> (
     ring: euclidean_ring_t <R>,
     buffer: Array <R>,
   ): vector_t <R> {
@@ -703,11 +766,11 @@ class vector_t <R> {
     })
   }
 
-  static fromArray <R> (
+  static from_ring_Array <R> (
     ring: euclidean_ring_t <R>,
     array: Array1d <R>,
   ): vector_t <R> {
-    return vector_t.from_buffer (ring, array)
+    return vector_t.from_ring_buffer (ring, array)
   }
 
   get_linear_index (x: number): number {
@@ -770,7 +833,7 @@ class vector_t <R> {
 
   copy (): vector_t <R> {
     let buffer = new Array (this.size)
-    let vector = vector_t.from_buffer (this.ring, buffer)
+    let vector = vector_t.from_ring_buffer (this.ring, buffer)
     for (let [i, x] of this.entries ()) {
       vector.set (i, x)
     }
@@ -828,33 +891,33 @@ class vector_t <R> {
     return this.update (n => this.ring.mul (n, a))
   }
 
-  static numbers <R> (
+  static ring_numbers <R> (
     ring: euclidean_ring_t <R>,
     n: R,
     size: number,
   ): vector_t <R> {
     let buffer = new Array (size) .fill (n)
-    return vector_t.from_buffer (ring, buffer)
+    return vector_t.from_ring_buffer (ring, buffer)
   }
 
-  static zeros <R> (
+  static ring_zeros <R> (
     ring: euclidean_ring_t <R>,
     size: number,
   ): vector_t <R> {
-    return vector_t.numbers (ring, ring.zero, size)
+    return vector_t.ring_numbers (ring, ring.zero, size)
   }
 
-  static ones <R> (
+  static ring_ones <R> (
     ring: euclidean_ring_t <R>,
     size: number,
   ): vector_t <R> {
-    return vector_t.numbers (ring, ring.one, size)
+    return vector_t.ring_numbers (ring, ring.one, size)
   }
 
   trans (matrix: matrix_t <R>): vector_t <R> {
     let [m, n] = matrix.shape
     assert (n === this.size)
-    let vector = vector_t.zeros (this.ring, m)
+    let vector = vector_t.ring_zeros (this.ring, m)
     for (let i of ut.range (0, m)) {
       vector.set (i, this.dot (matrix.row (i)))
     }
@@ -863,7 +926,7 @@ class vector_t <R> {
 
   append (that: vector_t <R>): vector_t <R> {
     let buffer = new Array (this.size + that.size)
-    let vector = vector_t.from_buffer (this.ring, buffer)
+    let vector = vector_t.from_ring_buffer (this.ring, buffer)
     for (let [i, x] of this.entries ()) {
       vector.set (i, x)
     }
