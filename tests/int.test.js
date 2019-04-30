@@ -48,6 +48,12 @@ test ("int.matrix", t => {
   t.deepEqual (x.shape, [3, 3])
 })
 
+
+test ("int.vector", t => {
+  let x = int.vector ([1, 2, 4])
+  t.deepEqual (x.size, 3)
+})
+
 function test_row_canonical_form (t, A, E) {
   let U = A.row_canonical_form ()
   if (! U.eq (E)) {

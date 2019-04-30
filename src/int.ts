@@ -79,25 +79,21 @@ class matrix_t extends eu.matrix_t <bigint> {
     x: number,
     y: number,
   ): matrix_t {
-    let shape: [number, number] = [x, y]
-    let size = eu.matrix_t.shape_to_size (shape)
-    let buffer = new Array (size)
-    buffer.fill (n)
-    return eu.matrix_t.from_ring_buffer (ring, buffer, shape)
+    return eu.matrix_t.ring_numbers (ring, n, x, y)
   }
 
   static zeros (
     x: number,
     y: number,
   ): matrix_t {
-    return matrix_t.numbers (ring.zero, x, y)
+    return eu.matrix_t.ring_zeros (ring, x, y)
   }
 
   static ones (
     x: number,
     y: number,
   ): matrix_t {
-    return matrix_t.numbers (ring.one, x, y)
+    return eu.matrix_t.ring_ones (ring, x, y)
   }
 }
 
@@ -116,8 +112,43 @@ function matrix (
   return eu.matrix_t.from_ring_Array2d (ring, bigint_array)
 }
 
+export
+class vector_t extends eu.vector_t <bigint> {
+  constructor (the: {
+    buffer: Array <bigint>,
+    shape: [number],
+    strides: [number],
+    offset?: number,
+  }) {
+    super ({
+      ...the,
+      ring,
+    })
+  }
 
-// export
-// function vector (array: Array1d): vector_t {
-//   return vector_t.fromArray (array)
-// }
+  static numbers (
+    n: bigint,
+    size: number,
+  ): vector_t {
+    return eu.vector_t.ring_numbers (ring, n, size)
+  }
+
+  static zeros (
+    size: number,
+  ): vector_t {
+    return eu.vector_t.ring_zeros (ring, size)
+  }
+
+  static ones (
+    size: number,
+  ): vector_t {
+    return eu.vector_t.ring_ones (ring, size)
+  }
+}
+
+export
+function vector (
+  array: eu.Array1d <bigint | number | string>
+): vector_t {
+  return eu.vector_t.from_ring_Array (ring, array.map (BigInt))
+}

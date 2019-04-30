@@ -780,7 +780,6 @@ class matrix_t <R> {
     return matrix
   }
 
-
   /**
    * `row_trans.mul (this) .eq (row_canonical)`
    */
