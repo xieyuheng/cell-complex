@@ -59,3 +59,44 @@ let ring = eu.ring <bigint> ({
   degree_lt: abs_lt,
   divmod: divmod,
 })
+
+export
+class matrix_t extends eu.matrix_t <bigint> {
+  constructor (the: {
+    buffer: Array <bigint>,
+    shape: [number, number],
+    strides: [number, number],
+    offset?: number,
+  }) {
+    super ({
+      ...the,
+      ring,
+    })
+  }
+
+  static numbers (
+    n: bigint,
+    x: number,
+    y: number,
+  ): matrix_t {
+    let shape: [number, number] = [x, y]
+    let size = eu.matrix_t.shape_to_size (shape)
+    let buffer = new Array (size)
+    buffer.fill (n)
+    return eu.matrix_t.from_ring_buffer (ring, buffer, shape)
+  }
+
+  static zeros (
+    x: number,
+    y: number,
+  ): matrix_t {
+    return matrix_t.numbers (ring.zero, x, y)
+  }
+
+  static ones (
+    x: number,
+    y: number,
+  ): matrix_t {
+    return matrix_t.numbers (ring.one, x, y)
+  }
+}
