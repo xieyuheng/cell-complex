@@ -2,8 +2,8 @@
 
 ## Aims
 
-- Implement and test mathematical theories in existing languages.
-- Design new languages to formalize abstract mathematical structures.
+- Implement and test mathematical theories in existing languages
+- Design new languages to formalize abstract mathematical structures
 - Questions are welcome -- [issues](https://github.com/xieyuheng/cicada/issues)
 
 ## Community
@@ -36,6 +36,7 @@
 
 ### `eu` euclid
 
+- [work in progress]
 - [module theory](https://en.wikipedia.org/wiki/Module_(mathematics)) over [euclidean domain](https://en.wikipedia.org/wiki/Euclidean_domain)
   - for generic matrix algorithms
 
@@ -49,6 +50,11 @@
 ### `cx` cell-complex
 
 - cell-complex based low dimensional algebraic topology library
+
+### `gh` graph
+
+- [work in progress]
+- graph theory -- one dimensional cell-complex
 
 ### `hl` homology
 
@@ -142,7 +148,7 @@ class projective_plane_t extends cx.cell_complex_t {
 }
 ```
 
-Calculate [Homology groups](https://en.wikipedia.org/wiki/Homology_(mathematics)):
+- calculate [homology groups](https://en.wikipedia.org/wiki/Homology_(mathematics)):
 
 ``` typescript
 let report: any = {
