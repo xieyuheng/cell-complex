@@ -593,6 +593,121 @@ class matrix_t {
     return this
   }
 
+  append_cols (that: matrix_t): matrix_t {
+    let [m, n] = this.shape
+    let [p, q] = that.shape
+    assert (m === p)
+    let shape: [number, number] = [m, n + q]
+    let size = matrix_t.shape_to_size (shape)
+    let buffer = new Float64Array (size)
+    let matrix = matrix_t.from_buffer (buffer, shape)
+    for (let i of ut.range (0, m)) {
+      let row = this.row (i) .append (that.row (i))
+      matrix.set_row (i, row)
+    }
+    return matrix
+  }
+
+  append_rows (that: matrix_t): matrix_t {
+    let [m, n] = this.shape
+    let [p, q] = that.shape
+    assert (n === q)
+    let shape: [number, number] = [m + p, n]
+    let size = matrix_t.shape_to_size (shape)
+    let buffer = new Float64Array (size)
+    let matrix = matrix_t.from_buffer (buffer, shape)
+    for (let i of ut.range (0, n)) {
+      let col = this.col (i) .append (that.col (i))
+      matrix.set_col (i, col)
+    }
+    return matrix
+  }
+
+  /**
+   * The main diag.
+   */
+  diag (): vector_t {
+    let [m, n] = this.shape
+    n = Math.min (m, n)
+    let vector = vector_t.zeros (n)
+    for (let i of ut.range (0, n)) {
+      vector.set (i, this.get (i, i))
+    }
+    return vector
+  }
+
+  static numbers (n: number, x: number, y: number): matrix_t {
+    let shape: [number, number] = [x, y]
+    let size = matrix_t.shape_to_size (shape)
+    let buffer = new Float64Array (size)
+    buffer.fill (n)
+    return matrix_t.from_buffer (buffer, shape)
+  }
+
+  static zeros (x: number, y: number): matrix_t {
+    return matrix_t.numbers (0, x, y)
+  }
+
+  static ones (x: number, y: number): matrix_t {
+    return matrix_t.numbers (1, x, y)
+  }
+
+  static id (n: number): matrix_t {
+    let matrix = matrix_t.zeros (n, n)
+    for (let i of ut.range (0, n)) {
+      matrix.set (i, i, 1)
+    }
+    return matrix
+  }
+
+  static row_trans (
+    permutation: permutation_t
+  ): matrix_t {
+    let n = permutation.size
+    let matrix = matrix_t.zeros (n, n)
+    for (let [i, v] of permutation.pairs ()) {
+      matrix.set (i, v, 1)
+    }
+    return matrix
+  }
+
+  static col_trans (
+    permutation: permutation_t
+  ): matrix_t {
+    let n = permutation.size
+    let matrix = matrix_t.zeros (n, n)
+    for (let [i, v] of permutation.pairs ()) {
+      matrix.set (v, i, 1)
+    }
+    return matrix
+  }
+
+  tuck_row (i: number, j: number): matrix_t {
+    let [m, n] = this.shape
+    let row_trans = matrix_t.row_trans (
+      permutation_t.id (m) .tuck (i, j)
+    )
+    return row_trans.mul (this)
+  }
+
+  tuck_col (i: number, j: number): matrix_t {
+    let [m, n] = this.shape
+    let col_trans = matrix_t.col_trans (
+      permutation_t.id (n) .tuck (i, j)
+    )
+    return this.mul (col_trans)
+  }
+
+  update_tuck_row (i: number, j: number): matrix_t {
+    this.update_copy (this.tuck_row (i, j))
+    return this
+  }
+
+  update_tuck_col (i: number, j: number): matrix_t {
+    this.update_copy (this.tuck_col (i, j))
+    return this
+  }
+
   row_echelon_form (): matrix_t {
     let matrix = this.copy ()
     let [m, n] = this.shape
@@ -659,36 +774,6 @@ class matrix_t {
           }
         }
       }
-    }
-    return matrix
-  }
-
-  append_cols (that: matrix_t): matrix_t {
-    let [m, n] = this.shape
-    let [p, q] = that.shape
-    assert (m === p)
-    let shape: [number, number] = [m, n + q]
-    let size = matrix_t.shape_to_size (shape)
-    let buffer = new Float64Array (size)
-    let matrix = matrix_t.from_buffer (buffer, shape)
-    for (let i of ut.range (0, m)) {
-      let row = this.row (i) .append (that.row (i))
-      matrix.set_row (i, row)
-    }
-    return matrix
-  }
-
-  append_rows (that: matrix_t): matrix_t {
-    let [m, n] = this.shape
-    let [p, q] = that.shape
-    assert (n === q)
-    let shape: [number, number] = [m + p, n]
-    let size = matrix_t.shape_to_size (shape)
-    let buffer = new Float64Array (size)
-    let matrix = matrix_t.from_buffer (buffer, shape)
-    for (let i of ut.range (0, n)) {
-      let col = this.col (i) .append (that.col (i))
-      matrix.set_col (i, col)
     }
     return matrix
   }
@@ -866,19 +951,6 @@ class matrix_t {
     }
   }
 
-  /**
-   * The main diag.
-   */
-  diag (): vector_t {
-    let [m, n] = this.shape
-    n = Math.min (m, n)
-    let vector = vector_t.zeros (n)
-    for (let i of ut.range (0, n)) {
-      vector.set (i, this.get (i, i))
-    }
-    return vector
-  }
-
   det (): number {
     assert (this.square_p ())
     let {
@@ -891,30 +963,6 @@ class matrix_t {
       sign = -1
     }
     return sign * upper.diag () .reduce ((acc, cur) => acc * cur)
-  }
-
-  static numbers (n: number, x: number, y: number): matrix_t {
-    let shape: [number, number] = [x, y]
-    let size = matrix_t.shape_to_size (shape)
-    let buffer = new Float64Array (size)
-    buffer.fill (n)
-    return matrix_t.from_buffer (buffer, shape)
-  }
-
-  static zeros (x: number, y: number): matrix_t {
-    return matrix_t.numbers (0, x, y)
-  }
-
-  static ones (x: number, y: number): matrix_t {
-    return matrix_t.numbers (1, x, y)
-  }
-
-  static id (n: number): matrix_t {
-    let matrix = matrix_t.zeros (n, n)
-    for (let i of ut.range (0, n)) {
-      matrix.set (i, i, 1)
-    }
-    return matrix
   }
 
   symmetric_p (): boolean {
@@ -1303,32 +1351,6 @@ class matrix_t {
     return matrix
   }
 
-  tuck_row (i: number, j: number): matrix_t {
-    let [m, n] = this.shape
-    let row_trans = matrix_t.row_trans (
-      permutation_t.id (m) .tuck (i, j)
-    )
-    return row_trans.mul (this)
-  }
-
-  tuck_col (i: number, j: number): matrix_t {
-    let [m, n] = this.shape
-    let col_trans = matrix_t.col_trans (
-      permutation_t.id (n) .tuck (i, j)
-    )
-    return this.mul (col_trans)
-  }
-
-  update_tuck_row (i: number, j: number): matrix_t {
-    this.update_copy (this.tuck_row (i, j))
-    return this
-  }
-
-  update_tuck_col (i: number, j: number): matrix_t {
-    this.update_copy (this.tuck_col (i, j))
-    return this
-  }
-
   invariant_factor_update (): matrix_t {
     let matrix = this
     let [m, n] = this.shape
@@ -1552,28 +1574,6 @@ class matrix_t {
     assert (the.col_trans.invertible_p ())
     return { ...the, smith }
   }
-
-  static row_trans (
-    permutation: permutation_t
-  ): matrix_t {
-    let n = permutation.size
-    let matrix = matrix_t.zeros (n, n)
-    for (let [i, v] of permutation.pairs ()) {
-      matrix.set (i, v, 1)
-    }
-    return matrix
-  }
-
-  static col_trans (
-    permutation: permutation_t
-  ): matrix_t {
-    let n = permutation.size
-    let matrix = matrix_t.zeros (n, n)
-    for (let [i, v] of permutation.pairs ()) {
-      matrix.set (v, i, 1)
-    }
-    return matrix
-  }
 }
 
 export
@@ -1758,25 +1758,34 @@ class vector_t {
     return vector
   }
 
-  argmax (f: (x: number) => number): number {
-    let lo = 0
-    let hi = this.size
-    return argmax (lo, hi, i => f (this.get (i)))
-  }
-
-  argfirst (p: (x: number) => boolean): number | null {
-    let lo = 0
-    let hi = this.size
-    return argfirst (lo, hi, i => p (this.get (i)))
-  }
-
-  first (p: (x: number) => boolean): number | null {
-    let arg = this.argfirst (p)
-    if (arg === null) {
-      return null
-    } else {
-      return this.get (arg)
+  append (that: vector_t): vector_t {
+    let buffer = new Float64Array (this.size + that.size)
+    let vector = vector_t.from_buffer (buffer)
+    for (let [i, x] of this.entries ()) {
+      vector.set (i, x)
     }
+    for (let [i, x] of that.entries ()) {
+      vector.set (i + this.size, x)
+    }
+    return vector
+  }
+
+  some (p: (v: number) => boolean): boolean {
+    for (let v of this.values ()) {
+      if (p (v)) {
+        return true
+      }
+    }
+    return false
+  }
+
+  every (p: (v: number) => boolean): boolean {
+    for (let v of this.values ()) {
+      if (! p (v)) {
+        return false
+      }
+    }
+    return true
   }
 
   update_add (that: vector_t): vector_t {
@@ -1839,34 +1848,25 @@ class vector_t {
     }
   }
 
-  some (p: (v: number) => boolean): boolean {
-    for (let v of this.values ()) {
-      if (p (v)) {
-        return true
-      }
-    }
-    return false
+  argmax (f: (x: number) => number): number {
+    let lo = 0
+    let hi = this.size
+    return argmax (lo, hi, i => f (this.get (i)))
   }
 
-  every (p: (v: number) => boolean): boolean {
-    for (let v of this.values ()) {
-      if (! p (v)) {
-        return false
-      }
-    }
-    return true
+  argfirst (p: (x: number) => boolean): number | null {
+    let lo = 0
+    let hi = this.size
+    return argfirst (lo, hi, i => p (this.get (i)))
   }
 
-  append (that: vector_t): vector_t {
-    let buffer = new Float64Array (this.size + that.size)
-    let vector = vector_t.from_buffer (buffer)
-    for (let [i, x] of this.entries ()) {
-      vector.set (i, x)
+  first (p: (x: number) => boolean): number | null {
+    let arg = this.argfirst (p)
+    if (arg === null) {
+      return null
+    } else {
+      return this.get (arg)
     }
-    for (let [i, x] of that.entries ()) {
-      vector.set (i + this.size, x)
-    }
-    return vector
   }
 
   invariant_factors_p (): boolean {

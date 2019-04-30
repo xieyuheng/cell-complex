@@ -1,8 +1,4 @@
 - euclid-tobe.ts
-* [bug] limitation
-- if the number goes beyond `number`, we will need generic `matrix_t <F>`
-- generic matrix_t and vector_t
-- generic matrix_t algos
 - test with decimal.js -- test K1
 * [note] row v.s. col
 - `row_trans`

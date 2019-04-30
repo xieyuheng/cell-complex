@@ -506,6 +506,165 @@ class matrix_t <R> {
     return x === y
   }
 
+  update_swap_rows (i: number, j: number): matrix_t <R> {
+    let [m, n] = this.shape
+    for (let k of ut.range (0, n)) {
+      let x = this.get (i, k)
+      let y = this.get (j, k)
+      this.set (i, k, y)
+      this.set (j, k, x)
+    }
+    return this
+  }
+
+  update_swap_cols (i: number, j: number): matrix_t <R> {
+    let [m, n] = this.shape
+    for (let k of ut.range (0, m)) {
+      let x = this.get (k, i)
+      let y = this.get (k, j)
+      this.set (k, i, y)
+      this.set (k, j, x)
+    }
+    return this
+  }
+
+  append_cols (that: matrix_t <R>): matrix_t <R> {
+    let [m, n] = this.shape
+    let [p, q] = that.shape
+    assert (m === p)
+    let shape: [number, number] = [m, n + q]
+    let size = matrix_t.shape_to_size (shape)
+    let buffer = new Array (size)
+    let matrix = matrix_t.from_buffer (this.ring, buffer, shape)
+    for (let i of ut.range (0, m)) {
+      let row = this.row (i) .append (that.row (i))
+      matrix.set_row (i, row)
+    }
+    return matrix
+  }
+
+  append_rows (that: matrix_t <R>): matrix_t <R> {
+    let [m, n] = this.shape
+    let [p, q] = that.shape
+    assert (n === q)
+    let shape: [number, number] = [m + p, n]
+    let size = matrix_t.shape_to_size (shape)
+    let buffer = new Array (size)
+    let matrix = matrix_t.from_buffer (this.ring, buffer, shape)
+    for (let i of ut.range (0, n)) {
+      let col = this.col (i) .append (that.col (i))
+      matrix.set_col (i, col)
+    }
+    return matrix
+  }
+
+  /**
+   * The main diag.
+   */
+  diag (): vector_t <R> {
+    let [m, n] = this.shape
+    n = Math.min (m, n)
+    let vector = vector_t.zeros (this.ring, n)
+    for (let i of ut.range (0, n)) {
+      vector.set (i, this.get (i, i))
+    }
+    return vector
+  }
+
+  static numbers <R> (
+    ring: euclidean_ring_t <R>,
+    n: R,
+    x: number,
+    y: number,
+  ): matrix_t <R> {
+    let shape: [number, number] = [x, y]
+    let size = matrix_t.shape_to_size (shape)
+    let buffer = new Array (size)
+    buffer.fill (n)
+    return matrix_t.from_buffer (ring, buffer, shape)
+  }
+
+  static zeros <R> (
+    ring: euclidean_ring_t <R>,
+    x: number,
+    y: number,
+  ): matrix_t <R> {
+    return matrix_t.numbers (ring, ring.zero, x, y)
+  }
+
+  static ones <R> (
+    ring: euclidean_ring_t <R>,
+    x: number,
+    y: number,
+  ): matrix_t <R> {
+    return matrix_t.numbers (ring, ring.one, x, y)
+  }
+
+  static id <R> (
+    ring: euclidean_ring_t <R>,
+    n: number,
+  ): matrix_t <R> {
+    let matrix = matrix_t.zeros (ring, n, n)
+    for (let i of ut.range (0, n)) {
+      matrix.set (i, i, ring.one)
+    }
+    return matrix
+  }
+
+  static row_trans <R> (
+    ring: euclidean_ring_t <R>,
+    permutation: permutation_t,
+  ): matrix_t <R> {
+    let n = permutation.size
+    let matrix = matrix_t.zeros (ring, n, n)
+    for (let [i, v] of permutation.pairs ()) {
+      matrix.set (i, v, ring.one)
+    }
+    return matrix
+  }
+
+  static col_trans <R> (
+    ring: euclidean_ring_t <R>,
+    permutation: permutation_t,
+  ): matrix_t <R> {
+    let n = permutation.size
+    let matrix = matrix_t.zeros (ring, n, n)
+    for (let [i, v] of permutation.pairs ()) {
+      matrix.set (v, i, ring.one)
+    }
+    return matrix
+  }
+
+  tuck_row (i: number, j: number): matrix_t <R> {
+    let [m, n] = this.shape
+    let row_trans = matrix_t.row_trans (
+      this.ring,
+      permutation_t.id (m) .tuck (i, j),
+    )
+    return row_trans.mul (this)
+  }
+
+  tuck_col (i: number, j: number): matrix_t <R> {
+    let [m, n] = this.shape
+    let col_trans = matrix_t.col_trans (
+      this.ring,
+      permutation_t.id (n) .tuck (i, j),
+    )
+    return this.mul (col_trans)
+  }
+
+  update_tuck_row (i: number, j: number): matrix_t <R> {
+    this.update_copy (this.tuck_row (i, j))
+    return this
+  }
+
+  update_tuck_col (i: number, j: number): matrix_t <R> {
+    this.update_copy (this.tuck_col (i, j))
+    return this
+  }
+
+  // TODO
+
 }
 
 export
@@ -701,5 +860,97 @@ class vector_t <R> {
     }
     return vector
   }
+
+  append (that: vector_t <R>): vector_t <R> {
+    let buffer = new Array (this.size + that.size)
+    let vector = vector_t.from_buffer (this.ring, buffer)
+    for (let [i, x] of this.entries ()) {
+      vector.set (i, x)
+    }
+    for (let [i, x] of that.entries ()) {
+      vector.set (i + this.size, x)
+    }
+    return vector
+  }
+
+  some (p: (v: R) => boolean): boolean {
+    for (let v of this.values ()) {
+      if (p (v)) {
+        return true
+      }
+    }
+    return false
+  }
+
+  every (p: (v: R) => boolean): boolean {
+    for (let v of this.values ()) {
+      if (! p (v)) {
+        return false
+      }
+    }
+    return true
+  }
+
+  update_add (that: vector_t <R>): vector_t <R> {
+    assert (this.size === that.size)
+    for (let [i, x] of that.entries ()) {
+      this.update_at (i, v => this.ring.add (v, x))
+    }
+    return this
+  }
+
+  add (that: vector_t <R>): vector_t <R> {
+    assert (this.size === that.size)
+    let vector = this.copy ()
+    for (let [i, x] of that.entries ()) {
+      vector.update_at (i, v => this.ring.add (v, x))
+    }
+    return vector
+  }
+
+  update_sub (that: vector_t <R>): vector_t <R> {
+    assert (this.size === that.size)
+    for (let [i, x] of that.entries ()) {
+      this.update_at (i, v => this.ring.sub (v, x))
+    }
+    return this
+  }
+
+  sub (that: vector_t <R>): vector_t <R> {
+    assert (this.size === that.size)
+    let vector = this.copy ()
+    for (let [i, x] of that.entries ()) {
+      vector.update_at (i, v => this.ring.sub (v, x))
+    }
+    return vector
+  }
+
+  reduce_with (
+    init: R,
+    f: (acc: R, cur: R) => R,
+  ): R {
+    let acc = init
+    for (let v of this.values ()) {
+      acc = f (acc, v)
+    }
+    return acc
+  }
+
+  reduce (
+    f: (acc: R, cur: R) => R,
+  ): R {
+    assert (this.size > 0)
+    if (this.size === 1) {
+      return this.get (0)
+    } else {
+      let acc = this.get (0)
+      for (let i of ut.range (1, this.size)) {
+        acc = f (acc, this.get (i))
+      }
+      return acc
+    }
+  }
+
+  // TODO
 
 }
