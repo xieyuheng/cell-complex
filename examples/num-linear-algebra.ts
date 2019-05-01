@@ -6,7 +6,7 @@ import * as num from "cicada-lang/lib/num"
 {
   /**
    * `reduced_row_echelon_form` is like `row_canonical_form`
-   *   it reduce pivot to one
+   *   it reduces pivots to one
    *   while respecting `epsilon` for numerical stability
    */
 
@@ -23,6 +23,7 @@ import * as num from "cicada-lang/lib/num"
   ])
 
   A.reduced_row_echelon_form () .print ()
+  A.row_canonical_form () .print ()
 
   assert (
     A.reduced_row_echelon_form () .eq (B)

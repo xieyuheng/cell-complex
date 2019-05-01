@@ -162,6 +162,7 @@ import * as num from "cicada-lang/lib/num"
   ])
 
   A.reduced_row_echelon_form () .print ()
+  A.row_canonical_form () .print ()
 
   assert (
     A.reduced_row_echelon_form () .eq (B)
