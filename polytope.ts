@@ -1,3 +1,3 @@
 class simplex_t {
-  
+
 }

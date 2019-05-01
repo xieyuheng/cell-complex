@@ -1,7 +1,3 @@
-- wikipedia
-  - [CW complex](https://en.wikipedia.org/wiki/CW_complex)
-  - [Cellular homology](https://en.wikipedia.org/wiki/Cellular_homology)
-
 - recommended books
 
   - **about polytopes**

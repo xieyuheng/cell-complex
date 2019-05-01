@@ -22,22 +22,29 @@
   but the shame is that
   no programming languages allow us
   to formalize abstract mathematical structures intuitively
+* polytope
+- polytope
+  - a set of n >= 0 points is affinely independent
+    if its affine hull has dimension n − 1,
+    that is, if every proper subset has a smaller affine hull.
+- point_t in euclid.ts
+- use num.ts to re-imp hackenbush
+* graph
+- reuse cell_complex_t
+- find cycles of graph by spanning tree's complement edges
+  - homology of general graph
+* hackenbush
+- with editor
 * computational-science
 - stiffness matrix
 - circulant matrix
 * polynomial
 - polynomial.ts -- symbolic algebra
-* graph
-- reuse cell_complex_t
-- find cycles of graph by spanning tree's complement edges
-  - homology of general graph
 * euclidean-space
 - linear diophantine equations with mod -- finite field
 - convert invariant_factors to elementary_divisors
 - primary_decomposition -- [rank, [[p0, n0], [p1, n1], ...]]
 - chinese_remainder_theorem
-- point_t
-- use euclidean-space to re-imp hackenbush
 * optimize
 - optimize frame_t and series_t by not using data_t
   but to use matrix_t and vector_t
@@ -101,10 +108,6 @@
 * geometry
 - quaternion
 - clifford-algebra
-- polytope
-  - a set of n >= 0 points is affinely independent
-    if its affine hull has dimension n − 1,
-    that is, if every proper subset has a smaller affine hull.
 * combinatorial-game
 - use go to test game tree searching
 - why the games of logic seem like one-player game
