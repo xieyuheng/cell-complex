@@ -141,6 +141,10 @@ class vector_t extends eu.vector_t <bigint> {
     return new vector_t (super.copy ())
   }
 
+  transpose (): matrix_t {
+    return new matrix_t (this.transpose ())
+  }
+
   static numbers (
     n: bigint,
     size: number,

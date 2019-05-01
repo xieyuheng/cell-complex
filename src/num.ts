@@ -94,6 +94,10 @@ class matrix_t extends eu.matrix_t <number> {
     return new matrix_t (super.copy ())
   }
 
+  transpose (): matrix_t {
+    return new matrix_t (this.transpose ())
+  }
+
   static numbers (
     n: number,
     x: number,
