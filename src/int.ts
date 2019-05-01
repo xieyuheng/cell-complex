@@ -108,6 +108,14 @@ class matrix_t extends eu.matrix_t <bigint> {
       eu.matrix_t.ring_ones (ring, x, y)
     )
   }
+
+  static id (
+    n: number,
+  ): matrix_t {
+    return new matrix_t (
+      eu.matrix_t.ring_id (ring, n)
+    )
+  }
 }
 
 export
