@@ -1,0 +1,25 @@
+* mathematical structures is about code reuse
+
+- in our euclidean-space.ts
+  `row_canonical_form` and `row_hermite_normal_form`
+  are almost the same
+
+- to factor out this sameness, and to reuse code
+  we need to use matrix over principal ideal integral ring
+
+- this is the main use of abstract mathematical structures
+  it solve the main problem of compute science
+  but the shame is that
+  no programming languages allow us
+  to formalize abstract mathematical structures intuitively
+
+* ironic
+
+- We have to re-implement `row_echelon_form` again for `num.matrix_t`
+  because `float` is not precisely a ring.
+
+- We also have to re-implement the core algorithm again for the ring of polynomial,
+  because there exist more efficient algorithm than the generic algorithm.
+
+- It is ironic that, after the abstraction,
+  to reach useful API, we still have to re-implement the core algorithm.
