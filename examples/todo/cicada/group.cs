@@ -4,6 +4,7 @@ class monoid_t {
   element_t: type
 
   id: this.element_t
+
   mul (x: this.element_t, y: this.element_t): this.element_t
 
   assoc (
@@ -35,8 +36,46 @@ class group_t extends monoid_t {
     x: this.element_t,
     y: this.element_t,
   ): this.element_t {
-    return this.mul (x, this.inv (y))
+    this.mul (x, this.inv (y))
   }
+}
+
+function group_product (g: group_t, h: group_t): group_t {
+  return group_t (
+    element_t = [g.element_t, h.element_t]
+
+    id = [g.id, h.id]
+
+    mul = (
+      x: [g.element_t, h.element_t],
+      y: [g.element_t, h.element_t],
+    ): [g.element_t, h.element_t] => {
+      return [
+        g.mul (x [0], y [0]),
+        h.mul (x [1], y [1]),
+      ]
+    }
+
+    assoc = (
+      x: [g.element_t, h.element_t],
+      y: [g.element_t, h.element_t],
+      z: [g.element_t, h.element_t],
+    ): eqv_t (
+      this.mul (this.mul (x, y), z),
+      this.mul (x, this.mul (y, z)),
+    ) => {
+      // TODO
+    }
+
+    inv = (
+      x: [g.element_t, h.element_t]
+    ): [g.element_t, h.element_t] => {
+      return [
+        g.inv (x [0]),
+        h.inv (x [1]),
+      ]
+    }
+  )
 }
 
 class group_hom_t {

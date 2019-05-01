@@ -90,12 +90,18 @@ class matrix_t extends eu.matrix_t <number> {
     })
   }
 
-  copy (): matrix_t {
-    return new matrix_t (super.copy ())
+  clone (the: {
+    buffer: Array <number>,
+    shape: [number, number],
+    strides: [number, number],
+    offset?: number,
+  }): matrix_t {
+    console.log ("num.matrix_t.clone")
+    return new matrix_t ({ ...this, ...the })
   }
 
-  transpose (): matrix_t {
-    return new matrix_t (super.transpose ())
+  copy (): matrix_t {
+    return new matrix_t (super.copy ())
   }
 
   static numbers (
@@ -330,4 +336,20 @@ function vector (
   return new vector_t (
     eu.vector_t.from_ring_Array (ring, array.map (Number))
   )
+}
+
+// let A: matrix_t = matrix ([
+//   [1, 3, 1],
+//   [1, 1, -1],
+//   [3, 11, 5],
+// ]) .transpose ()
+
+abstract class entity_t <E extends entity_t <E>> {
+  abstract create (): E
+}
+
+class apple_t extends entity_t <apple_t> {
+  create (): apple_t {
+    return new apple_t ()
+  }
 }

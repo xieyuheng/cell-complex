@@ -143,6 +143,17 @@ class matrix_t <R> {
     this.size = matrix_t.shape_to_size (the.shape)
   }
 
+  clone (the: {
+    ring: euclidean_ring_t <R>,
+    buffer: Array <R>,
+    shape: [number, number],
+    strides: [number, number],
+    offset?: number,
+  }): matrix_t <R> {
+    console.log ("euclid.matrix_t.clone")
+    return new matrix_t (the)
+  }
+
   static shape_to_size ([x, y]: [number, number]): number {
     return x * y
   }
@@ -567,10 +578,22 @@ class matrix_t <R> {
     return v.trans (this)
   }
 
+  // transpose (): matrix_t <R> {
+  //   let [m, n] = this.shape
+  //   let [s, t] = this.strides
+  //   return new matrix_t ({
+  //     ring: this.ring,
+  //     buffer: this.buffer,
+  //     shape: [n, m],
+  //     strides: [t, s],
+  //     offset: this.offset,
+  //   })
+  // }
+
   transpose (): matrix_t <R> {
     let [m, n] = this.shape
     let [s, t] = this.strides
-    return new matrix_t ({
+    return this.clone ({
       ring: this.ring,
       buffer: this.buffer,
       shape: [n, m],
