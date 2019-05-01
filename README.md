@@ -74,6 +74,29 @@ import * as int from "cicada-lang/lib/int"
 
 {
   /**
+   * generic `diag_canonical_form`
+   *   i.e. `smith_normal_form` for integers
+   */
+
+  let A = matrix ([
+    [2, 4, 4],
+    [-6, 6, 12],
+    [10, -4, -16],
+  ])
+
+  let S = matrix ([
+    [2, 0, 0],
+    [0, 6, 0],
+    [0, 0, -12],
+  ])
+
+  assert (
+    A.diag_canonical_form () .eq (S)
+  )
+}
+
+{
+  /**
    * solve linear diophantine equations
    */
 
@@ -111,86 +134,45 @@ import * as int from "cicada-lang/lib/int"
   - native js `Number`
   - `epsilon` for numerical stability
 
-### `eu` euclid
-
-- [module theory](https://en.wikipedia.org/wiki/Module_(mathematics)) over [euclidean ring](https://en.wikipedia.org/wiki/Euclidean_ring)
-  - for generic matrix algorithms
-
-#### `examples/define-int-matrix.ts`:
+#### `examples/num-linear-algebra.ts`:
 
 ``` typescript
 import assert from "assert"
 
-import * as eu from "cicada-lang/lib/euclid"
-import { set_t } from "cicada-lang/lib/abstract/set"
-
-let ints = new set_t <bigint> ({
-  eq: (x, y) => x === y
-})
-
-function abs (x: bigint) {
-  return x < 0n ? -x : x
-}
-
-let ring = eu.ring <bigint> ({
-  elements: ints,
-  zero: 0n,
-  add: (x: bigint, y: bigint) => x + y,
-  neg: (x: bigint) => - x,
-  one: 1n,
-  mul: (x: bigint, y: bigint) => x * y,
-  degree_lt: (x, y) => abs (x) < abs (y),
-  divmod: (x, y) => {
-    let r: bigint = x % y
-    r = r < 0 ? r + abs (y) : r
-    let q: bigint = (x - r) / y
-    return [q, r]
-  },
-})
-
-export
-class matrix_t extends eu.matrix_t <bigint> {}
-
-export
-function matrix (
-  array: eu.Array2d <bigint | number | string>
-): matrix_t {
-  let new_array = new Array <Array <bigint>> ()
-  for (let row of array) {
-    let new_row = new Array <bigint> ()
-    for (let x of row) {
-      new_row.push (BigInt (x))
-    }
-    new_array.push (new_row)
-  }
-  return new matrix_t (
-    eu.matrix_t.from_ring_Array2d (ring, new_array)
-  )
-}
+import * as ut from "cicada-lang/lib/util"
+import * as num from "cicada-lang/lib/num"
 
 {
   /**
-   * generic `diag_canonical_form`
-   *   i.e. `smith_normal_form` for integers
+   * `reduced_row_echelon_form` is like `row_canonical_form`
+   *   it reduces pivots to one
+   *   while respecting `epsilon` for numerical stability
    */
 
-  let A = matrix ([
-    [2, 4, 4],
-    [-6, 6, 12],
-    [10, -4, -16],
+  let A = num.matrix ([
+    [1, 3, 1, 9],
+    [1, 1, -1, 1],
+    [3, 11, 5, 35],
   ])
 
-  let S = matrix ([
-    [2, 0, 0],
-    [0, 6, 0],
-    [0, 0, -12],
+  let B = num.matrix ([
+    [1, 0, -2, -3],
+    [0, 1, 1, 4],
+    [0, 0, 0, 0],
   ])
+
+  A.reduced_row_echelon_form () .print ()
 
   assert (
-    A.diag_canonical_form () .eq (S)
+    A.reduced_row_echelon_form () .eq (B)
   )
 }
 ```
+
+### `eu` euclid
+
+- [module theory](https://en.wikipedia.org/wiki/Module_(mathematics)) over [euclidean ring](https://en.wikipedia.org/wiki/Euclidean_ring)
+  - for generic matrix algorithms
 
 ### `cg` combinatorial-game
 

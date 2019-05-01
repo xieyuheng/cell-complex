@@ -28,6 +28,29 @@ import * as int from "cicada-lang/lib/int"
 
 {
   /**
+   * generic `diag_canonical_form`
+   *   i.e. `smith_normal_form` for integers
+   */
+
+  let A = matrix ([
+    [2, 4, 4],
+    [-6, 6, 12],
+    [10, -4, -16],
+  ])
+
+  let S = matrix ([
+    [2, 0, 0],
+    [0, 6, 0],
+    [0, 0, -12],
+  ])
+
+  assert (
+    A.diag_canonical_form () .eq (S)
+  )
+}
+
+{
+  /**
    * solve linear diophantine equations
    */
 
