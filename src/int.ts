@@ -77,6 +77,10 @@ class matrix_t extends eu.matrix_t <bigint> {
     return new matrix_t (super.copy ())
   }
 
+  transpose (): matrix_t {
+    return new matrix_t (super.transpose ())
+  }
+
   static numbers (
     n: bigint,
     x: number,
@@ -139,10 +143,6 @@ class vector_t extends eu.vector_t <bigint> {
 
   copy (): vector_t {
     return new vector_t (super.copy ())
-  }
-
-  transpose (): matrix_t {
-    return new matrix_t (this.transpose ())
   }
 
   static numbers (

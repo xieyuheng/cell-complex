@@ -36,16 +36,12 @@ test ("num.matrix_t.reduced_row_echelon_form", t => {
 })
 
 function test_lower_upper_decomposition (t, m) {
-  console.log (m.lower_upper_decomposition)
-
-  t.pass ()
-
-  // let {
-  //   lower, upper, permu
-  // } = m.lower_upper_decomposition ()
-  // t.true (
-  //   permu.mul (m) .eq (lower.mul (upper))
-  // )
+  let {
+    lower, upper, permu
+  } = m.lower_upper_decomposition ()
+  t.true (
+    permu.mul (m) .eq (lower.mul (upper))
+  )
 }
 
 test ("num.matrix_t.lower_upper_decomposition", t => {
@@ -55,11 +51,11 @@ test ("num.matrix_t.lower_upper_decomposition", t => {
     [3, 11, 5],
   ]))
 
-  // test_lower_upper_decomposition (t, num.matrix ([
-  //   [1, 3, 1],
-  //   [1, 1, -1],
-  //   [3, 11, 5],
-  // ]) .transpose ())
+  test_lower_upper_decomposition (t, num.matrix ([
+    [1, 3, 1],
+    [1, 1, -1],
+    [3, 11, 5],
+  ]) .transpose ())
 
   test_lower_upper_decomposition (t, num.matrix ([
     [1, 3, 1],
