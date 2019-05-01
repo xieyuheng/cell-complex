@@ -73,16 +73,6 @@ class matrix_t extends eu.matrix_t <bigint> {
     })
   }
 
-  // clone (the: {
-  //   buffer: Array <bigint>,
-  //   shape: [number, number],
-  //   strides: [number, number],
-  //   offset?: number,
-  // }): matrix_t {
-  //   console.log ("int.matrix_t.clone")
-  //   return new matrix_t ({ ...this, ...the })
-  // }
-
   copy (): matrix_t {
     return new matrix_t (super.copy ())
   }
@@ -120,6 +110,12 @@ class matrix_t extends eu.matrix_t <bigint> {
   ): matrix_t {
     return new matrix_t (
       eu.matrix_t.ring_id (ring, n)
+    )
+  }
+
+  transpose (): matrix_t {
+    return new matrix_t (
+      super.transpose ()
     )
   }
 }
