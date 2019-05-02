@@ -23,8 +23,6 @@
 - [API Docs](https://api.cicada-lang.now.sh)
 
 - Try [examples](https://github.com/xieyuheng/cicada/tree/master/examples)
-  - use [`node`](https://github.com/nodejs/node) to run examples written in javascript
-  - use [`ts-node`](https://github.com/TypeStrong/ts-node) to run examples written in typescript
 
 - Contents:
   - [int](#int)
@@ -41,13 +39,13 @@
 - basic number theory
   - native js `BigInt`
 
-#### `examples/int-module.ts`:
+#### `examples/int-module.js`:
 
-``` typescript
-import assert from "assert"
+``` javascript
+let assert = require ("assert")
 
-import * as ut from "cicada-lang/lib/util"
-import * as int from "cicada-lang/lib/int"
+let ut = require ("cicada-lang/lib/util")
+let int = require ("cicada-lang/lib/int")
 
 {
   /**
@@ -78,13 +76,13 @@ import * as int from "cicada-lang/lib/int"
    *   i.e. `smith_normal_form` for integers
    */
 
-  let A = matrix ([
+  let A = int.matrix ([
     [2, 4, 4],
     [-6, 6, 12],
     [10, -4, -16],
   ])
 
-  let S = matrix ([
+  let S = int.matrix ([
     [2, 0, 0],
     [0, 6, 0],
     [0, 0, -12],
@@ -134,13 +132,13 @@ import * as int from "cicada-lang/lib/int"
   - native js `Number`
   - `epsilon` for numerical stability
 
-#### `examples/num-linear-algebra.ts`:
+#### `examples/num-linear-algebra.js`:
 
-``` typescript
-import assert from "assert"
+``` javascript
+let assert = require ("assert")
 
-import * as ut from "cicada-lang/lib/util"
-import * as num from "cicada-lang/lib/num"
+let ut = require ("cicada-lang/lib/util")
+let num = require ("cicada-lang/lib/num")
 
 {
   /**
@@ -199,15 +197,15 @@ import * as num from "cicada-lang/lib/num"
 
 ![Flatsurfaces.svg](https://github.com/xieyuheng/image-link/blob/master/homology/Flatsurfaces.svg)
 
-``` typescript
-import * as cx from "cicada-lang/lib/cell-complex"
-import * as hl from "cicada-lang/lib/homology"
-import * as ut from "cicada-lang/lib/util"
+``` javascript
+let cx = require ("cicada-lang/lib/cell-complex")
+let hl = require ("cicada-lang/lib/homology")
+let ut = require ("cicada-lang/lib/util")
 ```
 
 ![Spherecycles1.svg](https://github.com/xieyuheng/image-link/blob/master/homology/Spherecycles1.svg)
 
-``` typescript
+``` javascript
 class sphere_t extends cx.cell_complex_t {
   constructor () {
     let builder = new cx.cell_complex_builder_t ()
@@ -227,7 +225,7 @@ class sphere_t extends cx.cell_complex_t {
 
 ![Toruscycles1.svg](https://github.com/xieyuheng/image-link/blob/master/homology/Toruscycles1.svg)
 
-``` typescript
+``` javascript
 class torus_t extends cx.cell_complex_t {
   constructor () {
     let builder = new cx.cell_complex_builder_t ()
@@ -247,7 +245,7 @@ class torus_t extends cx.cell_complex_t {
 
 ![Kleincycles1.svg](https://github.com/xieyuheng/image-link/blob/master/homology/Kleincycles1.svg)
 
-``` typescript
+``` javascript
 class klein_bottle_t extends cx.cell_complex_t {
   constructor () {
     let builder = new cx.cell_complex_builder_t ()
@@ -267,7 +265,7 @@ class klein_bottle_t extends cx.cell_complex_t {
 
 ![Projectivecycles1.svg](https://github.com/xieyuheng/image-link/blob/master/homology/Projectivecycles1.svg)
 
-``` typescript
+``` javascript
 class projective_plane_t extends cx.cell_complex_t {
   constructor () {
     let builder = new cx.cell_complex_builder_t ()
@@ -285,8 +283,8 @@ class projective_plane_t extends cx.cell_complex_t {
 
 - calculate [homology groups](https://en.wikipedia.org/wiki/Homology_(mathematics)):
 
-``` typescript
-let report: any = {
+``` javascript
+let report = {
   "sphere": hl.homology_group_report (new sphere_t ()),
   "torus": hl.homology_group_report (new torus_t ()),
   "klein_bottle": hl.homology_group_report (new klein_bottle_t ()),
@@ -295,7 +293,8 @@ let report: any = {
 
 ut.log (report)
 
-{ sphere:
+let expected_report = {
+  sphere:
    { '0': { betti_number: 1, torsion_coefficients: [] },
      '1': { betti_number: 0, torsion_coefficients: [] },
      '2': { betti_number: 1, torsion_coefficients: [] },
@@ -314,7 +313,8 @@ ut.log (report)
    { '0': { betti_number: 1, torsion_coefficients: [] },
      '1': { betti_number: 0, torsion_coefficients: [ 2 ] },
      '2': { betti_number: 0, torsion_coefficients: [] },
-     euler_characteristic: 1 } }
+     euler_characteristic: 1 }
+}
 ```
 
 - Pictures by Guy Inchbald, a.k.a. [Steelpillow](https://commons.wikimedia.org/wiki/User:Steelpillow)

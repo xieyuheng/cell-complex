@@ -1,7 +1,7 @@
-import assert from "assert"
+let assert = require ("assert")
 
-import * as ut from "cicada-lang/lib/util"
-import * as num from "cicada-lang/lib/num"
+let ut = require ("cicada-lang/lib/util")
+let num = require ("cicada-lang/lib/num")
 
 {
   /**

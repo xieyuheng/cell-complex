@@ -1,7 +1,7 @@
-import assert from "assert"
+let assert = require ("assert")
 
-import * as ut from "cicada-lang/lib/util"
-import * as int from "cicada-lang/lib/int"
+let ut = require ("cicada-lang/lib/util")
+let int = require ("cicada-lang/lib/int")
 
 {
   /**
@@ -32,13 +32,13 @@ import * as int from "cicada-lang/lib/int"
    *   i.e. `smith_normal_form` for integers
    */
 
-  let A = matrix ([
+  let A = int.matrix ([
     [2, 4, 4],
     [-6, 6, 12],
     [10, -4, -16],
   ])
 
-  let S = matrix ([
+  let S = int.matrix ([
     [2, 0, 0],
     [0, 6, 0],
     [0, 0, -12],

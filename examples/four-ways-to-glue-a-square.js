@@ -1,6 +1,6 @@
-import * as cx from "cicada-lang/lib/cell-complex"
-import * as hl from "cicada-lang/lib/homology"
-import * as ut from "cicada-lang/lib/util"
+let cx = require ("cicada-lang/lib/cell-complex")
+let hl = require ("cicada-lang/lib/homology")
+let ut = require ("cicada-lang/lib/util")
 
 class sphere_t extends cx.cell_complex_t {
   constructor () {
@@ -64,7 +64,7 @@ class projective_plane_t extends cx.cell_complex_t {
   }
 }
 
-let report: any = {
+let report = {
   "sphere": hl.homology_group_report (new sphere_t ()),
   "torus": hl.homology_group_report (new torus_t ()),
   "klein_bottle": hl.homology_group_report (new klein_bottle_t ()),

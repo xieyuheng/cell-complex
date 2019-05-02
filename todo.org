@@ -9,6 +9,13 @@
 - reuse cell_complex_t
 - find cycles of graph by spanning tree's complement edges
   - homology of general graph
+* euclidean-space
+- no integral-module.ts just int.ts
+- matrix as vector
+- linear diophantine equations with mod -- finite field
+- convert invariant_factors to elementary_divisors
+- primary_decomposition -- [rank, [[p0, n0], [p1, n1], ...]]
+- chinese_remainder_theorem
 * hackenbush
 - with editor
 * computational-science
@@ -16,11 +23,6 @@
 - circulant matrix
 * polynomial
 - polynomial.ts -- symbolic algebra
-* euclidean-space
-- linear diophantine equations with mod -- finite field
-- convert invariant_factors to elementary_divisors
-- primary_decomposition -- [rank, [[p0, n0], [p1, n1], ...]]
-- chinese_remainder_theorem
 * optimize
 - optimize frame_t and series_t by not using data_t
   but to use matrix_t and vector_t
