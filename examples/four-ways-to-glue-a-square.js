@@ -65,10 +65,10 @@ class projective_plane_t extends cx.cell_complex_t {
 }
 
 let report = {
-  "sphere": hl.homology_group_report (new sphere_t ()),
-  "torus": hl.homology_group_report (new torus_t ()),
-  "klein_bottle": hl.homology_group_report (new klein_bottle_t ()),
-  "projective_plane": hl.homology_group_report (new projective_plane_t ()),
+  "sphere": hl.report (new sphere_t ()),
+  "torus": hl.report (new torus_t ()),
+  "klein_bottle": hl.report (new klein_bottle_t ()),
+  "projective_plane": hl.report (new projective_plane_t ()),
 }
 
 ut.log (report)

@@ -130,7 +130,7 @@ function boundary_matrix (
 }
 
 export
-function homology_group (
+function homology_diag_canonical (
   com: cx.cell_complex_t,
   dim: number,
 ): int.matrix_t {
@@ -153,9 +153,9 @@ function euler_characteristic (
   let n = 0
   for (let d of ut.range (0, com.dim + 1)) {
     if (d % 2 === 0) {
-      n += homology_group (com, d) .rank ()
+      n += homology_diag_canonical (com, d) .rank ()
     } else {
-      n -= homology_group (com, d) .rank ()
+      n -= homology_diag_canonical (com, d) .rank ()
     }
   }
   return n
@@ -185,12 +185,12 @@ function torsion_coefficients (
 }
 
 export
-function homology_group_report (
+function report (
   com: cx.cell_complex_t,
 ) {
   let obj: any = {}
   for (let d of ut.range (0, com.dim + 1)) {
-    let diag_canonical = homology_group (com, d)
+    let diag_canonical = homology_diag_canonical (com, d)
     obj [d] = {
       betti_number: betti_number (diag_canonical),
       torsion_coefficients: torsion_coefficients (diag_canonical),
