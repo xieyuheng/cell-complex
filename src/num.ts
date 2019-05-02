@@ -125,6 +125,12 @@ class matrix_t extends eu.matrix_t <number> {
     )
   }
 
+  append_cols (that: matrix_t): matrix_t {
+    return new matrix_t (
+      this.append_cols (that)
+    )
+  }
+
   row_echelon_form (): matrix_t {
     let matrix = this.copy ()
     let [m, n] = this.shape
