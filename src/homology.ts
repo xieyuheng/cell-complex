@@ -4,7 +4,6 @@ import * as ut from "./util"
 import { dic_t } from "./dic"
 import * as int from "./int"
 import * as cx from "./cell-complex"
-import { integral_module_t } from "./integral-module"
 
 export
 class chain_t {
@@ -134,7 +133,7 @@ export
 function homology_group (
   com: cx.cell_complex_t,
   dim: number,
-): integral_module_t {
+): int.matrix_t {
   let low = boundary_matrix (com, dim)
   let high = boundary_matrix (com, dim + 1)
   let kernel = low.kernel ()
@@ -143,9 +142,7 @@ function homology_group (
   if (matrix === null) {
     throw new Error ("[internal] solve_matrix fail")
   } else {
-    return integral_module_t.from_smith_normal_form (
-      matrix.diag_canonical_form ()
-    )
+    return matrix.diag_canonical_form ()
   }
 }
 
@@ -165,15 +162,38 @@ function euler_characteristic (
 }
 
 export
+function betti_number (
+  diag_canonical: int.matrix_t
+): number {
+  let [m, n] = diag_canonical.shape
+  let r = diag_canonical.rank ()
+  return m - r
+}
+
+export
+function torsion_coefficients (
+  diag_canonical: int.matrix_t
+): Array <number> {
+  let array = new Array ()
+  let invariant_factors = diag_canonical.diag ()
+  for (let v of invariant_factors.values ()) {
+    if (v !== 0n && v !== 1n) {
+      array.push (Number (int.abs (v)))
+    }
+  }
+  return array
+}
+
+export
 function homology_group_report (
   com: cx.cell_complex_t,
 ) {
   let obj: any = {}
   for (let d of ut.range (0, com.dim + 1)) {
-    let report = homology_group (com, d) .report ()
+    let diag_canonical = homology_group (com, d)
     obj [d] = {
-      betti_number: report.rank,
-      torsion_coefficients: report.torsion_coefficients,
+      betti_number: betti_number (diag_canonical),
+      torsion_coefficients: torsion_coefficients (diag_canonical),
     }
   }
   obj ["euler_characteristic"] = euler_characteristic (com)

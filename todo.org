@@ -1,4 +1,6 @@
 * polytope
+- hull_t
+- intersection_t
 - polytope
   - a set of n >= 0 points is affinely independent
     if its affine hull has dimension n − 1,
@@ -10,7 +12,6 @@
 - find cycles of graph by spanning tree's complement edges
   - homology of general graph
 * euclidean-space
-- no integral-module.ts just int.ts
 - matrix as vector
 - linear diophantine equations with mod -- finite field
 - convert invariant_factors to elementary_divisors
