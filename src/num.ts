@@ -31,11 +31,6 @@ let nums = new set_t <number> ({
 })
 
 export
-function abs_lt (x: number, y: number): boolean {
-  return Math.abs (x) < Math.abs (y)
-}
-
-export
 let ring = eu.ring <number> ({
   elements: nums,
   zero: 0,
@@ -43,7 +38,7 @@ let ring = eu.ring <number> ({
   neg: (x: number) => - x,
   one: 1,
   mul: (x: number, y: number) => x * y,
-  degree_lt: abs_lt,
+  degree_lt: (x: number, y: number) => false,
   divmod: (x: number, y: number) => [x / y, 0],
 })
 
@@ -327,20 +322,4 @@ function vector (
   return new vector_t (
     eu.vector_t.from_ring_Array (ring, array.map (Number))
   )
-}
-
-// let A: matrix_t = matrix ([
-//   [1, 3, 1],
-//   [1, 1, -1],
-//   [3, 11, 5],
-// ]) .transpose ()
-
-abstract class entity_t <E extends entity_t <E>> {
-  abstract create (): E
-}
-
-class apple_t extends entity_t <apple_t> {
-  create (): apple_t {
-    return new apple_t ()
-  }
 }
