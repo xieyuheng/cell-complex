@@ -149,14 +149,20 @@ class morphism_t {
   /**
    * Here the structure of `im_dic_t` is the key
    *   of the definition of `cell_complex_t` and `cell_t`.
+
    * It is not enough to record a dic
-   *   between cell id in dom to cell id in cod,
+   *   from cell id in dom to cell id in cod,
    *   we also need to record how the boundary of cell in dom
    *     is mapped to the boundary of cell in cod.
-   * I found this by constructing 
+
+   * I found this by constructing
    *   the vertex figures of `cell_complex_t`,
-   *   without the extra information, 
-   *   it will be impossible to construct vertex figure 
+   *   without the extra information,
+   *   it will be impossible to construct vertex figure.
+
+   * for `id => im.id`
+   *   `im.cell.dom == dom.get (id) .dom`
+   *   `im.cell.cod == cod.get (im.id) .dom`
    */
   dic: im_dic_t
 
@@ -358,6 +364,11 @@ interface morphism_exp_t {
 
 export
 class cell_complex_t {
+  /**
+   * for `id => cell`
+   *   `cell.dom == new spherical_t (...)`
+   *   `cell.cod == this.skeleton (id.dim - 1)`
+   */
   readonly cell_dic: dic_t <id_t, cell_t>
   protected name_dic: dic_t <string, id_t>
 
