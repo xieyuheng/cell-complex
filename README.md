@@ -129,7 +129,7 @@ const int = require ("cicada-lang/lib/int")
 
 - basic float number
   - native js `Number`
-  - `epsilon` for numerical stability
+  - with config-able `epsilon` for numerical stability
 
 #### `examples/num-linear-algebra.js`:
 

@@ -1,3 +1,4 @@
+- how to describe edge and face so they are easy to draw
 - geometry of convex polytope
   - example of give topological structure geometry
 - classification of regular polytope
