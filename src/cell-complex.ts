@@ -143,11 +143,32 @@ class im_dic_t extends dic_t <id_t, im_t> {
  */
 export
 class morphism_t {
+  dom: cell_complex_t
+  cod: cell_complex_t
+
+  /**
+   * Here the structure of `im_dic_t` is the key
+   *   of the definition of `cell_complex_t` and `cell_t`.
+   * It is not enough to record a dic
+   *   between cell id in dom to cell id in cod,
+   *   we also need to record how the boundary of cell in dom
+   *     is mapped to the boundary of cell in cod.
+   * I found this by constructing 
+   *   the vertex figures of `cell_complex_t`,
+   *   without the extra information, 
+   *   it will be impossible to construct vertex figure 
+   */
+  dic: im_dic_t
+
   constructor (
-    readonly dom: cell_complex_t,
-    readonly cod: cell_complex_t,
-    readonly dic: im_dic_t,
+    dom: cell_complex_t,
+    cod: cell_complex_t,
+    dic: im_dic_t,
   ) {
+    this.dom = dom
+    this.cod = cod
+    this.dic = dic
+
     if (! im_dic_compatible_p (dom, cod, dic)) {
       throw new Error ("im_dic not compatible")
     }

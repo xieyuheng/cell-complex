@@ -1,4 +1,5 @@
-- how to describe edge and face so they are easy to draw
+- how to describe edge and face so they are easy to draw ?
+- a generic way to specify geometry of cell-complex
 - geometry of convex polytope
   - example of give topological structure geometry
 - classification of regular polytope

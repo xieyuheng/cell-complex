@@ -26,6 +26,12 @@ class conical_hull_t {
 
 }
 
+// MAYBE
+// export
+// class affine_hull_t {
+
+// }
+
 export
 class halfspace_intersection_t {
   argumented: num.matrix_t
