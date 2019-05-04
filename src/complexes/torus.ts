@@ -4,7 +4,7 @@ export
 class torus_t extends cx.cell_complex_t {
   constructor () {
     let builder = new cx.cell_complex_builder_t ()
-    let origin = builder.inc_one_point ()
+    let origin = builder.attach_point ()
     let polo = builder.attach_edge (origin, origin)
     let toro = builder.attach_edge (origin, origin)
     let surf = builder.attach_face ([

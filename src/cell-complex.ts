@@ -606,16 +606,16 @@ class cell_complex_builder_t {
     return new id_t (dim, ser)
   }
 
-  inc_one_point (): id_t {
+  attach_point (): id_t {
     let id = this.gen_id (0)
     this.set (id, empty_cell)
     return id
   }
 
-  inc_points (n: number): Array <id_t> {
+  attach_points (n: number): Array <id_t> {
     let array = new Array <id_t> ()
     for (let i = 0; i < n; i += 1) {
-      array.push (this.inc_one_point ())
+      array.push (this.attach_point ())
     }
     return array
   }
@@ -943,7 +943,7 @@ class vertex_figure_t extends cell_complex_t {
     for (let [id, cell] of com.in_dim (1)) {
       for (let p of cell.dom.points ()) {
         if (cell.dic.get (p) .id.eq (vertex)) {
-          idx_dic.set ([id, p], builder.inc_one_point ())
+          idx_dic.set ([id, p], builder.attach_point ())
         }
       }
     }
@@ -1092,7 +1092,7 @@ class discrete_complex_t extends cell_complex_t {
 
   constructor (size: number) {
     let builder = new cell_complex_builder_t ()
-    builder.inc_points (size)
+    builder.attach_points (size)
     super (builder)
     this.size = size
   }
@@ -1178,7 +1178,7 @@ class polygon_t extends cell_complex_t {
   constructor (size: number) {
     let builder = new cell_complex_builder_t ()
     let side_id_array = []
-    let vertex_id_array = builder.inc_points (size)
+    let vertex_id_array = builder.attach_points (size)
     let i = 0
     while (i < size - 1) {
       side_id_array.push (

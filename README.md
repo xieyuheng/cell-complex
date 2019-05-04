@@ -208,7 +208,7 @@ const ut = require ("cicada-lang/lib/util")
 class sphere_t extends cx.cell_complex_t {
   constructor () {
     const builder = new cx.cell_complex_builder_t ()
-    const [south, middle, north] = builder.inc_points (3)
+    const [south, middle, north] = builder.attach_points (3)
     const south_long = builder.attach_edge (south, middle)
     const north_long = builder.attach_edge (middle, north)
     const surf = builder.attach_face ([
@@ -228,7 +228,7 @@ class sphere_t extends cx.cell_complex_t {
 class torus_t extends cx.cell_complex_t {
   constructor () {
     const builder = new cx.cell_complex_builder_t ()
-    const origin = builder.inc_one_point ()
+    const origin = builder.attach_point ()
     const toro = builder.attach_edge (origin, origin)
     const polo = builder.attach_edge (origin, origin)
     const surf = builder.attach_face ([
@@ -248,7 +248,7 @@ class torus_t extends cx.cell_complex_t {
 class klein_bottle_t extends cx.cell_complex_t {
   constructor () {
     const builder = new cx.cell_complex_builder_t ()
-    const origin = builder.inc_one_point ()
+    const origin = builder.attach_point ()
     const toro = builder.attach_edge (origin, origin)
     const cross = builder.attach_edge (origin, origin)
     const surf = builder.attach_face ([
@@ -268,7 +268,7 @@ class klein_bottle_t extends cx.cell_complex_t {
 class projective_plane_t extends cx.cell_complex_t {
   constructor () {
     const builder = new cx.cell_complex_builder_t ()
-    const [start, end] = builder.inc_points (2)
+    const [start, end] = builder.attach_points (2)
     const left_rim = builder.attach_edge (start, end)
     const right_rim = builder.attach_edge (end, start)
     const surf = builder.attach_face ([

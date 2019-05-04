@@ -4,7 +4,7 @@ export
 class sphere_t extends cx.cell_complex_t {
   constructor () {
     let builder = new cx.cell_complex_builder_t ()
-    let [south, middle, north] = builder.inc_points (3)
+    let [south, middle, north] = builder.attach_points (3)
     let south_long = builder.attach_edge (south, middle)
     let north_long = builder.attach_edge (middle, north)
     let surf = builder.attach_face ([
@@ -27,7 +27,7 @@ export
 class torus_t extends cx.cell_complex_t {
   constructor () {
     let builder = new cx.cell_complex_builder_t ()
-    let origin = builder.inc_one_point ()
+    let origin = builder.attach_point ()
     let toro = builder.attach_edge (origin, origin)
     let polo = builder.attach_edge (origin, origin)
     let surf = builder.attach_face ([
@@ -49,7 +49,7 @@ export
 class klein_bottle_t extends cx.cell_complex_t {
   constructor () {
     let builder = new cx.cell_complex_builder_t ()
-    let origin = builder.inc_one_point ()
+    let origin = builder.attach_point ()
     let toro = builder.attach_edge (origin, origin)
     let cross = builder.attach_edge (origin, origin)
     let surf = builder.attach_face ([
@@ -71,7 +71,7 @@ export
 class projective_plane_t extends cx.cell_complex_t {
   constructor () {
     let builder = new cx.cell_complex_builder_t ()
-    let [start, end] = builder.inc_points (2)
+    let [start, end] = builder.attach_points (2)
     let left_rim = builder.attach_edge (start, end)
     let right_rim = builder.attach_edge (end, start)
     let surf = builder.attach_face ([

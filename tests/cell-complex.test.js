@@ -15,7 +15,7 @@ test ("cx.cell_complex_t.from_exp", t => {
   let com = cx.cell_complex_t.from_exp (exp)
   t.deepEqual (exp, com.to_exp ())
 
-  ut.log (torus.to_exp ())
+  // ut.log (torus.to_exp ())
 })
 
 test ("cx.manifold_check", t => {
