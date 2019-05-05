@@ -4,8 +4,8 @@
 - Date: 2019-05-06
 
 To explain how I model cell-complex,
-I start from how one might model graph,
-and generalize the model to higher dimension recursively.
+- I start from how one might model graph,
+- and generalize the model to higher dimension recursively.
 
 TODO
 
