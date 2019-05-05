@@ -182,7 +182,7 @@ const num = require ("cicada-lang/lib/num")
 ### `cx` cell-complex
 
 - cell-complex based low dimensional algebraic topology library
-- [`docs/a-combinatorial-description-of-cell-complex`](docs/a-combinatorial-description-of-cell-complex.md)
+- [`docs/a-combinatorial-description-of-cell-complex.md`](docs/a-combinatorial-description-of-cell-complex.md)
 
 ### `gh` graph
 
