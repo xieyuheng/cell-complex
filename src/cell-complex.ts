@@ -50,29 +50,24 @@ function id_to_str (id: id_t): string {
   return id.to_str ()
 }
 
-export
-class im_t {
-  constructor (
-    public id: id_t,
-    public cell: cell_t,
-  ) {}
+function im_eq (
+  x: { id: id_t, cell: cell_t },
+  y: { id: id_t, cell: cell_t },
+): boolean {
+  return x.id.eq (y.id) && x.cell.eq (y.cell)
+}
 
-  to_exp (): im_exp_t {
-    return {
-      id: this.id.to_str (),
-      cell: this.cell.to_exp (),
-    }
-  }
-
-  eq (that: im_t): boolean {
-    return this.id.eq (that.id) && this.cell.eq (that.cell)
+function im_to_exp (im: { id: id_t, cell: cell_t }): im_exp_t {
+  return {
+    id: im.id.to_str (),
+    cell: im.cell.to_exp (),
   }
 }
 
 function im_dic_dim_compatible_p (
   dom: cell_complex_t,
   cod: cell_complex_t,
-  dic: im_dic_t,
+  dic: dic_t <id_t, { id: id_t, cell: cell_t }>,
   dim: number,
 ): boolean {
   for (let [id, im] of dic) {
@@ -92,7 +87,7 @@ function im_dic_dim_compatible_p (
 function im_dic_compatible_p (
   dom: cell_complex_t,
   cod: cell_complex_t,
-  dic: im_dic_t,
+  dic: dic_t <id_t, { id: id_t, cell: cell_t }>,
 ): boolean {
   if (dom.cell_dic.size !== dic.size) {
     return false
@@ -109,7 +104,7 @@ function im_dic_compatible_p (
 }
 
 function im_dic_has_value_id (
-  dic: im_dic_t,
+  dic: dic_t <id_t, { id: id_t, cell: cell_t }>,
   id: id_t,
 ): boolean {
   for (let im of dic.values ()) {
@@ -120,11 +115,8 @@ function im_dic_has_value_id (
   return false
 }
 
-export
-class im_dic_t extends dic_t <id_t, im_t> {
-  constructor () {
-    super (id_to_str)
-  }
+function new_im_dic (): dic_t <id_t, { id: id_t, cell: cell_t }> {
+  return new dic_t (id_to_str)
 }
 
 /**
@@ -136,7 +128,7 @@ class im_dic_t extends dic_t <id_t, im_t> {
  * An edge can not be mapped to a path of two edges,
  * if we allow such map,
  * the inverse of a morphism would be problematic,
- * and the definition of [[im_t]] would be much more complicated.
+ * and the definition of [[cell_t]] would be much more complicated.
 
  * Thus to capture the category of topological spaces,
  * we also need to use subdivision.
@@ -147,7 +139,7 @@ class morphism_t {
   cod: cell_complex_t
 
   /**
-   * Here the structure of `im_dic_t` is the key
+   * Here the structure of `dic` is the key
    *   of the definition of `cell_complex_t` and `cell_t`.
 
    * It is not enough to record a dic
@@ -164,12 +156,12 @@ class morphism_t {
    *   `im.cell.dom == dom.get (id) .dom`
    *   `im.cell.cod == cod.get (im.id) .dom`
    */
-  dic: im_dic_t
+  dic: dic_t <id_t, { id: id_t, cell: cell_t }>
 
   constructor (
     dom: cell_complex_t,
     cod: cell_complex_t,
-    dic: im_dic_t,
+    dic: dic_t <id_t, { id: id_t, cell: cell_t }>,
   ) {
     this.dom = dom
     this.cod = cod
@@ -195,13 +187,14 @@ class morphism_t {
   static from_exp (exp: morphism_exp_t): morphism_t {
     let dom = cell_complex_t.from_exp (exp.dom)
     let cod = cell_complex_t.from_exp (exp.cod)
-    let dic = new im_dic_t ()
+    let dic = new_im_dic ()
     let iter = Object.entries (exp.dic)
     for (let [k, v] of iter) {
       let id = id_t.parse (k)
-      let im = new im_t (
-        id_t.parse (v.id),
-        cell_t.from_exp (v.cell))
+      let im = {
+        id: id_t.parse (v.id),
+        cell: cell_t.from_exp (v.cell),
+      }
       dic.set (id, im)
     }
     return new morphism_t (dom, cod, dic)
@@ -216,7 +209,7 @@ class morphism_t {
       return false
     } else {
       for (let [k, [x, y]] of this.dic.zip (that.dic)) {
-        if (! x.eq (y)) {
+        if (! im_eq (x, y)) {
           return false
         }
       }
@@ -229,7 +222,7 @@ export
 class morphism_builder_t {
   dom: cell_complex_t
   cod: cell_complex_t
-  dic: im_dic_t
+  dic: dic_t <id_t, { id: id_t, cell: cell_t }>
 
   constructor (
     dom: cell_complex_t,
@@ -237,11 +230,11 @@ class morphism_builder_t {
   ) {
     this.dom = dom
     this.cod = cod
-    this.dic = new im_dic_t ()
+    this.dic = new_im_dic ()
   }
 
   point (x: id_t, y: id_t): morphism_builder_t {
-    let im = new im_t (y, empty_cell)
+    let im = { id: y, cell: empty_cell }
     this.dic.set (x, im)
     return this
   }
@@ -254,11 +247,11 @@ class morphism_builder_t {
     let cell = new cell_t (
       new endpoints_t (),
       this.cod.skeleton (1),
-      new im_dic_t () .merge_array ([
-        [new id_t (0, 0), new im_t (new id_t (0, 0), empty_cell)],
-        [new id_t (0, 1), new im_t (new id_t (0, 1), empty_cell)],
+      new_im_dic () .merge_array ([
+        [new id_t (0, 0), {id: new id_t (0, 0), cell: empty_cell}],
+        [new id_t (0, 1), {id: new id_t (0, 1), cell: empty_cell}],
       ]))
-    let im = new im_t (y, cell)
+    let im = { id: y, cell: cell }
     this.dic.set (x, im)
     return this
   }
@@ -271,11 +264,11 @@ class morphism_builder_t {
     let cell = new cell_t (
       new endpoints_t (),
       this.cod.skeleton (1),
-      new im_dic_t () .merge_array ([
-        [new id_t (0, 0), new im_t (new id_t (0, 1), empty_cell)],
-        [new id_t (0, 1), new im_t (new id_t (0, 0), empty_cell)],
+      new_im_dic () .merge_array ([
+        [new id_t (0, 0), {id: new id_t (0, 1), cell: empty_cell}],
+        [new id_t (0, 1), {id: new id_t (0, 0), cell: empty_cell}],
       ]))
-    let im = new im_t (y, cell)
+    let im = { id: y, cell: cell }
     this.dic.set (x, im)
     return this
   }
@@ -296,7 +289,7 @@ class morphism_builder_t {
     return new cell_t (this.dom, this.cod, this.dic)
   }
 
-  build_im_dic (): im_dic_t {
+  build_im_dic (): dic_t <id_t, { id: id_t, cell: cell_t }> {
     return this.dic
   }
 }
@@ -308,7 +301,7 @@ class cell_t extends morphism_t {
   constructor (
     dom: cell_complex_t,
     cod: cell_complex_t,
-    dic: im_dic_t,
+    dic: dic_t <id_t, { id: id_t, cell: cell_t }>,
   ) {
     super (dom, cod, dic)
     this.dom = dom.as_spherical ()
@@ -317,13 +310,14 @@ class cell_t extends morphism_t {
   static from_exp (exp: morphism_exp_t): cell_t {
     let dom = cell_complex_t.from_exp (exp.dom)
     let cod = cell_complex_t.from_exp (exp.cod)
-    let dic = new im_dic_t ()
+    let dic = new_im_dic ()
     let iter = Object.entries (exp.dic)
     for (let [k, v] of iter) {
       let id = id_t.parse (k)
-      let im = new im_t (
-        id_t.parse (v.id),
-        cell_t.from_exp (v.cell))
+      let im = {
+        id: id_t.parse (v.id),
+        cell: cell_t.from_exp (v.cell),
+      }
       dic.set (id, im)
     }
     return new cell_t (dom, cod, dic)
@@ -332,7 +326,7 @@ class cell_t extends morphism_t {
 
 export
 function im_dic_to_exp (
-  dic: im_dic_t
+  dic: dic_t <id_t, { id: id_t, cell: cell_t }>
 ): {
   [id: string]: im_exp_t
 } {
@@ -340,7 +334,7 @@ function im_dic_to_exp (
     [id: string]: im_exp_t
   } = {}
   for (let [id, im] of dic) {
-    exp [id.to_str ()] = im.to_exp ()
+    exp [id.to_str ()] = im_to_exp (im)
   }
   return exp
 }
@@ -686,7 +680,7 @@ class cell_complex_builder_t {
 function epimorphism_p (
   dom: cell_complex_t,
   cod: cell_complex_t,
-  dic: im_dic_t,
+  dic: dic_t <id_t, { id: id_t, cell: cell_t }>,
 ): boolean {
   for (let id of cod.cell_dic.keys ()) {
     if (! im_dic_has_value_id (dic, id)) {
@@ -701,7 +695,7 @@ class epimorphism_t extends morphism_t {
   constructor (
     dom: cell_complex_t,
     cod: cell_complex_t,
-    dic: im_dic_t,
+    dic: dic_t <id_t, { id: id_t, cell: cell_t }>,
   ) {
     if (! epimorphism_p (dom, cod, dic)) {
       throw new Error ("not epimorphism")
@@ -713,7 +707,7 @@ class epimorphism_t extends morphism_t {
 function monomorphism_p (
   dom: cell_complex_t,
   cod: cell_complex_t,
-  dic: im_dic_t,
+  dic: dic_t <id_t, { id: id_t, cell: cell_t }>,
 ): boolean {
   let id_str_set = new Set <string> ()
   for (let im of dic.values ()) {
@@ -732,7 +726,7 @@ class monomorphism_t extends morphism_t {
   constructor (
     dom: cell_complex_t,
     cod: cell_complex_t,
-    dic: im_dic_t,
+    dic: dic_t <id_t, { id: id_t, cell: cell_t }>,
   ) {
     if (! monomorphism_p (dom, cod, dic)) {
       throw new Error ("not monomorphism")
@@ -744,7 +738,7 @@ class monomorphism_t extends morphism_t {
 function isomorphism_p (
   dom: cell_complex_t,
   cod: cell_complex_t,
-  dic: im_dic_t,
+  dic: dic_t <id_t, { id: id_t, cell: cell_t }>,
 ): boolean {
   return epimorphism_p (dom, cod, dic) && monomorphism_p (dom, cod, dic)
 }
@@ -760,7 +754,7 @@ class isomorphism_t extends morphism_t {
   constructor (
     dom: cell_complex_t,
     cod: cell_complex_t,
-    dic: im_dic_t,
+    dic: dic_t <id_t, { id: id_t, cell: cell_t }>,
   ) {
     if (! isomorphism_p (dom, cod, dic)) {
       throw new Error ("not isomorphism")
@@ -1056,7 +1050,7 @@ class empty_morphism_t extends morphism_t {
     super (
       empty_complex,
       empty_complex,
-      new im_dic_t (),
+      new_im_dic (),
     )
   }
 }
@@ -1076,7 +1070,7 @@ class empty_cell_t extends cell_t {
     super (
       empty_complex,
       empty_complex,
-      new im_dic_t (),
+      new_im_dic (),
     )
   }
 }
@@ -1221,7 +1215,7 @@ function polygon_zip_circuit (
   polygon: polygon_t,
   cod: cell_complex_t,
   circuit: circuit_t,
-): im_dic_t {
+): dic_t <id_t, { id: id_t, cell: cell_t }> {
   let size = polygon.size
   let builder = new morphism_builder_t (polygon, cod)
   for (let i = 0; i < size; i += 1) {
