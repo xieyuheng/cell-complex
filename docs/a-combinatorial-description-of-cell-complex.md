@@ -1,4 +1,4 @@
-# Combinatorial Description of cell-complex
+# A Combinatorial Description of cell-complex
 
 - Author: Xie Yuheng
 - Date: 2019-05-06
