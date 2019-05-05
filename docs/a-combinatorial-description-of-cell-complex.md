@@ -7,7 +7,16 @@ To explain how I model cell-complex,
 - I start from how one might model graph,
 - and generalize the model to higher dimension recursively.
 
-TODO
+## `graph_t`
+
+``` typescript
+class id_t {
+  dim: number
+  ser: number
+}
+```
+
+## `cell_complex_t`
 
 ``` typescript
 class id_t {
