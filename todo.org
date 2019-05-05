@@ -1,16 +1,25 @@
-- how to describe edge and face so they are easy to draw ?
-- a generic way to specify geometry of cell-complex
+- mesh generation
+  - 3d model sculpturing
+  - to give geometry to cell-complex
+    we can generate mesh for cell-complex
 - geometry of convex polytope
   - example of give topological structure geometry
-- classification of regular polytope
 - algebra of cell-complex
   - check equality proof
   - the game of equality
 - classification of 2 manifold
+- classification of regular polytope
+- how to describe edge and face so they are easy to draw ?
+- a generic way to specify geometry of cell-complex
 * polytope
+- fourier-motzkin elimination
+- simplify inequalities
+- double description method
 - abstract/order.ts -- for num.ts, for polytope.ts
-- polytope
 - use num.ts to re-imp hackenbush
+* mathematical structures
+- ring.cs substructure and ideal_t
+- order.ts -- lattice_t, poset_t, total_t, heyting_algebra_t
 * graph
 - reuse cell_complex_t
 - find cycles of graph by spanning tree's complement edges
@@ -117,8 +126,6 @@
   - no `,` in function call
     maybe we need to limit the use of infix notation
   - use babel api to handle the syntax
-* mathematical structures in cicada
-- ring.cs substructure and ideal_t
 * dance
 - 3 circle dance
 - 4 circle dance

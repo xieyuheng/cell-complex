@@ -18,22 +18,25 @@ class convex_hull_t {
   // }
 
   // TODO
-  // dual (): halfspace_intersection_t
+  // to_intersection (): intersection_t
 }
 
 export
 class conical_hull_t {
+  matrix: num.matrix_t
 
+  constructor (
+    matrix: num.matrix_t,
+  ) {
+    this.matrix = matrix
+  }
+
+  // TODO
+  // to_linear_intersection (): linear_intersection_t
 }
 
-// MAYBE
-// export
-// class affine_hull_t {
-
-// }
-
 export
-class halfspace_intersection_t {
+class intersection_t {
   argumented: num.matrix_t
 
   constructor (
@@ -42,15 +45,33 @@ class halfspace_intersection_t {
     this.argumented = argumented
   }
 
-  // homogenize (): linear_halfspace_intersection_t {
+  // homogenize (): linear_intersection_t {
   // TODO
   // }
 
   // TODO
-  // proj (): {}
+  // to_convex_conical_hull (): [convex_hull_t, conical_hull_t] {}
+
+  // TODO
+  // proj (): intersection_t {}
 }
 
 // TODO
-class linear_halfspace_intersection_t {
+class linear_intersection_t {
+  argumented: num.matrix_t
 
+  constructor (
+    argumented: num.matrix_t,
+  ) {
+    this.argumented = argumented
+  }
+
+  // TODO
+  // to_conical_hull (): conical_hull_t {}
+
+  // TODO
+  // proj (): linear_intersection_t {}
 }
+
+// TODO
+// class polytope_t {}
