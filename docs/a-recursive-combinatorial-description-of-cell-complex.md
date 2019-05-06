@@ -418,10 +418,10 @@ More example cell-complexes can be found at the [main project page](https://gith
 
 `dic_t` can be viewed as sparse matrix.
 
-The recursive definition of `cell_t` means that, instead of incidence matrix,
+The recursive definition of `cell_t` means that, instead of incidence matrix,  
 we need higher order incidence tensor to describe cell-complex.
 
-For example, for 1-dimensional edges, we can use incidence matrix (like in graph theory),
+For example, for 1-dimensional edges, we can use incidence matrix (like in graph theory),  
 while for 2-dimensional faces, to represent the incidence relation,  
 we need a matrix valued matrix, i.e. a tensor of order four,  
 where the inner matrix encode the orientation of the incidence relation.
