@@ -421,6 +421,9 @@ More example cell-complexes can be found at the [main project page](https://gith
 The recursive definition of `cell_t` means that, instead of incidence matrix,  
 we need higher order incidence tensor to describe cell-complex.
 
+For example, for 1-dimensional edges, we can use incidence matrix (like in graph theory),  
+while for 2-dimensional faces, to represent the incidence relation, we need tensor of order three.
+
 ## Note about space complexity
 
 Due to the recursive construction, the space increases exponentially with the dimension.
