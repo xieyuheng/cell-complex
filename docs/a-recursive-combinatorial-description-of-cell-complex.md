@@ -16,6 +16,7 @@ I provide a recursive combinatorial description of cell-complex, with the hope t
 - [Graph as an example (to let readers be familiar with the pseudo code)](#graph-as-an-example-to-let-readers-be-familiar-with-the-pseudo-code)
 - [Cell-complex](#cell-complex)
 - [Cell-complex (again with comments)](#cell-complex-again-with-comments)
+- [Examples](#examples)
 - [Note about incidence matrix](#note-about-incidence-matrix)
 - [Future works](#future-works)
 - [References](#references)
@@ -161,6 +162,11 @@ class spherical_evidence_t {
    */
 }
 ```
+
+## Examples
+
+Example constructions of cell-complexes can be found at the [main project page](https://github.com/xieyuheng/cicada#hl-homology),
+they are written in higher level interface functions abstracted over the basic data structures above.
 
 ## Note about incidence matrix
 
