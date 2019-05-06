@@ -106,9 +106,9 @@ class cell_t {
 
 This means,
 to construct a `cell`,
-one have to **provide the evidence** that the `dom` of the `cell` is `spherical`.
+one have to **provide the evidence** that the `dom` of the `cell` is spherical.
 
-i.e. I pushed the responsibility of making sure the `dom` is `spherical` to people who use my method.
+i.e. I pushed the responsibility of making sure the `dom` is spherical to people who use my method.
 
 It is required that the `dom` must be a spherical cell-complex,
 but "check" can means "write a program to decide whether a cell-complex is spherical".
