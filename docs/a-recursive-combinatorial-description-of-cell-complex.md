@@ -23,16 +23,16 @@ I provide a recursive combinatorial description of cell-complex, with the hope t
 
 ## Introduction
 
-It is known that higher dimensional sphere recognition is undecidable[^1].
+It is known that higher dimensional sphere recognition is undecidable[#1].
 
-But we should not conclude that combinatorial description cannot be given (such as in section 12 of [^2]),
+But we should not conclude that combinatorial description cannot be given (such as in section 12 of [#2]),  
 because "describable" (or "constructible") is weaker than "decidable".
 
-And the construction of higher dimensional cell-complex by my method
+And the construction of higher dimensional cell-complex by my method  
 is not limited by sphere recognition problem's undecidability.
-- See section ["Cell-complex (again with comments)"][Cell-complex (again with comments)] for details.
+- See section ["Cell-complex (again with comments)"](#cell-complex-again-with-comments) for details.
 
-To explain how I model cell-complex,
+To explain how I model cell-complex,  
 I use javascript-like pseudo code to describe data structure.
 
 ## Graph as an example (to let readers be familiar with the pseudo code)
@@ -184,7 +184,7 @@ class spherical_evidence_t {
 
 ## Examples
 
-Example constructions of cell-complexes can be found at the [main project page](https://github.com/xieyuheng/cicada#hl-homology),
+Example constructions of cell-complexes can be found at the [main project page](https://github.com/xieyuheng/cicada#hl-homology),  
 they are written in higher level interface functions abstracted over the basic data structures above.
 
 Further documentation about programming interface is work in progress.
@@ -193,7 +193,8 @@ Further documentation about programming interface is work in progress.
 
 `dic_t` can be viewed as sparse matrix.
 
-The recursive definition of `cell_t` means that, instead of incidence matrix, we need higher order incidence tensor to describe cell-complex.
+The recursive definition of `cell_t` means that, instead of incidence matrix,  
+we need higher order incidence tensor to describe cell-complex.
 
 ## Future works
 
@@ -203,9 +204,9 @@ Based on the basic construction of cell-complex, I plan to:
 
 ## References
 
-[^1]: "Unrecognizability of manifolds"
+[#1]: "Unrecognizability of manifolds"
   by A.V. Chernavsky, V.P. Leksine.
 
-[^2]: "Topological methods, in: 'Handbook of Combinatorics'"
+[#2]: "Topological methods, in: 'Handbook of Combinatorics'"
   by Anders Björner,
   (R. Graham, M. Grötschel, and L. Lovász, eds.)
