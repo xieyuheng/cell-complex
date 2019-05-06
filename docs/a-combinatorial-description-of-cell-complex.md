@@ -1,7 +1,9 @@
 # A Combinatorial Description of cell-complex
 
+------
 - Author: Xie Yuheng
 - Date: 2019-05-06
+------
 
 To explain how I model cell-complex,
 I use javascript-like pseudo code to describe data structure.
