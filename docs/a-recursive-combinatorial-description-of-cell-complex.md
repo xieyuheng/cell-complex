@@ -9,8 +9,7 @@
 ## Abstract
 
 I provide a recursive combinatorial description of cell-complex,  
-with the hope that it will serves as a stepstone  
-for further formalization and experiments in algebraic topology.
+with the hope that it will serves as a stepstone for further formalization and experiments in algebraic topology.
 
 ### Contains
 
