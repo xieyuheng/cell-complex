@@ -117,3 +117,5 @@ but "check" can means "write a program to decide whether a cell-complex is spher
 
 My construction of cell-complex, does not require such program exist,
 because one have to provide the `spherical_evidence` by hand (i.e. not generate by a computer program).
+
+And this does not make the construction invalid.
