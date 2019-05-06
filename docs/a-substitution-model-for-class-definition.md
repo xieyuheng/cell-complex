@@ -1,8 +1,35 @@
 # A Substitution Model for Class Definition
 
-I wish the following remark can make my idea more clear.
+My overall class definitions are:
 
-in the definition of `class spherical_t`
+``` typescript
+class id_t {
+  dim: number
+  ser: number
+}
+
+class cell_complex_t {
+  cell_dic: dic_t <id_t, cell_t>
+}
+
+class cell_t {
+  dom: spherical_t
+  cod: cell_complex_t
+  dic: dic_t <id_t, { id: id_t, cell: cell_t }>
+}
+
+class spherical_t extends cell_complex_t {
+  spherical_evidence: spherical_evidence_t
+}
+
+class spherical_evidence_t {
+  /**
+   * [detail definition omitted]
+   */
+}
+```
+
+In the definition of `spherical_t`:
 
 ``` typescript
 class spherical_t extends cell_complex_t {
@@ -10,15 +37,9 @@ class spherical_t extends cell_complex_t {
 }
 ```
 
-substitute `extends cell_complex_t` by the definition of `class cell_complex_t`
-
-``` typescript
-class cell_complex_t {
-  cell_dic: dic_t <id_t, cell_t>
-}
-```
-
-we get
+Substitute `extends cell_complex_t` by the definition of `cell_complex_t`,
+we get:
+- i.e. `spherical_t extends cell_complex_t` means merge the definition of `cell_complex_t` into the definition of `spherical_t`.
 
 ``` typescript
 class spherical_t {
@@ -27,18 +48,8 @@ class spherical_t {
 }
 ```
 
-substitute the above definition of `class spherical_t` and `class cell_complex_t`
-in to the definition of `class cell_t`
-
-``` typescript
-class cell_t {
-  dom: spherical_t
-  cod: cell_complex_t
-  dic: dic_t <id_t, { id: id_t, cell: cell_t }>
-}
-```
-
-we get
+And substitute the above definition of `spherical_t` and `cell_complex_t` into the definition of `cell_t`,
+we get:
 
 ``` typescript
 class cell_t {
@@ -53,8 +64,8 @@ class cell_t {
 }
 ```
 
-substitute the definition of `class spherical_evidence_t` into the above definition of `class cell_t`
-we get
+And substitute the definition of `spherical_evidence_t` into the above definition of `cell_t`,
+we get:
 
 ``` typescript
 class cell_t {
@@ -73,8 +84,8 @@ class cell_t {
 }
 ```
 
-if I do not omit the `[detail definition]` in above structure
-I will get something roughly like
+If I do not omit the `[detail definition]` in above structure,
+I will get something like:
 
 ``` typescript
 class cell_t {
@@ -92,3 +103,17 @@ class cell_t {
   dic: dic_t <id_t, { id: id_t, cell: cell_t }>
 }
 ```
+
+This means,
+to construct a `cell`,
+one have to **provide the evidence** that the `dom` of the `cell` is `spherical`.
+
+i.e. I pushed the responsibility of making sure the `dom` is `spherical` to people who use my method.
+
+It is required that the `dom` must be a spherical cell-complex,
+but "check" can means "write a program to decide whether a cell-complex is spherical".
+- It is possible to write this program for dimension 0, 1, 2, 3,
+- but not possible for dimension >= 5.
+
+My construction of cell-complex, does not require such program exist,
+because one have to provide the `spherical_evidence` by hand (i.e. not generate by a computer program).
