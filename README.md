@@ -29,6 +29,7 @@
   - [euclid](#eu-euclid)
   - [combinatorial-game](#cg-combinatorial-game)
   - [cell-complex](#cx-cell-complex)
+    - [`docs/a-recursive-combinatorial-description-of-cell-complex.md`](docs/a-recursive-combinatorial-description-of-cell-complex.md)
   - [homology](#hl-homology)
   - [cicada-core](#cc-cicada-core)
   - [cicadascript](#cs-cicadascript)
@@ -38,7 +39,7 @@
 - basic number theory
   - native js `BigInt`
 
-#### `examples/int-module.js`:
+#### [`examples/int-module.js`](examples/int-module.js):
 
 ``` javascript
 const assert = require ("assert")
@@ -131,7 +132,7 @@ const int = require ("cicada-lang/lib/int")
   - native js `Number`
   - with config-able `epsilon` for numerical stability
 
-#### `examples/num-linear-algebra.js`:
+#### [`examples/num-linear-algebra.js`](examples/num-linear-algebra.js):
 
 ``` javascript
 const assert = require ("assert")
@@ -193,7 +194,7 @@ const num = require ("cicada-lang/lib/num")
 
 - [cellular homology](https://en.wikipedia.org/wiki/Cellular_homology) of cell-complex
 
-#### `examples/four-ways-to-glue-a-square.ts`:
+#### [`examples/four-ways-to-glue-a-square.js`](examples/four-ways-to-glue-a-square.js):
 
 ![Flatsurfaces.svg](https://github.com/xieyuheng/image-link/blob/master/homology/Flatsurfaces.svg)
 

@@ -25,11 +25,13 @@ I provide a recursive combinatorial description of cell-complex, with the hope t
 To explain how I model cell-complex,
 I use javascript-like pseudo code to describe data structure.
 
+TODO
+
 ## graph as an example (to let readers be familiar with the pseudo code)
 
 - the prefix `_t` denotes type
 - `id_t` is a serial number uniquely identify a vertex or an edge
-- `dic_t <K, V>` is a dictionary (a finite mapping) from `K` to `V`
+- `dic_t <K, V>` is a dictionary (a finite map) from `K` to `V`
 
 ``` typescript
 type id_t = number
@@ -115,7 +117,7 @@ class cell_t {
 
   dic: dic_t <id_t, { id: id_t, cell: cell_t }>
   /**
-   * Here the `dic` is a surjective mapping
+   * Here the `dic` is a surjective map
    *   from id of `dom` to id to `cod`,
    * which serves as a record of
    *   how the `cell`s in `dom` are mapped to the `cell`s in `cod`.
