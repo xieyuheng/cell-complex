@@ -6,7 +6,20 @@
 - Keywords: cell-complex, data structure.
 ------
 
-## intro
+## Abstract
+
+I provide a recursive combinatorial description of cell-complex, with the hope that it will serves as a stepstone for further formalization and experiments in algebraic topology.
+
+## Contains
+
+- [Introduction](#introduction)
+- [graph as an example (to let readers be familiar with the pseudo code)](#graph)
+- [cell-complex](#cell-complex)
+- [cell-complex (again with comments)](#cell-complex-(again-with-comments))
+- [note about incidence matrix](#note-about-incidence-matrix)
+- [future works](#future-works)
+
+## Introduction
 
 To explain how I model cell-complex,
 I use javascript-like pseudo code to describe data structure.
@@ -142,9 +155,7 @@ class spherical_evidence_t {
 
 `dic_t` can be viewed as sparse matrix.
 
-The recursive definition of `cell_t` means that,  
-instead of incidence matrix, we need  
-higher order incidence tensor to describe cell-complex.
+The recursive definition of `cell_t` means that, instead of incidence matrix, we need higher order incidence tensor to describe cell-complex.
 
 ## future works
 
