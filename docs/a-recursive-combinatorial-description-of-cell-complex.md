@@ -23,7 +23,14 @@ I provide a recursive combinatorial description of cell-complex, with the hope t
 
 ## Introduction
 
+It is known that higher dimensional sphere recognition is undecidable[^1].
 
+But we should not conclude that combinatorial description cannot be given (such as in section 12 of [^2]),
+because "describable" (or "constructible") is weaker than "decidable".
+
+And the construction of higher dimensional cell-complex by my method
+is not limited by sphere recognition problem's undecidability.
+- See section ["Cell-complex (again with comments)"][Cell-complex (again with comments)] for details.
 
 To explain how I model cell-complex,
 I use javascript-like pseudo code to describe data structure.
@@ -53,8 +60,8 @@ class graph_t {
 ## Cell-complex
 
 `cell_complex_t` can be viewed as generalization of `graph_t` to higher dimension,
-- merge `vertex_dic` and `edge_dic` to `cell_dic`
-- add `dim` field in `id_t` to distinguish dimension
+- Merge `vertex_dic` and `edge_dic` to `cell_dic`
+- Add `dim` field in `id_t` to distinguish dimension
 
 ``` typescript
 class id_t {
@@ -152,7 +159,7 @@ class spherical_t extends cell_complex_t {
    * and iosmorphism between two cell-complexes is
    *   a generalization of iosmorphism between two graphs.
 
-   * It is known that higher dimensional sphere recognition is undecidable. [^1]
+   * It is known that higher dimensional sphere recognition is undecidable.
    * This means, for higher dimensional (d >= 5) sphere,
    *   we can not write a program to decide whether a cell-complex is homeomorphic to sphere.
    * By "to decide" I mean to generate a proof,
@@ -190,7 +197,9 @@ The recursive definition of `cell_t` means that, instead of incidence matrix, we
 
 ## Future works
 
-TODO
+Based on the basic construction of cell-complex, I plan to:
+- Generalize the relation between 2-dimensional cell-complex and presentation theory of groupoid to higher dimension.
+- Provide more tools to help people study cell-complexes and algebraic topology.
 
 ## References
 
