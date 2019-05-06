@@ -409,7 +409,7 @@ and, layer by layer, design higher level interface functions.
 - This is how people control the cognitive complexity in computer science in general.
 
 The `cell_t` is recursively defined in the same way for all dimensions, but each dimension is special.  
-And for example, interface functions such as `attach_point`, `attach_face`, `attach_body` can be designed for each specific dimension.
+And, for example, interface functions such as `attach_point`, `attach_face`, `attach_body` can be designed for each specific dimension.
 
 More example cell-complexes can be found at the [main project page](https://github.com/xieyuheng/cicada#hl-homology).
 - Further documentation about programming interface is work in progress.
