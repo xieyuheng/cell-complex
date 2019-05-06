@@ -179,7 +179,7 @@ class spherical_evidence_t {
 
 ## Examples
 
-### triangle represented as javascript object
+### `triangle` represented as javascript object
 
 In the following example:
 - `1:2` means and `id` of dimension 1, serial number 2
@@ -212,7 +212,7 @@ The representation is designed to be readily serialized to JSON.
         '0:1': { id: '0:0', cell: null } } } }
 ```
 
-### triangle defined as subclass of cell_complex_t
+### `triangle` defined as subclass of `cell_complex_t`
 
 ``` typescript
 class triangle_t extends cx.cell_complex_t {
@@ -227,7 +227,7 @@ class triangle_t extends cx.cell_complex_t {
 }
 ```
 
-### torus represented as javascript object
+### `torus` represented as javascript object
 
 ``` typescript
 { '0:0': null,
@@ -378,7 +378,7 @@ class triangle_t extends cx.cell_complex_t {
                  '0:1': { id: '0:0', cell: null } } } } } } }
 ```
 
-### torus defined as subclass of cell_complex_t
+### `torus` defined as subclass of `cell_complex_t`
 
 ``` typescript
 class torus_t extends cx.cell_complex_t {
