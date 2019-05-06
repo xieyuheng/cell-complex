@@ -437,7 +437,8 @@ where `n` is the number of `d` dimension cells.
 Based on the basic construction of cell-complex, I plan to:
 - Generalize the relation between 2-dimensional cell-complex  
   and the presentation theory of groupoid to higher dimension.
-- Provide more tools to help people study cell-complexes and algebraic topology.
+- Provide more online interactive tools to help people study cell-complexes and algebraic topology,  
+  - The library is developed for javascript with this aim in mind.
 
 ------
 
