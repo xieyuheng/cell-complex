@@ -19,7 +19,8 @@ for further formalization and experiments in algebraic topology.
 - [Cell-complex](#cell-complex)
 - [Cell-complex (again with comments)](#cell-complex-again-with-comments)
 - [Examples](#examples)
-- [Note about incidence matrix](#note-about-incidence-matrix)
+- [Note about incidence matrix and incidence tensor](#note-about-incidence-matrix-and-incidence-tensor)
+- [Note about space complexity](#note-about-space-complexity)
 - [Future works](#future-works)
 - [References](#references)
 
@@ -178,17 +179,253 @@ class spherical_evidence_t {
 
 ## Examples
 
-Example constructions of cell-complexes can be found at the [main project page](https://github.com/xieyuheng/cicada#hl-homology),  
-they are written in higher level interface functions abstracted over the basic data structures above.
+### triangle represented as javascript object
 
-Further documentation about programming interface is work in progress.
+In the following example:
+- `1:2` means and `id` of dimension 1, serial number 2
+- `null` denotes `empty_cell`
 
-## Note about incidence matrix
+The representation is designed to be readily serialized to JSON.
+
+
+``` typescript
+{ '0:0': null,
+  '0:1': null,
+  '0:2': null,
+  '1:0':
+   { dom: { '0:0': null, '0:1': null },
+     cod: { '0:0': null, '0:1': null, '0:2': null },
+     dic:
+      { '0:0': { id: '0:0', cell: null },
+        '0:1': { id: '0:1', cell: null } } },
+  '1:1':
+   { dom: { '0:0': null, '0:1': null },
+     cod: { '0:0': null, '0:1': null, '0:2': null },
+     dic:
+      { '0:0': { id: '0:1', cell: null },
+        '0:1': { id: '0:2', cell: null } } },
+  '1:2':
+   { dom: { '0:0': null, '0:1': null },
+     cod: { '0:0': null, '0:1': null, '0:2': null },
+     dic:
+      { '0:0': { id: '0:2', cell: null },
+        '0:1': { id: '0:0', cell: null } } } }
+```
+
+### triangle defined as subclass of cell_complex_t
+
+``` typescript
+class triangle_t extends cx.cell_complex_t {
+  constructor () {
+    let builder = new cx.cell_complex_builder_t ()
+    let [a, b, c] = builder.attach_points (3)
+    let x = builder.attach_edge (a, b)
+    let y = builder.attach_edge (b, c)
+    let y = builder.attach_edge (c, a)
+    super (builder)
+  }
+}
+```
+
+### torus represented as javascript object
+
+``` typescript
+{ '0:0': null,
+  '1:0':
+   { dom: { '0:0': null, '0:1': null },
+     cod: { '0:0': null },
+     dic:
+      { '0:0': { id: '0:0', cell: null },
+        '0:1': { id: '0:0', cell: null } } },
+  '1:1':
+   { dom: { '0:0': null, '0:1': null },
+     cod: { '0:0': null },
+     dic:
+      { '0:0': { id: '0:0', cell: null },
+        '0:1': { id: '0:0', cell: null } } },
+  '2:0':
+   { dom:
+      { '0:0': null,
+        '0:1': null,
+        '0:2': null,
+        '0:3': null,
+        '1:0':
+         { dom: { '0:0': null, '0:1': null },
+           cod: { '0:0': null, '0:1': null, '0:2': null, '0:3': null },
+           dic:
+            { '0:0': { id: '0:0', cell: null },
+              '0:1': { id: '0:1', cell: null } } },
+        '1:1':
+         { dom: { '0:0': null, '0:1': null },
+           cod: { '0:0': null, '0:1': null, '0:2': null, '0:3': null },
+           dic:
+            { '0:0': { id: '0:1', cell: null },
+              '0:1': { id: '0:2', cell: null } } },
+        '1:2':
+         { dom: { '0:0': null, '0:1': null },
+           cod: { '0:0': null, '0:1': null, '0:2': null, '0:3': null },
+           dic:
+            { '0:0': { id: '0:2', cell: null },
+              '0:1': { id: '0:3', cell: null } } },
+        '1:3':
+         { dom: { '0:0': null, '0:1': null },
+           cod: { '0:0': null, '0:1': null, '0:2': null, '0:3': null },
+           dic:
+            { '0:0': { id: '0:3', cell: null },
+              '0:1': { id: '0:0', cell: null } } } },
+     cod:
+      { '0:0': null,
+        '1:0':
+         { dom: { '0:0': null, '0:1': null },
+           cod: { '0:0': null },
+           dic:
+            { '0:0': { id: '0:0', cell: null },
+              '0:1': { id: '0:0', cell: null } } },
+        '1:1':
+         { dom: { '0:0': null, '0:1': null },
+           cod: { '0:0': null },
+           dic:
+            { '0:0': { id: '0:0', cell: null },
+              '0:1': { id: '0:0', cell: null } } } },
+     dic:
+      { '0:0': { id: '0:0', cell: null },
+        '0:1': { id: '0:0', cell: null },
+        '1:0':
+         { id: '1:0',
+           cell:
+            { dom: { '0:0': null, '0:1': null },
+              cod:
+               { '0:0': null,
+                 '1:0':
+                  { dom: { '0:0': null, '0:1': null },
+                    cod: { '0:0': null },
+                    dic:
+                     { '0:0': { id: '0:0', cell: null },
+                       '0:1': { id: '0:0', cell: null } } },
+                 '1:1':
+                  { dom: { '0:0': null, '0:1': null },
+                    cod: { '0:0': null },
+                    dic:
+                     { '0:0': { id: '0:0', cell: null },
+                       '0:1': { id: '0:0', cell: null } } } },
+              dic:
+               { '0:0': { id: '0:0', cell: null },
+                 '0:1': { id: '0:1', cell: null } } } },
+        '0:2': { id: '0:0', cell: null },
+        '1:1':
+         { id: '1:1',
+           cell:
+            { dom: { '0:0': null, '0:1': null },
+              cod:
+               { '0:0': null,
+                 '1:0':
+                  { dom: { '0:0': null, '0:1': null },
+                    cod: { '0:0': null },
+                    dic:
+                     { '0:0': { id: '0:0', cell: null },
+                       '0:1': { id: '0:0', cell: null } } },
+                 '1:1':
+                  { dom: { '0:0': null, '0:1': null },
+                    cod: { '0:0': null },
+                    dic:
+                     { '0:0': { id: '0:0', cell: null },
+                       '0:1': { id: '0:0', cell: null } } } },
+              dic:
+               { '0:0': { id: '0:0', cell: null },
+                 '0:1': { id: '0:1', cell: null } } } },
+        '0:3': { id: '0:0', cell: null },
+        '1:2':
+         { id: '1:0',
+           cell:
+            { dom: { '0:0': null, '0:1': null },
+              cod:
+               { '0:0': null,
+                 '1:0':
+                  { dom: { '0:0': null, '0:1': null },
+                    cod: { '0:0': null },
+                    dic:
+                     { '0:0': { id: '0:0', cell: null },
+                       '0:1': { id: '0:0', cell: null } } },
+                 '1:1':
+                  { dom: { '0:0': null, '0:1': null },
+                    cod: { '0:0': null },
+                    dic:
+                     { '0:0': { id: '0:0', cell: null },
+                       '0:1': { id: '0:0', cell: null } } } },
+              dic:
+               { '0:0': { id: '0:1', cell: null },
+                 '0:1': { id: '0:0', cell: null } } } },
+        '1:3':
+         { id: '1:1',
+           cell:
+            { dom: { '0:0': null, '0:1': null },
+              cod:
+               { '0:0': null,
+                 '1:0':
+                  { dom: { '0:0': null, '0:1': null },
+                    cod: { '0:0': null },
+                    dic:
+                     { '0:0': { id: '0:0', cell: null },
+                       '0:1': { id: '0:0', cell: null } } },
+                 '1:1':
+                  { dom: { '0:0': null, '0:1': null },
+                    cod: { '0:0': null },
+                    dic:
+                     { '0:0': { id: '0:0', cell: null },
+                       '0:1': { id: '0:0', cell: null } } } },
+              dic:
+               { '0:0': { id: '0:1', cell: null },
+                 '0:1': { id: '0:0', cell: null } } } } } } }
+```
+
+### torus defined as subclass of cell_complex_t
+
+``` typescript
+class torus_t extends cx.cell_complex_t {
+  constructor () {
+    let builder = new cx.cell_complex_builder_t ()
+    let origin = builder.attach_point ()
+    let toro = builder.attach_edge (origin, origin)
+    let polo = builder.attach_edge (origin, origin)
+    let surf = builder.attach_face ([
+      toro,
+      polo,
+      toro.rev (),
+      polo.rev (),
+    ])
+    super (builder)
+  }
+}
+```
+
+### Remarks
+
+Even for simple example like `torus`, the plain representation
+goes far beyond the cognitive complexity I can endure.
+
+And indeed, instead of use the plain object representation,
+the intended usage is to abstract over the basic data structures, 
+and, layer by layer, design higher level interface functions.
+
+This is how people control the cognitive complexity in computer science in general.
+
+More example cell-complexes can be found at the [main project page](https://github.com/xieyuheng/cicada#hl-homology).
+- Further documentation about programming interface is work in progress.
+
+## Note about incidence matrix and incidence tensor
 
 `dic_t` can be viewed as sparse matrix.
 
 The recursive definition of `cell_t` means that, instead of incidence matrix,  
 we need higher order incidence tensor to describe cell-complex.
+
+## Note about space complexity
+
+Due to the recursive construction, the space increases exponentially with the dimension.
+
+If the dimension is bounded by `d`,
+the space complexity is `O (n^d)`,
+where `n` is the number of `d` dimension cells.
 
 ## Future works
 

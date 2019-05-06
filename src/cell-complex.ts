@@ -176,28 +176,18 @@ class morphism_t {
     return this.dom.dim + 1
   }
 
+  empty_p (): boolean {
+    return (this.dom.empty_p () &&
+            this.dom.empty_p () &&
+            this.dic.empty_p ())
+  }
+  
   to_exp (): morphism_exp_t {
-    return {
+    return this.empty_p () ? null : {
       dom: this.dom.to_exp (),
       cod: this.cod.to_exp (),
       dic: im_dic_to_exp (this.dic),
     }
-  }
-
-  static from_exp (exp: morphism_exp_t): morphism_t {
-    let dom = cell_complex_t.from_exp (exp.dom)
-    let cod = cell_complex_t.from_exp (exp.cod)
-    let dic = new_im_dic ()
-    let iter = Object.entries (exp.dic)
-    for (let [k, v] of iter) {
-      let id = id_t.parse (k)
-      let im = {
-        id: id_t.parse (v.id),
-        cell: cell_t.from_exp (v.cell),
-      }
-      dic.set (id, im)
-    }
-    return new morphism_t (dom, cod, dic)
   }
 
   eq (that: morphism_t): boolean {
@@ -306,8 +296,11 @@ class cell_t extends morphism_t {
     super (dom, cod, dic)
     this.dom = dom.as_spherical ()
   }
-
+  
   static from_exp (exp: morphism_exp_t): cell_t {
+    if (exp === null) {
+      return empty_cell
+    }
     let dom = cell_complex_t.from_exp (exp.dom)
     let cod = cell_complex_t.from_exp (exp.cod)
     let dic = new_im_dic ()
@@ -348,13 +341,13 @@ interface im_exp_t {
   cell: morphism_exp_t,
 }
 
-interface morphism_exp_t {
+type morphism_exp_t = null | {
   dom: cell_complex_exp_t,
   cod: cell_complex_exp_t,
   dic: {
     [id: string]: im_exp_t
   }
-}
+} 
 
 export
 class cell_complex_t {
@@ -379,6 +372,10 @@ class cell_complex_t {
     return Math.max (-1, ...array)
   }
 
+  empty_p (): boolean {
+    return this.cell_dic.empty_p ()
+  }
+  
   dim_of (id: id_t): number {
     return this.get (id) .dim
   }

@@ -43,6 +43,10 @@ class dic_t <K , V> {
     return this.val_map.size
   }
 
+  empty_p (): boolean {
+    return this.size === 0
+  }
+  
   to_array (): Array <[K, V]> {
     let array = new Array <[K, V]> ()
     for (let [s, v] of this.val_map) {

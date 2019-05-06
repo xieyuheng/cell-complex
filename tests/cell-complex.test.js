@@ -6,6 +6,9 @@ import * as ut from "../lib/util"
 
 test ("cx.cell_complex_t.eq", t => {
   let torus = new torus_t ()
+  // ut.log (new cx.polygon_t (3) .to_exp ())
+  // ut.log (torus.to_exp ())
+  
   t.true (torus.face ("surf") .dom.eq (new cx.polygon_t (4)))
 })
 
@@ -14,8 +17,6 @@ test ("cx.cell_complex_t.from_exp", t => {
   let exp = torus.to_exp ()
   let com = cx.cell_complex_t.from_exp (exp)
   t.deepEqual (exp, com.to_exp ())
-
-  // ut.log (torus.to_exp ())
 })
 
 test ("cx.manifold_check", t => {
