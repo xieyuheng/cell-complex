@@ -13,9 +13,9 @@ I provide a recursive combinatorial description of cell-complex, with the hope t
 ### Contains
 
 - [Introduction](#introduction)
-- [graph as an example (to let readers be familiar with the pseudo code)](#graph-as-an-example-to-let-readers-be-familiar-with-the-pseudo-code)
-- [cell-complex](#cell-complex)
-- [cell-complex (again with comments)](#cell-complex-again-with-comments)
+- [Graph as an example (to let readers be familiar with the pseudo code)](#graph-as-an-example-to-let-readers-be-familiar-with-the-pseudo-code)
+- [Cell-complex](#cell-complex)
+- [Cell-complex (again with comments)](#cell-complex-again-with-comments)
 - [Note about incidence matrix](#note-about-incidence-matrix)
 - [Future works](#future-works)
 - [References](#references)
@@ -27,9 +27,9 @@ I use javascript-like pseudo code to describe data structure.
 
 TODO
 
-## graph as an example (to let readers be familiar with the pseudo code)
+## Graph as an example (to let readers be familiar with the pseudo code)
 
-- the prefix `_t` denotes type
+- The prefix `_t` denotes type
 - `id_t` is a serial number uniquely identify a vertex or an edge
 - `dic_t <K, V>` is a dictionary (a finite map) from `K` to `V`
 
@@ -49,7 +49,7 @@ class graph_t {
 }
 ```
 
-## cell-complex
+## Cell-complex
 
 `cell_complex_t` can be viewed as generalization of `graph_t` to higher dimension,
 - merge `vertex_dic` and `edge_dic` to `cell_dic`
@@ -82,9 +82,9 @@ class spherical_evidence_t {
 }
 ```
 
-## cell-complex (again with comments)
+## Cell-complex (again with comments)
 
-- comments are written in `/** ... */`
+- Comments are written in `/** ... */`
 
 ``` typescript
 class id_t {
