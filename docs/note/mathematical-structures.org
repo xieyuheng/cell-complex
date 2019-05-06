@@ -1,19 +1,15 @@
-* mathematical structures is about code reuse
+* Mathematical structures is about code reuse
 
-- in our euclidean-space.ts
-  `row_canonical_form` and `row_hermite_normal_form`
-  are almost the same
+- To factor out the sameness of `row_canonical_form` between `row_hermite_normal_form`,
+  we need to use matrix over euclidean ring
 
-- to factor out this sameness, and to reuse code
-  we need to use matrix over principal ideal integral ring
+- This is the main use of abstract mathematical structures.
+  it solves the main problem of compute science -- code reuse.
 
-- this is the main use of abstract mathematical structures
-  it solve the main problem of compute science
-  but the shame is that
-  no programming languages allow us
-  to formalize abstract mathematical structures intuitively
+  But currently no programming language allow us
+  to formalize abstract mathematical structures intuitively.
 
-* ironic
+* Ironic
 
 - We have to re-implement `row_echelon_form` again for `num.matrix_t`
   because `float` is not precisely a ring.

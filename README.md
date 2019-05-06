@@ -29,7 +29,6 @@
   - [euclid](#eu-euclid)
   - [combinatorial-game](#cg-combinatorial-game)
   - [cell-complex](#cx-cell-complex)
-    - [`docs/a-recursive-combinatorial-description-of-cell-complex.md`](docs/a-recursive-combinatorial-description-of-cell-complex.md)
   - [homology](#hl-homology)
   - [cicada-core](#cc-cicada-core)
   - [cicadascript](#cs-cicadascript)
@@ -331,6 +330,23 @@ const expected_report = {
 
 - [work in progress]
 - js syntax frontend of cicada-core
+
+## Readings
+
+- Recommended books:
+
+  - **about polytopes**
+
+    - "Lectures on Polytopes: Updated Seventh Printing of the First Edition",
+      by Günter M. Ziegler, 2007
+
+    - "Regular Polytopes", by Coxeter, 1948
+
+  - **simplicial-complex based algebraic topology**
+
+    - "A Textbook of Topology"
+      by Seifert and Threlfall, 1934,
+      Translated by Michael A. Goldman, 1980
 
 ## License
 
