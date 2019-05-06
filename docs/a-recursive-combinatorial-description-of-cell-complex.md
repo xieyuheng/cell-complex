@@ -91,7 +91,7 @@ class spherical_evidence_t {
 }
 ```
 
-## Cell-complex (again with comments)
+## Cell-complex (again, with comments)
 
 Comments in code block are written in `/** ... */`, while corresponding comments follows the code block.
 
