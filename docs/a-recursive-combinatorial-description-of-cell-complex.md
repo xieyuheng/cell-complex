@@ -14,7 +14,7 @@ with the hope that it will serves as a stepstone for further formalization and e
 ### Contains
 
 - [Introduction](#introduction)
-- [Graph as an example (to let readers be familiar with the pseudo code)](#graph-as-an-example-to-let-readers-be-familiar-with-the-pseudo-code)
+- [Graph as an example (to help readers be familiar with the pseudo code)](#graph-as-an-example-to-let-readers-be-familiar-with-the-pseudo-code)
 - [Cell-complex](#cell-complex)
 - [Cell-complex (again with comments)](#cell-complex-again-with-comments)
 - [Examples](#examples)
@@ -34,7 +34,7 @@ And the construction of higher dimensional cell-complex by my method
 is not limited by sphere recognition problem's undecidability.  
 - See section ["Cell-complex (again with comments)"](#cell-complex-again-with-comments) for details.
 
-## Graph as an example (to let readers be familiar with the pseudo code)
+## Graph as an example (to help readers be familiar with the pseudo code)
 
 In the following I use a javascript-like pseudo code to describe data structures.
 
