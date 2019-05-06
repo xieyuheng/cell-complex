@@ -1,6 +1,6 @@
 import {
   id_t, vertex_t, edge_t, graph_t
-} from "../graph"
+} from "../graph-info"
 
 import * as cg from "../combinatorial-game"
 

@@ -1,5 +1,4 @@
 - graph.ts => graph-info.ts
-
 - simple graph.ts
 - mesh generation
   - 3d model sculpturing
