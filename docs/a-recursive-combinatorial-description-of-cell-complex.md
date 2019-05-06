@@ -49,7 +49,7 @@ class graph_t {
 
 ## cell-complex
 
-`cell_complex_t` can be viewed as generation of `graph_t` to higher dimension,
+`cell_complex_t` can be viewed as generalization of `graph_t` to higher dimension,
 - merge `vertex_dic` and `edge_dic` to `cell_dic`
 - add `dim` field in `id_t` to distinguish dimension
 
@@ -84,7 +84,7 @@ class spherical_evidence_t {
 
 - comments are written in `/** ... */`
 
-``` typescript
+``` javascript
 class id_t {
   dim: number
   ser: number
@@ -93,7 +93,10 @@ class id_t {
 class cell_complex_t {
   cell_dic: dic_t <id_t, cell_t>
   /**
-   * TODO
+   * To build a `cell_complex` we attach `cell`s to it iteratively,
+   * while attaching a `cell` we also introduce a new unique `id`
+   *   to identify the `cell` in this `cell_complex`,
+   * where an `id` consist of a dimension and a serial number.
    */
 }
 
@@ -101,6 +104,11 @@ class cell_t {
   /**
    * `dom` -- domain
    * `cod` -- codomain
+
+   * When attaching a `cell` to a `cell_complex`,
+   *   the `dom` must be a spherical cell-complex,
+   *   and the `cod` is the `n`-dimensional skeleton of the `cell_complex`.
+   *   where `n` is the dimension of the `dom`.
    */
   dom: spherical_t
   cod: cell_complex_t
@@ -108,9 +116,9 @@ class cell_t {
   dic: dic_t <id_t, { id: id_t, cell: cell_t }>
   /**
    * Here the `dic` is a surjective mapping
-   *   from id of `dom` to id to `cod`.
+   *   from id of `dom` to id to `cod`,
    * which serves as a record of
-   *   how the cells in `dom` is mapped to the cells in `cod`.
+   *   how the `cell`s in `dom` are mapped to the `cell`s in `cod`.
 
    * Here we can not simply use:
    *   `dic: dic_t <id_t, id_t>`
