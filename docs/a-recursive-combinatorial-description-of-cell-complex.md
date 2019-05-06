@@ -16,7 +16,7 @@ with the hope that it will serves as a stepstone for further formalization and e
 - [Introduction](#introduction)
 - [Graph as an example (to help readers be familiar with the pseudo code)](#graph-as-an-example-to-help-readers-be-familiar-with-the-pseudo-code)
 - [Cell-complex](#cell-complex)
-- [Cell-complex (again with comments)](#cell-complex-again-with-comments)
+- [Cell-complex (again, with comments)](#cell-complex-again-with-comments)
 - [Examples](#examples)
 - [Note about incidence matrix and incidence tensor](#note-about-incidence-matrix-and-incidence-tensor)
 - [Note about space complexity](#note-about-space-complexity)
@@ -32,7 +32,7 @@ because "describable" (or "constructible") is weaker than "decidable".
 
 And the construction of higher dimensional cell-complex by my method  
 is not limited by sphere recognition problem's undecidability.  
-- See section ["Cell-complex (again with comments)"](#cell-complex-again-with-comments) for details.
+- See section ["Cell-complex (again, with comments)"](#cell-complex-again-with-comments) for details.
 
 ## Graph as an example (to help readers be familiar with the pseudo code)
 
