@@ -1042,7 +1042,7 @@ class empty_complex_t extends cell_complex_t {
   }
 }
 
-const empty_complex = new empty_complex_t ()
+let empty_complex = new empty_complex_t ()
 
 export
 class empty_morphism_t extends morphism_t {
@@ -1056,10 +1056,10 @@ class empty_morphism_t extends morphism_t {
 }
 
 export
-const empty_morphism = new empty_morphism_t ()
+let empty_morphism = new empty_morphism_t ()
 
 export
-const empty_isomorphism = new isomorphism_t (
+let empty_isomorphism = new isomorphism_t (
   empty_morphism.dom,
   empty_morphism.cod,
   empty_morphism.dic)
@@ -1076,7 +1076,7 @@ class empty_cell_t extends cell_t {
 }
 
 export
-const empty_cell = new empty_cell_t ()
+let empty_cell = new empty_cell_t ()
 
 //// 0 dimension
 

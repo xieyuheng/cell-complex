@@ -41,10 +41,10 @@
 #### [`examples/int-module.js`](examples/int-module.js):
 
 ``` javascript
-const assert = require ("assert")
+let assert = require ("assert")
 
-const ut = require ("cicada-lang/lib/util")
-const int = require ("cicada-lang/lib/int")
+let ut = require ("cicada-lang/lib/util")
+let int = require ("cicada-lang/lib/int")
 
 {
   /**
@@ -52,13 +52,13 @@ const int = require ("cicada-lang/lib/int")
    *   i.e. `hermite_normal_form` for integers
    */
 
-  const A = int.matrix ([
+  let A = int.matrix ([
     [2, 3, 6, 2],
     [5, 6, 1, 6],
     [8, 3, 1, 1],
   ])
 
-  const B = int.matrix ([
+  let B = int.matrix ([
     [1, 0, -11, 2],
     [0, 3, 28, -2],
     [0, 0, 61, -13],
@@ -75,13 +75,13 @@ const int = require ("cicada-lang/lib/int")
    *   i.e. `smith_normal_form` for integers
    */
 
-  const A = int.matrix ([
+  let A = int.matrix ([
     [2, 4, 4],
     [-6, 6, 12],
     [10, -4, -16],
   ])
 
-  const S = int.matrix ([
+  let S = int.matrix ([
     [2, 0, 0],
     [0, 6, 0],
     [0, 0, -12],
@@ -97,7 +97,7 @@ const int = require ("cicada-lang/lib/int")
    * solve linear diophantine equations
    */
 
-  const A = int.matrix ([
+  let A = int.matrix ([
     [1, 2, 3, 4, 5, 6, 7],
     [1, 0, 1, 0, 1, 0, 1],
     [2, 4, 5, 6, 1, 1, 1],
@@ -105,7 +105,7 @@ const int = require ("cicada-lang/lib/int")
     [0, 0, 1, 1, 2, 2, 3],
   ])
 
-  const b = int.vector ([
+  let b = int.vector ([
     28,
     4,
     20,
@@ -113,7 +113,7 @@ const int = require ("cicada-lang/lib/int")
     9,
   ])
 
-  const solution = A.solve (b)
+  let solution = A.solve (b)
 
   if (solution !== null) {
     solution.print ()
@@ -134,10 +134,10 @@ const int = require ("cicada-lang/lib/int")
 #### [`examples/num-linear-algebra.js`](examples/num-linear-algebra.js):
 
 ``` javascript
-const assert = require ("assert")
+let assert = require ("assert")
 
-const ut = require ("cicada-lang/lib/util")
-const num = require ("cicada-lang/lib/num")
+let ut = require ("cicada-lang/lib/util")
+let num = require ("cicada-lang/lib/num")
 
 {
   /**
@@ -146,13 +146,13 @@ const num = require ("cicada-lang/lib/num")
    *   while respecting `epsilon` for numerical stability
    */
 
-  const A = num.matrix ([
+  let A = num.matrix ([
     [1, 3, 1, 9],
     [1, 1, -1, 1],
     [3, 11, 5, 35],
   ])
 
-  const B = num.matrix ([
+  let B = num.matrix ([
     [1, 0, -2, -3],
     [0, 1, 1, 4],
     [0, 0, 0, 0],
@@ -198,9 +198,9 @@ const num = require ("cicada-lang/lib/num")
 ![Flatsurfaces.svg](https://github.com/xieyuheng/image-link/blob/master/homology/Flatsurfaces.svg)
 
 ``` javascript
-const cx = require ("cicada-lang/lib/cell-complex")
-const hl = require ("cicada-lang/lib/homology")
-const ut = require ("cicada-lang/lib/util")
+let cx = require ("cicada-lang/lib/cell-complex")
+let hl = require ("cicada-lang/lib/homology")
+let ut = require ("cicada-lang/lib/util")
 ```
 
 ![Spherecycles1.svg](https://github.com/xieyuheng/image-link/blob/master/homology/Spherecycles1.svg)
@@ -208,11 +208,11 @@ const ut = require ("cicada-lang/lib/util")
 ``` javascript
 class sphere_t extends cx.cell_complex_t {
   constructor () {
-    const builder = new cx.cell_complex_builder_t ()
-    const [south, middle, north] = builder.attach_points (3)
-    const south_long = builder.attach_edge (south, middle)
-    const north_long = builder.attach_edge (middle, north)
-    const surf = builder.attach_face ([
+    let builder = new cx.cell_complex_builder_t ()
+    let [south, middle, north] = builder.attach_points (3)
+    let south_long = builder.attach_edge (south, middle)
+    let north_long = builder.attach_edge (middle, north)
+    let surf = builder.attach_face ([
       south_long,
       north_long,
       north_long.rev (),
@@ -228,11 +228,11 @@ class sphere_t extends cx.cell_complex_t {
 ``` javascript
 class torus_t extends cx.cell_complex_t {
   constructor () {
-    const builder = new cx.cell_complex_builder_t ()
-    const origin = builder.attach_point ()
-    const toro = builder.attach_edge (origin, origin)
-    const polo = builder.attach_edge (origin, origin)
-    const surf = builder.attach_face ([
+    let builder = new cx.cell_complex_builder_t ()
+    let origin = builder.attach_point ()
+    let toro = builder.attach_edge (origin, origin)
+    let polo = builder.attach_edge (origin, origin)
+    let surf = builder.attach_face ([
       toro,
       polo,
       toro.rev (),
@@ -248,11 +248,11 @@ class torus_t extends cx.cell_complex_t {
 ``` javascript
 class klein_bottle_t extends cx.cell_complex_t {
   constructor () {
-    const builder = new cx.cell_complex_builder_t ()
-    const origin = builder.attach_point ()
-    const toro = builder.attach_edge (origin, origin)
-    const cross = builder.attach_edge (origin, origin)
-    const surf = builder.attach_face ([
+    let builder = new cx.cell_complex_builder_t ()
+    let origin = builder.attach_point ()
+    let toro = builder.attach_edge (origin, origin)
+    let cross = builder.attach_edge (origin, origin)
+    let surf = builder.attach_face ([
       toro,
       cross,
       toro.rev (),
@@ -268,11 +268,11 @@ class klein_bottle_t extends cx.cell_complex_t {
 ``` javascript
 class projective_plane_t extends cx.cell_complex_t {
   constructor () {
-    const builder = new cx.cell_complex_builder_t ()
-    const [start, end] = builder.attach_points (2)
-    const left_rim = builder.attach_edge (start, end)
-    const right_rim = builder.attach_edge (end, start)
-    const surf = builder.attach_face ([
+    let builder = new cx.cell_complex_builder_t ()
+    let [start, end] = builder.attach_points (2)
+    let left_rim = builder.attach_edge (start, end)
+    let right_rim = builder.attach_edge (end, start)
+    let surf = builder.attach_face ([
       left_rim, right_rim,
       left_rim, right_rim,
     ])
@@ -284,7 +284,7 @@ class projective_plane_t extends cx.cell_complex_t {
 - calculate [homology groups](https://en.wikipedia.org/wiki/Homology_(mathematics)):
 
 ``` javascript
-const report = {
+let report = {
   "sphere": hl.report (new sphere_t ()),
   "torus": hl.report (new torus_t ()),
   "klein_bottle": hl.report (new klein_bottle_t ()),
@@ -293,7 +293,7 @@ const report = {
 
 ut.log (report)
 
-const expected_report = {
+let expected_report = {
   sphere:
    { '0': { betti_number: 1, torsion_coefficients: [] },
      '1': { betti_number: 0, torsion_coefficients: [] },
