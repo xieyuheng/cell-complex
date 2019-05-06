@@ -137,3 +137,11 @@ class spherical_evidence_t {
    */
 }
 ```
+
+## note about incidence matrix
+
+`dic_t` can be viewed as sparse matrix.
+
+The recursive definition of `cell_t` implies that,  
+instead of incidence matrix, we need  
+higher order incidence tensor to describe cell-complex.
