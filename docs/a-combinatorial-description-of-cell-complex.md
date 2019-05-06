@@ -62,9 +62,11 @@ class spherical_t extends cell_complex_t {
   spherical_evidence: spherical_evidence_t
   /**
    * `spherical_t` extends `cell_complex_t` by adding field `spherical_evidence`,
-   * which contains a homeomorphism between the `cell_complex` and a standard sphere,
+   * which contains a homeomorphism between the `cell_complex`
+   *   and a standard sphere (for example, boundary of n-simplex or n-cube),
    * where homeomorphism is defined as iosmorphism after subdivisions,
-   * and iosmorphism between two cell-complexes is a generalization of iosmorphism between two graphs.
+   * and iosmorphism between two cell-complexes is
+   *   a generalization of iosmorphism between two graphs.
    */
 }
 
