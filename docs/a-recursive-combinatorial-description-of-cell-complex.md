@@ -181,7 +181,7 @@ class spherical_evidence_t {
 ### `triangle` represented as javascript object
 
 In the following example:
-- `1:2` means and `id` of dimension 1, serial number 2
+- `1:2` means an `id` of dimension `1`, serial number `2`
 - `null` denotes `empty_cell`
 
 The representation is designed to be readily serialized to JSON.
