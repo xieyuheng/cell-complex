@@ -16,8 +16,9 @@ I provide a recursive combinatorial description of cell-complex, with the hope t
 - [graph as an example (to let readers be familiar with the pseudo code)](#graph-as-an-example-to-let-readers-be-familiar-with-the-pseudo-code)
 - [cell-complex](#cell-complex)
 - [cell-complex (again with comments)](#cell-complex-again-with-comments)
-- [note about incidence matrix](#note-about-incidence-matrix)
-- [future works](#future-works)
+- [Note about incidence matrix](#note-about-incidence-matrix)
+- [Future works](#future-works)
+- [References](#references)
 
 ## Introduction
 
@@ -161,6 +162,6 @@ The recursive definition of `cell_t` means that, instead of incidence matrix, we
 
 TODO
 
-## Reference
+## References
 
 TODO
