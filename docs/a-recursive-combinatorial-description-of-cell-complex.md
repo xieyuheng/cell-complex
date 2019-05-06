@@ -435,7 +435,7 @@ where the inner matrix encode the orientation of the incidence relation.
 - and for a 3-dimensional body, we need a matrix of matrix to encode the orientation,  
   the incidence relation can be represented by *matrix valued matrix* valued matrix.
 
-and so on so forth ...
+and so on and so forth ...
 
 In general, the order of tensor, is equal to `2^d` where `d` is the dimension.
 
