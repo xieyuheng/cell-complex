@@ -1,0 +1,9 @@
+## Note about incidence matrix and incidence-tensor
+
+`dic_t` can be viewed as sparse matrix.
+
+The recursive definition of `cell_t` means that, instead of incidence matrix,
+we need higher order incidence tensor to describe cell-complex.
+
+For example, for 1-dimensional edges, we can use incidence matrix (like in graph theory),
+while for 2-dimensional faces, to represent the incidence relation, we need tensor of order three.

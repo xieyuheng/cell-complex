@@ -18,7 +18,6 @@ with the hope that it will serves as a stepstone for further formalization and e
 - [Cell-complex](#cell-complex)
 - [Cell-complex (again, with comments)](#cell-complex-again-with-comments)
 - [Examples](#examples)
-- [Note about incidence matrix and incidence tensor](#note-about-incidence-matrix-and-incidence-tensor)
 - [Note about space complexity](#note-about-space-complexity)
 - [Future works](#future-works)
 - [References](#references)
@@ -214,9 +213,9 @@ The representation is designed to be readily serializable to JSON.
 ### `triangle` defined as subclass of `cell_complex_t`
 
 ``` typescript
-class triangle_t extends cx.cell_complex_t {
+class triangle_t extends cell_complex_t {
   constructor () {
-    let builder = new cx.cell_complex_builder_t ()
+    let builder = new cell_complex_builder_t ()
     let [a, b, c] = builder.attach_points (3)
     let x = builder.attach_edge (a, b)
     let y = builder.attach_edge (b, c)
@@ -380,9 +379,9 @@ class triangle_t extends cx.cell_complex_t {
 ### `torus` defined as subclass of `cell_complex_t`
 
 ``` typescript
-class torus_t extends cx.cell_complex_t {
+class torus_t extends cell_complex_t {
   constructor () {
-    let builder = new cx.cell_complex_builder_t ()
+    let builder = new cell_complex_builder_t ()
     let origin = builder.attach_point ()
     let toro = builder.attach_edge (origin, origin)
     let polo = builder.attach_edge (origin, origin)
@@ -413,16 +412,6 @@ And, for example, interface functions such as `attach_point`, `attach_face`, `at
 
 More example cell-complexes can be found at the [main project page](https://github.com/xieyuheng/cicada#hl-homology).
 - Further documentation about programming interface is work in progress.
-
-## Note about incidence matrix and incidence tensor
-
-`dic_t` can be viewed as sparse matrix.
-
-The recursive definition of `cell_t` means that, instead of incidence matrix,  
-we need higher order incidence tensor to describe cell-complex.
-
-For example, for 1-dimensional edges, we can use incidence matrix (like in graph theory),  
-while for 2-dimensional faces, to represent the incidence relation, we need tensor of order three.
 
 ## Note about space complexity
 
