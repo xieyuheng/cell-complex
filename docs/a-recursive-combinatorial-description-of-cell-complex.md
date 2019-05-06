@@ -437,7 +437,7 @@ where the inner matrix encode the orientation of the incidence relation.
 
 and so on and so forth ...
 
-In general, the order of tensor, is equal to `2^d` where `d` is the dimension.
+In general, the order of tensor, is equal to `2*d` where `d` is the dimension.
 
 ## Note about space complexity
 
