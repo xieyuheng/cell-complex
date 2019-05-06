@@ -8,7 +8,9 @@
 
 ## Abstract
 
-I provide a recursive combinatorial description of cell-complex, with the hope that it will serves as a stepstone for further formalization and experiments in algebraic topology.
+I provide a recursive combinatorial description of cell-complex,  
+with the hope that it will serves as a stepstone  
+for further formalization and experiments in algebraic topology.
 
 ### Contains
 
@@ -23,13 +25,13 @@ I provide a recursive combinatorial description of cell-complex, with the hope t
 
 ## Introduction
 
-It is known that higher dimensional sphere recognition is undecidable[#1][].
+It is known that higher dimensional sphere recognition is undecidable[[1]][#1].
 
-But we should not conclude that combinatorial description cannot be given (such as in section 12 of [#2][]),  
+But we should not conclude that combinatorial description cannot be given (such as in section 12 of [[2]][#2]),  
 because "describable" (or "constructible") is weaker than "decidable".
 
 And the construction of higher dimensional cell-complex by my method  
-is not limited by sphere recognition problem's undecidability.
+is not limited by sphere recognition problem's undecidability.  
 - See section ["Cell-complex (again with comments)"](#cell-complex-again-with-comments) for details.
 
 To explain how I model cell-complex,  
@@ -199,14 +201,22 @@ we need higher order incidence tensor to describe cell-complex.
 ## Future works
 
 Based on the basic construction of cell-complex, I plan to:
-- Generalize the relation between 2-dimensional cell-complex and presentation theory of groupoid to higher dimension.
+- Generalize the relation between 2-dimensional cell-complex  
+  and the presentation theory of groupoid to higher dimension.
 - Provide more tools to help people study cell-complexes and algebraic topology.
+
+------
 
 ## References
 
-[#1]: "Unrecognizability of manifolds"
-  by A.V. Chernavsky, V.P. Leksine.
+#### [1] Unrecognizability of manifolds
 
-[#2]: "Topological methods, in: 'Handbook of Combinatorics'"
-  by Anders Björner,
-  (R. Graham, M. Grötschel, and L. Lovász, eds.)
+- by A.V. Chernavsky, V.P. Leksine.
+
+#### [2] Topological methods, in: "Handbook of Combinatorics"
+
+- by Anders Björner, (R. Graham, M. Grötschel, and L. Lovász, eds.)
+
+
+[#1]: #1-unrecognizability-of-manifolds
+[#2]: #2-topological-methods-in-handbook-of-combinatorics
