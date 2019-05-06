@@ -84,7 +84,7 @@ class spherical_evidence_t {
 
 - comments are written in `/** ... */`
 
-``` javascript
+``` typescript
 class id_t {
   dim: number
   ser: number
