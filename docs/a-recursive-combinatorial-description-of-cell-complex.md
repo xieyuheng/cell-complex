@@ -1,4 +1,4 @@
-# A Combinatorial Description of cell-complex
+# A Recursive Combinatorial Description of cell-complex
 
 ------
 - Author: Xie Yuheng
@@ -142,6 +142,10 @@ class spherical_evidence_t {
 
 `dic_t` can be viewed as sparse matrix.
 
-The recursive definition of `cell_t` implies that,  
+The recursive definition of `cell_t` means that,  
 instead of incidence matrix, we need  
 higher order incidence tensor to describe cell-complex.
+
+## future works
+
+TODO
