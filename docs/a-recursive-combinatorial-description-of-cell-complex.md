@@ -23,9 +23,9 @@ I provide a recursive combinatorial description of cell-complex, with the hope t
 
 ## Introduction
 
-It is known that higher dimensional sphere recognition is undecidable[#1].
+It is known that higher dimensional sphere recognition is undecidable[#1][].
 
-But we should not conclude that combinatorial description cannot be given (such as in section 12 of [#2]),  
+But we should not conclude that combinatorial description cannot be given (such as in section 12 of [#2][]),  
 because "describable" (or "constructible") is weaker than "decidable".
 
 And the construction of higher dimensional cell-complex by my method  
