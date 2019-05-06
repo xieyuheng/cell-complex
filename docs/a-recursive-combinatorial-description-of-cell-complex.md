@@ -403,11 +403,14 @@ class torus_t extends cx.cell_complex_t {
 Even for simple example like `torus`, the plain representation
 goes far beyond the cognitive complexity I can endure.
 
-And indeed, instead of use the plain object representation,
+And indeed, instead of using the plain object representation,
 the intended usage is to abstract over the basic data structures, 
 and, layer by layer, design higher level interface functions.
 
-This is how people control the cognitive complexity in computer science in general.
+- This is how people control the cognitive complexity in computer science in general.
+
+The `cell_t` is recursively defined in the same way for all dimensions, but each dimension is special.  
+And for example, interface functions such as `attach_point`, `attach_face`, `attach_body` can be designed for each specific dimension.
 
 More example cell-complexes can be found at the [main project page](https://github.com/xieyuheng/cicada#hl-homology).
 - Further documentation about programming interface is work in progress.
@@ -424,7 +427,7 @@ we need higher order incidence tensor to describe cell-complex.
 Due to the recursive construction, the space increases exponentially with the dimension.
 
 If the dimension is bounded by `d`,
-the space complexity is `O (n^d)`,
+the space complexity is `O(n^d)`,
 where `n` is the number of `d` dimension cells.
 
 ## Future works
