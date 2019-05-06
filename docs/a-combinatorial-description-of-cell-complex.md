@@ -10,6 +10,7 @@ To explain how I model cell-complex,
 I use javascript-like pseudo code to describe data structure.
 
 For example, the structure of `graph_t`,
+- the prefix `_t` denotes type
 - `id_t` is a serial number uniquely identify a vertex or an edge
 - `dic_t <K, V>` is a dictionary (a finite mapping) from `K` to `V`
 
@@ -44,6 +45,40 @@ class cell_complex_t {
 }
 
 class cell_t {
+  dom: spherical_t
+  cod: cell_complex_t
+  dic: dic_t <id_t, { id: id_t, cell: cell_t }>
+}
+
+class spherical_t extends cell_complex_t {
+  spherical_evidence: spherical_evidence_t
+}
+
+class spherical_evidence_t {
+  /**
+   * [detail definition omitted]
+   */
+}
+```
+
+
+`cell_complex_t` again with comments,
+- where comments are written in `/** ... */`
+
+``` typescript
+class id_t {
+  dim: number
+  ser: number
+}
+
+class cell_complex_t {
+  cell_dic: dic_t <id_t, cell_t>
+  /**
+   * TODO
+   */
+}
+
+class cell_t {
   /**
    * `dom` -- domain
    * `cod` -- codomain
@@ -53,24 +88,47 @@ class cell_t {
 
   dic: dic_t <id_t, { id: id_t, cell: cell_t }>
   /**
-   * here we can not simply use: `dic: dic_t <id_t, id_t>`,
-   * I found this only when trying to construct `vertex_figure` of `cell_complex`.
+   * Here the `dic` is a surjective mapping
+   *   from id of `dom` to id to `cod`.
+   * which serves as a record of
+   *   how the cells in `dom` is mapped to the cells in `cod`.
+
+   * Here we can not simply use:
+   *   `dic: dic_t <id_t, id_t>`
+   * we also need to record
+   *   how the boundary of a cell `A` in `dom`
+   *   is mapped to the boundary of a cell `B` in `cod`.
+   * we can record this extra information by another cell `C`
+   *   `C.dom == A.dom`
+   *   `C.cod == B.dom`
+
+   * I found this only when trying to construct `vertex_figure` of `cell_complex`,
+   * without the extra information,
+   *   it will be impossible to construct `vertex_figure`,
+   * and the construction of `vertex_figure` is important for checking
+   *   whether a `cell_complex` is a `manifold`.
    */
 }
 
 class spherical_t extends cell_complex_t {
   spherical_evidence: spherical_evidence_t
   /**
-   * `spherical_t` extends `cell_complex_t` by adding field `spherical_evidence`,
+   * `spherical_t` is special `cell_complex_t`
+   *   it extends `cell_complex_t` by adding field `spherical_evidence`,
    * which contains a homeomorphism between the `cell_complex`
    *   and a standard sphere (for example, boundary of n-simplex or n-cube),
-   * where homeomorphism is defined as iosmorphism after subdivisions,
+   * where homeomorphism between two cell-complexes
+   *   is defined as iosmorphism after subdivisions,
    * and iosmorphism between two cell-complexes is
    *   a generalization of iosmorphism between two graphs.
+
+   * It is known that TODO.
    */
 }
 
 class spherical_evidence_t {
-  // [detail definition omitted]
+  /**
+   * [detail definition omitted]
+   */
 }
 ```
