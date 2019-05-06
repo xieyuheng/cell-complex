@@ -19,7 +19,7 @@ with the hope that it will serves as a stepstone for further formalization and e
 - [Cell-complex (again, with comments)](#cell-complex-again-with-comments)
 - [Examples](#examples)
 - [Note about space complexity](#note-about-space-complexity)
-- [Note about incidence matrix and incidence tensor](#note-about-incidence-matrix-and-incidence-tensor)
+- [Note about incidence matrix](#note-about-incidence-matrix)
 - [Future works](#future-works)
 - [References](#references)
 
@@ -414,17 +414,16 @@ And, for example, interface functions such as `attach_point`, `attach_face`, `at
 More example cell-complexes can be found at the [main project page](https://github.com/xieyuheng/cicada#hl-homology).
 - Further documentation about programming interface is work in progress.
 
-## Note about incidence matrix and incidence tensor
+## Note about incidence matrix
 
 `dic_t` can be viewed as sparse matrix.
 
 The recursive definition of `cell_t` means that, instead of incidence matrix,  
-we need higher order incidence tensor to describe cell-complex.
+we need nested higher order incidence matrix to describe cell-complex.
 
 For example, for 1-dimensional edges, we can use incidence matrix (like in graph theory),  
 while for 2-dimensional faces, to represent the incidence relation,  
-we need a matrix valued matrix, i.e. a tensor of order four,  
-where the inner matrix encode the orientation of the incidence relation.
+we need a matrix valued matrix, where the inner matrix encode the orientation of the incidence relation.
 
 - For a directed graph, we can simply use `+1` or `-1` to encode the orientation,  
   the incidence relation can be represented by a `+1, -1` valued matrix.
@@ -437,7 +436,8 @@ where the inner matrix encode the orientation of the incidence relation.
 
 and so on and so forth ...
 
-In general, the order of tensor, is equal to `2*d` where `d` is the dimension.
+- Note that, the type (or shape) of inner matrix depends on the shape of cell boundary,  
+  thus these nested matrixes are not exactly higher order tensors. 
 
 ## Note about space complexity
 
