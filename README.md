@@ -191,7 +191,7 @@ let num = require ("cicada-lang/lib/num")
 
 ### `gh` graph
 
-- [work in progress]
+- [TODO]
 - graph theory -- one dimensional cell-complex
 
 ### `hl` homology
@@ -326,14 +326,14 @@ let expected_report = {
 
 ### `cc` cicada-core
 
-- [work in progress]
+- [TODO]
 - a dependently-typed programming language
 - game semantics
 - logic programming interface
 
 ### `cs` cicadascript
 
-- [work in progress]
+- [TODO]
 - js syntax frontend of cicada-core
 
 ## License
