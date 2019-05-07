@@ -2,7 +2,7 @@
 
 ## Aims
 
-- Libraries and tools for 3D computer graphics
+- Libraries and tools for topological and geometric modeling
 
 ## Community
 
