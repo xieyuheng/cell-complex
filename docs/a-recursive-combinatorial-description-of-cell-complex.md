@@ -21,9 +21,13 @@ with the hope that it will serves as a stepstone for further formalization and e
 - [Note about space complexity](#note-about-space-complexity)
 - [Note about incidence matrix](#note-about-incidence-matrix)
 - [Future works](#future-works)
+- [Appendixes](#appendixes) 
 - [References](#references)
 
 ## Introduction
+
+My description of cell-complex follows closely with the classical definition (such as in [[3]][#3]),  
+excpet that I describe the incidence relation of cells more explicitly.
 
 It is known that higher dimensional sphere recognition is undecidable[[1]][#1].
 
@@ -455,6 +459,13 @@ Based on the basic construction of cell-complex, I plan to:
 - Provide more online interactive tools to help people study cell-complexes and algebraic topology,  
   - The library is developed for javascript with this aim in mind.
 
+## Appendixes
+
+- [A Substitution Model for Class Definition](https://github.com/xieyuheng/cicada/blob/master/docs/a-substitution-model-for-class-definition.md)
+  - Further clarify the use of class definitions in this paper 
+    for people with less programming experiences.
+  - Also summarize the difference between "describable" and "decidable".
+
 ------
 
 ## References
@@ -467,6 +478,10 @@ Based on the basic construction of cell-complex, I plan to:
 
 - by Anders Björner, (R. Graham, M. Grötschel, and L. Lovász, eds.)
 
+#### [3] The Topology of CW Complexes 
+
+- by Albert T. Lundell, Stephen Weingram
 
 [#1]: #1-unrecognizability-of-manifolds
 [#2]: #2-topological-methods-in-handbook-of-combinatorics
+[#3]: #3-the-topology-of-cw-complexes 
