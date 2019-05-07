@@ -10,7 +10,7 @@
 
 I provide a recursive combinatorial description of cell-complex,  
 which can be used to model higher order incidence relations in higher dimensional topological structures,  
-I hope it will serves as a stepstone for further formalization and experiments in algebraic topology.
+I hope it will serve as a stepstone for further formalization and experiments in algebraic topology.
 
 ### Contains
 
