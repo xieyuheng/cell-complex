@@ -3,7 +3,6 @@
 ## Aims
 
 - Libraries and tools for 3D computer graphics
-- Interactive theorem prover for formalization and verification
 
 ## Community
 
