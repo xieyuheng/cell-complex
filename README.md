@@ -2,8 +2,8 @@
 
 ## Aims
 
-- Implement and test mathematical theories in existing languages
-- Design new languages to formalize abstract mathematical structures
+- Libraries and tools for 3D computer graphics.
+- Interactive theorem prover for formalization and verification.
 
 ## Community
 
@@ -337,15 +337,15 @@ let expected_report = {
 
   - **about polytopes**
 
-    - "Lectures on Polytopes: Updated Seventh Printing of the First Edition"  
+    - "Lectures on Polytopes: Updated Seventh Printing of the First Edition"
       by Günter M. Ziegler, 2007
 
     - "Regular Polytopes", by Coxeter, 1948
 
   - **simplicial-complex based algebraic topology**
 
-    - "A Textbook of Topology"  
-      by Seifert and Threlfall, 1934,  
+    - "A Textbook of Topology"
+      by Seifert and Threlfall, 1934,
       Translated by Michael A. Goldman, 1980
 
 ## License
