@@ -1,4 +1,4 @@
-# Cicada Language
+# Cicada
 
 ## Aims
 
