@@ -15,6 +15,12 @@
 - CI -- [gitlab-ci](https://gitlab.com/xieyuheng/cicada/pipelines)
 - [cicada-rs](http://github.com/xieyuheng/cicada-rs) -- an old cicada attempt in rust
 
+## Docs
+
+- [A Recursive Combinatorial Description of cell-complex](https://github.com/xieyuheng/cicada/blob/master/docs/a-recursive-combinatorial-description-of-cell-complex.md)
+  - A paper about the definition of cell-complex in this project
+  - by Xie Yuheng, 2019-05-06
+
 ## Modules
 
 - `npm install cicada-lang`
