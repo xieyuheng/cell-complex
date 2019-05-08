@@ -423,26 +423,16 @@ More example cell-complexes can be found at the [main project page](https://gith
 
 `dic_t` can be viewed as sparse matrix.
 
-The recursive definition of `cell_t` means that, instead of incidence matrix,  
-we need nested higher order incidence matrix to describe cell-complex.
+Each level of incidence relation in a cell-complex can be represented as cell-valued incidence matrix.  
+the cell in matrix encode the orientation of the incidence relation.
 
-For example, for 1-dimensional edges, we can use incidence matrix (like in graph theory),  
-while for 2-dimensional faces, to represent the incidence relation,  
-we need a matrix valued matrix, where the inner matrix encode the orientation of the incidence relation.
-
-- For a directed graph, we can simply use `+1` or `-1` to encode the orientation,  
-  the incidence relation can be represented by a `+1, -1` valued matrix.
-  
-- while for a 2-dimensional face, we need a matrix to encode the orientation,  
-  the incidence relation can be represented by matrix valued matrix.
-
-- and for a 3-dimensional body, we need a matrix of matrix to encode the orientation,  
-  the incidence relation can be represented by *matrix valued matrix* valued matrix.
+For example, 
+- for incidence relation between edges and points (i.e. graph theory),  
+  values of incidence matrix are 1-cells (which can be encoded by `+1` or `-1`),
+- for incidence relation between bodies and edges,  
+  values of incidence matrix are 2-cells,
 
 and so on and so forth ...
-
-- Note that, the type (or shape) of inner matrix depends on the shape of cell boundary,  
-  thus these nested matrixes are not exactly higher order tensors. 
 
 ## Note about space complexity
 
