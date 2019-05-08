@@ -153,11 +153,3 @@ class random_bot_t <P, S, C> {
     }
   }
 }
-
-// export
-// class mcts_bot_t <P, S, C> {
-//   constructor (
-//     // public game: game_t <P, S, C>,
-//   ) {}
-
-// }
