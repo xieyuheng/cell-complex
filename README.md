@@ -39,8 +39,7 @@
 
 ### `int` int
 
-- basic number theory
-  - native js `BigInt`
+- basic number theory (native js `BigInt`)
 
 #### [`examples/int-module.js`](examples/int-module.js):
 
@@ -132,7 +131,6 @@ let int = require ("cicada-lang/lib/int")
 ### `num` num
 
 - basic float number
-  - native js `Number`
   - with config-able `epsilon` for numerical stability
 
 #### [`examples/num-linear-algebra.js`](examples/num-linear-algebra.js):
