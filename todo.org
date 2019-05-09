@@ -1,3 +1,4 @@
+- example usages of higher order incidence relation
 - simple graph.ts
 - mesh generation
   - 3d model sculpturing
@@ -92,9 +93,6 @@
 - pure_complex_t
   an n-dimensional complex is said to be pure
   if each k cell (k < n) is a face of at least one n-dimensional cell
-- by the boundary of a pure n-dimensional cell
-  we mean the totality of (n - 1)-cell
-  which are incident with an odd number n-cells
 - boundary operator
   - the boundary of the boundary of a cell_complex_t should be zero
     even if the cell_complex_t is not a bounfold_t
