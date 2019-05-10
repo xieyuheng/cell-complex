@@ -1,6 +1,7 @@
 import * as _ from "lodash"
 
 import * as cg from "../combinatorial-game"
+import { random_bot_t } from "./bots/rand"
 
 type player_t = "X" | "O"
 
@@ -126,7 +127,7 @@ export
 let tic_tac_toe = new game_t ()
 
 export
-let random_bot = new cg.random_bot_t (tic_tac_toe)
+let random_bot = new random_bot_t (tic_tac_toe)
 
 export
 function new_play (): play_t {

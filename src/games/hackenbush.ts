@@ -3,6 +3,7 @@ import {
 } from "../graph-info"
 
 import * as cg from "../combinatorial-game"
+import { random_bot_t } from "./bots/rand"
 
 export
 type player_t = "blue" | "red"
@@ -107,7 +108,7 @@ export
 let hackenbush = new game_t ()
 
 export
-let random_bot = new cg.random_bot_t (hackenbush)
+let random_bot = new random_bot_t (hackenbush)
 
 export
 function new_play (bush: state_t): play_t {
