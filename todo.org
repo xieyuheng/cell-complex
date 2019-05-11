@@ -1,5 +1,5 @@
-- example usages of higher order incidence relation
 - simple graph.ts
+- example usages of higher order incidence relation
 - mesh generation
   - 3d model sculpturing
   - to give geometry to cell-complex
@@ -17,17 +17,22 @@
 - fourier-motzkin elimination
 - simplify inequalities
 - double description method
+* num
+- num.matrix_t.positive_definite_p ()
 - abstract/order.ts -- for num.ts, for polytope.ts
 - use num.ts to re-imp hackenbush
 * mathematical structures
 - ring.cs substructure and ideal_t
 - order.ts -- lattice_t, poset_t, total_t, heyting_algebra_t
 * graph
-- reuse cell_complex_t
+- reuse cell_complex_t -- by `graph_t.as_cell_complex ()`
 - find cycles of graph by spanning tree's complement edges
   - homology of general graph
-* euclidean-space
+* int
 - linear diophantine equations with mod -- finite field
+* euclid
+- .diag => .main_diag
+- .diag .set_diag
 - convert invariant_factors to elementary_divisors
 - primary_decomposition -- [rank, [[p0, n0], [p1, n1], ...]]
 - chinese_remainder_theorem
