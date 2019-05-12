@@ -1,5 +1,4 @@
-- cse
-- simple graph.ts
+- graph.ts with geometry
 - example usages of higher order incidence relation
 - mesh generation
   - 3d model sculpturing

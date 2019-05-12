@@ -1,7 +1,12 @@
-let assert = require ("assert")
+import assert from "assert"
 
-let ut = require ("cicada-lang/lib/util")
-let num = require ("cicada-lang/lib/num")
+import * as ut from "./util"
+import * as num from "./num"
+
+/**
+ * Computational Science and Engineering
+ * - we will need `sparse_matrix_t`
+ */
 
 {
   let K4 = num.matrix ([

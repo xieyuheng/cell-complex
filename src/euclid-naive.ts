@@ -640,7 +640,7 @@ class matrix_t {
     return vector
   }
 
-  static numbers (n: number, x: number, y: number): matrix_t {
+  static constant (n: number, x: number, y: number): matrix_t {
     let shape: [number, number] = [x, y]
     let size = matrix_t.shape_to_size (shape)
     let buffer = new Float64Array (size)
@@ -649,11 +649,11 @@ class matrix_t {
   }
 
   static zeros (x: number, y: number): matrix_t {
-    return matrix_t.numbers (0, x, y)
+    return matrix_t.constant (0, x, y)
   }
 
   static ones (x: number, y: number): matrix_t {
-    return matrix_t.numbers (1, x, y)
+    return matrix_t.constant (1, x, y)
   }
 
   static id (n: number): matrix_t {
@@ -1735,17 +1735,17 @@ class vector_t {
     return this.update (n => n * a)
   }
 
-  static numbers (n: number, size: number): vector_t {
+  static constant (n: number, size: number): vector_t {
     let buffer = new Float64Array (size) .fill (n)
     return vector_t.from_buffer (buffer)
   }
 
   static zeros (size: number): vector_t {
-    return vector_t.numbers (0, size)
+    return vector_t.constant (0, size)
   }
 
   static ones (size: number): vector_t {
-    return vector_t.numbers (1, size)
+    return vector_t.constant (1, size)
   }
 
   trans (matrix: matrix_t): vector_t {

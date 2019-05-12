@@ -279,7 +279,7 @@ class array_t {
     return new array_t (buffer, shape, strides)
   }
 
-  static numbers (n: number, shape: Array <number>): array_t {
+  static constant (n: number, shape: Array <number>): array_t {
     let size = array_t.shape_to_size (shape)
     let buffer = new Float64Array (size)
     buffer.fill (n)
@@ -288,11 +288,11 @@ class array_t {
   }
 
   static zeros (shape: Array <number>): array_t {
-    return array_t.numbers (0, shape)
+    return array_t.constant (0, shape)
   }
 
   static ones (shape: Array <number>): array_t {
-    return array_t.numbers (1, shape)
+    return array_t.constant (1, shape)
   }
 
   fill (x: number): array_t {

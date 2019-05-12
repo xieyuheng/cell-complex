@@ -77,13 +77,13 @@ class matrix_t extends eu.matrix_t <bigint> {
     return new matrix_t (super.copy ())
   }
 
-  static numbers (
+  static constant (
     n: bigint,
     x: number,
     y: number,
   ): matrix_t {
     return new matrix_t (
-      eu.matrix_t.ring_numbers (ring, n, x, y)
+      eu.matrix_t.ring_constant (ring, n, x, y)
     )
   }
 
@@ -155,12 +155,12 @@ class vector_t extends eu.vector_t <bigint> {
     return new vector_t (super.copy ())
   }
 
-  static numbers (
+  static constant (
     n: bigint,
     size: number,
   ): vector_t {
     return new vector_t (
-      eu.vector_t.ring_numbers (ring, n, size)
+      eu.vector_t.ring_constant (ring, n, size)
     )
   }
 

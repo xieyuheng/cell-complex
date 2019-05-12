@@ -218,9 +218,9 @@ test ("put", t => {
   }
 })
 
-test ("numbers", t => {
+test ("constant", t => {
   {
-    let x = nd.array_t.numbers (6, [2, 2])
+    let x = nd.array_t.constant (6, [2, 2])
     t.true (x.get ([0, 0]) === 6)
     t.true (x.get ([0, 1]) === 6)
     t.true (x.get ([1, 0]) === 6)
@@ -245,7 +245,7 @@ test ("numbers", t => {
 })
 
 test ("fill", t => {
-  let x = nd.array_t.numbers (6, [2, 2])
+  let x = nd.array_t.constant (6, [2, 2])
   t.true (x.get ([0, 0]) === 6)
   t.true (x.get ([0, 1]) === 6)
   t.true (x.get ([1, 0]) === 6)
@@ -267,7 +267,7 @@ test ("print", t => {
 })
 
 test ("map", t => {
-  let x = nd.array_t.numbers (3, [2, 2])
+  let x = nd.array_t.constant (3, [2, 2])
   t.true (x.get ([0, 0]) === 3)
   t.true (x.get ([0, 1]) === 3)
   t.true (x.get ([1, 0]) === 3)

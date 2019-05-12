@@ -657,7 +657,7 @@ class matrix_t <R> {
     return vector
   }
 
-  static ring_numbers <R> (
+  static ring_constant <R> (
     ring: euclidean_ring_t <R>,
     n: R,
     x: number,
@@ -675,7 +675,7 @@ class matrix_t <R> {
     x: number,
     y: number,
   ): matrix_t <R> {
-    return matrix_t.ring_numbers (ring, ring.zero, x, y)
+    return matrix_t.ring_constant (ring, ring.zero, x, y)
   }
 
   static ring_ones <R> (
@@ -683,7 +683,7 @@ class matrix_t <R> {
     x: number,
     y: number,
   ): matrix_t <R> {
-    return matrix_t.ring_numbers (ring, ring.one, x, y)
+    return matrix_t.ring_constant (ring, ring.one, x, y)
   }
 
   static ring_id <R> (
@@ -1331,7 +1331,7 @@ class vector_t <R> {
     return this.update (n => this.ring.mul (n, a))
   }
 
-  static ring_numbers <R> (
+  static ring_constant <R> (
     ring: euclidean_ring_t <R>,
     n: R,
     size: number,
@@ -1344,14 +1344,14 @@ class vector_t <R> {
     ring: euclidean_ring_t <R>,
     size: number,
   ): vector_t <R> {
-    return vector_t.ring_numbers (ring, ring.zero, size)
+    return vector_t.ring_constant (ring, ring.zero, size)
   }
 
   static ring_ones <R> (
     ring: euclidean_ring_t <R>,
     size: number,
   ): vector_t <R> {
-    return vector_t.ring_numbers (ring, ring.one, size)
+    return vector_t.ring_constant (ring, ring.one, size)
   }
 
   trans (matrix: matrix_t <R>): vector_t <R> {
