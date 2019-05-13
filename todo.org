@@ -97,8 +97,13 @@
       2. 丰富 compose 为 glue
 - higher_groupoid_t
 * cell-complex
-- can we fully encode the information of cell-complex
-  by the matrix of boundary operators ?
+- we can fully encode the information of cell-complex
+  by cell-valued incidence matrixes,
+  - we can specialize cells for each dimension,
+    for examples:
+    - +1,-1 (2-dim rotation) for [2-dim, 1-dim] incidence relation
+    - 2-dim rotation for [3-dim, 2-dim] incidence relation
+    - 3-dim rotation for [4-dim, 3-dim] incidence relation
 - 2-dim manifold classification -- zip of john conway
 - [refine API] auto compatible in morphism_builder_t
 - bounfold_check
