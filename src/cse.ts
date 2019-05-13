@@ -6,6 +6,8 @@ import * as num from "./num"
 /**
  * Computational Science and Engineering
  * - we will need `sparse_matrix_t`
+ * - maybe we need a abstract interface for `matrix_t`
+ *   to be able to represent K, C, T, B in even better ways
  */
 
 {

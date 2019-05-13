@@ -1,9 +1,9 @@
-- graph.ts with geometry
-- example usages of higher order incidence relation
 - mesh generation
   - 3d model sculpturing
   - to give geometry to cell-complex
     we can generate mesh for cell-complex
+- example usages of higher order incidence relation
+- graph.ts with geometry
 - geometry of convex polytope
   - example of give topological structure geometry
 - algebra of cell-complex
@@ -13,6 +13,20 @@
 - classification of regular polytope
 - how to describe edge and face so they are easy to draw ?
 - a generic way to specify geometry of cell-complex
+* what knowledge is worth knowing ?
+- topological and geometrical modeling
+  - mesh -- blender
+  - geometrical transformation
+  - clifford algebra
+- physics simulation
+  - differential equation & difference equation
+  - finite element method -- PDE
+  - direction field -- ODE
+* the way to cicada language
+- do not start from a "well designed" type theory
+- start from the way I want to do formalize
+- implement it and fix it by examples
+- form a type theory at the end
 * polytope
 - fourier-motzkin elimination
 - simplify inequalities
