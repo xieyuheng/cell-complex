@@ -1,7 +1,3 @@
-- mesh generation
-  - 3d model sculpturing
-  - to give geometry to cell-complex
-    we can generate mesh for cell-complex
 - example usages of higher order incidence relation
 - graph.ts with geometry
 - geometry of convex polytope
@@ -27,6 +23,10 @@
 - start from the way I want to do formalize
 - implement it and fix it by examples
 - form a type theory at the end
+* mesh
+- to give geometry to cell-complex, we can
+  1. generate mesh for cell-complex
+  2. use affine variety of algebraic geometry
 * polytope
 - fourier-motzkin elimination
 - simplify inequalities

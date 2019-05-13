@@ -185,12 +185,11 @@ class spherical_evidence_t {
 
 ### `triangle` represented as javascript object
 
-In the following example:
+In the following example *in extenso*:
 - `1:2` means an `id` of dimension `1`, serial number `2`
 - `null` denotes `empty_cell`
 
 The representation is designed to be readily serializable to JSON.
-
 
 ``` typescript
 { '0:0': null,
@@ -232,6 +231,8 @@ class triangle_t extends cell_complex_t {
 ```
 
 ### `torus` represented as javascript object
+
+*in extenso*
 
 ``` typescript
 { '0:0': null,
