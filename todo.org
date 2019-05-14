@@ -1,3 +1,4 @@
+- holding implements until finite element method and PDE
 - example usages of higher order incidence relation
 - graph.ts with geometry
 - geometry of convex polytope
@@ -11,8 +12,9 @@
 - a generic way to specify geometry of cell-complex
 * what knowledge is worth knowing ?
 - topological and geometrical modeling
-  - mesh -- blender
-  - geometrical transformation
+  - mesh 
+    - polytopal-complex 
+    - blender
   - clifford algebra
 - physics simulation
   - differential equation & difference equation
@@ -32,6 +34,10 @@
 - simplify inequalities
 - double description method
 * num
+- projection matrix
+  - rank one matrix
+  - P.mul (P) .eq (P)
+  - P.transpose () .eq (P)
 - num.matrix_t.positive_definite_p ()
 - abstract/order.ts -- for num.ts, for polytope.ts
 - use num.ts to re-imp hackenbush
@@ -104,6 +110,7 @@
     - +1,-1 (2-dim rotation) for [2-dim, 1-dim] incidence relation
     - 2-dim rotation for [3-dim, 2-dim] incidence relation
     - 3-dim rotation for [4-dim, 3-dim] incidence relation
+- how about adjacency matrix between higher order elements ?
 - 2-dim manifold classification -- zip of john conway
 - [refine API] auto compatible in morphism_builder_t
 - bounfold_check
@@ -120,6 +127,11 @@
 - boundary operator
   - the boundary of the boundary of a cell_complex_t should be zero
     even if the cell_complex_t is not a bounfold_t
+* polytopal-complex
+- like cell-complex
+  but without self adjacency
+  which simplifies the data structure
+- polytopal-complex can be used as basic data structure in meshing
 * geometry
 - quaternion
 - clifford-algebra
@@ -142,13 +154,14 @@
 - reuse js syntax
   the syntax of js is enough
   we only need to do the following extensions
-  - `<f> (<field> = <object>)`
-    function call with named field
-  - `f (a) (b)` == `f (a, b)`
-    auto currying
+  - function call with named field
+    `<f> (<field> = <object>)`
+  - auto currying
+    `f (a) (b)` == `f (a, b)`
   - no `,` in function call
-    maybe we need to limit the use of infix notation
-  - use babel api to handle the syntax
+    - maybe we need to limit the use of infix notation
+    - maybe use newline as `,`
+- use babel api to handle the syntax
 * dance
 - 3 circle dance
 - 4 circle dance
