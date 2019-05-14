@@ -5,7 +5,7 @@ let ut = require ("cicada-lang/lib/util")
 class sphere_t extends cx.cell_complex_t {
   constructor () {
     let bui = new cx.cell_complex_builder_t ()
-    let [south, middle, north] = bui.attach_points (3)
+    let [south, middle, north] = bui.attach_vertexes (3)
     let south_long = bui.attach_edge (south, middle)
     let north_long = bui.attach_edge (middle, north)
     let surf = bui.attach_face ([
@@ -21,7 +21,7 @@ class sphere_t extends cx.cell_complex_t {
 class torus_t extends cx.cell_complex_t {
   constructor () {
     let bui = new cx.cell_complex_builder_t ()
-    let origin = bui.attach_point ()
+    let origin = bui.attach_vertex ()
     let toro = bui.attach_edge (origin, origin)
     let polo = bui.attach_edge (origin, origin)
     let surf = bui.attach_face ([
@@ -37,7 +37,7 @@ class torus_t extends cx.cell_complex_t {
 class klein_bottle_t extends cx.cell_complex_t {
   constructor () {
     let bui = new cx.cell_complex_builder_t ()
-    let origin = bui.attach_point ()
+    let origin = bui.attach_vertex ()
     let toro = bui.attach_edge (origin, origin)
     let cross = bui.attach_edge (origin, origin)
     let surf = bui.attach_face ([
@@ -53,7 +53,7 @@ class klein_bottle_t extends cx.cell_complex_t {
 class projective_plane_t extends cx.cell_complex_t {
   constructor () {
     let bui = new cx.cell_complex_builder_t ()
-    let [start, end] = bui.attach_points (2)
+    let [start, end] = bui.attach_vertexes (2)
     let left_rim = bui.attach_edge (start, end)
     let right_rim = bui.attach_edge (end, start)
     let surf = bui.attach_face ([

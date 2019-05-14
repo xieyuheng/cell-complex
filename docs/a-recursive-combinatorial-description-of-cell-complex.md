@@ -221,7 +221,7 @@ The representation is designed to be readily serializable to JSON.
 class triangle_t extends cell_complex_t {
   constructor () {
     let builder = new cell_complex_builder_t ()
-    let [a, b, c] = builder.attach_points (3)
+    let [a, b, c] = builder.attach_vertexes (3)
     let x = builder.attach_edge (a, b)
     let y = builder.attach_edge (b, c)
     let y = builder.attach_edge (c, a)
@@ -389,7 +389,7 @@ class triangle_t extends cell_complex_t {
 class torus_t extends cell_complex_t {
   constructor () {
     let builder = new cell_complex_builder_t ()
-    let origin = builder.attach_point ()
+    let origin = builder.attach_vertex ()
     let toro = builder.attach_edge (origin, origin)
     let polo = builder.attach_edge (origin, origin)
     let surf = builder.attach_face ([
@@ -415,7 +415,7 @@ and, layer by layer, design higher level interface functions.
 - This is how people control the cognitive complexity in computer science in general.
 
 The `cell_t` is recursively defined in the same way for all dimensions, but each dimension is special.  
-And, for example, interface functions such as `attach_point`, `attach_face`, `attach_body` can be designed for each specific dimension.
+And, for example, interface functions such as `attach_vertex`, `attach_face`, `attach_body` can be designed for each specific dimension.
 
 More example cell-complexes can be found at the [main project page](https://github.com/xieyuheng/cicada#hl-homology).
 - Further documentation about programming interface is work in progress.
@@ -428,7 +428,7 @@ Each level of incidence relation in a cell-complex can be represented as cell-va
 the cell in matrix encode the orientation of the incidence relation.
 
 For example, 
-- for incidence relation between edges and points (i.e. graph theory),  
+- for incidence relation between edges and vertexes (i.e. graph theory),  
   values of incidence matrix are 1-cells (which can be encoded by `+1` or `-1`),
 - for incidence relation between bodies and edges,  
   values of incidence matrix are 2-cells,

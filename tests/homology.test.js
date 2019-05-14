@@ -84,8 +84,8 @@ test ("hl.chain_t.boundary", t => {
 class example_graph_t extends cx.cell_complex_t {
   constructor () {
     let builder = new cx.cell_complex_builder_t ()
-    let [x, y, z] = builder.attach_points (3)
-    let k = builder.attach_point ()
+    let [x, y, z] = builder.attach_vertexes (3)
+    let k = builder.attach_vertex ()
     let a = builder.attach_edge (x, y)
     let b = builder.attach_edge (y, z)
     let c = builder.attach_edge (z, x)
@@ -105,7 +105,7 @@ test ("example_graph_t", t => {
 class example_complex_t extends cx.cell_complex_t {
   constructor () {
     let builder = new cx.cell_complex_builder_t ()
-    let [x, y, z] = builder.attach_points (3)
+    let [x, y, z] = builder.attach_vertexes (3)
     let a = builder.attach_edge (x, y)
     let b = builder.attach_edge (y, z)
     let c = builder.attach_edge (z, x)

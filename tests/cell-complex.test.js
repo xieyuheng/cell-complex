@@ -8,7 +8,7 @@ test ("cx.cell_complex_t.eq", t => {
   let torus = new torus_t ()
   // ut.log (new cx.polygon_t (3) .to_exp ())
   // ut.log (torus.to_exp ())
-  
+
   t.true (torus.face ("surf") .dom.eq (new cx.polygon_t (4)))
 })
 
@@ -54,7 +54,7 @@ test ("cx.manifold_check", t => {
 test ("cx.vertex_figure", t => {
   // the following test depends on
   //   the specific definition of `torus_t`,
-  //   i.e. the orientation of edges and points.
+  //   i.e. the orientation of edges and vertexes.
 
   let torus = new torus_t ()
   let verf = new cx.vertex_figure_t (torus, torus.id ("origin"))
@@ -63,10 +63,10 @@ test ("cx.vertex_figure", t => {
 
   let iso = new cx.morphism_builder_t (
     new cx.polygon_t (4), verf
-  ) .point_ser (0, 0)
-    .point_ser (1, 2)
-    .point_ser (2, 1)
-    .point_ser (3, 3)
+  ) .vertex_ser (0, 0)
+    .vertex_ser (1, 2)
+    .vertex_ser (2, 1)
+    .vertex_ser (3, 3)
     .edge_ser (0, 0)
     .edge_ser_rev (1, 1)
     .edge_ser_rev (2, 2)
@@ -107,7 +107,7 @@ test ("cx.vertex_figure", t => {
     ) .eq (new cx.id_t (0, 3))
   )
 
-  torus.face ("surf") .polygon.vertex_id_array.map ((p, i) => {
+  torus.face ("surf") .polygon.vertex_id_array () .map ((p, i) => {
     t.true (
       verf.idx (torus.id ("surf"), p) .eq (new cx.id_t (1, i)))
   })

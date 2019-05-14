@@ -1,3 +1,8 @@
+- try a cell_complex_t without cell_complex_builder_t
+  to simplify the API of cell_complex_t building
+------
+- 2-dim manifold classification -- zip of john conway
+- classification of regular polytope
 - holding implements until finite element method and PDE
 - example usages of higher order incidence relation
 - graph.ts with geometry
@@ -6,14 +11,12 @@
 - algebra of cell-complex
   - check equality proof
   - the game of equality
-- classification of 2 manifold
-- classification of regular polytope
 - how to describe edge and face so they are easy to draw ?
 - a generic way to specify geometry of cell-complex
 * what knowledge is worth knowing ?
 - topological and geometrical modeling
-  - mesh 
-    - polytopal-complex 
+  - mesh
+    - polytopal-complex
     - blender
   - clifford algebra
 - physics simulation
@@ -34,10 +37,17 @@
 - simplify inequalities
 - double description method
 * num
-- projection matrix
+- projection matrix for 1-dim subspace
   - rank one matrix
   - P.mul (P) .eq (P)
   - P.transpose () .eq (P)
+- projection matrix for m-dim subspace
+  - subspace represented by A
+    - columns are column vectors of the subspace
+  - P = A.mul (A.transpose () .mul (A) .inv ()) .mul (A.transpose ())
+    - P.mul (P) .eq (P)
+    - P.transpose () .eq (P)
+- normal equation
 - num.matrix_t.positive_definite_p ()
 - abstract/order.ts -- for num.ts, for polytope.ts
 - use num.ts to re-imp hackenbush
@@ -111,7 +121,6 @@
     - 2-dim rotation for [3-dim, 2-dim] incidence relation
     - 3-dim rotation for [4-dim, 3-dim] incidence relation
 - how about adjacency matrix between higher order elements ?
-- 2-dim manifold classification -- zip of john conway
 - [refine API] auto compatible in morphism_builder_t
 - bounfold_check
 - cell_check -- is im_dic_compatible_p enough ?

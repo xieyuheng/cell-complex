@@ -181,7 +181,7 @@ class morphism_t {
             this.dom.empty_p () &&
             this.dic.empty_p ())
   }
-  
+
   to_exp (): morphism_exp_t {
     return this.empty_p () ? null : {
       dom: this.dom.to_exp (),
@@ -223,14 +223,14 @@ class morphism_builder_t {
     this.dic = new_im_dic ()
   }
 
-  point (x: id_t, y: id_t): morphism_builder_t {
+  vertex (x: id_t, y: id_t): morphism_builder_t {
     let im = { id: y, cell: empty_cell }
     this.dic.set (x, im)
     return this
   }
 
-  point_ser (x: number, y: number): morphism_builder_t {
-    return this.point (new id_t (0, x), new id_t (0, y))
+  vertex_ser (x: number, y: number): morphism_builder_t {
+    return this.vertex (new id_t (0, x), new id_t (0, y))
   }
 
   edge (x: id_t, y: id_t): morphism_builder_t {
@@ -296,7 +296,7 @@ class cell_t extends morphism_t {
     super (dom, cod, dic)
     this.dom = dom.as_spherical ()
   }
-  
+
   static from_exp (exp: morphism_exp_t): cell_t {
     if (exp === null) {
       return empty_cell
@@ -347,7 +347,7 @@ type morphism_exp_t = null | {
   dic: {
     [id: string]: im_exp_t
   }
-} 
+}
 
 export
 class cell_complex_t {
@@ -375,7 +375,7 @@ class cell_complex_t {
   empty_p (): boolean {
     return this.cell_dic.empty_p ()
   }
-  
+
   dim_of (id: id_t): number {
     return this.get (id) .dim
   }
@@ -410,14 +410,14 @@ class cell_complex_t {
     }
   }
 
-  *points () {
+  *vertexes () {
     for (let [id, _cell] of this.in_dim (0)) {
       yield id
     }
   }
 
-  point_id_array (): Array <id_t> {
-    return Array.from (this.points ())
+  vertex_id_array (): Array <id_t> {
+    return Array.from (this.vertexes ())
   }
 
   has (id: id_t): boolean {
@@ -514,7 +514,7 @@ class cell_complex_t {
     return that.lteq (this)
   }
 
-  define_point (name: string, id: id_t): cell_complex_t {
+  define_vertex (name: string, id: id_t): cell_complex_t {
     assert (id.dim === 0)
     this.name_dic.set (name, id)
     return this
@@ -597,16 +597,16 @@ class cell_complex_builder_t {
     return new id_t (dim, ser)
   }
 
-  attach_point (): id_t {
+  attach_vertex (): id_t {
     let id = this.gen_id (0)
     this.set (id, empty_cell)
     return id
   }
 
-  attach_points (n: number): Array <id_t> {
+  attach_vertexes (n: number): Array <id_t> {
     let array = new Array <id_t> ()
     for (let i = 0; i < n; i += 1) {
-      array.push (this.attach_point ())
+      array.push (this.attach_vertex ())
     }
     return array
   }
@@ -771,32 +771,32 @@ function isomorphic_to_endpoints (
   if (size !== 2) {
     return null
   }
-  let [start, end] = com.point_id_array ()
+  let [start, end] = com.vertex_id_array ()
   let endpoints = new endpoints_t ()
   let dic = new morphism_builder_t (
     endpoints, com
-  ) .point (endpoints.id ("start"), start)
-    .point (endpoints.id ("end"), end)
+  ) .vertex (endpoints.id ("start"), start)
+    .vertex (endpoints.id ("end"), end)
     .build_im_dic ()
   return new isomorphism_t (endpoints, com, dic)
 }
 
 function find_next_edge_id (
   com: cell_complex_t,
-  point: id_t,
+  vertex: id_t,
   edge_id_set: Set <id_t | rev_id_t>,
 ): [id_t, id_t | rev_id_t] | null {
   for (let id of com.id_in_dim (1)) {
     if (! edge_id_set.has (id)) {
       let edge = com.get_edge (id)
-      if (edge.start.eq (point)) {
-        point = edge.end
+      if (edge.start.eq (vertex)) {
+        vertex = edge.end
         edge_id_set.add (id)
-        return [point, id]
-      } else if (edge.end.eq (point)) {
-        point = edge.start
+        return [vertex, id]
+      } else if (edge.end.eq (vertex)) {
+        vertex = edge.start
         edge_id_set.add (id)
-        return [point, id.rev ()]
+        return [vertex, id.rev ()]
       }
     }
   }
@@ -818,16 +818,16 @@ function isomorphic_to_polygon (
     return null
   }
   let circuit = new Array ()
-  let { value: point } = com.id_in_dim (0) .next ()
+  let { value: vertex } = com.id_in_dim (0) .next ()
   let edge_id_set = new Set ()
   for (let i = 0; i < size; i++) {
-    let found = find_next_edge_id (com, point, edge_id_set)
+    let found = find_next_edge_id (com, vertex, edge_id_set)
     if (found === null) {
       return null
     } else {
-      let [next_point, id] = found
+      let [next_vertex, id] = found
       circuit.push (id)
-      point = next_point
+      vertex = next_vertex
     }
   }
   let polygon = new polygon_t (size)
@@ -841,10 +841,10 @@ function isomorphic_to_polygon (
 
 /**
  * A n-dim manifold, is a topological space,
- * each point of which has a n-ball as close neighbourhood.
+ * each vertex of which has a n-ball as close neighbourhood.
 
  * For cell-complex, it is sufficient to check that,
- * each points of it has a (n-1)-sphere as [[vertex_figure_t]].
+ * each vertexes of it has a (n-1)-sphere as [[vertex_figure_t]].
  */
 export
 class manifold_evidence_t {
@@ -867,7 +867,7 @@ function manifold_check (
     return new manifold_evidence_t (com.dim)
   } else if (com.dim === 1) {
     let evidence = new manifold_evidence_t (com.dim)
-    for (let vertex of com.points ()) {
+    for (let vertex of com.vertexes ()) {
       let verf = new vertex_figure_t (com, vertex)
       let iso = isomorphic_to_endpoints (verf)
       if (iso === null) {
@@ -879,7 +879,7 @@ function manifold_check (
     return evidence
   } else if (com.dim === 2) {
     let evidence = new manifold_evidence_t (com.dim)
-    for (let vertex of com.points ()) {
+    for (let vertex of com.vertexes ()) {
       let verf = new vertex_figure_t (com, vertex)
       let iso = isomorphic_to_polygon (verf)
       if (iso === null) {
@@ -932,15 +932,15 @@ class vertex_figure_t extends cell_complex_t {
     let builder = new cell_complex_builder_t ()
 
     for (let [id, cell] of com.in_dim (1)) {
-      for (let p of cell.dom.points ()) {
+      for (let p of cell.dom.vertexes ()) {
         if (cell.dic.get (p) .id.eq (vertex)) {
-          idx_dic.set ([id, p], builder.attach_point ())
+          idx_dic.set ([id, p], builder.attach_vertex ())
         }
       }
     }
 
     for (let [id, cell] of com.in_dim (2)) {
-      for (let p of cell.dom.points ()) {
+      for (let p of cell.dom.vertexes ()) {
         if (cell.dic.get (p) .id.eq (vertex)) {
           let verf = new vertex_figure_t (cell.dom, p)
           let [[e1, p1], [e2, p2]] = verf.idx_dic.key_array ()
@@ -960,7 +960,7 @@ class vertex_figure_t extends cell_complex_t {
     }
 
     for (let [id, cell] of com.in_dim (3)) {
-      for (let p of cell.dom.points ()) {
+      for (let p of cell.dom.vertexes ()) {
         if (cell.dic.get (p) .id.eq (vertex)) {
           // TODO
         }
@@ -974,8 +974,8 @@ class vertex_figure_t extends cell_complex_t {
   }
 
   /**
-   * use `cell` in `this.com`, and `point` in `cell.dom`,
-   * to index a point or cell in vertex_figure
+   * use `cell` in `this.com`, and `vertex` in `cell.dom`,
+   * to index a vertex or cell in vertex_figure
    */
   idx (c: id_t, p: id_t): id_t {
     return this.idx_dic.get ([c, p])
@@ -1083,7 +1083,7 @@ class discrete_complex_t extends cell_complex_t {
 
   constructor (size: number) {
     let builder = new cell_complex_builder_t ()
-    builder.attach_points (size)
+    builder.attach_vertexes (size)
     super (builder)
     this.size = size
   }
@@ -1098,7 +1098,7 @@ class singleton_t extends discrete_complex_t {
   constructor () {
     super (1)
     this
-      .define_point ("point", this.idx (0))
+      .define_vertex ("vertex", this.idx (0))
   }
 }
 
@@ -1107,8 +1107,8 @@ class endpoints_t extends discrete_complex_t {
   constructor () {
     super (2)
     this
-      .define_point ("start", this.idx (0))
-      .define_point ("end", this.idx (1))
+      .define_vertex ("start", this.idx (0))
+      .define_vertex ("end", this.idx (1))
   }
 }
 
@@ -1134,8 +1134,8 @@ class edge_t extends cell_t {
     let cod = builder.skeleton (0)
     let dic = new morphism_builder_t (
       endpoints, cod
-    ) .point (endpoints.id ("start"), start)
-      .point (endpoints.id ("end"), end)
+    ) .vertex (endpoints.id ("start"), start)
+      .vertex (endpoints.id ("end"), end)
       .build_im_dic ()
     super (endpoints, cod, dic)
     this.start = start
@@ -1154,8 +1154,8 @@ class interval_t extends cell_complex_t {
     let inter = builder.attach_edge (start, end)
     super (builder)
     this
-      .define_point ("start", start)
-      .define_point ("end", end)
+      .define_vertex ("start", start)
+      .define_vertex ("end", end)
       .define_edge ("inter", inter)
   }
 }
@@ -1163,13 +1163,12 @@ class interval_t extends cell_complex_t {
 export
 class polygon_t extends cell_complex_t {
   readonly size: number
-  readonly vertex_id_array: Array <id_t>
   readonly side_id_array: Array <id_t>
 
   constructor (size: number) {
     let builder = new cell_complex_builder_t ()
     let side_id_array = []
-    let vertex_id_array = builder.attach_points (size)
+    let vertex_id_array = builder.attach_vertexes (size)
     let i = 0
     while (i < size - 1) {
       side_id_array.push (
@@ -1184,7 +1183,6 @@ class polygon_t extends cell_complex_t {
         vertex_id_array [0]))
     super (builder)
     this.size = size
-    this.vertex_id_array = vertex_id_array
     this.side_id_array = side_id_array
   }
 }
@@ -1222,13 +1220,13 @@ function polygon_zip_circuit (
     if (tar_id instanceof rev_id_t) {
       tar_id = tar_id.rev ()
       let tar = cod.get_edge (tar_id)
-      builder.point (src.start, tar.end)
-      builder.point (src.end, tar.start)
+      builder.vertex (src.start, tar.end)
+      builder.vertex (src.end, tar.start)
       builder.edge_rev (src_id, tar_id)
     } else {
       let tar = cod.get_edge (tar_id)
-      builder.point (src.start, tar.start)
-      builder.point (src.end, tar.end)
+      builder.vertex (src.start, tar.start)
+      builder.vertex (src.end, tar.end)
       builder.edge (src_id, tar_id)
     }
   }
