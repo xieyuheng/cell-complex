@@ -1,3 +1,5 @@
+- new vertex_figure_t
+- new vertex_figure_t
 - try cell-complex--direct.ts
   to simplify the API of cell_complex_t building
 ------
