@@ -1117,7 +1117,7 @@ class endpoints_t extends discrete_complex_t {
 /**
  * Although cell-complex is recursively defined,
  * but each dimension has its own special features.
- * For example, the only ssible 1-cell is [[edge_t]].
+ * For example, the only possible 1-cell is [[edge_t]].
  */
 export
 class edge_t extends cell_t {

@@ -1,4 +1,4 @@
-- try cell-complex--no-id.ts
+- try cell-complex--direct.ts
   to simplify the API of cell_complex_t building
 ------
 - 2-dim manifold classification -- zip of john conway
