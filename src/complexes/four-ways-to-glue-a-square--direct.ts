@@ -1,4 +1,5 @@
-import * as cx from "../cell-complex"
+import * as ut from "../util"
+import * as cx from "../cell-complex--direct"
 
 export
 class sphere_t extends cx.cell_complex_t {
@@ -20,7 +21,7 @@ export
 class torus_t extends cx.cell_complex_t {
   constructor () {
     super ({ dim: 2 })
-    this.attach_vertexes (["origin"])
+    this.attach_vertex ("origin")
     this.attach_edge ("toro", ["origin", "origin"])
     this.attach_edge ("polo", ["origin", "origin"])
     this.attach_face ("surf", [
@@ -36,7 +37,7 @@ export
 class klein_bottle_t extends cx.cell_complex_t {
   constructor () {
     super ({ dim: 2 })
-    this.attach_vertexes (["origin"])
+    this.attach_vertex ("origin")
     this.attach_edge ("toro", ["origin", "origin"])
     this.attach_edge ("cross", ["origin", "origin"])
     this.attach_face ("surf", [
@@ -61,3 +62,12 @@ class projective_plane_t extends cx.cell_complex_t {
     ])
   }
 }
+
+let report = {
+  "sphere": new sphere_t (),
+  "torus": new torus_t (),
+  "klein_bottle": new klein_bottle_t (),
+  "projective_plane": new projective_plane_t (),
+}
+
+ut.log (report)
