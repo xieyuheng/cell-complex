@@ -4,63 +4,63 @@ let ut = require ("cicada-lang/lib/util")
 
 class sphere_t extends cx.cell_complex_t {
   constructor () {
-    let bui = new cx.cell_complex_builder_t ()
-    let [south, middle, north] = bui.attach_vertexes (3)
-    let south_long = bui.attach_edge (south, middle)
-    let north_long = bui.attach_edge (middle, north)
-    let surf = bui.attach_face ([
+    let builder = new cx.cell_complex_builder_t ()
+    let [south, middle, north] = builder.attach_vertexes (3)
+    let south_long = builder.attach_edge (south, middle)
+    let north_long = builder.attach_edge (middle, north)
+    let surf = builder.attach_face ([
       south_long,
       north_long,
       north_long.rev (),
       south_long.rev (),
     ])
-    super (bui)
+    super (builder)
   }
 }
 
 class torus_t extends cx.cell_complex_t {
   constructor () {
-    let bui = new cx.cell_complex_builder_t ()
-    let origin = bui.attach_vertex ()
-    let toro = bui.attach_edge (origin, origin)
-    let polo = bui.attach_edge (origin, origin)
-    let surf = bui.attach_face ([
+    let builder = new cx.cell_complex_builder_t ()
+    let origin = builder.attach_vertex ()
+    let toro = builder.attach_edge (origin, origin)
+    let polo = builder.attach_edge (origin, origin)
+    let surf = builder.attach_face ([
       toro,
       polo,
       toro.rev (),
       polo.rev (),
     ])
-    super (bui)
+    super (builder)
   }
 }
 
 class klein_bottle_t extends cx.cell_complex_t {
   constructor () {
-    let bui = new cx.cell_complex_builder_t ()
-    let origin = bui.attach_vertex ()
-    let toro = bui.attach_edge (origin, origin)
-    let cross = bui.attach_edge (origin, origin)
-    let surf = bui.attach_face ([
+    let builder = new cx.cell_complex_builder_t ()
+    let origin = builder.attach_vertex ()
+    let toro = builder.attach_edge (origin, origin)
+    let cross = builder.attach_edge (origin, origin)
+    let surf = builder.attach_face ([
       toro,
       cross,
       toro.rev (),
       cross,
     ])
-    super (bui)
+    super (builder)
   }
 }
 
 class projective_plane_t extends cx.cell_complex_t {
   constructor () {
-    let bui = new cx.cell_complex_builder_t ()
-    let [start, end] = bui.attach_vertexes (2)
-    let left_rim = bui.attach_edge (start, end)
-    let right_rim = bui.attach_edge (end, start)
-    let surf = bui.attach_face ([
+    let builder = new cx.cell_complex_builder_t ()
+    let [start, end] = builder.attach_vertexes (2)
+    let left_rim = builder.attach_edge (start, end)
+    let right_rim = builder.attach_edge (end, start)
+    let surf = builder.attach_face ([
       left_rim, right_rim,
       left_rim, right_rim,
     ])
-    super (bui)
+    super (builder)
   }
 }
 
