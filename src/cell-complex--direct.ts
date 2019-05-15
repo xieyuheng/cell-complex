@@ -1,18 +1,14 @@
 import assert from "assert"
+import nanoid from "nanoid"
 
 import * as ut from "./util"
-
-// maybe uuid
-export
-class id_t {
-  // TODO
-}
 
 export
 class morphism_t {
   dom: cell_complex_t
   cod: cell_complex_t
   map: Map <cell_t, { cell: cell_t, incident: cell_t }>
+  id: string
 
   constructor (the: {
     dom: cell_complex_t,
@@ -22,6 +18,21 @@ class morphism_t {
     this.dom = the.dom
     this.cod = the.cod
     this.map = the.map || new Map ()
+    this.id = nanoid (10)
+  }
+
+  repr (): any {
+    let repr: any = {}
+    repr ["id"] = this.id
+    repr ["dom"] = this.dom.repr ()
+    repr ["cod"] = this.cod.repr ()
+    for (let [src, { cell: tar, incident }] of this.map) {
+      repr [src.id] = {
+        cell: tar.id,
+        incident: incident.repr ()
+      }
+    }
+    return repr
   }
 }
 
@@ -124,7 +135,10 @@ class cell_complex_t {
   }
 
   attach_face (name: string, circuit: Array <edge_exp_t>) {
-    this.attach (name, new face_t (this, circuit))
+    this.attach (name, new face_t (
+      this,
+      circuit.map (exp => edge_exp_eval (this, exp)),
+    ))
   }
 
   cell (name: string): cell_t {
@@ -161,6 +175,22 @@ class cell_complex_t {
     } else {
       throw new Error (`cell_t not edge_t: ${name}`)
     }
+  }
+
+  repr (): any {
+    if (this.dim === -1) {
+      return null
+    }
+    let repr: any = {}
+    repr ["dim"] = this.dim
+    for (let [d, cell_array] of this.cell_map) {
+      repr [d] = cell_array.map (cell => cell.repr ())
+    }
+    repr ["name_map"] = {}
+    for (let [name, cell] of this.name_map) {
+      repr ["name_map"] [name] = cell.id
+    }
+    return repr
   }
 }
 
@@ -275,34 +305,51 @@ type edge_exp_t = string | Array <string>;
 
 //// 2 dimension
 
+export
+class edge_rev_t {
+  rev: edge_t
+
+  constructor (rev: edge_t) {
+    this.rev = rev
+  }
+}
+
+export
+function edge_exp_eval (
+  com: cell_complex_t,
+  exp: edge_exp_t,
+): edge_t | edge_rev_t {
+  if (typeof exp === "string") {
+    let name = exp
+    return com.edge (name)
+  } else if (exp.length === 2 && exp [1] === "rev") {
+    let name = exp [0]
+    return new edge_rev_t (com.edge (name))
+  } else {
+    throw new Error (`unknown exp: ${exp}`)
+  }
+}
+
 function polygon_zip_circuit (
   polygon: polygon_t,
   cod: cell_complex_t,
-  circuit: Array <edge_exp_t>,
+  circuit: Array <edge_t | edge_rev_t>,
 ): Map <cell_t, { cell: cell_t, incident: cell_t }> {
   let size = polygon.size
   let map = new Map ()
   for (let i = 0; i < size; i++) {
     let src = polygon.edge_array [i]
-    let exp = circuit [i]
-    if (typeof exp === "string") {
-      let name = exp
-      let tar = cod.edge (name)
+    let edge = circuit [i]
+    if (edge instanceof edge_t) {
+      let tar = edge
       set_vertex_incident (map, src.start, tar.start)
       set_vertex_incident (map, src.end, tar.end)
       set_edge_incident (map, src, tar)
-    } else if (exp instanceof Array) {
-      if (exp.length === 2 && exp [1] === "rev") {
-        let name = exp [0]
-        let tar = cod.edge (name)
-        set_vertex_incident (map, src.start, tar.end)
-        set_vertex_incident (map, src.end, tar.start)
-        set_edge_rev_incident (map, src, tar)
-      } else {
-        throw new Error (`unknown edge_exp: ${exp}`)
-      }
     } else {
-      throw new Error (`unknown edge_exp: ${exp}`)
+      let tar = edge.rev
+      set_vertex_incident (map, src.start, tar.end)
+      set_vertex_incident (map, src.end, tar.start)
+      set_edge_rev_incident (map, src, tar)
     }
   }
   return map
@@ -356,12 +403,12 @@ function set_edge_rev_incident (
 
 export
 class face_t extends cell_t {
-  circuit: Array <edge_exp_t>
+  circuit: Array <edge_t | edge_rev_t>
   polygon: polygon_t
 
   constructor (
     com: cell_complex_t,
-    circuit: Array <edge_exp_t>,
+    circuit: Array <edge_t | edge_rev_t>,
   ) {
     let dom = new polygon_t (circuit.length)
     let cod = com.skeleton (1)

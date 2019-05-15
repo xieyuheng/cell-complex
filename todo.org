@@ -48,6 +48,9 @@
     - P.mul (P) .eq (P)
     - P.transpose () .eq (P)
 - normal equation
+- gram -- only gram
+- gram-schmidt -- with normalization
+  - is there a version of gram-schmidt for integer matrix ?
 - num.matrix_t.positive_definite_p ()
 - abstract/order.ts -- for num.ts, for polytope.ts
 - use num.ts to re-imp hackenbush

@@ -35,8 +35,10 @@
     "@types/assert": "^1.4.2",
     "@types/big.js": "^4.0.5",
     "@types/lodash": "^4.14.129",
+    "@types/nanoid": "^2.0.0",
     "big.js": "^5.2.2",
     "decimal.js": "^10.2.0",
-    "lodash": "^4.17.11"
+    "lodash": "^4.17.11",
+    "nanoid": "^2.0.1"
   }
 }
