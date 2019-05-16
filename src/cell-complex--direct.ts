@@ -17,7 +17,11 @@ class figure_t {
     src: vertex_t,
     tar: vertex_t,
   ) {
-    this.array.push ({ src, tar, cfg: new vertex_t () })
+    if (! this.has_src (src)) {
+      this.array.push ({ src, tar, cfg: new vertex_t () })
+    } else {
+      throw new Error (`src already defined`)
+    }
   }
 
   edge (
@@ -36,7 +40,11 @@ class figure_t {
       src.endpoints.vertex ("end"),
       tar.endpoints.vertex ("end"),
     )
-    this.array.push ({ src, tar, cfg })
+    if (! this.has_src (src)) {
+      this.array.push ({ src, tar, cfg })
+    } else {
+      throw new Error (`src already defined`)
+    }
   }
 
   edge_rev (
@@ -55,7 +63,22 @@ class figure_t {
       src.endpoints.vertex ("end"),
       tar.endpoints.vertex ("start"),
     )
-    this.array.push ({ src, tar, cfg })
+    if (! this.has_src (src)) {
+      this.array.push ({ src, tar, cfg })
+    } else {
+      throw new Error (`src already defined`)
+    }
+  }
+
+  has_src (
+    cell: cell_t,
+  ): boolean {
+    for (let {src} of this.array) {
+      if (cell.eq (src)) {
+        return true
+      }
+    }
+    return false
   }
 
   has_tar (
@@ -84,7 +107,7 @@ class figure_t {
   static from_polygon_and_circuit (
     polygon: polygon_t,
     cod: cell_complex_t,
-    circuit: Array <edge_t | edge_rev_t>,
+    circuit: circuit_t,
   ): figure_t {
     let size = polygon.size
     let fig = new figure_t ()
@@ -93,12 +116,10 @@ class figure_t {
       let edge = circuit [i]
       if (edge instanceof edge_t) {
         let tar = edge
-        fig.vertex (src.start, tar.start)
         fig.vertex (src.end, tar.end)
         fig.edge (src, tar)
       } else {
         let tar = edge.rev
-        fig.vertex (src.start, tar.end)
         fig.vertex (src.end, tar.start)
         fig.edge_rev (src, tar)
       }
@@ -128,11 +149,12 @@ class morphism_t {
     dom: cell_complex_t,
     cod: cell_complex_t,
     fig?: figure_t,
+    uuid?: string,
   }) {
     this.dom = the.dom
     this.cod = the.cod
     this.fig = the.fig || new figure_t ()
-    this.uuid = nanoid (10)
+    this.uuid = the.uuid || nanoid (10)
   }
 
   eq (that: morphism_t): boolean {
@@ -160,9 +182,13 @@ class cell_t extends morphism_t {
     dom: cell_complex_t,
     cod: cell_complex_t,
     fig?: figure_t,
+    spherical_evidence?: spherical_evidence_t,
   }) {
     super (the)
-    this.dom = the.dom.as_spherical ()
+    this.dom = new spherical_t (
+      the.dom,
+      the.spherical_evidence,
+    )
   }
 
   get dim (): number {
@@ -205,10 +231,6 @@ class cell_complex_t {
       )
   }
 
-  as_spherical (): spherical_t {
-    return new spherical_t (this)
-  }
-
   skeleton (dim: number): cell_complex_t {
     let com = new cell_complex_t ({ dim })
     for (let [d, cell_array] of this.cell_map) {
@@ -241,12 +263,26 @@ class cell_complex_t {
     }
   }
 
+  get vertex_array (): Array <vertex_t> {
+    return this.cell_array (0) .map (cell => cell as vertex_t)
+  }
+
   get edge_array (): Array <edge_t> {
     return this.cell_array (1) .map (cell => cell as edge_t)
   }
 
-  // has_name
-  // has_cell
+  has_name (name: string): boolean {
+    return this.name_map.has (name)
+  }
+
+  has_cell (x: cell_t): boolean {
+    for (let y of this.cells ()) {
+      if (x.eq (y)) {
+        return true
+      }
+    }
+    return false
+  }
 
   attach (name: string, cell: cell_t) {
     this.cell_array (cell.dim) .push (cell)
@@ -272,10 +308,10 @@ class cell_complex_t {
     ))
   }
 
-  attach_face (name: string, circuit: Array <edge_exp_t>) {
+  attach_face (name: string, circuit_exp: Array <edge_exp_t>) {
     this.attach (name, new face_t (
       this,
-      circuit.map (exp => edge_exp_eval (this, exp)),
+      circuit_exp.map (exp => edge_exp_eval (this, exp)),
     ))
   }
 
@@ -315,8 +351,12 @@ class cell_complex_t {
     }
   }
 
+  empty_p (): boolean {
+    return this.dim === -1
+  }
+
   repr (): any {
-    if (this.dim === -1) {
+    if (this.empty_p ()) {
       return null
     }
     let repr: any = {}
@@ -340,9 +380,82 @@ class isomorphism_t extends morphism_t {
     fig?: figure_t,
   }) {
     super (the)
-    if (! isomorphism_p (this)) {
-      throw new Error ("not isomorphism")
+    if (! epimorphism_p (this)) {
+      ut.log (this.repr ())
+      throw new Error ("not epimorphism")
     }
+    if (! monomorphism_p (this)) {
+      ut.log (this.repr ())
+      throw new Error ("not monomorphism")
+    }
+  }
+
+  static endpoints (
+    com: cell_complex_t
+  ): isomorphism_t | undefined {
+    if (com.dim !== 0) {
+      return undefined
+    }
+    let size = com.vertex_array.length
+    if (size !== 2) {
+      return undefined
+    }
+    let [start, end] = com.vertex_array
+    let endpoints = new endpoints_t ()
+    let fig = new figure_t ()
+    fig.vertex (endpoints.vertex ("start"), start)
+    fig.vertex (endpoints.vertex ("end"), end)
+    return new isomorphism_t ({
+      dom: endpoints,
+      cod: com,
+      fig,
+    })
+  }
+
+  static polygon (
+    com: cell_complex_t
+  ): isomorphism_t | undefined {
+    if (com.dim !== 1) {
+      return undefined
+    }
+    let size = com.edge_array.length
+    if (size !== com.vertex_array.length) {
+      return undefined
+    }
+    if (size === 0) {
+      return undefined
+    }
+    let circuit: circuit_t = new Array ()
+    let vertex = com.vertex_array [0]
+    let edge_uuid_set = new Set ()
+    for (let i = 0; i < size; i++) {
+      for (let edge of com.edge_array) {
+        if (! edge_uuid_set.has (edge.uuid)) {
+          if (edge.start.eq (vertex)) {
+            edge_uuid_set.add (edge.uuid)
+            circuit.push (edge)
+            vertex = edge.end
+            break
+          } else if (edge.end.eq (vertex)) {
+            edge_uuid_set.add (edge.uuid)
+            circuit.push (edge)
+            vertex = edge.start
+            break
+          }
+        }
+      }
+    }
+    if (circuit.length !== size) {
+      return undefined
+    }
+    let polygon = new polygon_t (size)
+    let fig = figure_t
+      .from_polygon_and_circuit (polygon, com, circuit)
+    return new isomorphism_t ({
+      dom: polygon,
+      cod: com,
+      fig,
+    })
   }
 }
 
@@ -418,21 +531,74 @@ export
 class spherical_t extends cell_complex_t {
   spherical_evidence: spherical_evidence_t
 
-  constructor (the: {
-    dim: number,
-    cell_map?: Map <number, Array <cell_t>>,
-    name_map?: Map <string, cell_t>,
-    spherical_evidence?: spherical_evidence_t,
-  }) {
-    super (the)
-    this.spherical_evidence = the.spherical_evidence ||
-      new spherical_evidence_t ()
+  constructor (
+    com: cell_complex_t,
+    evid?: spherical_evidence_t,
+  ) {
+    super (com)
+    if (evid !== undefined) {
+      if (evid.iso.cod.eq (this)) {
+        this.spherical_evidence = evid
+      } else {
+        throw new Error ("spherical check fail")
+      }
+    } else {
+      evid = spherical_evidence_t.generate (this)
+      if (evid !== undefined) {
+        this.spherical_evidence = evid
+      } else {
+        throw new Error ("spherical check fail")
+      }
+    }
   }
 }
 
 export
 class spherical_evidence_t {
-  // TODO
+  iso: isomorphism_t
+
+  constructor (
+    iso: isomorphism_t,
+  ) {
+    this.iso = iso
+  }
+
+  get dim (): number {
+    return this.iso.dom.dim
+  }
+
+  static from_iso (
+    iso: isomorphism_t | undefined
+  ): spherical_evidence_t | undefined {
+    if (iso !== undefined) {
+      return new spherical_evidence_t (iso)
+    } else {
+      return undefined
+    }
+  }
+
+  static generate (
+    com: cell_complex_t
+  ): spherical_evidence_t | undefined {
+    if (com.empty_p ()) {
+      return new spherical_evidence_t (
+        new isomorphism_t (
+          new empty_morphism_t ()
+        )
+      )
+    } else if (com.dim === 0) {
+      return spherical_evidence_t.from_iso (
+        isomorphism_t.endpoints (com)
+      )
+    } else if (com.dim === 1) {
+      return spherical_evidence_t.from_iso (
+        isomorphism_t.polygon (com)
+      )
+    } else {
+      console.log ("[warning] can not check dim 2 yet")
+      return undefined
+    }
+  }
 }
 
 //// -1 dimension
@@ -445,6 +611,16 @@ class empty_complex_t extends cell_complex_t {
 }
 
 //// 0 dimension
+
+export
+class empty_morphism_t extends morphism_t {
+  constructor () {
+    super ({
+      dom: new empty_complex_t (),
+      cod: new empty_complex_t (),
+    })
+  }
+}
 
 export
 class vertex_t extends cell_t {
@@ -486,6 +662,10 @@ class edge_t extends cell_t {
     this.start = start
     this.end = end
     this.endpoints = dom
+  }
+
+  get rev (): edge_rev_t {
+    return new edge_rev_t (this)
   }
 }
 
@@ -539,14 +719,16 @@ function edge_exp_eval (
   }
 }
 
+type circuit_t = Array <edge_t | edge_rev_t>
+
 export
 class face_t extends cell_t {
-  circuit: Array <edge_t | edge_rev_t>
+  circuit: circuit_t
   polygon: polygon_t
 
   constructor (
     com: cell_complex_t,
-    circuit: Array <edge_t | edge_rev_t>,
+    circuit: circuit_t,
   ) {
     let dom = new polygon_t (circuit.length)
     let cod = com.skeleton (1)

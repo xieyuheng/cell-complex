@@ -1,4 +1,3 @@
-- new spherical_check
 - new vertex_figure_t
 - new manifold_check
 - homology for cell-complex--direct.ts
