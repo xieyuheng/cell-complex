@@ -34,3 +34,41 @@ function repeats <T> (x: T, n: number): Array <T> {
   }
   return array
 }
+
+export
+function map_eq <K, V> (
+  x: Map <K, V>,
+  y: Map <K, V>,
+  eq: (v: V, w: V) => boolean,
+): boolean {
+  if (x.size !== y.size) { return false }
+  for (let k of x.keys ()) {
+    let v = x.get (k)
+    let w = y.get (k)
+    if (v === undefined) {
+      return false
+    } else if (w === undefined) {
+      return false
+    } else if (! eq (v, w)) {
+      return false
+    }
+  }
+  return true
+}
+
+export
+function array_eq <V> (
+  x: Array <V>,
+  y: Array <V>,
+  eq: (v: V, w: V) => boolean,
+): boolean {
+  if (x.length !== y.length) { return false }
+  for (let i of range (0, x.length)) {
+    let v = x [i]
+    let w = y [i]
+    if (! eq (v, w)) {
+      return false
+    }
+  }
+  return true
+}

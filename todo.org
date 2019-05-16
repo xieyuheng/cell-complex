@@ -1,5 +1,7 @@
+- new spherical_check
 - new vertex_figure_t
-- new vertex_figure_t
+- new manifold_check
+- homology for cell-complex--direct.ts
 - try cell-complex--direct.ts
   to simplify the API of cell_complex_t building
 ------

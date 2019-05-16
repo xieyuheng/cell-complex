@@ -4,34 +4,150 @@ import nanoid from "nanoid"
 import * as ut from "./util"
 
 export
+class figure_t {
+  array: Array <{ src: cell_t, tar: cell_t, cfg: cell_t }>
+
+  constructor (
+    array?: Array <{ src: cell_t, tar: cell_t, cfg: cell_t }>
+  ) {
+    this.array = array || new Array ()
+  }
+
+  vertex (
+    src: vertex_t,
+    tar: vertex_t,
+  ) {
+    this.array.push ({ src, tar, cfg: new vertex_t () })
+  }
+
+  edge (
+    src: edge_t,
+    tar: edge_t,
+  ) {
+    let cfg = new cell_t ({
+      dom: src.endpoints,
+      cod: tar.endpoints,
+    })
+    cfg.fig.vertex (
+      src.endpoints.vertex ("start"),
+      tar.endpoints.vertex ("start"),
+    )
+    cfg.fig.vertex (
+      src.endpoints.vertex ("end"),
+      tar.endpoints.vertex ("end"),
+    )
+    this.array.push ({ src, tar, cfg })
+  }
+
+  edge_rev (
+    src: edge_t,
+    tar: edge_t,
+  ) {
+    let cfg = new cell_t ({
+      dom: src.endpoints,
+      cod: tar.endpoints,
+    })
+    cfg.fig.vertex (
+      src.endpoints.vertex ("start"),
+      tar.endpoints.vertex ("end"),
+    )
+    cfg.fig.vertex (
+      src.endpoints.vertex ("end"),
+      tar.endpoints.vertex ("start"),
+    )
+    this.array.push ({ src, tar, cfg })
+  }
+
+  has_tar (
+    cell: cell_t,
+  ): boolean {
+    for (let {tar} of this.array) {
+      if (cell.eq (tar)) {
+        return true
+      }
+    }
+    return false
+  }
+
+  repr (): any {
+    let repr: any = []
+    for (let {src, tar, cfg} of this.array) {
+      repr.push ({
+        src: src.uuid,
+        tar: tar.uuid,
+        cfg: cfg.repr (),
+      })
+    }
+    return repr
+  }
+
+  static from_polygon_and_circuit (
+    polygon: polygon_t,
+    cod: cell_complex_t,
+    circuit: Array <edge_t | edge_rev_t>,
+  ): figure_t {
+    let size = polygon.size
+    let fig = new figure_t ()
+    for (let i = 0; i < size; i++) {
+      let src = polygon.edge_array [i]
+      let edge = circuit [i]
+      if (edge instanceof edge_t) {
+        let tar = edge
+        fig.vertex (src.start, tar.start)
+        fig.vertex (src.end, tar.end)
+        fig.edge (src, tar)
+      } else {
+        let tar = edge.rev
+        fig.vertex (src.start, tar.end)
+        fig.vertex (src.end, tar.start)
+        fig.edge_rev (src, tar)
+      }
+    }
+    return fig
+  }
+
+  eq (that: figure_t): boolean {
+    return ut.array_eq (
+      this.array,
+      that.array,
+      (x, y) => x.src.eq (y.src) &&
+        x.tar.eq (y.tar) &&
+        x.cfg.eq (y.cfg),
+    )
+  }
+}
+
+export
 class morphism_t {
   dom: cell_complex_t
   cod: cell_complex_t
-  map: Map <cell_t, { cell: cell_t, incident: cell_t }>
-  id: string
+  fig: figure_t
+  uuid: string
 
   constructor (the: {
     dom: cell_complex_t,
     cod: cell_complex_t,
-    map?: Map <cell_t, { cell: cell_t, incident: cell_t }>,
+    fig?: figure_t,
   }) {
     this.dom = the.dom
     this.cod = the.cod
-    this.map = the.map || new Map ()
-    this.id = nanoid (10)
+    this.fig = the.fig || new figure_t ()
+    this.uuid = nanoid (10)
+  }
+
+  eq (that: morphism_t): boolean {
+    return (this.uuid === that.uuid) &&
+      this.dom.eq (that.dom) &&
+      this.cod.eq (that.cod) &&
+      this.fig.eq (that.fig)
   }
 
   repr (): any {
     let repr: any = {}
-    repr ["id"] = this.id
+    repr ["uuid"] = this.uuid
     repr ["dom"] = this.dom.repr ()
     repr ["cod"] = this.cod.repr ()
-    for (let [src, { cell: tar, incident }] of this.map) {
-      repr [src.id] = {
-        cell: tar.id,
-        incident: incident.repr ()
-      }
-    }
+    repr ["fig"] = this.fig.repr ()
     return repr
   }
 }
@@ -43,7 +159,7 @@ class cell_t extends morphism_t {
   constructor (the: {
     dom: cell_complex_t,
     cod: cell_complex_t,
-    map?: Map <cell_t, { cell: cell_t, incident: cell_t }>,
+    fig?: figure_t,
   }) {
     super (the)
     this.dom = the.dom.as_spherical ()
@@ -75,6 +191,20 @@ class cell_complex_t {
     this.name_map = the.name_map || new Map ()
   }
 
+  eq (that: cell_complex_t): boolean {
+    return (this.dim === that.dim) &&
+      ut.map_eq (
+        this.cell_map,
+        that.cell_map,
+        (x, y) => ut.array_eq (x, y, (v, w) => v.eq (w)),
+      ) &&
+      ut.map_eq (
+        this.name_map,
+        that.name_map,
+        (x, y) => x.eq (y),
+      )
+  }
+
   as_spherical (): spherical_t {
     return new spherical_t (this)
   }
@@ -100,6 +230,14 @@ class cell_complex_t {
       return cell_array
     } else {
       throw new Error (`no cell_array at dim: ${dim}`)
+    }
+  }
+
+  *cells (): IterableIterator <cell_t> {
+    for (let d of ut.range (0, this.dim + 1)) {
+      for (let cell of this.cell_array (d)) {
+        yield cell
+      }
     }
   }
 
@@ -188,24 +326,107 @@ class cell_complex_t {
     }
     repr ["name_map"] = {}
     for (let [name, cell] of this.name_map) {
-      repr ["name_map"] [name] = cell.id
+      repr ["name_map"] [name] = cell.uuid
     }
     return repr
   }
 }
 
 export
+class isomorphism_t extends morphism_t {
+  constructor (the: {
+    dom: cell_complex_t,
+    cod: cell_complex_t,
+    fig?: figure_t,
+  }) {
+    super (the)
+    if (! isomorphism_p (this)) {
+      throw new Error ("not isomorphism")
+    }
+  }
+}
+
+export
+class epimorphism_t extends morphism_t {
+  constructor (the: {
+    dom: cell_complex_t,
+    cod: cell_complex_t,
+    fig?: figure_t,
+  }) {
+    super (the)
+    if (! epimorphism_p (this)) {
+      throw new Error ("not epimorphism")
+    }
+  }
+}
+
+export
+class monomorphism_t extends morphism_t {
+  constructor (the: {
+    dom: cell_complex_t,
+    cod: cell_complex_t,
+    fig?: figure_t,
+  }) {
+    super (the)
+    if (! monomorphism_p (this)) {
+      throw new Error ("not monomorphism")
+    }
+  }
+}
+
+export
+function isomorphism_p (the: {
+  dom: cell_complex_t,
+  cod: cell_complex_t,
+  fig: figure_t,
+}): boolean {
+  return epimorphism_p (the) && monomorphism_p (the)
+}
+
+export
+function epimorphism_p (the: {
+  dom: cell_complex_t,
+  cod: cell_complex_t,
+  fig: figure_t,
+}): boolean {
+  for (let cell of the.cod.cells ()) {
+    if (! the.fig.has_tar (cell)) {
+      return false
+    }
+  }
+  return true
+}
+
+export
+function monomorphism_p (the: {
+  dom: cell_complex_t,
+  cod: cell_complex_t,
+  fig: figure_t,
+}): boolean {
+  let used_uuid_set = new Set <string> ()
+  for (let {src, tar} of the.fig.array) {
+    if (used_uuid_set.has (tar.uuid)) {
+      return false
+    } else {
+      used_uuid_set.add (tar.uuid)
+    }
+  }
+  return true
+}
+
+export
 class spherical_t extends cell_complex_t {
-  spherical_evidence : spherical_evidence_t
+  spherical_evidence: spherical_evidence_t
 
   constructor (the: {
     dim: number,
     cell_map?: Map <number, Array <cell_t>>,
     name_map?: Map <string, cell_t>,
+    spherical_evidence?: spherical_evidence_t,
   }) {
     super (the)
-    // TODO
-    this.spherical_evidence = new spherical_evidence_t ()
+    this.spherical_evidence = the.spherical_evidence ||
+      new spherical_evidence_t ()
   }
 }
 
@@ -246,18 +467,6 @@ class endpoints_t extends cell_complex_t {
 //// 1 dimension
 
 export
-function set_vertex_incident (
-  map: Map <cell_t, { cell: cell_t, incident: cell_t }>,
-  x: vertex_t,
-  y: vertex_t,
-) {
-  map.set (x, {
-    cell: y,
-    incident: new vertex_t (),
-  })
-}
-
-export
 class edge_t extends cell_t {
   start: vertex_t
   end: vertex_t
@@ -270,10 +479,10 @@ class edge_t extends cell_t {
   ) {
     let dom = new endpoints_t ()
     let cod = com.skeleton (0)
-    let map = new Map ()
-    set_vertex_incident (map, dom.vertex ("start"), start)
-    set_vertex_incident (map, dom.vertex ("end"), end)
-    super ({dom, cod, map})
+    let fig = new figure_t ()
+    fig.vertex (dom.vertex ("start"), start)
+    fig.vertex (dom.vertex ("end"), end)
+    super ({dom, cod, fig})
     this.start = start
     this.end = end
     this.endpoints = dom
@@ -330,77 +539,6 @@ function edge_exp_eval (
   }
 }
 
-function polygon_zip_circuit (
-  polygon: polygon_t,
-  cod: cell_complex_t,
-  circuit: Array <edge_t | edge_rev_t>,
-): Map <cell_t, { cell: cell_t, incident: cell_t }> {
-  let size = polygon.size
-  let map = new Map ()
-  for (let i = 0; i < size; i++) {
-    let src = polygon.edge_array [i]
-    let edge = circuit [i]
-    if (edge instanceof edge_t) {
-      let tar = edge
-      set_vertex_incident (map, src.start, tar.start)
-      set_vertex_incident (map, src.end, tar.end)
-      set_edge_incident (map, src, tar)
-    } else {
-      let tar = edge.rev
-      set_vertex_incident (map, src.start, tar.end)
-      set_vertex_incident (map, src.end, tar.start)
-      set_edge_rev_incident (map, src, tar)
-    }
-  }
-  return map
-}
-
-export
-function set_edge_incident (
-  map: Map <cell_t, { cell: cell_t, incident: cell_t }>,
-  x: edge_t,
-  y: edge_t,
-) {
-  let incident = new cell_t ({
-    dom: x.endpoints,
-    cod: y.endpoints,
-  })
-  set_vertex_incident (
-    incident.map,
-    x.endpoints.vertex ("start"),
-    y.endpoints.vertex ("start"),
-  )
-  set_vertex_incident (
-    incident.map,
-    x.endpoints.vertex ("end"),
-    y.endpoints.vertex ("end"),
-  )
-  map.set (x, { cell: y, incident })
-}
-
-export
-function set_edge_rev_incident (
-  map: Map <cell_t, { cell: cell_t, incident: cell_t }>,
-  x: edge_t,
-  y: edge_t,
-) {
-  let incident = new cell_t ({
-    dom: x.endpoints,
-    cod: y.endpoints,
-  })
-  set_vertex_incident (
-    incident.map,
-    x.endpoints.vertex ("start"),
-    y.endpoints.vertex ("end"),
-  )
-  set_vertex_incident (
-    incident.map,
-    x.endpoints.vertex ("end"),
-    y.endpoints.vertex ("start"),
-  )
-  map.set (x, { cell: y, incident })
-}
-
 export
 class face_t extends cell_t {
   circuit: Array <edge_t | edge_rev_t>
@@ -412,8 +550,9 @@ class face_t extends cell_t {
   ) {
     let dom = new polygon_t (circuit.length)
     let cod = com.skeleton (1)
-    let map = polygon_zip_circuit (dom, cod, circuit)
-    super ({dom, cod, map})
+    let fig = figure_t
+      .from_polygon_and_circuit (dom, cod, circuit)
+    super ({dom, cod, fig})
     this.circuit = circuit
     this.polygon = dom
   }
