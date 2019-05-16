@@ -27,7 +27,7 @@ class chain_t {
   ): chain_t {
     return new chain_t (
       com, dim,
-      int.vector_t.zeros (com.size_of_dim (dim)))
+      int.vector_t.zeros (com.dim_size (dim)))
   }
 
   update_at (
@@ -40,8 +40,8 @@ class chain_t {
 
   down (matrix: int.matrix_t): chain_t {
     let [m, n] = matrix.shape
-    assert (m === this.com.size_of_dim (this.dim - 1))
-    assert (n === this.com.size_of_dim (this.dim))
+    assert (m === this.com.dim_size (this.dim - 1))
+    assert (n === this.com.dim_size (this.dim))
     return new chain_t (
       this.com,
       this.dim - 1,
@@ -50,8 +50,8 @@ class chain_t {
 
   up (matrix: int.matrix_t): chain_t {
     let [m, n] = matrix.shape
-    assert (m === this.com.size_of_dim (this.dim + 1))
-    assert (n === this.com.size_of_dim (this.dim))
+    assert (m === this.com.dim_size (this.dim + 1))
+    assert (n === this.com.dim_size (this.dim))
     return new chain_t (
       this.com,
       this.dim + 1,
@@ -119,8 +119,8 @@ function boundary_matrix (
   com: cx.cell_complex_t,
   dim: number,
 ): int.matrix_t {
-  let m = com.size_of_dim (dim - 1)
-  let n = com.size_of_dim (dim)
+  let m = com.dim_size (dim - 1)
+  let n = com.dim_size (dim)
   let matrix = int.matrix_t.zeros (m, n)
   for (let id of com.id_in_dim (dim)) {
     let boundary = boundary_of_basis (com, id)

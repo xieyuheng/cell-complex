@@ -380,7 +380,7 @@ class cell_complex_t {
     return this.get (id) .dim
   }
 
-  size_of_dim (dim: number): number {
+  dim_size (dim: number): number {
     return Array.from (this.in_dim (dim)) .length
   }
 
@@ -643,7 +643,7 @@ class cell_complex_builder_t {
     } else {
       let cell = this.get (id)
       let circuit = new Array <id_t | rev_id_t> ()
-      let size = cell.dom.size_of_dim (1)
+      let size = cell.dom.dim_size (1)
       let polygon = new polygon_t (size)
       for (let side_id of polygon.side_id_array) {
         let im = cell.dic.get (side_id)
@@ -767,7 +767,7 @@ function isomorphic_to_endpoints (
   if (com.dim !== 0) {
     return null
   }
-  let size = com.size_of_dim (0)
+  let size = com.dim_size (0)
   if (size !== 2) {
     return null
   }
@@ -810,8 +810,8 @@ function isomorphic_to_polygon (
   if (com.dim !== 1) {
     return null
   }
-  let size = com.size_of_dim (0)
-  if (size !== com.size_of_dim (1)) {
+  let size = com.dim_size (0)
+  if (size !== com.dim_size (1)) {
     return null
   }
   if (size < 1) {

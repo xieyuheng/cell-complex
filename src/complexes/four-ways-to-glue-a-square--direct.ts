@@ -70,4 +70,4 @@ let report = {
   "projective_plane": new projective_plane_t () .repr (),
 }
 
-ut.log (report)
+// ut.log (report)

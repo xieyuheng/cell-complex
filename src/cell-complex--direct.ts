@@ -194,6 +194,15 @@ class cell_t extends morphism_t {
   get dim (): number {
     return this.dom.dim + 1
   }
+
+  ser (com: cell_complex_t): number {
+    for (let [i, cell] of com.cell_array (this.dim) .entries ()) {
+      if (this.eq (cell)) {
+        return i
+      }
+    }
+    throw new Error (`fail to find cell in com`)
+  }
 }
 
 export
@@ -251,8 +260,12 @@ class cell_complex_t {
     if (cell_array !== undefined) {
       return cell_array
     } else {
-      throw new Error (`no cell_array at dim: ${dim}`)
+      return new Array ()
     }
+  }
+
+  dim_size (dim: number): number {
+    return this.cell_array (dim) .length
   }
 
   *cells (): IterableIterator <cell_t> {
