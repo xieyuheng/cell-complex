@@ -71,3 +71,5 @@ let report = {
 }
 
 // ut.log (report)
+
+ut.log (new torus_t () .repr ())

@@ -1,7 +1,7 @@
+- switch to cell-complex--direct.ts
+  to simplify the API of cell_complex_t building
 - new vertex_figure_t
 - new manifold_check
-- try cell-complex--direct.ts
-  to simplify the API of cell_complex_t building
 ------
 - 2-dim manifold classification -- zip of john conway
 - classification of regular polytope
