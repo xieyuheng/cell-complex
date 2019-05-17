@@ -132,7 +132,30 @@ test ("four-ways-to-glue-a-square", t => {
     "projective_plane": hl.report (new projective_plane_t ()),
   }
 
-  ut.log (report)
+  let expected_report = {
+    sphere:
+    { '0': { betti_number: 1, torsion_coefficients: [] },
+      '1': { betti_number: 0, torsion_coefficients: [] },
+      '2': { betti_number: 1, torsion_coefficients: [] },
+      euler_characteristic: 2 },
+    torus:
+    { '0': { betti_number: 1, torsion_coefficients: [] },
+      '1': { betti_number: 2, torsion_coefficients: [] },
+      '2': { betti_number: 1, torsion_coefficients: [] },
+      euler_characteristic: 0 },
+    klein_bottle:
+    { '0': { betti_number: 1, torsion_coefficients: [] },
+      '1': { betti_number: 1, torsion_coefficients: [ 2 ] },
+      '2': { betti_number: 0, torsion_coefficients: [] },
+      euler_characteristic: 0 },
+    projective_plane:
+    { '0': { betti_number: 1, torsion_coefficients: [] },
+      '1': { betti_number: 0, torsion_coefficients: [ 2 ] },
+      '2': { betti_number: 0, torsion_coefficients: [] },
+      euler_characteristic: 1 }
+  }
+
+  t.deepEqual (report, expected_report)
 
   t.pass ()
 })

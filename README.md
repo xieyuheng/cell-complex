@@ -207,17 +207,16 @@ let ut = require ("cicada-lang/lib/util")
 ``` javascript
 class sphere_t extends cx.cell_complex_t {
   constructor () {
-    let builder = new cx.cell_complex_builder_t ()
-    let [south, middle, north] = builder.attach_vertexes (3)
-    let south_long = builder.attach_edge (south, middle)
-    let north_long = builder.attach_edge (middle, north)
-    let surf = builder.attach_face ([
-      south_long,
-      north_long,
-      north_long.rev (),
-      south_long.rev (),
+    super ({ dim: 2 })
+    this.attach_vertexes (["south", "middle", "north"])
+    this.attach_edge ("south_long", ["south", "middle"])
+    this.attach_edge ("north_long", ["middle", "north"])
+    this.attach_face ("surf", [
+      "south_long",
+      "north_long",
+      ["north_long", "rev"],
+      ["south_long", "rev"],
     ])
-    super (builder)
   }
 }
 ```
@@ -227,17 +226,16 @@ class sphere_t extends cx.cell_complex_t {
 ``` javascript
 class torus_t extends cx.cell_complex_t {
   constructor () {
-    let builder = new cx.cell_complex_builder_t ()
-    let origin = builder.attach_vertex ()
-    let toro = builder.attach_edge (origin, origin)
-    let polo = builder.attach_edge (origin, origin)
-    let surf = builder.attach_face ([
-      toro,
-      polo,
-      toro.rev (),
-      polo.rev (),
+    super ({ dim: 2 })
+    this.attach_vertex ("origin")
+    this.attach_edge ("toro", ["origin", "origin"])
+    this.attach_edge ("polo", ["origin", "origin"])
+    this.attach_face ("surf", [
+      "toro",
+      "polo",
+      ["toro", "rev"],
+      ["polo", "rev"],
     ])
-    super (builder)
   }
 }
 ```
@@ -247,17 +245,16 @@ class torus_t extends cx.cell_complex_t {
 ``` javascript
 class klein_bottle_t extends cx.cell_complex_t {
   constructor () {
-    let builder = new cx.cell_complex_builder_t ()
-    let origin = builder.attach_vertex ()
-    let toro = builder.attach_edge (origin, origin)
-    let cross = builder.attach_edge (origin, origin)
-    let surf = builder.attach_face ([
-      toro,
-      cross,
-      toro.rev (),
-      cross,
+    super ({ dim: 2 })
+    this.attach_vertex ("origin")
+    this.attach_edge ("toro", ["origin", "origin"])
+    this.attach_edge ("cross", ["origin", "origin"])
+    this.attach_face ("surf", [
+      "toro",
+      "cross",
+      ["toro", "rev"],
+      "cross",
     ])
-    super (builder)
   }
 }
 ```
@@ -267,17 +264,17 @@ class klein_bottle_t extends cx.cell_complex_t {
 ``` javascript
 class projective_plane_t extends cx.cell_complex_t {
   constructor () {
-    let builder = new cx.cell_complex_builder_t ()
-    let [start, end] = builder.attach_vertexes (2)
-    let left_rim = builder.attach_edge (start, end)
-    let right_rim = builder.attach_edge (end, start)
-    let surf = builder.attach_face ([
-      left_rim, right_rim,
-      left_rim, right_rim,
+    super ({ dim: 2 })
+    this.attach_vertexes (["start", "end"])
+    this.attach_edge ("left_rim", ["start", "end"])
+    this.attach_edge ("right_rim", ["end", "start"])
+    this.attach_face ("surf", [
+      "left_rim", "right_rim",
+      "left_rim", "right_rim",
     ])
-    super (builder)
   }
 }
+
 ```
 
 - calculate [homology groups](https://en.wikipedia.org/wiki/Homology_(mathematics)):

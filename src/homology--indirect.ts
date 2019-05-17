@@ -153,9 +153,9 @@ function euler_characteristic (
   let n = 0
   for (let d of ut.range (0, com.dim + 1)) {
     if (d % 2 === 0) {
-      n += homology_diag_canonical (com, d) .rank ()
+      n += betti_number (homology_diag_canonical (com, d))
     } else {
-      n -= homology_diag_canonical (com, d) .rank ()
+      n -= betti_number (homology_diag_canonical (com, d))
     }
   }
   return n
@@ -177,8 +177,9 @@ function torsion_coefficients (
   let array = new Array ()
   let invariant_factors = diag_canonical.diag ()
   for (let v of invariant_factors.values ()) {
-    if (v !== 0n && v !== 1n) {
-      array.push (Number (int.abs (v)))
+    let n = Number (int.abs (v))
+    if (n !== 0 && n !== 1) {
+      array.push (n)
     }
   }
   return array

@@ -62,14 +62,3 @@ class projective_plane_t extends cx.cell_complex_t {
     ])
   }
 }
-
-let report = {
-  "sphere": new sphere_t () .repr (),
-  "torus": new torus_t () .repr (),
-  "klein_bottle": new klein_bottle_t () .repr (),
-  "projective_plane": new projective_plane_t () .repr (),
-}
-
-// ut.log (report)
-
-ut.log (new torus_t () .repr ())
