@@ -1,8 +1,8 @@
-- new vertex_figure_t
+- 2-dim manifold classification -- zip of john conway
 - new manifold_check
+- new vertex_figure_t
 - update cell-complex
 ------
-- 2-dim manifold classification -- zip of john conway
 - classification of regular polytope
 - holding implements until finite element method and PDE
 - example usages of higher order incidence relation
