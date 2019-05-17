@@ -541,6 +541,14 @@ function monomorphism_p (the: {
 }
 
 export
+function spherical_check (
+  evid: spherical_evidence_t,
+  com: cell_complex_t,
+): boolean {
+  return evid.iso.cod.eq (com)
+}
+
+export
 class spherical_t extends cell_complex_t {
   spherical_evidence: spherical_evidence_t
 
@@ -549,20 +557,12 @@ class spherical_t extends cell_complex_t {
     evid?: spherical_evidence_t,
   ) {
     super (com)
-    if (evid !== undefined) {
-      if (evid.iso.cod.eq (this)) {
-        this.spherical_evidence = evid
-      } else {
-        throw new Error ("spherical check fail")
-      }
-    } else {
-      evid = spherical_evidence_t.generate (this)
-      if (evid !== undefined) {
-        this.spherical_evidence = evid
-      } else {
-        throw new Error ("spherical check fail")
-      }
-    }
+    this.spherical_evidence = evid ||
+      spherical_evidence_t.generate (this) ||
+      ut.panic ("spherical_evidence_t.generate fail")
+    assert (
+      spherical_check (this.spherical_evidence, com)
+    )
   }
 }
 
@@ -611,6 +611,50 @@ class spherical_evidence_t {
       console.log ("[warning] can not check dim 2 yet")
       return undefined
     }
+  }
+}
+
+// export
+// class manifold_t extends cell_complex_t {
+//   manifold_evidence: manifold_evidence_t
+
+//   constructor (
+//     com: cell_complex_t,
+//     evid?: manifold_evidence_t,
+//   ) {
+//     super (com)
+//     if (evid !== undefined) {
+//       if (evid.iso.cod.eq (this)) {
+//         this.manifold_evidence = evid
+//       } else {
+//         throw new Error ("manifold_check fail")
+//       }
+//     } else {
+//       evid = manifold_evidence_t.generate (this)
+//       if (evid !== undefined) {
+//         this.manifold_evidence = evid
+//       } else {
+//         throw new Error ("manifold_evidence_t.generate fail")
+//       }
+//     }
+//   }
+// }
+
+/**
+ * A n-dim manifold, is a topological space,
+ * each vertex of which has a n-ball as close neighbourhood.
+
+ * For cell-complex, it is sufficient to check that,
+ * each vertexes of it has a (n-1)-sphere as [[vertex_figure_t]].
+ */
+export
+class manifold_evidence_t {
+  dim: number
+  // iso_map: Map <cell_t, isomorphism_t>
+
+  constructor (dim: number) {
+    this.dim = dim
+    // this.iso_map = new Map ()
   }
 }
 

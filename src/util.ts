@@ -72,3 +72,8 @@ function array_eq <V> (
   }
   return true
 }
+
+export
+function panic (message: string): never {
+  throw new Error (message)
+}

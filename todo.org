@@ -1,7 +1,5 @@
 - new vertex_figure_t
 - new manifold_check
-- remove indirect version
-  - clear non use code
 - update cell-complex
 ------
 - 2-dim manifold classification -- zip of john conway
