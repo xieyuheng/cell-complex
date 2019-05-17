@@ -194,6 +194,8 @@ let num = require ("cicada-lang/lib/num")
 
 #### [`examples/four-ways-to-glue-a-square.js`](examples/four-ways-to-glue-a-square.js):
 
+- The following pictures are made by Guy Inchbald, a.k.a. [Steelpillow](https://commons.wikimedia.org/wiki/User:Steelpillow)
+
 ![Flatsurfaces.svg](https://github.com/xieyuheng/image-link/blob/master/homology/Flatsurfaces.svg)
 
 ``` javascript
@@ -312,8 +314,6 @@ let expected_report = {
      euler_characteristic: 1 }
 }
 ```
-
-- Pictures by Guy Inchbald, a.k.a. [Steelpillow](https://commons.wikimedia.org/wiki/User:Steelpillow)
 
 ### `cc` cicada-core
 
