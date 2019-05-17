@@ -1,1031 +1,615 @@
 import assert from "assert"
+import nanoid from "nanoid"
 
-import { dic_t } from "./dic"
+import * as ut from "./util"
 
-/**
- * In the context of a [[cell_complex_t]],
- * The dimension and a serial number can identify a cell.
- */
 export
-class id_t {
+class figure_t {
+  array: Array <{ src: cell_t, tar: cell_t, cfg: cell_t }>
+
   constructor (
-    readonly dim: number,
-    readonly ser: number,
-  ) {}
-
-  eq (that: id_t): boolean {
-    return ((this.dim === that.dim) &&
-            (this.ser === that.ser))
+    array?: Array <{ src: cell_t, tar: cell_t, cfg: cell_t }>
+  ) {
+    this.array = array || new Array ()
   }
 
-  to_str (): string {
-    return `${this.dim}:${this.ser}`
+  vertex (
+    src: vertex_t,
+    tar: vertex_t,
+  ) {
+    if (! this.has_src (src)) {
+      this.array.push ({ src, tar, cfg: new vertex_t () })
+    } else {
+      throw new Error (`src already defined`)
+    }
   }
 
-  static valid_id_str (str: string): boolean {
-    let words = str.split (":")
-    if (words.length !== 2) { return false }
-    let dim = Number.parseInt (words [0])
-    let ser = Number.parseInt (words [1])
-    if (Number.isNaN (dim)) { return false }
-    if (Number.isNaN (ser)) { return false }
-    return true
+  edge (
+    src: edge_t,
+    tar: edge_t,
+  ) {
+    let cfg = new cell_t ({
+      dom: src.endpoints,
+      cod: tar.endpoints,
+    })
+    cfg.fig.vertex (
+      src.endpoints.vertex ("start"),
+      tar.endpoints.vertex ("start"),
+    )
+    cfg.fig.vertex (
+      src.endpoints.vertex ("end"),
+      tar.endpoints.vertex ("end"),
+    )
+    if (! this.has_src (src)) {
+      this.array.push ({ src, tar, cfg })
+    } else {
+      throw new Error (`src already defined`)
+    }
   }
 
-  static parse (str: string): id_t {
-    assert (this.valid_id_str (str))
-    let words = str.split (":")
-    let dim = Number.parseInt (words [0])
-    let ser = Number.parseInt (words [1])
-    return new id_t (dim, ser)
+  edge_rev (
+    src: edge_t,
+    tar: edge_t,
+  ) {
+    let cfg = new cell_t ({
+      dom: src.endpoints,
+      cod: tar.endpoints,
+    })
+    cfg.fig.vertex (
+      src.endpoints.vertex ("start"),
+      tar.endpoints.vertex ("end"),
+    )
+    cfg.fig.vertex (
+      src.endpoints.vertex ("end"),
+      tar.endpoints.vertex ("start"),
+    )
+    if (! this.has_src (src)) {
+      this.array.push ({ src, tar, cfg })
+    } else {
+      throw new Error (`src already defined`)
+    }
   }
 
-  rev (): rev_id_t {
-    return new rev_id_t (this)
-  }
-}
-
-export
-function id_to_str (id: id_t): string {
-  return id.to_str ()
-}
-
-function im_eq (
-  x: { id: id_t, cell: cell_t },
-  y: { id: id_t, cell: cell_t },
-): boolean {
-  return x.id.eq (y.id) && x.cell.eq (y.cell)
-}
-
-function im_to_exp (im: { id: id_t, cell: cell_t }): im_exp_t {
-  return {
-    id: im.id.to_str (),
-    cell: im.cell.to_exp (),
-  }
-}
-
-function im_dic_dim_compatible_p (
-  dom: cell_complex_t,
-  cod: cell_complex_t,
-  dic: dic_t <id_t, { id: id_t, cell: cell_t }>,
-  dim: number,
-): boolean {
-  for (let [id, im] of dic) {
-    if (id.dim === dim) {
-      for (let [id1, im1] of im.cell.dic) {
-        let x = dom.get (id) .dic.get (id1) .id
-        let y = cod.get (im.id) .dic.get (im1.id) .id
-        if (! dic.get (x) .id.eq (y)) {
-          return false
-        }
+  has_src (
+    cell: cell_t,
+  ): boolean {
+    for (let {src} of this.array) {
+      if (cell.eq (src)) {
+        return true
       }
     }
-  }
-  return true
-}
-
-function im_dic_compatible_p (
-  dom: cell_complex_t,
-  cod: cell_complex_t,
-  dic: dic_t <id_t, { id: id_t, cell: cell_t }>,
-): boolean {
-  if (dom.cell_dic.size !== dic.size) {
     return false
   }
-  let dim = dom.dim
-  while (dim > 0) {
-    if (im_dic_dim_compatible_p (dom, cod, dic, dim)) {
-      dim -= 1
-    } else {
-      return false
+
+  has_tar (
+    cell: cell_t,
+  ): boolean {
+    for (let {tar} of this.array) {
+      if (cell.eq (tar)) {
+        return true
+      }
     }
+    return false
   }
-  return true
-}
 
-function im_dic_has_value_id (
-  dic: dic_t <id_t, { id: id_t, cell: cell_t }>,
-  id: id_t,
-): boolean {
-  for (let im of dic.values ()) {
-    if (id.eq (im.id)) {
-      return true
+  repr (): any {
+    let repr: any = []
+    for (let {src, tar, cfg} of this.array) {
+      repr.push ({
+        src: src.uuid,
+        tar: tar.uuid,
+        cfg: cfg.repr (),
+      })
     }
+    return repr
   }
-  return false
+
+  static from_polygon_and_circuit (
+    polygon: polygon_t,
+    cod: cell_complex_t,
+    circuit: circuit_t,
+  ): figure_t {
+    let size = polygon.size
+    let fig = new figure_t ()
+    for (let i = 0; i < size; i++) {
+      let src = polygon.edge_array [i]
+      let edge = circuit [i]
+      if (edge instanceof edge_t) {
+        let tar = edge
+        fig.vertex (src.end, tar.end)
+        fig.edge (src, tar)
+      } else {
+        let tar = edge.rev
+        fig.vertex (src.end, tar.start)
+        fig.edge_rev (src, tar)
+      }
+    }
+    return fig
+  }
+
+  eq (that: figure_t): boolean {
+    return ut.array_eq (
+      this.array,
+      that.array,
+      (x, y) => x.src.eq (y.src) &&
+        x.tar.eq (y.tar) &&
+        x.cfg.eq (y.cfg),
+    )
+  }
 }
 
-function new_im_dic (): dic_t <id_t, { id: id_t, cell: cell_t }> {
-  return new dic_t (id_to_str)
-}
-
-/**
- * Note that,
- * The category induced by this `morphism_t`
- * is intended to capture the category of topological spaces.
-
- * But, for example,
- * An edge can not be mapped to a path of two edges,
- * if we allow such map,
- * the inverse of a morphism would be problematic,
- * and the definition of [[cell_t]] would be much more complicated.
-
- * Thus to capture the category of topological spaces,
- * we also need to use subdivision.
- */
 export
 class morphism_t {
   dom: cell_complex_t
   cod: cell_complex_t
+  fig: figure_t
+  uuid: string
 
-  /**
-   * Here the structure of `dic` is the key
-   *   of the definition of `cell_complex_t` and `cell_t`.
-
-   * It is not enough to record a dic
-   *   from cell id in dom to cell id in cod,
-   *   we also need to record how the boundary of cell in dom
-   *     is mapped to the boundary of cell in cod.
-
-   * I found this by constructing
-   *   the vertex figures of `cell_complex_t`,
-   *   without the extra information,
-   *   it will be impossible to construct vertex figure.
-
-   * for `id => im.id`
-   *   `im.cell.dom == dom.get (id) .dom`
-   *   `im.cell.cod == cod.get (im.id) .dom`
-   */
-  dic: dic_t <id_t, { id: id_t, cell: cell_t }>
-
-  constructor (
+  constructor (the: {
     dom: cell_complex_t,
     cod: cell_complex_t,
-    dic: dic_t <id_t, { id: id_t, cell: cell_t }>,
-  ) {
-    this.dom = dom
-    this.cod = cod
-    this.dic = dic
+    fig?: figure_t,
+    uuid?: string,
+  }) {
+    this.dom = the.dom
+    this.cod = the.cod
+    this.fig = the.fig || new figure_t ()
+    this.uuid = the.uuid || nanoid (10)
+  }
 
-    if (! im_dic_compatible_p (dom, cod, dic)) {
-      throw new Error ("im_dic not compatible")
-    }
+  eq (that: morphism_t): boolean {
+    return (this.uuid === that.uuid) &&
+      this.dom.eq (that.dom) &&
+      this.cod.eq (that.cod) &&
+      this.fig.eq (that.fig)
+  }
+
+  repr (): any {
+    let repr: any = {}
+    repr ["uuid"] = this.uuid
+    repr ["dom"] = this.dom.repr ()
+    repr ["cod"] = this.cod.repr ()
+    repr ["fig"] = this.fig.repr ()
+    return repr
+  }
+}
+
+export
+class cell_t extends morphism_t {
+  dom: spherical_t
+
+  constructor (the: {
+    dom: cell_complex_t,
+    cod: cell_complex_t,
+    fig?: figure_t,
+    spherical_evidence?: spherical_evidence_t,
+  }) {
+    super (the)
+    this.dom = new spherical_t (
+      the.dom,
+      the.spherical_evidence,
+    )
   }
 
   get dim (): number {
     return this.dom.dim + 1
   }
 
-  empty_p (): boolean {
-    return (this.dom.empty_p () &&
-            this.dom.empty_p () &&
-            this.dic.empty_p ())
-  }
-
-  to_exp (): morphism_exp_t {
-    return this.empty_p () ? null : {
-      dom: this.dom.to_exp (),
-      cod: this.cod.to_exp (),
-      dic: im_dic_to_exp (this.dic),
-    }
-  }
-
-  eq (that: morphism_t): boolean {
-    if (! this.dom.eq (that.dom)) {
-      return false
-    } else if (! this.cod.lteq (that.cod)) {
-      return false
-    } else if (! this.dic.key_eq (that.dic)) {
-      return false
-    } else {
-      for (let [k, [x, y]] of this.dic.zip (that.dic)) {
-        if (! im_eq (x, y)) {
-          return false
-        }
+  ser (com: cell_complex_t): number {
+    for (let [i, cell] of com.cell_array (this.dim) .entries ()) {
+      if (this.eq (cell)) {
+        return i
       }
-      return true
     }
-  }
-}
-
-export
-class morphism_builder_t {
-  dom: cell_complex_t
-  cod: cell_complex_t
-  dic: dic_t <id_t, { id: id_t, cell: cell_t }>
-
-  constructor (
-    dom: cell_complex_t,
-    cod: cell_complex_t,
-  ) {
-    this.dom = dom
-    this.cod = cod
-    this.dic = new_im_dic ()
-  }
-
-  vertex (x: id_t, y: id_t): morphism_builder_t {
-    let im = { id: y, cell: empty_cell }
-    this.dic.set (x, im)
-    return this
-  }
-
-  vertex_ser (x: number, y: number): morphism_builder_t {
-    return this.vertex (new id_t (0, x), new id_t (0, y))
-  }
-
-  edge (x: id_t, y: id_t): morphism_builder_t {
-    let cell = new cell_t (
-      new endpoints_t (),
-      this.cod.skeleton (1),
-      new_im_dic () .merge_array ([
-        [new id_t (0, 0), {id: new id_t (0, 0), cell: empty_cell}],
-        [new id_t (0, 1), {id: new id_t (0, 1), cell: empty_cell}],
-      ]))
-    let im = { id: y, cell: cell }
-    this.dic.set (x, im)
-    return this
-  }
-
-  edge_ser (x: number, y: number): morphism_builder_t {
-    return this.edge (new id_t (1, x), new id_t (1, y))
-  }
-
-  edge_rev (x: id_t, y: id_t): morphism_builder_t {
-    let cell = new cell_t (
-      new endpoints_t (),
-      this.cod.skeleton (1),
-      new_im_dic () .merge_array ([
-        [new id_t (0, 0), {id: new id_t (0, 1), cell: empty_cell}],
-        [new id_t (0, 1), {id: new id_t (0, 0), cell: empty_cell}],
-      ]))
-    let im = { id: y, cell: cell }
-    this.dic.set (x, im)
-    return this
-  }
-
-  edge_ser_rev (x: number, y: number): morphism_builder_t {
-    return this.edge_rev (new id_t (1, x), new id_t (1, y))
-  }
-
-  build_morphism (): morphism_t {
-    return new morphism_t (this.dom, this.cod, this.dic)
-  }
-
-  build_isomorphism (): isomorphism_t {
-    return new isomorphism_t (this.dom, this.cod, this.dic)
-  }
-
-  build_cell (): cell_t {
-    return new cell_t (this.dom, this.cod, this.dic)
-  }
-
-  build_im_dic (): dic_t <id_t, { id: id_t, cell: cell_t }> {
-    return this.dic
-  }
-}
-
-export
-class cell_t extends morphism_t {
-  readonly dom: spherical_t
-
-  constructor (
-    dom: cell_complex_t,
-    cod: cell_complex_t,
-    dic: dic_t <id_t, { id: id_t, cell: cell_t }>,
-  ) {
-    super (dom, cod, dic)
-    this.dom = dom.as_spherical ()
-  }
-
-  static from_exp (exp: morphism_exp_t): cell_t {
-    if (exp === null) {
-      return empty_cell
-    }
-    let dom = cell_complex_t.from_exp (exp.dom)
-    let cod = cell_complex_t.from_exp (exp.cod)
-    let dic = new_im_dic ()
-    let iter = Object.entries (exp.dic)
-    for (let [k, v] of iter) {
-      let id = id_t.parse (k)
-      let im = {
-        id: id_t.parse (v.id),
-        cell: cell_t.from_exp (v.cell),
-      }
-      dic.set (id, im)
-    }
-    return new cell_t (dom, cod, dic)
-  }
-}
-
-export
-function im_dic_to_exp (
-  dic: dic_t <id_t, { id: id_t, cell: cell_t }>
-): {
-  [id: string]: im_exp_t
-} {
-  let exp: {
-    [id: string]: im_exp_t
-  } = {}
-  for (let [id, im] of dic) {
-    exp [id.to_str ()] = im_to_exp (im)
-  }
-  return exp
-}
-
-interface cell_complex_exp_t {
-  [id: string] : morphism_exp_t
-}
-
-interface im_exp_t {
-  id: string,
-  cell: morphism_exp_t,
-}
-
-type morphism_exp_t = null | {
-  dom: cell_complex_exp_t,
-  cod: cell_complex_exp_t,
-  dic: {
-    [id: string]: im_exp_t
+    throw new Error (`fail to find cell in com`)
   }
 }
 
 export
 class cell_complex_t {
-  /**
-   * for `id => cell`
-   *   `cell.dom == new spherical_t (...)`
-   *   `cell.cod == this.skeleton (id.dim - 1)`
-   */
-  readonly cell_dic: dic_t <id_t, cell_t>
-  protected name_dic: dic_t <string, id_t>
+  dim: number
+  cell_map: Map <number, Array <cell_t>>
+  name_map: Map <string, cell_t>
 
-  constructor (
-    builder: cell_complex_builder_t =
-      new cell_complex_builder_t ()
-  ) {
-    this.cell_dic = builder.cell_dic.copy ()
-    this.name_dic = builder.name_dic.copy ()
+  constructor (the: {
+    dim: number,
+    cell_map?: Map <number, Array <cell_t>>,
+    name_map?: Map <string, cell_t>,
+  }) {
+    this.dim = the.dim
+    this.cell_map = the.cell_map || new Map ()
+    for (let d of ut.range (0, this.dim + 1)) {
+      if (! this.cell_map.has (d)) {
+        this.cell_map.set (d, new Array ())
+      }
+    }
+    this.name_map = the.name_map || new Map ()
   }
 
-  get dim (): number {
-    let array = this.cell_dic.key_array () .map (id => id.dim)
-    return Math.max (-1, ...array)
-  }
-
-  empty_p (): boolean {
-    return this.cell_dic.empty_p ()
-  }
-
-  dim_of (id: id_t): number {
-    return this.get (id) .dim
-  }
-
-  dim_size (dim: number): number {
-    return Array.from (this.in_dim (dim)) .length
+  eq (that: cell_complex_t): boolean {
+    return (this.dim === that.dim) &&
+      ut.map_eq (
+        this.cell_map,
+        that.cell_map,
+        (x, y) => ut.array_eq (x, y, (v, w) => v.eq (w)),
+      ) &&
+      ut.map_eq (
+        this.name_map,
+        that.name_map,
+        (x, y) => x.eq (y),
+      )
   }
 
   skeleton (dim: number): cell_complex_t {
-    let com = new cell_complex_t ()
-    for (let [id, cell] of this.cell_dic.to_array ()) {
-      if (id.dim <= dim) {
-        com.cell_dic.set (id, cell)
+    let com = new cell_complex_t ({ dim })
+    for (let [d, cell_array] of this.cell_map) {
+      if (d <= dim) {
+        com.cell_map.set (d, cell_array)
+      }
+    }
+    for (let [name, cell] of this.name_map) {
+      if (cell.dim <= dim) {
+        com.name_map.set (name, cell)
       }
     }
     return com
   }
 
-  *id_in_dim (dim: number) {
-    for (let id of this.cell_dic.keys ()) {
-      if (id.dim === dim) {
-        yield id as id_t
+  cell_array (dim: number): Array <cell_t> {
+    let cell_array = this.cell_map.get (dim)
+    if (cell_array !== undefined) {
+      return cell_array
+    } else {
+      return new Array ()
+    }
+  }
+
+  dim_size (dim: number): number {
+    return this.cell_array (dim) .length
+  }
+
+  *cells (): IterableIterator <cell_t> {
+    for (let d of ut.range (0, this.dim + 1)) {
+      for (let cell of this.cell_array (d)) {
+        yield cell
       }
     }
   }
 
-  *in_dim (dim: number) {
-    for (let [id, cell] of this.cell_dic) {
-      if (id.dim === dim) {
-        yield [id, cell] as [id_t, cell_t]
+  get vertex_array (): Array <vertex_t> {
+    return this.cell_array (0) .map (cell => cell as vertex_t)
+  }
+
+  get edge_array (): Array <edge_t> {
+    return this.cell_array (1) .map (cell => cell as edge_t)
+  }
+
+  has_name (name: string): boolean {
+    return this.name_map.has (name)
+  }
+
+  has_cell (x: cell_t): boolean {
+    for (let y of this.cells ()) {
+      if (x.eq (y)) {
+        return true
       }
     }
+    return false
   }
 
-  *vertexes () {
-    for (let [id, _cell] of this.in_dim (0)) {
-      yield id
+  attach (name: string, cell: cell_t) {
+    this.cell_array (cell.dim) .push (cell)
+    this.name_map.set (name, cell)
+  }
+
+
+  attach_vertex (name: string) {
+    this.attach (name, new vertex_t ())
+  }
+
+  attach_vertexes (names: Array <string>) {
+    for (let name of names) {
+      this.attach_vertex (name)
     }
   }
 
-  vertex_id_array (): Array <id_t> {
-    return Array.from (this.vertexes ())
+  attach_edge (name: string, [start, end]: [string, string]) {
+    this.attach (name, new edge_t (
+      this,
+      this.vertex (start),
+      this.vertex (end),
+    ))
   }
 
-  has (id: id_t): boolean {
-    return this.cell_dic.has (id)
-  }
-
-  get (id: id_t): cell_t {
-    return this.cell_dic.get (id)
-  }
-
-  as_spherical (): spherical_t {
-    return new spherical_t (this)
-  }
-
-  get_edge (id: id_t): edge_t {
-    return this.as_builder () .get_edge (id)
-  }
-
-  get_face (id: id_t): face_t {
-    return this.as_builder () .get_face (id)
-  }
-
-  as_builder (): cell_complex_builder_t {
-    let builder = new cell_complex_builder_t ()
-    builder.cell_dic = this.cell_dic.copy ()
-    return builder
-  }
-
-  copy (): cell_complex_t {
-    return new cell_complex_t (this.as_builder ())
-  }
-
-  to_exp (): cell_complex_exp_t {
-    let exp: cell_complex_exp_t = {}
-    for (let [id, cell] of this.cell_dic) {
-      exp [id.to_str ()] = cell.to_exp ()
-    }
-    return exp
-  }
-
-  static from_exp (exp: cell_complex_exp_t): cell_complex_t {
-    let builder = new cell_complex_builder_t ()
-    let iter = Object.entries (exp)
-      .filter (([k, _]) => id_t.valid_id_str (k))
-    for (let [k, v] of iter) {
-      let id = id_t.parse (k)
-      let cell = cell_t.from_exp (v)
-      builder.set (id, cell)
-    }
-    return builder.build ()
-  }
-
-  eq (that: cell_complex_t): boolean {
-    if (! this.cell_dic.key_eq (that.cell_dic)) {
-      return false
-    }
-    for (let [k, [x, y]] of this.cell_dic.zip (that.cell_dic)) {
-      if (! x.eq (y)) {
-        return false
-      }
-    }
-    return true
-  }
-
-  lt (that: cell_complex_t): boolean {
-    if (! this.cell_dic.key_lt (that.cell_dic)) {
-      return false
-    }
-    for (let [k, [x, y]] of this.cell_dic.zip (that.cell_dic)) {
-      if (! x.eq (y)) {
-        return false
-      }
-    }
-    return true
-  }
-
-  lteq (that: cell_complex_t): boolean {
-    if (! this.cell_dic.key_lteq (that.cell_dic)) {
-      return false
-    }
-    for (let [k, [x, y]] of this.cell_dic.zip (that.cell_dic)) {
-      if (! x.eq (y)) {
-        return false
-      }
-    }
-    return true
-  }
-
-  gt (that: cell_complex_t): boolean {
-    return that.lt (this)
-  }
-
-  gteq (that: cell_complex_t): boolean {
-    return that.lteq (this)
-  }
-
-  define_vertex (name: string, id: id_t): cell_complex_t {
-    assert (id.dim === 0)
-    this.name_dic.set (name, id)
-    return this
-  }
-
-  define_edge (name: string, id: id_t): cell_complex_t {
-    assert (id.dim === 1)
-    this.name_dic.set (name, id)
-    return this
-  }
-
-  define_face (name: string, id: id_t): cell_complex_t {
-    assert (id.dim === 2)
-    this.name_dic.set (name, id)
-    return this
-  }
-
-  id (name: string): id_t {
-    return this.name_dic.get (name)
+  attach_face (name: string, circuit_exp: Array <edge_exp_t>) {
+    this.attach (name, new face_t (
+      this,
+      circuit_exp.map (exp => edge_exp_eval (this, exp)),
+    ))
   }
 
   cell (name: string): cell_t {
-    return this.get (this.id (name))
+    let cell = this.name_map.get (name)
+    if (cell !== undefined) {
+      return cell
+    } else {
+      throw new Error (`can not find cell: ${name}`)
+    }
+  }
+
+  vertex (name: string): vertex_t {
+    let cell = this.cell (name)
+    if (cell instanceof vertex_t) {
+      return cell
+    } else {
+      throw new Error (`cell_t not vertex_t: ${name}`)
+    }
   }
 
   edge (name: string): edge_t {
-    return this.get_edge (this.id (name))
+    let cell = this.cell (name)
+    if (cell instanceof edge_t) {
+      return cell
+    } else {
+      throw new Error (`cell_t not edge_t: ${name}`)
+    }
   }
 
   face (name: string): face_t {
-    return this.get_face (this.id (name))
+    let cell = this.cell (name)
+    if (cell instanceof face_t) {
+      return cell
+    } else {
+      throw new Error (`cell_t not edge_t: ${name}`)
+    }
   }
 
-  // chain_from_array (
-  //   dim: number,
-  //   array: Array <[id_t, number]>,
-  // ): chain_t {
-  //   let chain = new chain_t (dim, this)
-  //   for (let [id, n] of array) {
-  //     chain.dic.update_at (id, m => m + n)
-  //   }
-  //   return chain
-  // }
+  empty_p (): boolean {
+    return this.dim === -1
+  }
+
+  repr (): any {
+    if (this.empty_p ()) {
+      return null
+    }
+    let repr: any = {}
+    repr ["dim"] = this.dim
+    for (let [d, cell_array] of this.cell_map) {
+      repr [d] = cell_array.map (cell => cell.repr ())
+    }
+    repr ["name_map"] = {}
+    for (let [name, cell] of this.name_map) {
+      repr ["name_map"] [name] = cell.uuid
+    }
+    return repr
+  }
 }
 
 export
-class cell_complex_builder_t {
-  cell_dic: dic_t <id_t, cell_t>
-  name_dic: dic_t <string, id_t>
-
-  constructor () {
-    this.cell_dic = new dic_t (id_to_str)
-    this.name_dic = new dic_t ()
-  }
-
-  get dim (): number {
-    let array = this.cell_dic.key_array () .map (id => id.dim)
-    return Math.max (0, ...array)
-  }
-
-  set (id: id_t, cell: cell_t) {
-    this.cell_dic.set (id, cell)
-  }
-
-  has (id: id_t): boolean {
-    return this.cell_dic.has (id)
-  }
-
-  get (id: id_t): cell_t {
-    return this.cell_dic.get (id)
-  }
-
-  gen_id (dim: number): id_t {
-    let ser = 0
-    for (let id of this.cell_dic.key_array ()) {
-      if (id.dim === dim) {
-        ser = Math.max (ser, id.ser) + 1
-      }
+class isomorphism_t extends morphism_t {
+  constructor (the: {
+    dom: cell_complex_t,
+    cod: cell_complex_t,
+    fig?: figure_t,
+  }) {
+    super (the)
+    if (! epimorphism_p (this)) {
+      ut.log (this.repr ())
+      throw new Error ("not epimorphism")
     }
-    return new id_t (dim, ser)
-  }
-
-  attach_vertex (): id_t {
-    let id = this.gen_id (0)
-    this.set (id, empty_cell)
-    return id
-  }
-
-  attach_vertexes (n: number): Array <id_t> {
-    let array = new Array <id_t> ()
-    for (let i = 0; i < n; i += 1) {
-      array.push (this.attach_vertex ())
-    }
-    return array
-  }
-
-  attach (cell: cell_t): id_t {
-    let id = this.gen_id (cell.dim)
-    this.cell_dic.set (id, cell)
-    return id
-  }
-
-  attach_edge (start: id_t, end: id_t): id_t {
-    return this.attach (new edge_t (this, start, end))
-  }
-
-  attach_face (circuit: circuit_t): id_t {
-    return this.attach (new face_t (this, circuit))
-  }
-
-  get_edge (id: id_t): edge_t {
-    if (id.dim !== 1) {
-      throw new Error ("dimension mismatch")
-    } else {
-      let cell = this.get (id)
-      let endpoints = new endpoints_t ()
-      let start = cell.dic.get (endpoints.id ("start")) .id
-      let end = cell.dic.get (endpoints.id ("end")) .id
-      return new edge_t (this, start, end)
+    if (! monomorphism_p (this)) {
+      ut.log (this.repr ())
+      throw new Error ("not monomorphism")
     }
   }
 
-  get_face (id: id_t): face_t {
-    if (id.dim !== 2) {
-      throw new Error ("dimension mismatch")
-    } else {
-      let cell = this.get (id)
-      let circuit = new Array <id_t | rev_id_t> ()
-      let size = cell.dom.dim_size (1)
-      let polygon = new polygon_t (size)
-      for (let side_id of polygon.side_id_array) {
-        let im = cell.dic.get (side_id)
-        let endpoints = new endpoints_t ()
-        let start = endpoints.id ("start")
-        let end = endpoints.id ("end")
-        let dic = im.cell.dic
-        if ((dic.get (start) .id.eq (start)) &&
-            (dic.get (end) .id.eq (end))) {
-          circuit.push (im.id)
-        } else if ((dic.get (start) .id.eq (end)) &&
-                   (dic.get (end) .id.eq (start))) {
-          circuit.push (im.id.rev ())
-        } else {
-          throw new Error ("endpoints mismatch")
+  static endpoints (
+    com: cell_complex_t
+  ): isomorphism_t | undefined {
+    if (com.dim !== 0) {
+      return undefined
+    }
+    let size = com.vertex_array.length
+    if (size !== 2) {
+      return undefined
+    }
+    let [start, end] = com.vertex_array
+    let endpoints = new endpoints_t ()
+    let fig = new figure_t ()
+    fig.vertex (endpoints.vertex ("start"), start)
+    fig.vertex (endpoints.vertex ("end"), end)
+    return new isomorphism_t ({
+      dom: endpoints,
+      cod: com,
+      fig,
+    })
+  }
+
+  static polygon (
+    com: cell_complex_t
+  ): isomorphism_t | undefined {
+    if (com.dim !== 1) {
+      return undefined
+    }
+    let size = com.edge_array.length
+    if (size !== com.vertex_array.length) {
+      return undefined
+    }
+    if (size === 0) {
+      return undefined
+    }
+    let circuit: circuit_t = new Array ()
+    let vertex = com.vertex_array [0]
+    let edge_uuid_set = new Set ()
+    for (let i = 0; i < size; i++) {
+      for (let edge of com.edge_array) {
+        if (! edge_uuid_set.has (edge.uuid)) {
+          if (edge.start.eq (vertex)) {
+            edge_uuid_set.add (edge.uuid)
+            circuit.push (edge)
+            vertex = edge.end
+            break
+          } else if (edge.end.eq (vertex)) {
+            edge_uuid_set.add (edge.uuid)
+            circuit.push (edge)
+            vertex = edge.start
+            break
+          }
         }
       }
-      return new face_t (this, circuit)
     }
-  }
-
-  build (): cell_complex_t {
-    return new cell_complex_t (this)
-  }
-
-  skeleton (dim: number): cell_complex_t {
-    return this.build () .skeleton (dim)
-  }
-}
-
-function epimorphism_p (
-  dom: cell_complex_t,
-  cod: cell_complex_t,
-  dic: dic_t <id_t, { id: id_t, cell: cell_t }>,
-): boolean {
-  for (let id of cod.cell_dic.keys ()) {
-    if (! im_dic_has_value_id (dic, id)) {
-      return false
+    if (circuit.length !== size) {
+      return undefined
     }
+    let polygon = new polygon_t (size)
+    let fig = figure_t
+      .from_polygon_and_circuit (polygon, com, circuit)
+    return new isomorphism_t ({
+      dom: polygon,
+      cod: com,
+      fig,
+    })
   }
-  return true
 }
 
 export
 class epimorphism_t extends morphism_t {
-  constructor (
+  constructor (the: {
     dom: cell_complex_t,
     cod: cell_complex_t,
-    dic: dic_t <id_t, { id: id_t, cell: cell_t }>,
-  ) {
-    if (! epimorphism_p (dom, cod, dic)) {
+    fig?: figure_t,
+  }) {
+    super (the)
+    if (! epimorphism_p (this)) {
       throw new Error ("not epimorphism")
     }
-    super (dom, cod, dic)
   }
 }
 
-function monomorphism_p (
+export
+class monomorphism_t extends morphism_t {
+  constructor (the: {
+    dom: cell_complex_t,
+    cod: cell_complex_t,
+    fig?: figure_t,
+  }) {
+    super (the)
+    if (! monomorphism_p (this)) {
+      throw new Error ("not monomorphism")
+    }
+  }
+}
+
+export
+function isomorphism_p (the: {
   dom: cell_complex_t,
   cod: cell_complex_t,
-  dic: dic_t <id_t, { id: id_t, cell: cell_t }>,
-): boolean {
-  let id_str_set = new Set <string> ()
-  for (let im of dic.values ()) {
-    let str = im.id.to_str ()
-    if (id_str_set.has (str)) {
+  fig: figure_t,
+}): boolean {
+  return epimorphism_p (the) && monomorphism_p (the)
+}
+
+export
+function epimorphism_p (the: {
+  dom: cell_complex_t,
+  cod: cell_complex_t,
+  fig: figure_t,
+}): boolean {
+  for (let cell of the.cod.cells ()) {
+    if (! the.fig.has_tar (cell)) {
       return false
-    } else {
-      id_str_set.add (str)
     }
   }
   return true
 }
 
 export
-class monomorphism_t extends morphism_t {
-  constructor (
-    dom: cell_complex_t,
-    cod: cell_complex_t,
-    dic: dic_t <id_t, { id: id_t, cell: cell_t }>,
-  ) {
-    if (! monomorphism_p (dom, cod, dic)) {
-      throw new Error ("not monomorphism")
-    }
-    super (dom, cod, dic)
-  }
-}
-
-function isomorphism_p (
+function monomorphism_p (the: {
   dom: cell_complex_t,
   cod: cell_complex_t,
-  dic: dic_t <id_t, { id: id_t, cell: cell_t }>,
-): boolean {
-  return epimorphism_p (dom, cod, dic) && monomorphism_p (dom, cod, dic)
-}
-
-/**
- * When generating the new cell-complex,
- * such as [[vertex_figure_t]] and [[product_complex_t]],
- * it does not matter how we specify the dic.
- * `isomorphism_t` handles the non uniqueness of dic.
- */
-export
-class isomorphism_t extends morphism_t {
-  constructor (
-    dom: cell_complex_t,
-    cod: cell_complex_t,
-    dic: dic_t <id_t, { id: id_t, cell: cell_t }>,
-  ) {
-    if (! isomorphism_p (dom, cod, dic)) {
-      throw new Error ("not isomorphism")
-    }
-    super (dom, cod, dic)
-  }
-}
-
-export
-function isomorphic_to_endpoints (
-  com: cell_complex_t
-): isomorphism_t | null {
-  if (com.dim !== 0) {
-    return null
-  }
-  let size = com.dim_size (0)
-  if (size !== 2) {
-    return null
-  }
-  let [start, end] = com.vertex_id_array ()
-  let endpoints = new endpoints_t ()
-  let dic = new morphism_builder_t (
-    endpoints, com
-  ) .vertex (endpoints.id ("start"), start)
-    .vertex (endpoints.id ("end"), end)
-    .build_im_dic ()
-  return new isomorphism_t (endpoints, com, dic)
-}
-
-function find_next_edge_id (
-  com: cell_complex_t,
-  vertex: id_t,
-  edge_id_set: Set <id_t | rev_id_t>,
-): [id_t, id_t | rev_id_t] | null {
-  for (let id of com.id_in_dim (1)) {
-    if (! edge_id_set.has (id)) {
-      let edge = com.get_edge (id)
-      if (edge.start.eq (vertex)) {
-        vertex = edge.end
-        edge_id_set.add (id)
-        return [vertex, id]
-      } else if (edge.end.eq (vertex)) {
-        vertex = edge.start
-        edge_id_set.add (id)
-        return [vertex, id.rev ()]
-      }
-    }
-  }
-  return null
-}
-
-export
-function isomorphic_to_polygon (
-  com: cell_complex_t
-): isomorphism_t | null {
-  if (com.dim !== 1) {
-    return null
-  }
-  let size = com.dim_size (0)
-  if (size !== com.dim_size (1)) {
-    return null
-  }
-  if (size < 1) {
-    return null
-  }
-  let circuit = new Array ()
-  let { value: vertex } = com.id_in_dim (0) .next ()
-  let edge_id_set = new Set ()
-  for (let i = 0; i < size; i++) {
-    let found = find_next_edge_id (com, vertex, edge_id_set)
-    if (found === null) {
-      return null
+  fig: figure_t,
+}): boolean {
+  let used_uuid_set = new Set <string> ()
+  for (let {src, tar} of the.fig.array) {
+    if (used_uuid_set.has (tar.uuid)) {
+      return false
     } else {
-      let [next_vertex, id] = found
-      circuit.push (id)
-      vertex = next_vertex
+      used_uuid_set.add (tar.uuid)
     }
   }
-  let polygon = new polygon_t (size)
-  let dic = polygon_zip_circuit (polygon, com, circuit)
-  if (isomorphism_p (polygon, com, dic)) {
-    return new isomorphism_t (polygon, com, dic)
-  } else {
-    return null
-  }
-}
-
-/**
- * A n-dim manifold, is a topological space,
- * each vertex of which has a n-ball as close neighbourhood.
-
- * For cell-complex, it is sufficient to check that,
- * each vertexes of it has a (n-1)-sphere as [[vertex_figure_t]].
- */
-export
-class manifold_evidence_t {
-  dim: number
-  iso_dic: dic_t <id_t, isomorphism_t>
-
-  constructor (dim: number) {
-    this.dim = dim
-    this.iso_dic = new dic_t (id_to_str)
-  }
+  return true
 }
 
 export
-function manifold_check (
-  com: cell_complex_t
-): manifold_evidence_t | null {
-  if (com.eq (empty_complex)) {
-    return new manifold_evidence_t (com.dim)
-  } else if (com.dim === 0) {
-    return new manifold_evidence_t (com.dim)
-  } else if (com.dim === 1) {
-    let evidence = new manifold_evidence_t (com.dim)
-    for (let vertex of com.vertexes ()) {
-      let verf = new vertex_figure_t (com, vertex)
-      let iso = isomorphic_to_endpoints (verf)
-      if (iso === null) {
-        return null
-      } else {
-        evidence.iso_dic.set (vertex, iso)
-      }
-    }
-    return evidence
-  } else if (com.dim === 2) {
-    let evidence = new manifold_evidence_t (com.dim)
-    for (let vertex of com.vertexes ()) {
-      let verf = new vertex_figure_t (com, vertex)
-      let iso = isomorphic_to_polygon (verf)
-      if (iso === null) {
-        return null
-      } else {
-        evidence.iso_dic.set (vertex, iso)
-      }
-    }
-    return evidence
-  } else {
-    console.log ("[warning] can not check dim 3 yet")
-    return null
-  }
-}
-
-export
-class manifold_t extends cell_complex_t {
-  readonly manifold_evidence
-  : manifold_evidence_t
-
-  constructor (com: cell_complex_t) {
-    super (com.as_builder ())
-    let manifold_evidence = manifold_check (this)
-    if (manifold_evidence === null) {
-      throw new Error ("manifold_check fail")
-    } else {
-      this.manifold_evidence = manifold_evidence
-    }
-  }
-}
-
-/**
- * `vertex_figure` commute with sub_complex relation.
- * (respecting the vertex)
- */
-export
-class vertex_figure_t extends cell_complex_t {
-  readonly com: cell_complex_t
-  readonly vertex: id_t
-  readonly idx_dic: dic_t <[id_t, id_t], id_t>
+class spherical_t extends cell_complex_t {
+  spherical_evidence: spherical_evidence_t
 
   constructor (
     com: cell_complex_t,
-    vertex: id_t,
+    evid?: spherical_evidence_t,
   ) {
-    let index_to_str = ([c, p]: [id_t, id_t]): string => {
-      return c.to_str () + ", " + p.to_str ()
-    }
-    let idx_dic = new dic_t <[id_t, id_t], id_t> (index_to_str)
-    let builder = new cell_complex_builder_t ()
-
-    for (let [id, cell] of com.in_dim (1)) {
-      for (let p of cell.dom.vertexes ()) {
-        if (cell.dic.get (p) .id.eq (vertex)) {
-          idx_dic.set ([id, p], builder.attach_vertex ())
-        }
+    super (com)
+    if (evid !== undefined) {
+      if (evid.iso.cod.eq (this)) {
+        this.spherical_evidence = evid
+      } else {
+        throw new Error ("spherical check fail")
+      }
+    } else {
+      evid = spherical_evidence_t.generate (this)
+      if (evid !== undefined) {
+        this.spherical_evidence = evid
+      } else {
+        throw new Error ("spherical check fail")
       }
     }
-
-    for (let [id, cell] of com.in_dim (2)) {
-      for (let p of cell.dom.vertexes ()) {
-        if (cell.dic.get (p) .id.eq (vertex)) {
-          let verf = new vertex_figure_t (cell.dom, p)
-          let [[e1, p1], [e2, p2]] = verf.idx_dic.key_array ()
-          let im1 = cell.dic.get (e1)
-          let im2 = cell.dic.get (e2)
-          let start = idx_dic.get ([
-            im1.id,
-            im1.cell.dic.get (p1) .id,
-          ])
-          let end = idx_dic.get ([
-            im2.id,
-            im2.cell.dic.get (p2) .id,
-          ])
-          idx_dic.set ([id, p], builder.attach_edge (start, end))
-        }
-      }
-    }
-
-    for (let [id, cell] of com.in_dim (3)) {
-      for (let p of cell.dom.vertexes ()) {
-        if (cell.dic.get (p) .id.eq (vertex)) {
-          // TODO
-        }
-      }
-    }
-
-    super (builder)
-    this.com = com
-    this.vertex = vertex
-    this.idx_dic = idx_dic
-  }
-
-  /**
-   * use `cell` in `this.com`, and `vertex` in `cell.dom`,
-   * to index a vertex or cell in vertex_figure
-   */
-  idx (c: id_t, p: id_t): id_t {
-    return this.idx_dic.get ([c, p])
   }
 }
 
 export
 class spherical_evidence_t {
+  iso: isomorphism_t
+
   constructor (
-    readonly dim: number,
-    readonly iso: isomorphism_t,
-  ) {}
-}
-
-function spherical_check (
-  com: cell_complex_t
-): spherical_evidence_t | null {
-  if (com.eq (empty_complex)) {
-    return new spherical_evidence_t (com.dim, empty_isomorphism)
-  } else if (com.dim === 0) {
-    let iso = isomorphic_to_endpoints (com)
-    if (iso === null) {
-      return null
-    } else {
-      return new spherical_evidence_t (com.dim, iso)
-    }
-  } else if (com.dim === 1) {
-    let iso = isomorphic_to_polygon (com)
-    if (iso === null) {
-      return null
-    } else {
-      return new spherical_evidence_t (com.dim, iso)
-    }
-  } else {
-    console.log ("[warning] can not check dim 2 yet")
-    return null
+    iso: isomorphism_t,
+  ) {
+    this.iso = iso
   }
-}
 
-export
-class spherical_t extends cell_complex_t {
-  readonly spherical_evidence : spherical_evidence_t
+  get dim (): number {
+    return this.iso.dom.dim
+  }
 
-  constructor (com: cell_complex_t) {
-    super (com.as_builder ())
-    let spherical_evidence = spherical_check (this)
-    if (spherical_evidence === null) {
-      throw new Error ("spherical_check fail")
+  static from_iso (
+    iso: isomorphism_t | undefined
+  ): spherical_evidence_t | undefined {
+    if (iso !== undefined) {
+      return new spherical_evidence_t (iso)
     } else {
-      this.spherical_evidence = spherical_evidence
+      return undefined
+    }
+  }
+
+  static generate (
+    com: cell_complex_t
+  ): spherical_evidence_t | undefined {
+    if (com.empty_p ()) {
+      return new spherical_evidence_t (
+        new isomorphism_t (
+          new empty_morphism_t ()
+        )
+      )
+    } else if (com.dim === 0) {
+      return spherical_evidence_t.from_iso (
+        isomorphism_t.endpoints (com)
+      )
+    } else if (com.dim === 1) {
+      return spherical_evidence_t.from_iso (
+        isomorphism_t.polygon (com)
+      )
+    } else {
+      console.log ("[warning] can not check dim 2 yet")
+      return undefined
     }
   }
 }
@@ -1035,203 +619,120 @@ class spherical_t extends cell_complex_t {
 export
 class empty_complex_t extends cell_complex_t {
   constructor () {
-    super ()
+    super ({ dim: -1 })
   }
 }
-
-let empty_complex = new empty_complex_t ()
-
-export
-class empty_morphism_t extends morphism_t {
-  constructor () {
-    super (
-      empty_complex,
-      empty_complex,
-      new_im_dic (),
-    )
-  }
-}
-
-export
-let empty_morphism = new empty_morphism_t ()
-
-export
-let empty_isomorphism = new isomorphism_t (
-  empty_morphism.dom,
-  empty_morphism.cod,
-  empty_morphism.dic)
-
-export
-class empty_cell_t extends cell_t {
-  constructor () {
-    super (
-      empty_complex,
-      empty_complex,
-      new_im_dic (),
-    )
-  }
-}
-
-export
-let empty_cell = new empty_cell_t ()
 
 //// 0 dimension
 
 export
-class discrete_complex_t extends cell_complex_t {
-  readonly size: number
-
-  constructor (size: number) {
-    let builder = new cell_complex_builder_t ()
-    builder.attach_vertexes (size)
-    super (builder)
-    this.size = size
-  }
-
-  idx (i: number): id_t {
-    return new id_t (0, i)
+class empty_morphism_t extends morphism_t {
+  constructor () {
+    super ({
+      dom: new empty_complex_t (),
+      cod: new empty_complex_t (),
+    })
   }
 }
 
 export
-class singleton_t extends discrete_complex_t {
+class vertex_t extends cell_t {
   constructor () {
-    super (1)
-    this
-      .define_vertex ("vertex", this.idx (0))
+    super ({
+      dom: new empty_complex_t (),
+      cod: new empty_complex_t (),
+    })
   }
 }
 
 export
-class endpoints_t extends discrete_complex_t {
+class endpoints_t extends cell_complex_t {
   constructor () {
-    super (2)
-    this
-      .define_vertex ("start", this.idx (0))
-      .define_vertex ("end", this.idx (1))
+    super ({ dim: 0 })
+    this.attach_vertexes (["start", "end"])
   }
 }
 
 //// 1 dimension
 
-/**
- * Although cell-complex is recursively defined,
- * but each dimension has its own special features.
- * For example, the only possible 1-cell is [[edge_t]].
- */
 export
 class edge_t extends cell_t {
-  start: id_t
-  end: id_t
+  start: vertex_t
+  end: vertex_t
   endpoints: endpoints_t
 
   constructor (
-    builder: cell_complex_builder_t,
-    start: id_t,
-    end: id_t,
+    com: cell_complex_t,
+    start: vertex_t,
+    end: vertex_t,
   ) {
-    let endpoints = new endpoints_t ()
-    let cod = builder.skeleton (0)
-    let dic = new morphism_builder_t (
-      endpoints, cod
-    ) .vertex (endpoints.id ("start"), start)
-      .vertex (endpoints.id ("end"), end)
-      .build_im_dic ()
-    super (endpoints, cod, dic)
+    let dom = new endpoints_t ()
+    let cod = com.skeleton (0)
+    let fig = new figure_t ()
+    fig.vertex (dom.vertex ("start"), start)
+    fig.vertex (dom.vertex ("end"), end)
+    super ({dom, cod, fig})
     this.start = start
     this.end = end
-    this.endpoints = endpoints
+    this.endpoints = dom
   }
-}
 
-export
-class interval_t extends cell_complex_t {
-  constructor () {
-    let endpoints = new endpoints_t ()
-    let builder = endpoints.as_builder ()
-    let start = endpoints.id ("start")
-    let end = endpoints.id ("end")
-    let inter = builder.attach_edge (start, end)
-    super (builder)
-    this
-      .define_vertex ("start", start)
-      .define_vertex ("end", end)
-      .define_edge ("inter", inter)
+  get rev (): edge_rev_t {
+    return new edge_rev_t (this)
   }
 }
 
 export
 class polygon_t extends cell_complex_t {
-  readonly size: number
-  readonly side_id_array: Array <id_t>
+  size: number
 
   constructor (size: number) {
-    let builder = new cell_complex_builder_t ()
-    let side_id_array = []
-    let vertex_id_array = builder.attach_vertexes (size)
-    let i = 0
-    while (i < size - 1) {
-      side_id_array.push (
-        builder.attach_edge (
-          vertex_id_array [i],
-          vertex_id_array [i + 1]))
-      i += 1
-    }
-    side_id_array.push (
-      builder.attach_edge (
-        vertex_id_array [size - 1],
-        vertex_id_array [0]))
-    super (builder)
+    super ({ dim: 1 })
     this.size = size
-    this.side_id_array = side_id_array
+    for (let i = 0; i < size; i++) {
+      this.attach_vertex (`0:${i}`)
+    }
+    for (let i = 0; i < size - 1; i++) {
+      this.attach_edge (`1:${i}`, [ `0:${i}`, `0:${i+1}` ])
+    }
+    this.attach_edge (`1:${size-1}`, [ `0:${size-1}`, `0:0` ])
   }
 }
+
+/**
+ * not recursive type like sexp.
+ */
+export
+type edge_exp_t = string | Array <string>;
 
 //// 2 dimension
 
 export
-class rev_id_t {
-  constructor (
-    readonly id: id_t,
-  ) {}
+class edge_rev_t {
+  rev: edge_t
 
-  eq (that: rev_id_t): boolean {
-    return this.id.eq (that.id)
-  }
-
-  rev (): id_t {
-    return this.id
+  constructor (rev: edge_t) {
+    this.rev = rev
   }
 }
 
-type circuit_t = Array <id_t | rev_id_t>
-
-function polygon_zip_circuit (
-  polygon: polygon_t,
-  cod: cell_complex_t,
-  circuit: circuit_t,
-): dic_t <id_t, { id: id_t, cell: cell_t }> {
-  let size = polygon.size
-  let builder = new morphism_builder_t (polygon, cod)
-  for (let i = 0; i < size; i += 1) {
-    let src_id = polygon.side_id_array [i]
-    let tar_id = circuit [i]
-    let src = polygon.get_edge (src_id)
-    if (tar_id instanceof rev_id_t) {
-      tar_id = tar_id.rev ()
-      let tar = cod.get_edge (tar_id)
-      builder.vertex (src.start, tar.end)
-      builder.vertex (src.end, tar.start)
-      builder.edge_rev (src_id, tar_id)
-    } else {
-      let tar = cod.get_edge (tar_id)
-      builder.vertex (src.start, tar.start)
-      builder.vertex (src.end, tar.end)
-      builder.edge (src_id, tar_id)
-    }
+export
+function edge_exp_eval (
+  com: cell_complex_t,
+  exp: edge_exp_t,
+): edge_t | edge_rev_t {
+  if (typeof exp === "string") {
+    let name = exp
+    return com.edge (name)
+  } else if (exp.length === 2 && exp [1] === "rev") {
+    let name = exp [0]
+    return new edge_rev_t (com.edge (name))
+  } else {
+    throw new Error (`unknown exp: ${exp}`)
   }
-  return builder.build_im_dic ()
 }
+
+type circuit_t = Array <edge_t | edge_rev_t>
 
 export
 class face_t extends cell_t {
@@ -1239,19 +740,15 @@ class face_t extends cell_t {
   polygon: polygon_t
 
   constructor (
-    builder: cell_complex_builder_t,
+    com: cell_complex_t,
     circuit: circuit_t,
   ) {
-    let size = circuit.length
-    let polygon = new polygon_t (size)
-    let cod = builder.skeleton (1)
-    let dic = polygon_zip_circuit (polygon, cod, circuit)
-    super (polygon, cod, dic)
+    let dom = new polygon_t (circuit.length)
+    let cod = com.skeleton (1)
+    let fig = figure_t
+      .from_polygon_and_circuit (dom, cod, circuit)
+    super ({dom, cod, fig})
     this.circuit = circuit
-    this.polygon = polygon
+    this.polygon = dom
   }
 }
-
-//// 3 dimension
-
-// TODO

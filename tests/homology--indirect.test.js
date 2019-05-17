@@ -2,15 +2,15 @@ import test from "ava"
 
 import * as ut from "../lib/util"
 import * as int from "../lib/int"
-import * as cx from "../lib/cell-complex"
-import * as hl from "../lib/homology"
+import * as cx from "../lib/cell-complex--indirect"
+import * as hl from "../lib/homology--indirect"
 
 import {
   sphere_t,
   torus_t,
   klein_bottle_t,
   projective_plane_t,
-} from "../lib/complexes/four-ways-to-glue-a-square"
+} from "../lib/complexes/four-ways-to-glue-a-square--indirect"
 
 test ("hl.chain_t.zeros", t => {
   let torus = new torus_t ()

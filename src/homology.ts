@@ -6,109 +6,31 @@ import * as int from "./int"
 import * as cx from "./cell-complex"
 
 export
-class chain_t {
-  readonly com: cx.cell_complex_t
-  readonly dim: number
-  readonly vector: int.vector_t
-
-  constructor (
-    com: cx.cell_complex_t,
-    dim: number,
-    vector: int.vector_t,
-  ) {
-    this.dim = dim
-    this.com = com
-    this.vector = vector
-  }
-
-  static zeros (
-    dim: number,
-    com: cx.cell_complex_t,
-  ): chain_t {
-    return new chain_t (
-      com, dim,
-      int.vector_t.zeros (com.dim_size (dim)))
-  }
-
-  update_at (
-    id: cx.id_t,
-    f: (v: bigint) => bigint,
-  ): chain_t {
-    this.vector.update_at (id.ser, f)
-    return this
-  }
-
-  down (matrix: int.matrix_t): chain_t {
-    let [m, n] = matrix.shape
-    assert (m === this.com.dim_size (this.dim - 1))
-    assert (n === this.com.dim_size (this.dim))
-    return new chain_t (
-      this.com,
-      this.dim - 1,
-      this.vector.trans (matrix))
-  }
-
-  up (matrix: int.matrix_t): chain_t {
-    let [m, n] = matrix.shape
-    assert (m === this.com.dim_size (this.dim + 1))
-    assert (n === this.com.dim_size (this.dim))
-    return new chain_t (
-      this.com,
-      this.dim + 1,
-      this.vector.trans (matrix))
-  }
-
-  boundary (): chain_t {
-    return this.down (
-      boundary_matrix (this.com, this.dim)
-    )
-  }
-
-  add (that: chain_t): chain_t {
-    assert (this.dim === that.dim)
-    return new chain_t (
-      this.com,
-      this.dim,
-      this.vector.add (that.vector))
-  }
-
-  zero_p (): boolean {
-    return this.vector.zero_p ()
-  }
-
-  cycle_p (): boolean {
-    return this.boundary () .zero_p ()
-  }
-
-  print () {
-    console.log (`dim: ${this.dim}`)
-    this.vector.print ()
-  }
-}
-
-export
-function boundary_of_basis (
+function boundary_vector (
   com: cx.cell_complex_t,
-  id: cx.id_t,
-): chain_t {
-  let boundary = chain_t.zeros (id.dim - 1, com)
-  if (id.dim === 0) {
-    return boundary
-  } else if (id.dim === 1) {
-    let edge = com.get_edge (id)
-    boundary.update_at (edge.start, n => n - 1n)
-    boundary.update_at (edge.end, n => n + 1n)
-    return boundary
-  } else if (id.dim === 2) {
-    let face = com.get_face (id)
+  cell: cx.cell_t,
+): int.vector_t {
+  if (cell.dim === 0) {
+    return int.vector_t.zeros (0)
+  } else if (cell.dim === 1) {
+    let edge = cell as cx.edge_t
+    let size = com.vertex_array.length
+    let vector = int.vector_t.zeros (size)
+    vector.update_at (edge.start.ser (com), n => n - 1n)
+    vector.update_at (edge.end.ser (com), n => n + 1n)
+    return vector
+  } else if (cell.dim === 2) {
+    let face = cell as cx.face_t
+    let size = com.edge_array.length
+    let vector = int.vector_t.zeros (size)
     for (let e of face.circuit) {
-      if (e instanceof cx.rev_id_t) {
-        boundary.update_at (e.rev (), n => n - 1n)
+      if (e instanceof cx.edge_rev_t) {
+        vector.update_at (e.rev.ser (com), n => n - 1n)
       } else {
-        boundary.update_at (e, n => n + 1n)
+        vector.update_at (e.ser (com), n => n + 1n)
       }
     }
-    return boundary
+    return vector
   } else {
     throw new Error ("can only calculate dim 0, 1, 2 yet")
   }
@@ -122,9 +44,8 @@ function boundary_matrix (
   let m = com.dim_size (dim - 1)
   let n = com.dim_size (dim)
   let matrix = int.matrix_t.zeros (m, n)
-  for (let id of com.id_in_dim (dim)) {
-    let boundary = boundary_of_basis (com, id)
-    matrix.set_col (id.ser, boundary.vector)
+  for (let cell of com.cell_array (dim)) {
+    matrix.set_col (cell.ser (com), boundary_vector (com, cell))
   }
   return matrix
 }

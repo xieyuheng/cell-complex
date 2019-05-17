@@ -1,4 +1,4 @@
-import * as cx from "../cell-complex"
+import * as cx from "../cell-complex--indirect"
 
 export
 class torus_t extends cx.cell_complex_t {

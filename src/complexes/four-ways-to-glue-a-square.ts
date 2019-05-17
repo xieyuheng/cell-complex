@@ -1,89 +1,75 @@
+import * as ut from "../util"
 import * as cx from "../cell-complex"
 
 export
 class sphere_t extends cx.cell_complex_t {
   constructor () {
-    let builder = new cx.cell_complex_builder_t ()
-    let [south, middle, north] = builder.attach_vertexes (3)
-    let south_long = builder.attach_edge (south, middle)
-    let north_long = builder.attach_edge (middle, north)
-    let surf = builder.attach_face ([
-      south_long,
-      north_long,
-      north_long.rev (),
-      south_long.rev (),
+    super ({ dim: 2 })
+    this.attach_vertexes (["south", "middle", "north"])
+    this.attach_edge ("south_long", ["south", "middle"])
+    this.attach_edge ("north_long", ["middle", "north"])
+    this.attach_face ("surf", [
+      "south_long",
+      "north_long",
+      ["north_long", "rev"],
+      ["south_long", "rev"],
     ])
-    super (builder)
-    this
-      .define_vertex ("south", south)
-      .define_vertex ("north", north)
-      .define_edge ("south_long", south_long)
-      .define_edge ("north_long", north_long)
-      .define_face ("surf", surf)
   }
 }
 
 export
 class torus_t extends cx.cell_complex_t {
   constructor () {
-    let builder = new cx.cell_complex_builder_t ()
-    let origin = builder.attach_vertex ()
-    let toro = builder.attach_edge (origin, origin)
-    let polo = builder.attach_edge (origin, origin)
-    let surf = builder.attach_face ([
-      toro,
-      polo,
-      toro.rev (),
-      polo.rev (),
+    super ({ dim: 2 })
+    this.attach_vertex ("origin")
+    this.attach_edge ("toro", ["origin", "origin"])
+    this.attach_edge ("polo", ["origin", "origin"])
+    this.attach_face ("surf", [
+      "toro",
+      "polo",
+      ["toro", "rev"],
+      ["polo", "rev"],
     ])
-    super (builder)
-    this
-      .define_vertex ("origin", origin)
-      .define_edge ("toro", toro)
-      .define_edge ("polo", polo)
-      .define_face ("surf", surf)
   }
 }
 
 export
 class klein_bottle_t extends cx.cell_complex_t {
   constructor () {
-    let builder = new cx.cell_complex_builder_t ()
-    let origin = builder.attach_vertex ()
-    let toro = builder.attach_edge (origin, origin)
-    let cross = builder.attach_edge (origin, origin)
-    let surf = builder.attach_face ([
-      toro,
-      cross,
-      toro.rev (),
-      cross,
+    super ({ dim: 2 })
+    this.attach_vertex ("origin")
+    this.attach_edge ("toro", ["origin", "origin"])
+    this.attach_edge ("cross", ["origin", "origin"])
+    this.attach_face ("surf", [
+      "toro",
+      "cross",
+      ["toro", "rev"],
+      "cross",
     ])
-    super (builder)
-    this
-      .define_vertex ("origin", origin)
-      .define_edge ("toro", toro)
-      .define_edge ("cross", cross)
-      .define_face ("surf", surf)
   }
 }
 
 export
 class projective_plane_t extends cx.cell_complex_t {
   constructor () {
-    let builder = new cx.cell_complex_builder_t ()
-    let [start, end] = builder.attach_vertexes (2)
-    let left_rim = builder.attach_edge (start, end)
-    let right_rim = builder.attach_edge (end, start)
-    let surf = builder.attach_face ([
-      left_rim, right_rim,
-      left_rim, right_rim,
+    super ({ dim: 2 })
+    this.attach_vertexes (["start", "end"])
+    this.attach_edge ("left_rim", ["start", "end"])
+    this.attach_edge ("right_rim", ["end", "start"])
+    this.attach_face ("surf", [
+      "left_rim", "right_rim",
+      "left_rim", "right_rim",
     ])
-    super (builder)
-    this
-      .define_vertex ("start", start)
-      .define_vertex ("end", end)
-      .define_edge ("left_rim", left_rim)
-      .define_edge ("right_rim", right_rim)
-      .define_face ("surf", surf)
   }
 }
+
+let report = {
+  "sphere": new sphere_t () .repr (),
+  "torus": new torus_t () .repr (),
+  "klein_bottle": new klein_bottle_t () .repr (),
+  "projective_plane": new projective_plane_t () .repr (),
+}
+
+// ut.log (report)
+
+ut.log (new torus_t () .repr ())
