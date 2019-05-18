@@ -42,7 +42,7 @@
 #### [`examples/int-module.js`](examples/int-module.js):
 
 ``` javascript
-let assert = require ("assert").strict
+let assert = require ("assert") .strict
 
 let ut = require ("cicada-lang/lib/util")
 let int = require ("cicada-lang/lib/int")
@@ -133,15 +133,14 @@ let int = require ("cicada-lang/lib/int")
 #### [`examples/num-linear-algebra.js`](examples/num-linear-algebra.js):
 
 ``` javascript
-let assert = require ("assert").strict
+let assert = require ("assert") .strict
 
 let ut = require ("cicada-lang/lib/util")
 let num = require ("cicada-lang/lib/num")
 
 {
   /**
-   * `reduced_row_echelon_form` is like `row_canonical_form`
-   *   it reduces pivots to one
+   * `reduced_row_echelon_form` reduces pivots to one
    *   while respecting `epsilon` for numerical stability
    */
 
@@ -158,7 +157,6 @@ let num = require ("cicada-lang/lib/num")
   ])
 
   A.reduced_row_echelon_form () .print ()
-  A.row_canonical_form () .print ()
 
   assert (
     A.reduced_row_echelon_form () .eq (B)
