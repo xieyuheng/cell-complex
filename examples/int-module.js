@@ -1,4 +1,4 @@
-let assert = require ("assert")
+let assert = require ("assert") .strict
 
 let ut = require ("cicada-lang/lib/util")
 let int = require ("cicada-lang/lib/int")
