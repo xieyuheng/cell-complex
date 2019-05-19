@@ -1,4 +1,57 @@
+- another manifold_check
+  - any edge occur twice
+    thus when glued
+    we will have not boundary
+  - condition on edge_figure_t
+    is weaker then condition on vertex_figure_t
+    - every dimension have its element_figure_t
+      the higher dimension the weaker the condition
+    - maybe we should use the word "shape" instead of "figure"
+      because of the use of `figure_t`
+  - but this is not enough
+    because of pinch points
+  - how should we call this kind of weaker manifold_check ?
+    pinchfold_t ?
+    instead of think of name for each dimension
+    we should
+    | manifold_t  | weak_manifold_t (0) |
+    | pinchfold_t | weak_manifold_t (1) |
+    |             | weak_manifold_t (2) |
+    |             | ...                 |
+    pinchfold_t ?
 - 2-dim manifold classification -- zip of john conway
+  - can the normalization algorithm works on more than manifold_t ?
+- normal forms
+  - sphere: a a.rev
+  - tori:
+    a1 b1 a1.rev b1.rev
+    a2 b2 a2.rev b2.rev
+    ...
+    an bn an.rev bn.rev
+  - cross-caps (projective-plane):
+    a1 a1
+    a2 a2
+    ...
+    an an
+    - note that
+      two cross-caps is a klein_bottle
+- the normalization algorithm
+  1. merge faces at double occuring edge pairs
+     while maintaining homeomorphic to disk
+     - only double occuring pairs can be merged
+       without losing information
+     - this will reduce the cell-complex to the following state:
+       - there are no double occuring edge pairs
+       - or merging any more double occuring edge pairs
+         will make it non homeomorphic to disk
+         - information of non-disk-ness is encoded by edge pairs
+           if we merge more the information of non-disk-ness
+           will be lost
+  2. reduce vertexes to one vertex
+  3. make same-direction edges next to each other
+  4. make opposite-direction edges ???
+  5. cross-cap + torus = three cross-caps
+- new im_dic_compatible_p
 - new manifold_check
 - new vertex_figure_t
 - update cell-complex
@@ -125,7 +178,6 @@
     - 2-dim rotation for [3-dim, 2-dim] incidence relation
     - 3-dim rotation for [4-dim, 3-dim] incidence relation
 - how about adjacency matrix between higher order elements ?
-- [refine API] auto compatible in morphism_builder_t
 - bounfold_check
 - cell_check -- is im_dic_compatible_p enough ?
 - can we encode cell-complex by graph ?
