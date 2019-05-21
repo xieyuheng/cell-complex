@@ -9,6 +9,10 @@
 * algebra of cell-complex
 - check equality proof
 - the game of equality
+- 2-dim cell-complex can be expressed purely algebraicly
+  thus classification can also be expressed algebraicly
+  but, for 3-dim cell-complex
+  we do not have the syntax of higher algebra
 * manifold classification
 - another manifold_check
   - any edge occur twice
