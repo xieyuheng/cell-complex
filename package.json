@@ -27,7 +27,7 @@
     "@types/big.js": "^4.0.5",
     "@types/lodash": "^4.14.130",
     "@types/nanoid": "^2.0.0",
-    "@babel/core": "^7.4.4",
+    "@babel/core": "^7.4.5",
     "@babel/plugin-transform-runtime": "^7.4.4",
     "ava": "^1.4.1",
     "parcel-bundler": "^1.12.3",
@@ -35,10 +35,10 @@
     "typescript": "^3.4.5"
   },
   "dependencies": {
-    "@babel/runtime-corejs2": "^7.4.4",
+    "@babel/runtime-corejs2": "^7.4.5",
     "big.js": "^5.2.2",
     "decimal.js": "^10.2.0",
     "lodash": "^4.17.11",
-    "nanoid": "^2.0.2"
+    "nanoid": "^2.0.3"
   }
 }
