@@ -206,7 +206,7 @@
 - clifford-algebra
 * combinatorial-game
 - use go to test game tree searching
-- why the games of logic seem like one-player game
+- why the games of logic seem like one-player game ?
 - aristotle (lukasiewicz) -> de morgan -> peirce
 - go
 - martin-gardner
