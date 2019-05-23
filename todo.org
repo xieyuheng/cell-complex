@@ -7,7 +7,6 @@
 - how to describe edge and face so they are easy to draw ?
 - a generic way to specify geometry of cell-complex
 * cicada-core
-- cicada/game.ts
 - more examples from /old
 - game semantics for the type system
 - compile to js with runtime type information
