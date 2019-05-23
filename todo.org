@@ -135,12 +135,12 @@
 - circulant matrix
 * polynomial
 - polynomial.ts -- symbolic algebra
-* optimize
-- optimize frame_t and series_t by not using data_t
-  but to use matrix_t and vector_t
 * panel-data
 - frame_t.act & series_t.trans
 - data_t slice
+* optimize
+- optimize frame_t and series_t by not using data_t
+  but to use matrix_t and vector_t
 * homology
 - what is the meaning of 1 torsion_coefficients ?
 * homotopy
@@ -207,8 +207,6 @@
 * combinatorial-game
 - use go to test game tree searching
 - why the games of logic seem like one-player game
-- fol -- game semantics of first order logic
-- cl -- game semantics of constructive logic
 - aristotle (lukasiewicz) -> de morgan -> peirce
 - go
 - martin-gardner
@@ -216,10 +214,10 @@
 - surreal -- the theory of surreal number
   - theory about two-player normal-ending game
 * cicada-core
+- game semantics for the type system
 - compile to js with runtime type information
-  - game semantics
   - { type: { field: <type> }, field: <value> }
-* cicadascript
+* cicadascript -- a syntax frontend of cicada-core
 - reuse js syntax
   the syntax of js is enough
   we only need to do the following extensions
@@ -230,7 +228,6 @@
   - no `,` in function call
     - maybe we need to limit the use of infix notation
     - maybe use newline as `,`
-- use babel api to handle the syntax
 * dance
 - 3 circle dance
 - 4 circle dance
