@@ -73,7 +73,6 @@ class field_t extends integral_ring_t {
   div (
     x: this.element_t,
     y: this.element_t,
-  ): this.element_t {
-    return this.mul (x, this.inv (y))
-  }
+  ): this.element_t = this.mul (x, this.inv (y))
+
 }

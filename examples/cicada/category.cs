@@ -10,14 +10,11 @@ class category_t {
   compose (
     f: this.arrow_t,
     g: this.arrow_t,
-    {
-      eqv_t (this.cod (f), this.dom (g)),
-    },
+    {{ composable: eqv_t (this.cod (f), this.dom (g)) }}
   ): {
-    h: this.arrow_t
-    eqv_t (this.dom (h), this.dom (f))
-    eqv_t (this.cod (h), this.cod (g))
-    return h
+    return h: this.arrow_t
+    eqv_dom: eqv_t (this.dom (h), this.dom (f))
+    eqv_cod: eqv_t (this.cod (h), this.cod (g))
   }
 
   id_left (
@@ -54,10 +51,9 @@ class functor_t {
   map: (x: this.lcat.object_t): this.rcat.object_t
 
   fmap (f: this.lcat.arrow_t): {
-    g: this.rcat.arrow_t
-    eqv_t (this.map (this.lcat.dom (f)), this.rcat.dom (g))
-    eqv_t (this.map (this.lcat.cod (f)), this.rcat.cod (g))
-    return g
+    return g: this.rcat.arrow_t
+    eqv_dom: eqv_t (this.map (this.lcat.dom (f)), this.rcat.dom (g))
+    eqv_cod: eqv_t (this.map (this.lcat.cod (f)), this.rcat.cod (g))
   }
 
   fmap_respect_compose (
@@ -87,10 +83,9 @@ class natural_transformation_t {
   rcat = this.rfun.rcat
 
   component (x: this.lcat.object_t): {
-    c: this.rcat.arrow_t
-    eqv_t (this.rcat.dom (c), this.lfun.map (x))
-    eqv_t (this.rcat.cod (c), this.rfun.map (x))
-    return c
+    return c: this.rcat.arrow_t
+    eqv_dom: eqv_t (this.rcat.dom (c), this.lfun.map (x))
+    eqv_cod: eqv_t (this.rcat.cod (c), this.rfun.map (x))
   }
 
   natural (

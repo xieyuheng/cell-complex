@@ -40,43 +40,42 @@ class group_t extends monoid_t {
   }
 }
 
-function group_product (g: group_t, h: group_t): group_t {
-  return group_t (
-    element_t = [g.element_t, h.element_t]
+group_product (g: group_t, h: group_t) = group_t (
+  element_t = [g.element_t, h.element_t]
 
-    id = [g.id, h.id]
+  id = [g.id, h.id]
 
-    mul = (
-      x: [g.element_t, h.element_t],
-      y: [g.element_t, h.element_t],
-    ): [g.element_t, h.element_t] => {
-      return [
-        g.mul (x [0], y [0]),
-        h.mul (x [1], y [1]),
-      ]
-    }
+  mul = (
+    x: [g.element_t, h.element_t],
+    y: [g.element_t, h.element_t],
+  ): [g.element_t, h.element_t] => {
+    return [
+      g.mul (x [0], y [0]),
+      h.mul (x [1], y [1]),
+    ]
+  }
 
-    assoc = (
-      x: [g.element_t, h.element_t],
-      y: [g.element_t, h.element_t],
-      z: [g.element_t, h.element_t],
-    ): eqv_t (
-      this.mul (this.mul (x, y), z),
-      this.mul (x, this.mul (y, z)),
-    ) => {
-      // TODO
-    }
+  assoc = (
+    x: [g.element_t, h.element_t],
+    y: [g.element_t, h.element_t],
+    z: [g.element_t, h.element_t],
+  ): eqv_t (
+    this.mul (this.mul (x, y), z),
+    this.mul (x, this.mul (y, z)),
+  ) => {
+    // TODO
+  }
 
-    inv = (
-      x: [g.element_t, h.element_t]
-    ): [g.element_t, h.element_t] => {
-      return [
-        g.inv (x [0]),
-        h.inv (x [1]),
-      ]
-    }
-  )
-}
+  inv = (
+    x: [g.element_t, h.element_t]
+  ): [g.element_t, h.element_t] => {
+    return [
+      g.inv (x [0]),
+      h.inv (x [1]),
+    ]
+  }
+)
+
 
 class group_hom_t {
   dom: group_t
@@ -105,7 +104,7 @@ class group_hom_t {
 // TODO
 // use `group_iso_t` as `eqv_t of group_t`
 
-let group_cat = category_t (
+group_cat = category_t (
   object_t = group_t
   arrow_t = group_hom_t
 
