@@ -6,6 +6,12 @@
   - example of give geometry to topological structure
 - how to describe edge and face so they are easy to draw ?
 - a generic way to specify geometry of cell-complex
+* cicada-core
+- cicada/game.ts
+- more examples from /old
+- game semantics for the type system
+- compile to js with runtime type information
+  - { type: { field: <type> }, field: <value> }
 * algebra of cell-complex
 - check equality proof
 - the game of equality
@@ -213,10 +219,6 @@
 - (paper) investigations into game semantics of logic
 - surreal -- the theory of surreal number
   - theory about two-player normal-ending game
-* cicada-core
-- game semantics for the type system
-- compile to js with runtime type information
-  - { type: { field: <type> }, field: <value> }
 * cicadascript -- a syntax frontend of cicada-core
 - reuse js syntax
   the syntax of js is enough
