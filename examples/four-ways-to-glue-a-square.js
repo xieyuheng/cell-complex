@@ -1,6 +1,6 @@
-let cx = require ("cicada-lang/lib/cell-complex")
-let hl = require ("cicada-lang/lib/homology")
-let ut = require ("cicada-lang/lib/util")
+let cx = require ("../lib/cell-complex")
+let hl = require ("../lib/homology")
+let ut = require ("../lib/util")
 
 class sphere_t extends cx.cell_complex_t {
   constructor () {

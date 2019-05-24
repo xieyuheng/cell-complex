@@ -1,4 +1,4 @@
-let cc = require ("cicada-lang/lib/cicada/simple")
+let cc = require ("../../lib/cicada/simple")
 
 {
 

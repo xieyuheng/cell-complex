@@ -1,7 +1,0 @@
-{
-  "name": "cicada-examples",
-  "version": "0.0.1",
-  "dependencies": {
-    "cicada-lang": "0.0.34"
-  }
-}

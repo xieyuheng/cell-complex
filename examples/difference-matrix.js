@@ -1,7 +1,7 @@
 let assert = require ("assert") .strict
 
-let ut = require ("cicada-lang/lib/util")
-let num = require ("cicada-lang/lib/num")
+let ut = require ("../lib/util")
+let num = require ("../lib/num")
 
 {
   let A = num.matrix ([
