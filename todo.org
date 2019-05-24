@@ -8,6 +8,9 @@
 - a generic way to specify geometry of cell-complex
 * cicada-core
 - more examples from /old
+- semantics of game plays
+- example games about `nat_t` and `list_t` -- cicada/simple
+- example games about `vect_t` -- cicada/core
 - game semantics for the type system
 - compile to js with runtime type information
   - { type: { field: <type> }, field: <value> }
