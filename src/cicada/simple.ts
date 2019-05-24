@@ -30,7 +30,7 @@ abstract class game_t {
   abstract choices: Array <choice_t>
   abstract choose (choice: choice_t): game_t
   abstract eq (that: game_t): boolean
-  abstract report (): void
+  abstract report (): this
 
   dot (name: string): game_t {
     return this.choose (new dot_t (name))
@@ -93,7 +93,7 @@ class disj_t extends game_t {
       && ut.map_eq (that.map, this.map, (x, y) => x.eq (y))
   }
 
-  report () {
+  report (): this {
     console.log (`kind: disj_t`)
     console.log (`name: ${this.name}`)
     console.log (`player: ${this.player}`)
@@ -102,6 +102,7 @@ class disj_t extends game_t {
       console.log (`  ${choice.repr ()}`)
     }
     console.log (`end: ${end_p (this)}`)
+    return this
   }
 
   choose (dot: dot_t): game_t {
@@ -148,7 +149,7 @@ class conj_t extends game_t {
       && ut.map_eq (that.map, this.map, (x, y) => x.eq (y))
   }
 
-  report () {
+  report (): this {
     console.log (`kind: conj_t`)
     console.log (`name: ${this.name}`)
     console.log (`player: ${this.player}`)
@@ -157,6 +158,7 @@ class conj_t extends game_t {
       console.log (`  ${choice.repr ()}`)
     }
     console.log (`end: ${end_p (this)}`)
+    return this
   }
 
   choose (dot: dot_t): game_t {
@@ -218,7 +220,7 @@ class arrow_t extends game_t {
       && that.succ.eq (this.succ)
   }
 
-  report () {
+  report (): this {
     console.log (`kind: arrow_t`)
     console.group ("ante")
     this.ante.report ()
@@ -233,6 +235,7 @@ class arrow_t extends game_t {
       console.log (`  ${choice.repr ()}`)
     }
     console.log (`end: ${end_p (this)}`)
+    return this
   }
 
   choose (choice: choice_t): game_t {
@@ -301,7 +304,7 @@ class ante_t extends game_t {
       && ut.map_eq (that.map, this.map, (x, y) => x.eq (y))
   }
 
-  report () {
+  report (): this {
     console.log (`kind: ante_t`)
     console.log (`size: ${this.map.size}`)
     console.log (`cursor: ${this.cursor}`)
@@ -311,6 +314,7 @@ class ante_t extends game_t {
       console.log (`  ${choice.repr ()}`)
     }
     console.log (`end: ${end_p (this)}`)
+    return this
   }
 
   choose (choice: choice_t): game_t {
