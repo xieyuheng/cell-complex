@@ -15,7 +15,6 @@ class cons_t {
   cdr : list_t (this.t)
 }
 
-
 list_length: (
   {{ t: type }}
   list: list_t (t)
@@ -73,7 +72,6 @@ class succ_length_t {
   length: nat_t = succ_t (n)
   prev: list_length_t (l, n)
 }
-
 
 /** in prolog, we will have:
  * append([], Succ, Succ).
