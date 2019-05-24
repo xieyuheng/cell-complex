@@ -5,15 +5,15 @@ union list_t {
   t : type
 }
 
-class null_t (
+class null_t {
   t : type
-)
+}
 
-class cons_t (
+class cons_t {
   t : type
   car : this.t
   cdr : list_t (this.t)
-)
+}
 
 
 list_length: (
@@ -63,16 +63,16 @@ union list_length_t {
   length : nat_t
 }
 
-class zero_length_t (
+class zero_length_t {
   list: list_t (t) = null_t ()
   length: nat_t = zero_t ()
-)
+}
 
-class succ_length_t (
+class succ_length_t {
   list: list_t (t) = cons_t (x, l)
   length: nat_t = succ_t (n)
   prev: list_length_t (l, n)
-)
+}
 
 
 /** in prolog, we will have:
