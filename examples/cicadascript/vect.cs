@@ -8,17 +8,15 @@ union vect_t {
 
 class null_vect_t {
   t: type
-  length: nat_t
-  length = zero_t ()
+  length: nat_t = zero_t ()
 }
 
 class cons_vect_t {
-  t: type
-  length: nat_t
-  car: this.t
   {{ n: nat_t }}
+  t: type
+  length: nat_t = succ_t (this.n)
+  car: this.t
   cdr: vect_t (this.t, this.n)
-  length = succ_t (this.n)
 }
 
 vect_append: (
