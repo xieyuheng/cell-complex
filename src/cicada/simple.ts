@@ -2,6 +2,8 @@
  * Game semantics of simple (non-dependent) type system.
  */
 
+import assert from "assert"
+
 import * as ut from "../util"
 
 export
@@ -187,12 +189,18 @@ class arrow_t implements game_t {
   }
 
   get choices (): Array <choice_t> {
-    return ! this.pass
-      ? this.ante.choices
-      : this.succ.choices.concat (
-        Array.from ((this.ante as ante_t) .map.keys ())
-          .map (name => (new ref_t (name)))
-      )
+    if (! this.pass) {
+      return this.ante.choices
+    } else {
+      // TODO should use a filter
+      //   to get only useful `ref_t`
+      return this.succ.choices.length === 0
+        ? []
+        : this.succ.choices.concat (
+          Array.from ((this.ante as ante_t) .map.keys ())
+            .map (name => (new ref_t (name)))
+        )
+    }
   }
 
   eq (that: game_t): boolean {
@@ -208,6 +216,7 @@ class arrow_t implements game_t {
     console.group ()
     this.ante.report ()
     console.groupEnd ()
+    console.log (`pass: ${this.pass}`)
     console.log (`player: ${this.player}`)
     console.log (`choices:`)
     for (let choice of this.choices) {
@@ -238,6 +247,8 @@ class arrow_t implements game_t {
             pass: true,
           })
         } else {
+          console.log ("game:", game) // false_t
+          console.log ("this.succ:", this.succ) // bool_t
           throw new Error ("TODO")
         }
       } else {
@@ -293,12 +304,13 @@ class ante_t implements game_t {
   eq (that: game_t): boolean {
     return that instanceof ante_t
       && that.cursor === this.cursor
-      && that.map === this.map // TODO
+      && that.map === this.map // TODO map_eq
   }
 
   report () {
     console.log (`kind: ante_t`)
-    // TODO
+    console.log (`size: ${this.map.size}`)
+    console.log (`cursor: ${this.cursor}`)
     console.log (`player: ${this.player}`)
     console.log (`choices:`)
     for (let choice of this.choices) {
@@ -309,9 +321,14 @@ class ante_t implements game_t {
 
   choose (choice: choice_t): game_t {
     let next = this.current_game.choose (choice)
-    let cursor = end_p (next) && this.player !== "falsifier"
+    let cursor = end_p (next)
+      && opponent_player (next.player) === "verifier"
       ? this.cursor + 1
       : this.cursor
+    if (cursor >= this.map.size) {
+      // the last game is use for `.choices` and `end_p`
+      cursor = cursor - 1
+    }
     return new ante_t (
       new Map (this.map) .set (this.current_name, next),
       cursor,
@@ -352,7 +369,35 @@ class ante_t implements game_t {
   })
 
   f1_t.report ()
-  // f1_t.choose (new dot_t ("true_t")) .report ()
+
+  console.log ()
+
+  f1_t
+    .choose (new dot_t ("true_t"))
+    .report ()
+
+  console.log ()
+
+  f1_t
+    .choose (new dot_t ("true_t"))
+    .choose (new dot_t ("false_t"))
+    .report ()
+
+  console.log ()
+
+  f1_t
+    .choose (new dot_t ("true_t"))
+    .choose (new dot_t ("false_t"))
+    .choose (new dot_t ("false_t"))
+    .report ()
+
+  console.log ()
+
+  // f1_t
+  //   .choose (new dot_t ("true_t"))
+  //   .choose (new dot_t ("false_t"))
+  //   .choose (new ref_t ("x"))
+  //   .report ()
 }
 
 // TODO
