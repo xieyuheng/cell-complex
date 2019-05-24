@@ -1,3 +1,9 @@
+/**
+ * Game semantics of dependent type system.
+ */
+
+// TODO
+
 // export class id_t {}
 
 // export class name_t {
