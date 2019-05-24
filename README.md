@@ -34,7 +34,6 @@
   - [combinatorial-game](#cg-combinatorial-game)
   - [cell-complex](#cx-cell-complex)
   - [homology](#hl-homology)
-  - [cicada-core](#cc-cicada-core)
   - [cicadascript](#cs-cicadascript)
 
 ### `int` int
@@ -313,17 +312,16 @@ let expected_report = {
 }
 ```
 
-### `cc` cicada-core
-
-- [TODO]
-- a dependently-typed programming language
-- game semantics
-- logic programming interface
-
 ### `cs` cicadascript
 
-- [TODO]
-- js syntax frontend of cicada-core
+A dependently-typed programming language
+- javascript-like syntax
+- for interactive theorem proving
+- and practical verification tasks
+- based on game semantics
+- with logic programming interface
+
+- [examples (preview)](https://github.com/xieyuheng/cicada/tree/master/examples/cicadascript)
 
 ## License
 
