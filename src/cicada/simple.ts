@@ -25,12 +25,16 @@ function opponent_player (player: player_t) {
  */
 
 export
-interface game_t {
-  player: player_t
-  choices: Array <choice_t>
-  choose (choice: choice_t): game_t
-  eq (that: game_t): boolean
-  report (): void
+abstract class game_t {
+  abstract player: player_t
+  abstract choices: Array <choice_t>
+  abstract choose (choice: choice_t): game_t
+  abstract eq (that: game_t): boolean
+  abstract report (): void
+
+  dot (name: string): game_t {
+    return this.choose (new dot_t (name))
+  }
 }
 
 export
@@ -42,17 +46,18 @@ function end_p (game: game_t): boolean {
 }
 
 export
-interface choice_t {
-  repr (): string
+abstract class choice_t {
+  abstract repr (): string
 }
 
 export
-class dot_t implements choice_t {
+class dot_t extends choice_t {
   name: string
 
   constructor (
     name: string,
   ) {
+    super ()
     this.name = name
   }
 
@@ -62,7 +67,7 @@ class dot_t implements choice_t {
 }
 
 export
-class disj_t implements game_t {
+class disj_t extends game_t {
   name: string
   map: Map <string, game_t>
 
@@ -70,6 +75,7 @@ class disj_t implements game_t {
     name: string,
     map: Map <string, game_t>,
   ) {
+    super ()
     this.name = name
     this.map = map
   }
@@ -116,7 +122,7 @@ function disj (
 }
 
 export
-class conj_t implements game_t {
+class conj_t extends game_t {
   name: string
   map: Map <string, game_t>
 
@@ -124,6 +130,7 @@ class conj_t implements game_t {
     name: string,
     map: Map <string, game_t>,
   ) {
+    super ()
     this.name = name
     this.map = map
   }
@@ -175,7 +182,7 @@ function conj (
  *   those concepts are about strategy.
  */
 export
-class arrow_t implements game_t {
+class arrow_t extends game_t {
   ante: ante_t
   succ: game_t
   pass: boolean
@@ -185,6 +192,7 @@ class arrow_t implements game_t {
     succ: game_t,
     pass?: boolean,
   }) {
+    super ()
     assert (the.ante instanceof ante_t)
     this.ante = the.ante as ante_t
     this.succ = the.succ
@@ -253,7 +261,7 @@ class arrow_t implements game_t {
  */
 
 export
-class ante_t implements game_t {
+class ante_t extends game_t {
   map: Map <string, game_t>
   cursor: number
   array: Array <{ name: string, game: game_t}>
@@ -262,6 +270,7 @@ class ante_t implements game_t {
     map: Map <string, game_t>,
     cursor?: number,
   ) {
+    super ()
     this.map = map
     this.cursor = cursor !== undefined ? cursor : 0
     this.array = Array.from (map)
@@ -321,17 +330,24 @@ class ante_t implements game_t {
   }
 }
 
-// TODO
-// export function arrow
+export
+function arrow (
+  obj: { [key: string]: game_t },
+  succ: game_t,
+) {
+  let map = ut.obj2map (obj)
+  let ante = new ante_t (map)
+  return new arrow_t ({ ante, succ })
+}
 
 // TODO
-// class sum_t implements game_t
+// class sum_t extends game_t
 
 // TODO
-// class product_t implements game_t
+// class product_t extends game_t
 
 // TODO
-// class record_t implements game_t
+// class record_t extends game_t
 
 export
 class strategy_t {
