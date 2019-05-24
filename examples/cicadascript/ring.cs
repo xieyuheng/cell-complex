@@ -22,20 +22,20 @@ class ring_t {
   one = this.multiplication.id
   mul = this.multiplication.mul
 
-  left_distr (
+  left_distr: (
     x: this.element_t,
     y: this.element_t,
     z: this.element_t,
-  ): eqv_t (
+  ) -> eqv_t (
     this.mul (x, this.add (y, z)),
     this.add (this.mul (x, y), this.mul (x, z)),
   )
 
-  right_distr(
+  right_distr: (
     x: this.element_t,
     y: this.element_t,
     z: this.element_t,
-  ): eqv_t (
+  ) -> eqv_t (
     this.mul (this.add (y, z), x),
     this.add (this.mul (y, x), this.mul (z, x)),
   )
@@ -43,10 +43,10 @@ class ring_t {
 
 export
 class commutative_ring_t extends ring_t {
-  commu (
+  commu: (
     x: this.element_t,
     y: this.element_t,
-  ): eqv_t (
+  ) -> eqv_t (
     this.mul (x, y),
     this.mul (y, x),
   )
@@ -55,24 +55,25 @@ class commutative_ring_t extends ring_t {
 }
 
 class integral_ring_t extends commutative_ring_t {
-  nonzero_product (
+  nonzero_product: (
     x: this.element_t, not_eqv_t (x, this.zero),
     y: this.element_t, not_eqv_t (y, this.zero),
-  ): not_eqv_t (this.mul (x, y), this.zero)
+  ) -> not_eqv_t (this.mul (x, y), this.zero)
 }
 
 class euclidean_ring_t extends integral_ring_t {
-  degree: (x: this.element_t) => number
+  degree: (x: this.element_t) -> number
 
   // TODO
 }
 
 class field_t extends integral_ring_t {
-  inv (x: this.element_t): this.element_t
+  inv: (x: this.element_t) -> this.element_t
 
-  div (
+  div: (
     x: this.element_t,
     y: this.element_t,
-  ): this.element_t = this.mul (x, this.inv (y))
-
+  ) -> this.element_t = {
+    this.mul (x, this.inv (y))
+  }
 }
