@@ -314,14 +314,12 @@ let expected_report = {
 
 ### `cs` cicadascript
 
-A dependently-typed programming language
-- javascript-like syntax
+A dependently-typed programming language, with javascript-like syntax
+- based on game semantics
 - for interactive theorem proving
 - and practical verification tasks
-- based on game semantics
-- with logic programming interface
 
-- [examples (preview)](https://github.com/xieyuheng/cicada/tree/master/examples/cicadascript)
+[examples (preview)](https://github.com/xieyuheng/cicada/tree/master/examples/cicadascript)
 
 ## License
 
