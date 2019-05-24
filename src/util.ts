@@ -77,3 +77,25 @@ export
 function panic (message: string): never {
   throw new Error (message)
 }
+
+export
+function map2obj <V> (
+  map: Map <string, V>
+): { [key: string]: V } {
+  let obj: any = {}
+  for (let [k, v] of map.entries ()) {
+    obj [k] = v
+  }
+  return obj
+}
+
+export
+function obj2map <V> (
+  obj: { [key: string]: V }
+): Map <string, V> {
+  let map = new Map <string, V> ()
+  for (let k in obj) {
+    map.set (k, obj [k])
+  }
+  return map
+}

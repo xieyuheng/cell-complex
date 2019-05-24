@@ -84,6 +84,7 @@ class disj_t implements game_t {
   eq (that: game_t): boolean {
     return that instanceof disj_t
       && that.name === this.name
+      && ut.map_eq (that.map, this.map, (x, y) => x.eq (y))
   }
 
   report () {
@@ -100,6 +101,18 @@ class disj_t implements game_t {
   choose (dot: dot_t): game_t {
     return this.map.get (dot.name) as game_t
   }
+}
+
+export
+function disj (
+  name: string,
+  array: Array <conj_t | disj_t>,
+): conj_t {
+  let map = new Map ()
+  for (let game of array) {
+    map.set (game.name, game)
+  }
+  return new disj_t (name, map)
 }
 
 export
@@ -125,6 +138,7 @@ class conj_t implements game_t {
   eq (that: game_t): boolean {
     return that instanceof conj_t
       && that.name === this.name
+      && ut.map_eq (that.map, this.map, (x, y) => x.eq (y))
   }
 
   report () {
@@ -143,31 +157,27 @@ class conj_t implements game_t {
   }
 }
 
-/**
- * `arrow_t` has two stages:
- *  `ante` create bindings
- *  `succ` use bindings -- by `ref_t`
- */
-
 export
-class ref_t implements choice_t {
-  name: string
-
-  constructor (
-    name: string,
-  ) {
-    this.name = name
-  }
-
-  repr (): string {
-    return "@" + this.name
-  }
+function conj (
+  name: string,
+  obj: { [key: string]: game_t },
+): conj_t {
+  let map = ut.obj2map (obj)
+  return new conj_t (name, map)
 }
 
+/**
+ * `arrow_t` has two stages: `ante` and `succ`,
+ *   during `ante` player's roles are reversed.
+
+ * Note that, during the play of `arrow_t`,
+ *   there are not local naming and reference,
+ *   those concepts are about strategy.
+ */
 export
 class arrow_t implements game_t {
   ante: game_t
-  // TODO
+  // TODO convert to `ante_t` in constructor
   // ante: ante_t
   succ: game_t
   pass: boolean
@@ -189,18 +199,9 @@ class arrow_t implements game_t {
   }
 
   get choices (): Array <choice_t> {
-    if (! this.pass) {
-      return this.ante.choices
-    } else {
-      // TODO should use a filter
-      //   to get only useful `ref_t`
-      return this.succ.choices.length === 0
-        ? []
-        : this.succ.choices.concat (
-          Array.from ((this.ante as ante_t) .map.keys ())
-            .map (name => (new ref_t (name)))
-        )
-    }
+    return ! this.pass
+      ? this.ante.choices
+      : this.succ.choices
   }
 
   eq (that: game_t): boolean {
@@ -212,9 +213,11 @@ class arrow_t implements game_t {
 
   report () {
     console.log (`kind: arrow_t`)
-    // TODO
-    console.group ()
+    console.group ("ante")
     this.ante.report ()
+    console.groupEnd ()
+    console.group ("succ")
+    this.succ.report ()
     console.groupEnd ()
     console.log (`pass: ${this.pass}`)
     console.log (`player: ${this.player}`)
@@ -236,34 +239,16 @@ class arrow_t implements game_t {
         pass: verifier_loss_p,
       })
     } else {
-      if (choice instanceof ref_t) {
-        let ref: ref_t = choice
-        let ante = this.ante as ante_t
-        let game = ante.map.get (ref.name) as game_t
-        if (game.eq (this.succ)) {
-          return new arrow_t ({
-            ante: this.ante,
-            succ: new conj_t ("true_t", new Map ()),
-            pass: true,
-          })
-        } else {
-          console.log ("game:", game) // false_t
-          console.log ("this.succ:", this.succ) // bool_t
-          throw new Error ("TODO")
-        }
-      } else {
-        return new arrow_t ({
-          ante: this.ante,
-          succ: this.succ.choose (choice),
-          pass: true,
-        })
-      }
+      return new arrow_t ({
+        ante: this.ante,
+        succ: this.succ.choose (choice),
+        pass: true,
+      })
     }
   }
 }
 
 /**
- * Player's role is reversed in this game.
  * To win this game,
  *   the falsifier must win all games in map.
  */
@@ -304,7 +289,7 @@ class ante_t implements game_t {
   eq (that: game_t): boolean {
     return that instanceof ante_t
       && that.cursor === this.cursor
-      && that.map === this.map // TODO map_eq
+      && ut.map_eq (that.map, this.map, (x, y) => x.eq (y))
   }
 
   report () {
@@ -337,6 +322,9 @@ class ante_t implements game_t {
 }
 
 // TODO
+// export function arrow
+
+// TODO
 // class sum_t implements game_t
 
 // TODO
@@ -345,72 +333,7 @@ class ante_t implements game_t {
 // TODO
 // class record_t implements game_t
 
-// TEST
-
-{
-  let true_t = new conj_t ("true_t", new Map ())
-  let false_t = new conj_t ("false_t", new Map ())
-  let bool_t = new disj_t (
-    "bool_t", new Map ([
-      ["true_t", true_t],
-      ["false_t", false_t],
-    ])
-  )
-
-  // bool_t.report ()
-  // bool_t.choose (new dot_t ("true_t")) .report ()
-
-  let f1_t = new arrow_t ({
-    ante: new ante_t (new Map ([
-      ["x", bool_t],
-      ["y", bool_t],
-    ])),
-    succ: bool_t,
-  })
-
-  f1_t.report ()
-
-  console.log ()
-
-  f1_t
-    .choose (new dot_t ("true_t"))
-    .report ()
-
-  console.log ()
-
-  f1_t
-    .choose (new dot_t ("true_t"))
-    .choose (new dot_t ("false_t"))
-    .report ()
-
-  console.log ()
-
-  f1_t
-    .choose (new dot_t ("true_t"))
-    .choose (new dot_t ("false_t"))
-    .choose (new dot_t ("false_t"))
-    .report ()
-
-  console.log ()
-
-  // f1_t
-  //   .choose (new dot_t ("true_t"))
-  //   .choose (new dot_t ("false_t"))
-  //   .choose (new ref_t ("x"))
-  //   .report ()
+export
+class strategy_t {
+  // TODO
 }
-
-// TODO
-// export function conj
-
-// TODO
-// export function disj
-
-// TODO
-// export function arrow
-
-// {
-//   let true_t = conj ("true_t", {})
-//   let false_t = conj ("false_t", {})
-//   let bool_t = disj ("bool_t", [ true_t, false_t ])
-// }

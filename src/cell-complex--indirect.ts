@@ -333,7 +333,7 @@ function im_dic_to_exp (
 }
 
 interface cell_complex_exp_t {
-  [id: string] : morphism_exp_t
+  [id: string]: morphism_exp_t
 }
 
 interface im_exp_t {
