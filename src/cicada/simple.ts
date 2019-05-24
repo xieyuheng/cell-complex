@@ -176,9 +176,7 @@ function conj (
  */
 export
 class arrow_t implements game_t {
-  ante: game_t
-  // TODO convert to `ante_t` in constructor
-  // ante: ante_t
+  ante: ante_t
   succ: game_t
   pass: boolean
 
@@ -187,7 +185,8 @@ class arrow_t implements game_t {
     succ: game_t,
     pass?: boolean,
   }) {
-    this.ante = the.ante
+    assert (the.ante instanceof ante_t)
+    this.ante = the.ante as ante_t
     this.succ = the.succ
     this.pass = the.pass !== undefined ? the.pass : false
   }
