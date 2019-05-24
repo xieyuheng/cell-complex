@@ -32,6 +32,13 @@ abstract class game_t {
   abstract eq (that: game_t): boolean
   abstract report (): this
 
+  info (label: string): this {
+    console.group (label)
+    this.report ()
+    console.groupEnd ()
+    return this
+  }
+
   dot (name: string): game_t {
     return this.choose (new dot_t (name))
   }
