@@ -253,6 +253,7 @@ class arrow_t implements game_t {
  *   the falsifier must win all games in map.
  */
 
+export
 class ante_t implements game_t {
   map: Map <string, game_t>
   cursor: number
