@@ -362,5 +362,16 @@ function arrow (
 
 export
 class strategy_t {
+  /**
+   * A strategy for a player,
+   *   gives instruction for the player at each choice.
+   * Imagining you are a game master in China,
+   *   and you can not travel to Japan for a championship,
+   *   so a friend have to play the championship on behalf of you,
+   *   and you have to teach your strategy to your friend.
+   * A strategy must thought of all the possible choices,
+   *   specially those tough choices,
+   *   induced by the opponent player's good moves.
+   */
   // TODO
 }

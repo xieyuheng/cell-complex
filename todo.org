@@ -6,7 +6,18 @@
   - example of give geometry to topological structure
 - how to describe edge and face so they are easy to draw ?
 - a generic way to specify geometry of cell-complex
-* cicada-core
+* graph
+- graph without info -- for new hackenbush
+- reuse cell_complex_t -- by `graph_t.as_cell_complex ()`
+- find cycles of graph by spanning tree's complement edges
+  - homology of general graph
+* games -- for frontend jobs
+- hackenbush
+- dots-and-boxes
+- connect-four
+- go
+- hackenbush editor
+* cicadascript
 - more examples from /old
 - semantics of game plays
 - example games about `nat_t` and `list_t` -- cicada/simple
@@ -14,6 +25,16 @@
 - game semantics for the type system
 - compile to js with runtime type information
   - { type: { field: <type> }, field: <value> }
+- reuse js syntax
+  the syntax of js is almost enough
+  we only need to do the following extensions
+  - function call with named field
+    `<f> (<field> = <object>)`
+  - auto currying
+    `f (a) (b)` == `f (a, b)`
+  - no `,` in function call
+    - maybe we need to limit the use of infix notation
+    - maybe use newline as `,`
 * algebra of cell-complex
 - check equality proof
 - the game of equality
@@ -123,10 +144,6 @@
 * mathematical structures
 - ring.cs substructure and ideal_t
 - order.ts -- lattice_t, poset_t, total_t, heyting_algebra_t
-* graph
-- reuse cell_complex_t -- by `graph_t.as_cell_complex ()`
-- find cycles of graph by spanning tree's complement edges
-  - homology of general graph
 * int
 - linear diophantine equations with mod -- finite field
 * euclid
@@ -135,9 +152,6 @@
 - convert invariant_factors to elementary_divisors
 - primary_decomposition -- [rank, [[p0, n0], [p1, n1], ...]]
 - chinese_remainder_theorem
-* dots-and-boxes
-* hackenbush
-- with editor
 * computational-science
 - stiffness matrix
 - circulant matrix
@@ -216,22 +230,10 @@
 - use go to test game tree searching
 - why the games of logic seem like one-player game ?
 - aristotle (lukasiewicz) -> de morgan -> peirce
-- go
 - martin-gardner
 - (paper) investigations into game semantics of logic
 - surreal -- the theory of surreal number
   - theory about two-player normal-ending game
-* cicadascript -- a syntax frontend of cicada-core
-- reuse js syntax
-  the syntax of js is enough
-  we only need to do the following extensions
-  - function call with named field
-    `<f> (<field> = <object>)`
-  - auto currying
-    `f (a) (b)` == `f (a, b)`
-  - no `,` in function call
-    - maybe we need to limit the use of infix notation
-    - maybe use newline as `,`
 * dance
 - 3 circle dance
 - 4 circle dance
