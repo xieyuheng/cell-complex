@@ -6,7 +6,6 @@
   - example of give geometry to topological structure
 - how to describe edge and face so they are easy to draw ?
 - a generic way to specify geometry of cell-complex
-* minitt
 * graph
 - graph without info -- for new hackenbush
 - reuse cell_complex_t -- by `graph_t.as_cell_complex ()`
