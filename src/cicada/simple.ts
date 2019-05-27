@@ -44,6 +44,11 @@ abstract class game_t {
   }
 }
 
+// TODO
+// game of game
+// export
+// class gg_t extends game_t {}
+
 export
 function end_p (game: game_t): boolean {
   /**
@@ -372,10 +377,61 @@ function arrow (
  *   induced by the opponent player's good moves.
  */
 export
-class strategy_t {
-  // TODO
-
-  constructor () {
-
-  }
+abstract class strategy_t {
+  abstract player: player_t
 }
+
+// TODO
+// to win a game of game is to provide any game
+
+/**
+ * verifier's winning strategy is called verification (or proof).
+ */
+export
+abstract class verification_t extends strategy_t {
+  player: player_t = "verifier"
+}
+
+/**
+ * falsifier's winning strategy is called falsification.
+ */
+export
+abstract class falsification_t extends strategy_t {
+  player: player_t = "falsifier"
+}
+
+/**
+ * the verification of a union,
+ *   is to provide a member of the union.
+ */
+export
+class member_t extends verification_t {
+  // TODO
+}
+
+/**
+ * the verification of a record,
+ *   is to fill in all the fields of the record.
+ */
+export
+class fillin_t extends verification_t {
+  // TODO
+}
+
+/**
+ * the verification of a arrow,
+ *   is a falsification of its ante,
+ *   and a verification of its succ,
+ *     with reference to the falsification of its ante.
+ */
+export
+class fun_t extends verification_t {
+  // TODO
+}
+
+// TODO
+// strategy.eq (that: strategy_t): boolean
+
+// TODO
+// strategy.wins (game: game_t): true | Error
+// game.use (strategy: strategy_t): test_t

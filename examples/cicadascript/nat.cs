@@ -1,13 +1,13 @@
+union nat_t {
+  zero_t
+  succ_t
+} {}
+
 class zero_t {}
 
 class succ_t {
   prev : nat_t
 }
-
-union nat_t {
-  zero_t
-  succ_t
-} {}
 
 add: (
   x: nat_t,
