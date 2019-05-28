@@ -1,4 +1,6 @@
-- [cicada/simple] use module_t for recursive definitions
+- use `module_t` for better API
+- should arrow_t also use `() => game_t` ?
+- syntax should be plugin of the semantics
 - classification of regular polytope
 - holding implements until finite element method and PDE
 - example usages of higher order incidence relation
