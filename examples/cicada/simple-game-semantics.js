@@ -54,6 +54,7 @@ let null_t = () => cc.record ("null_t", { "t": cc.type })
 
 let cons_t = () => cc.record ("cons_t", {
   "t": cc.type,
+  // TODO `self` `dot` `apply`
   "car": dot (self, "t"),
   "cdr": apply (list_t, [dot (self, "t")]),
   "cdr": apply (list_t, { "t": dot (self, "t") }),
