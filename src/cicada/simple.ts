@@ -48,12 +48,34 @@ abstract class game_t {
   }
 }
 
-// TODO
 /**
  * type of types, game of games.
  */
-// export
-// class type_t extends game_t {}
+export
+class type_t extends game_t {
+  /**
+   * `type_t` is like a dynamic union,
+   *   thus its player is verifier.
+   */
+  get player (): player_t { return "verifier" }
+
+  get choices (): Array <choice_t> {
+    throw new Error ("TODO")
+  }
+
+  choose (choice: choice_t): game_t {
+    throw new Error ("TODO")
+  }
+
+  eq (that: game_t): boolean {
+    return that instanceof type_t
+  }
+}
+
+export
+function type (): () => type_t {
+  return () => new type_t ()
+}
 
 export
 function end_p (game: game_t): boolean {
@@ -136,7 +158,7 @@ export
 function union (
   name: string,
   array: Array <() => record_t | union_t>,
-): record_t {
+): union_t {
   let map = new Map ()
   for (let game of array) {
     map.set (game.name, game)
@@ -365,7 +387,7 @@ export
 function arrow (
   obj: { [key: string]: game_t },
   succ: game_t,
-) {
+): arrow_t {
   let map = ut.obj2map (obj)
   let ante = new ante_t (map)
   return new arrow_t ({ ante, succ })
@@ -420,12 +442,13 @@ class member_t extends verification_t {
  *   is to fill in all the fields of the record.
  */
 export
-class fillin_t extends verification_t {
+class fulfill_t extends verification_t {
   // TODO
 }
 
 /**
- * the verification of a arrow,
+ * it is fun to verify an arrow.
+ * the verification of an arrow,
  *   is a falsification of its ante,
  *   and a verification of its succ,
  *     with reference to the falsification of its ante.

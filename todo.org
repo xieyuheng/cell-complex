@@ -1,6 +1,7 @@
+- the `cicada/simple.ts` game play might be enough for dependent game (dependent type)
+- should arrow_t also use `() => game_t` ? yes.
 - use `module_t` for better API
-- should arrow_t also use `() => game_t` ?
-- syntax should be plugin of the semantics
+- syntax should be plugin of the semantics ?
 - classification of regular polytope
 - holding implements until finite element method and PDE
 - example usages of higher order incidence relation
