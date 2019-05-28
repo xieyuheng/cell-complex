@@ -18,33 +18,22 @@ f1_t
   .dot ("false_t") .info (2)
   .dot ("false_t") .info (3)
 
-// TODO need a module for recursive definitions
+let bool = new cc.module_t ("bool")
+  .union ("bool_t", [ "true_t", "false_t" ])
+  .class ("true_t")
+  .class ("false_t")
 
-let bool = new module_t ("bool")
-  .define_union ("bool_t", [ "true_t", "false_t" ])
-  .define_class ("true_t")
-  .define_class ("false_t")
+let nat = new cc.module_t ("nat")
+  .union ("nat_t", [ "zero_t", "succ_t" ])
+  .class ("zero_t")
+  .class ("succ_t", { "prev": "nat_t" })
 
-let nat = new module_t ("nat")
-  .define_union ("nat_t", [ "zero_t", "succ_t" ])
-  .define_class ("zero_t")
-  .define_class ("succ_t", { "prev": "nat_t" })
-
-let list = new module_t ("list")
-  .define_union ("list_t", [ "null_t", "cons_t" ], { "t": "type" })
-  .define_class ("null_t", { "t": "type" })
-  .define_class ("cons_t", {
+let list = new cc.module_t ("list")
+  .union ("list_t", [ "null_t", "cons_t" ], { "t": "type" })
+  .class ("null_t", { "t": "type" })
+  .class ("cons_t", {
     "t": "type",
-    "car": "this.t",
-    "cdr": ["list_t", "this.t"],
-  })
-
-let list = new module_t ("list")
-  .define_union ("list_t", [ "null_t", "cons_t" ], { "t": "type" })
-  .define_class ("null_t", { "t": "type" })
-  .define_class ("cons_t", {
-    "t": "type",
-    "car": ["dot" "this", "t"],
-    "cdr": ["type_cons", "list_t", ["dot" "this", "t"]],
-    "cdr": ["list_t", ["dot" "this", "t"]],
+    "car": "this.t", // "car": dot ("this", "t"),
+    "cdr": apply ("list_t", ["this.t"]),
+    "cdr": apply ("list_t", { "t": "this.t" }),
   })

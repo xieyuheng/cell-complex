@@ -45,9 +45,30 @@ abstract class game_t {
 }
 
 // TODO
-// game of game
+/**
+ * type of types, game of games.
+ */
 // export
-// class gg_t extends game_t {}
+// class type_t extends game_t {}
+
+export
+class module_t {
+  module_name: string
+  game_map: Map <string, game_t>
+
+  constructor (module_name: string) {
+    this.module_name = module_name
+    this.game_map = new Map ()
+  }
+
+  class () {
+    // TODO
+  }
+
+  union () {
+    // TODO
+  }
+}
 
 export
 function end_p (game: game_t): boolean {

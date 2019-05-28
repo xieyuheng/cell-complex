@@ -1,3 +1,4 @@
+- [cicada/simple] use module_t for recursive definitions
 - classification of regular polytope
 - holding implements until finite element method and PDE
 - example usages of higher order incidence relation
