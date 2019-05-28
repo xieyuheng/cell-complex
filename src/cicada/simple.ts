@@ -79,7 +79,7 @@ class dot_t extends choice_t {
 }
 
 export
-class disj_t extends game_t {
+class union_t extends game_t {
   name: string
   map: Map <string, game_t>
 
@@ -100,13 +100,13 @@ class disj_t extends game_t {
   }
 
   eq (that: game_t): boolean {
-    return that instanceof disj_t
+    return that instanceof union_t
       && that.name === this.name
       && ut.map_eq (that.map, this.map, (x, y) => x.eq (y))
   }
 
   report (): this {
-    console.log (`kind: disj_t`)
+    console.log (`kind: union_t`)
     console.log (`name: ${this.name}`)
     console.log (`player: ${this.player}`)
     console.log (`choices:`)
@@ -123,19 +123,19 @@ class disj_t extends game_t {
 }
 
 export
-function disj (
+function union (
   name: string,
-  array: Array <conj_t | disj_t>,
-): conj_t {
+  array: Array <record_t | union_t>,
+): record_t {
   let map = new Map ()
   for (let game of array) {
     map.set (game.name, game)
   }
-  return new disj_t (name, map)
+  return new union_t (name, map)
 }
 
 export
-class conj_t extends game_t {
+class record_t extends game_t {
   name: string
   map: Map <string, game_t>
 
@@ -156,13 +156,13 @@ class conj_t extends game_t {
   }
 
   eq (that: game_t): boolean {
-    return that instanceof conj_t
+    return that instanceof record_t
       && that.name === this.name
       && ut.map_eq (that.map, this.map, (x, y) => x.eq (y))
   }
 
   report (): this {
-    console.log (`kind: conj_t`)
+    console.log (`kind: record_t`)
     console.log (`name: ${this.name}`)
     console.log (`player: ${this.player}`)
     console.log (`choices:`)
@@ -179,12 +179,12 @@ class conj_t extends game_t {
 }
 
 export
-function conj (
+function record (
   name: string,
   obj: { [key: string]: game_t },
-): conj_t {
+): record_t {
   let map = ut.obj2map (obj)
-  return new conj_t (name, map)
+  return new record_t (name, map)
 }
 
 /**
