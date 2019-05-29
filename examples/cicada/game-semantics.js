@@ -1,4 +1,4 @@
-let cc = require ("../../lib/cicada/simple")
+let cc = require ("../../lib/cicada/core")
 
 let bool_t = () => cc.union ("bool_t", [
   true_t, false_t

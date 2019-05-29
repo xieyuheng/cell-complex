@@ -1,5 +1,5 @@
 /**
- * Game semantics of simple (non-dependent) type system.
+ * Game semantics of dependent type system.
  */
 
 import assert from "assert"
