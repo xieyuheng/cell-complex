@@ -11,9 +11,7 @@ class type_t extends gs.game_t {
    * `type_t` is like a dynamic union,
    *   thus its player is verifier.
    */
-  get player (): gs.player_t { return "verifier" }
-
-  get choices (): Array <gs.choice_t> {
+  choices (player: gs.player_t): Array <gs.choice_t> {
     throw new Error ("TODO")
   }
 
@@ -21,11 +19,14 @@ class type_t extends gs.game_t {
     throw new Error ("TODO")
   }
 
+  copy (): type_t {
+    return new type_t ()
+  }
+  
   report (): object {
     return {
       "kind": "type_t",
-      "player": this.player,
-      // TODO      
+      // TODO
     }
   }
 }

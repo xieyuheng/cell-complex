@@ -1,16 +1,18 @@
 import assert from "assert"
 import * as ut from "../util"
 import * as gs from "./game-semantics"
-import { union_t } from "./union"
-import { record_t } from "./record"
-import { arrow_t, ante_t } from "./arrow"
-import { dot_t } from "./dot"
+import { ref_t } from "./ref"
+import { union_t, member_t } from "./union"
+import { record_t, field_t } from "./record"
+// import { arrow_t, ante_t } from "./arrow"
+// import { path_t } from "./path"
 
 // Top level API of game semantics of cicada language.
 
 export
-function dot (name: string): dot_t {
-  return new dot_t (name)
+let step = {
+  member: (name: string) => new member_t (name),
+  field: (name: string) => new field_t (name),
 }
 
 export
@@ -58,54 +60,19 @@ class module_t {
     return this
   }
 
-  arrow (
-    name: string,
-    ante_obj: { [key: string]: string },
-    succ_name: string,
-  ): this {
-    // TODO should be obj: { [key: string]: exp_t }
-    let map = ut.mapmap (
-      ut.obj2map (ante_obj),
-      (sub_name) => this.ref (sub_name),
-    )
-    let ante = new ante_t (map)
-    let succ = this.ref (succ_name)
-    this.define (name, new arrow_t ({ ante, succ }))
-    return this
-  }
-}
-
-export
-class ref_t extends gs.game_t {
-  module: module_t
-  name: string
-
-  constructor (
-    module: module_t,
-    name: string,
-  ) {
-    super ()
-    this.module = module
-    this.name = name
-  }
-
-  get player (): gs.player_t {
-    let game = this.module.game (this.name)
-    return game.player
-  }
-
-  get choices (): Array <gs.choice_t> {
-    let game = this.module.game (this.name)
-    return game.choices
-  }
-
-  choose (choice: gs.choice_t): gs.game_t {
-    let game = this.module.game (this.name)
-    return game.choose (choice)
-  }
-
-  report (): object {
-    let game = this.module.game (this.name)
-    return game.report ()
-  }
+  // arrow (
+  //   name: string,
+  //   ante_obj: { [key: string]: string },
+  //   succ_name: string,
+  // ): this {
+  //   // TODO should be obj: { [key: string]: exp_t }
+  //   let map = ut.mapmap (
+  //     ut.obj2map (ante_obj),
+  //     (sub_name) => this.ref (sub_name),
+  //   )
+  //   let ante = new ante_t (map)
+  //   let succ = this.ref (succ_name)
+  //   this.define (name, new arrow_t ({ ante, succ }))
+  //   return this
+  // }
 }
