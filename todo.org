@@ -1,6 +1,6 @@
-- `() => game_t` in `pause_t`
 - use `path` as choice instead of `dot`
 - syntax should be plugin of the semantics ?
+------
 - classification of regular polytope
 - holding implements until finite element method and PDE
 - example usages of higher order incidence relation
