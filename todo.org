@@ -1,5 +1,4 @@
 - `() => game_t` in `pause_t`
-- should arrow_t also use `() => game_t` ? yes.
 - use `path` as choice instead of `dot`
 - syntax should be plugin of the semantics ?
 - classification of regular polytope

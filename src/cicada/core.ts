@@ -83,6 +83,22 @@ class module_t {
     this.define (name, new record_t (name, map))
     return this
   }
+
+  arrow (
+    name: string,
+    ante_obj: { [key: string]: string },
+    succ_name: string,
+  ): this {
+    // TODO should be obj: { [key: string]: exp_t }
+    let map = ut.mapmap (
+      ut.obj2map (ante_obj),
+      (sub_name) => new ref_t (this, sub_name),
+    )
+    let ante = new ante_t (map)
+    let succ = new ref_t (this, succ_name)
+    this.define (name, new arrow_t ({ ante, succ }))
+    return this
+  }
 }
 
 export

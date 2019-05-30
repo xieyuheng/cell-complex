@@ -9,16 +9,13 @@ let bool = new cc.module_t ("bool")
     "y": "bool_t",
   }, "bool_t")
 
-
-bool.game ("bool_t")
-  .info (0)
+bool.game ("bool_t") .info (0)
   .dot ("true_t") .info (1)
 
-// bool.game ("f1")
-//   .info (0)
-//   .dot ("true_t") .info (1)
-//   .dot ("false_t") .info (2)
-//   .dot ("false_t") .info (3)
+bool.game ("f1") .info (0)
+  .dot ("true_t") .info (1)
+  .dot ("false_t") .info (2)
+  .dot ("false_t") .info (3)
 
 // let zero_t = () => cc.record ("zero_t", {})
 
