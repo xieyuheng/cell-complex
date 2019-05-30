@@ -29,12 +29,7 @@ abstract class game_t {
   abstract player: player_t
   abstract choices: Array <choice_t>
   abstract choose (choice: choice_t): game_t
-  abstract eq (that: game_t): boolean
-
-  report (): this {
-    console.log (this)
-    return this
-  }
+  abstract report (): this
 
   info (label: string): this {
     console.group (label)
@@ -45,6 +40,81 @@ abstract class game_t {
 
   dot (name: string): game_t {
     return this.choose (new dot_t (name))
+  }
+}
+
+export
+class module_t {
+  game_map: Map <string, game_t>
+
+  constructor () {
+    this.game_map = new Map ()
+  }
+
+  define (name: string, game: game_t): this {
+    this.game_map.set (name, game)
+    return this
+  }
+
+  game (name: string): game_t {
+    let game = this.game_map.get (name)
+    if (game !== undefined) {
+      return game
+    } else {
+      throw new Error (`undefined game: ${name}`)
+    }
+  }
+
+  union (name: string, array: Array <string>): this {
+    let map = new Map ()
+    for (let sub_name of array) {
+      map.set (sub_name, new ref_t (this, sub_name))
+    }
+    this.define (name, new union_t (name, map))
+    return this
+  }
+
+  record (name: string, obj: { [key: string]: string }): this {
+    // TODO should be obj: { [key: string]: exp_t }
+    let map = ut.mapmap (
+      ut.obj2map (obj),
+      (sub_name) => new ref_t (this, sub_name),
+    )
+    this.define (name, new record_t (name, map))
+    return this
+  }
+}
+
+export
+class ref_t extends game_t {
+  module: module_t
+  name: string
+
+  constructor (module: module_t, name: string) {
+    super ()
+    this.module = module
+    this.name = name
+  }
+
+  get player (): player_t {
+    let game = this.module.game (this.name)
+    return game.player
+  }
+
+  get choices (): Array <choice_t> {
+    let game = this.module.game (this.name)
+    return game.choices
+  }
+
+  choose (choice: choice_t): game_t {
+    let game = this.module.game (this.name)
+    return game.choose (choice)
+  }
+
+  report (): this {
+    let game = this.module.game (this.name)
+    game.report ()
+    return this
   }
 }
 
@@ -67,8 +137,11 @@ class type_t extends game_t {
     throw new Error ("TODO")
   }
 
-  eq (that: game_t): boolean {
-    return that instanceof type_t
+  report (): this {
+    console.log (`kind: type_t`)
+    console.log (`player: ${this.player}`)
+    // TODO
+    return this
   }
 }
 
@@ -91,6 +164,38 @@ abstract class choice_t {
 }
 
 export
+class pause_t extends game_t {
+  resume: () => game_t
+
+  constructor (resume: () => game_t) {
+    super ()
+    this.resume = resume
+  }
+
+  get player (): player_t {
+    return this.resume () .player
+  }
+
+  get choices (): Array <choice_t> {
+    return this.resume () .choices
+  }
+
+  choose (choice: choice_t): game_t {
+    return this.resume () .choose (choice)
+  }
+
+  report (): this {
+    this.resume () .report ()
+    return this
+  }
+}
+
+export
+function pause (resume: () => game_t): pause_t {
+  return new pause_t (resume)
+}
+
+export
 class dot_t extends choice_t {
   name: string
 
@@ -109,11 +214,11 @@ class dot_t extends choice_t {
 export
 class union_t extends game_t {
   name: string
-  map: Map <string, () => game_t>
+  map: Map <string, game_t>
 
   constructor (
     name: string,
-    map: Map <string, () => game_t>,
+    map: Map <string, game_t>,
   ) {
     super ()
     this.name = name
@@ -125,11 +230,6 @@ class union_t extends game_t {
   get choices (): Array <choice_t> {
     return Array.from (this.map.keys ())
       .map (name => (new dot_t (name)))
-  }
-
-  eq (that: game_t): boolean {
-    return that instanceof union_t
-      && that.name === this.name
   }
 
   report (): this {
@@ -145,11 +245,11 @@ class union_t extends game_t {
   }
 
   choose (dot: dot_t): game_t {
-    let trunk = this.map.get (dot.name)
-    if (trunk === undefined) {
+    let game = this.map.get (dot.name)
+    if (game === undefined) {
       throw new Error (`unknown dot.name: ${dot.name}`)
     } else {
-      return trunk ()
+      return game
     }
   }
 }
@@ -157,7 +257,7 @@ class union_t extends game_t {
 export
 function union (
   name: string,
-  array: Array <() => record_t | union_t>,
+  array: Array <record_t | union_t>,
 ): union_t {
   let map = new Map ()
   for (let game of array) {
@@ -169,11 +269,11 @@ function union (
 export
 class record_t extends game_t {
   name: string
-  map: Map <string, () => game_t>
+  map: Map <string, game_t>
 
   constructor (
     name: string,
-    map: Map <string, () => game_t>,
+    map: Map <string, game_t>,
   ) {
     super ()
     this.name = name
@@ -185,12 +285,6 @@ class record_t extends game_t {
   get choices (): Array <choice_t> {
     return Array.from (this.map.keys ())
       .map (name => (new dot_t (name)))
-  }
-
-  eq (that: game_t): boolean {
-    return that instanceof record_t
-      && that.name === this.name
-      && ut.map_eq (that.map, this.map, (x, y) => x () .eq (y ()))
   }
 
   report (): this {
@@ -206,11 +300,11 @@ class record_t extends game_t {
   }
 
   choose (dot: dot_t): game_t {
-    let trunk = this.map.get (dot.name)
-    if (trunk === undefined) {
+    let game = this.map.get (dot.name)
+    if (game === undefined) {
       throw new Error (`unknown dot.name: ${dot.name}`)
     } else {
-      return trunk ()
+      return game
     }
   }
 }
@@ -218,7 +312,7 @@ class record_t extends game_t {
 export
 function record (
   name: string,
-  obj: { [key: string]: () => game_t },
+  obj: { [key: string]: game_t },
 ): record_t {
   let map = ut.obj2map (obj)
   return new record_t (name, map)
@@ -260,13 +354,6 @@ class arrow_t extends game_t {
     return ! this.pass
       ? this.ante.choices
       : this.succ.choices
-  }
-
-  eq (that: game_t): boolean {
-    return that instanceof arrow_t
-      && that.pass === this.pass
-      && that.ante.eq (this.ante)
-      && that.succ.eq (this.succ)
   }
 
   report (): this {
@@ -345,12 +432,6 @@ class ante_t extends game_t {
 
   get choices (): Array <choice_t> {
     return this.current_game.choices
-  }
-
-  eq (that: game_t): boolean {
-    return that instanceof ante_t
-      && that.cursor === this.cursor
-      && ut.map_eq (that.map, this.map, (x, y) => x.eq (y))
   }
 
   report (): this {
@@ -457,9 +538,6 @@ export
 class fun_t extends verification_t {
   // TODO
 }
-
-// TODO
-// strategy.eq (that: strategy_t): boolean
 
 // TODO
 // strategy.wins (game: game_t): true | Error
