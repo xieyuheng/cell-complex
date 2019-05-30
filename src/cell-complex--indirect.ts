@@ -819,7 +819,7 @@ function isomorphic_to_polygon (
   }
   let circuit = new Array ()
   let { value: vertex } = com.id_in_dim (0) .next ()
-  let edge_id_set = new Set ()
+  let edge_id_set = new Set <id_t | rev_id_t> ()
   for (let i = 0; i < size; i++) {
     let found = find_next_edge_id (com, vertex, edge_id_set)
     if (found === null) {
