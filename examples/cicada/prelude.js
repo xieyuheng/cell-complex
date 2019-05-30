@@ -7,12 +7,14 @@ let bool = new cc.module_t ("bool")
   // .arrow ("f1", { "x": "bool_t", "y": "bool_t" }, "bool_t")
 
 bool.game ("bool_t") .info (0)
-  .choose (cc.dot ("true_t")) .info (1)
+  .choose (cc.path ([
+    cc.step.member ("true_t")
+  ])) .info (1)
 
-bool.game ("f1") .info (0)
-  .choose (cc.dot ("true_t")) .info (1)
-  .choose (cc.dot ("false_t")) .info (2)
-  .choose (cc.dot ("false_t")) .info (3)
+bool.game ("bool_t") .info (0)
+  .move ([
+    cc.step.member ("true_t")
+  ]) .info (1)
 
 // bool.game ("f1")
 //   .choose (cc.path ([
@@ -59,13 +61,6 @@ nat.game ("nat_t")
     cc.step.field ("prev"),
     cc.step.member ("zero_t"),
   ])
-
-nat.game ("nat_t") .info (0)
-  .choose (cc.dot ("succ_t")) .info (1)
-  .choose (cc.dot ("prev")) .info (2)
-  .choose (cc.dot ("succ_t")) .info (3)
-  .choose (cc.dot ("prev")) .info (4)
-  .choose (cc.dot ("zero_t")) .info (5)
 
 // let list = new cc.module_t ("list")
 //   .union ("list_t", [ "null_t", "cons_t" ], { "t": "type" })

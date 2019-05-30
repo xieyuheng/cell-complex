@@ -91,6 +91,10 @@ class record_t extends gs.game_t {
     return {
       "kind": "record_t",
       "name": this.name,
+      "fields": ut.map2obj (ut.mapmap (
+        this.map,
+        game => game.report (),
+      )),
       "end": this.end_p (),
     }
   }

@@ -5,9 +5,14 @@ import { ref_t } from "./ref"
 import { union_t, member_t } from "./union"
 import { record_t, field_t } from "./record"
 // import { arrow_t, ante_t } from "./arrow"
-// import { path_t } from "./path"
+import { path_t, step_t } from "./path"
 
 // Top level API of game semantics of cicada language.
+
+export
+function path (steps: Array <step_t>): path_t {
+  return new path_t (steps)
+}
 
 export
 let step = {

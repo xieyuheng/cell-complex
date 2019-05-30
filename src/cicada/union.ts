@@ -91,6 +91,10 @@ class union_t extends gs.game_t {
     return {
       "kind": "union_t",
       "name": this.name,
+      "members": ut.map2obj (ut.mapmap (
+        this.map,
+        game => game.report (),
+      )),
       "end": this.end_p (),
     }
   }
