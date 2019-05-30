@@ -1,7 +1,5 @@
 import assert from "assert"
-
 import * as ut from "../util"
-
 import * as gs from "./game-semantics"
 
 /**
@@ -42,24 +40,6 @@ class arrow_t extends gs.game_t {
       : this.succ.choices
   }
 
-  report (): this {
-    console.log (`kind: arrow_t`)
-    console.group ("ante")
-    this.ante.report ()
-    console.groupEnd ()
-    console.group ("succ")
-    this.succ.report ()
-    console.groupEnd ()
-    console.log (`pass: ${this.pass}`)
-    console.log (`player: ${this.player}`)
-    console.log (`choices:`)
-    for (let choice of this.choices) {
-      console.log (`  ${choice.repr ()}`)
-    }
-    console.log (`end: ${this.end_p ()}`)
-    return this
-  }
-
   choose (choice: gs.choice_t): gs.game_t {
     if (! this.pass) {
       let next_ante = this.ante.choose (choice)
@@ -76,6 +56,18 @@ class arrow_t extends gs.game_t {
         succ: this.succ.choose (choice),
         pass: true,
       })
+    }
+  }
+
+  report (): object {
+    return {
+      "kind": "arrow_t",
+      "ante": this.ante.report (),
+      "succ": this.succ.report (),
+      "pass": this.pass,
+      "player": this.player,
+      "choices": this.choices.map (choice => choice.report ()),
+      "end": this.end_p (),
     }
   }
 }
@@ -120,19 +112,6 @@ class ante_t extends gs.game_t {
     return this.current_game.choices
   }
 
-  report (): this {
-    console.log (`kind: ante_t`)
-    console.log (`size: ${this.map.size}`)
-    console.log (`cursor: ${this.cursor}`)
-    console.log (`player: ${this.player}`)
-    console.log (`choices:`)
-    for (let choice of this.choices) {
-      console.log (`  ${choice.repr ()}`)
-    }
-    console.log (`end: ${this.end_p ()}`)
-    return this
-  }
-
   choose (choice: gs.choice_t): gs.game_t {
     let next = this.current_game.choose (choice)
     let cursor = next.end_p ()
@@ -147,5 +126,16 @@ class ante_t extends gs.game_t {
       new Map (this.map) .set (this.current_name, next),
       cursor,
     )
+  }
+
+  report (): object {
+    return {
+      "kind": "ante_t",
+      "size": this.map.size,
+      "cursor": this.cursor,
+      "player": this.player,
+      "choices": this.choices.map (choice => choice.report ()),
+      "end": this.end_p (),
+    }
   }
 }

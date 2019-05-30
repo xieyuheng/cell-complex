@@ -1,7 +1,5 @@
 import assert from "assert"
-
 import * as ut from "../util"
-
 import * as gs from "./game-semantics"
 import { dot_t } from "./dot"
 
@@ -26,16 +24,14 @@ class union_t extends gs.game_t {
       .map (name => (new dot_t (name)))
   }
 
-  report (): this {
-    console.log (`kind: union_t`)
-    console.log (`name: ${this.name}`)
-    console.log (`player: ${this.player}`)
-    console.log (`choices:`)
-    for (let choice of this.choices) {
-      console.log (`  ${choice.repr ()}`)
+  report (): object {
+    return {
+      "kind": "union_t",
+      "name": this.name,
+      "player": this.player,
+      "choices": this.choices.map (choice => choice.report ()),
+      "end": this.end_p (),
     }
-    console.log (`end: ${this.end_p ()}`)
-    return this
   }
 
   choose (dot: dot_t): gs.game_t {

@@ -4,10 +4,7 @@ let bool = new cc.module_t ("bool")
   .union ("bool_t", [ "true_t", "false_t" ])
   .record ("true_t", {})
   .record ("false_t", {})
-  .arrow ("f1", {
-    "x": "bool_t",
-    "y": "bool_t",
-  }, "bool_t")
+  .arrow ("f1", { "x": "bool_t", "y": "bool_t" }, "bool_t")
 
 bool.game ("bool_t") .info (0)
   .choose (cc.dot ("true_t")) .info (1)

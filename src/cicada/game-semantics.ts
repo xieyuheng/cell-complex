@@ -1,10 +1,7 @@
-/**
- * Game semantics of dependent type system.
- */
-
 import assert from "assert"
-
 import * as ut from "../util"
+
+// Game semantics framework for logic and type system.
 
 export
 type player_t = "verifier" | "falsifier"
@@ -18,7 +15,7 @@ function opponent_player (player: player_t) {
 
 export
 abstract class choice_t {
-  abstract repr (): string
+  abstract report (): any
 }
 
 /**
@@ -34,11 +31,11 @@ abstract class game_t {
   abstract player: player_t
   abstract choices: Array <choice_t>
   abstract choose (choice: choice_t): game_t
-  abstract report (): this
+  abstract report (): any
 
   info (label: string): this {
     console.group (label)
-    this.report ()
+    ut.log (this.report ())
     console.groupEnd ()
     return this
   }

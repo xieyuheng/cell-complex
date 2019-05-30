@@ -1,13 +1,12 @@
 import assert from "assert"
-
 import * as ut from "../util"
-
 import * as gs from "./game-semantics"
-
 import { union_t } from "./union"
 import { record_t } from "./record"
 import { arrow_t, ante_t } from "./arrow"
 import { dot_t } from "./dot"
+
+// Top level API of game semantics of cicada language.
 
 export
 function dot (name: string): dot_t {
@@ -36,10 +35,14 @@ class module_t {
     }
   }
 
+  ref (name: string): ref_t {
+    return new ref_t (this, name)
+  }
+
   union (name: string, array: Array <string>): this {
     let map = new Map ()
     for (let sub_name of array) {
-      map.set (sub_name, new ref_t (this, sub_name))
+      map.set (sub_name, this.ref (sub_name))
     }
     this.define (name, new union_t (name, map))
     return this
@@ -49,7 +52,7 @@ class module_t {
     // TODO should be obj: { [key: string]: exp_t }
     let map = ut.mapmap (
       ut.obj2map (obj),
-      (sub_name) => new ref_t (this, sub_name),
+      (sub_name) => this.ref (sub_name),
     )
     this.define (name, new record_t (name, map))
     return this
@@ -63,10 +66,10 @@ class module_t {
     // TODO should be obj: { [key: string]: exp_t }
     let map = ut.mapmap (
       ut.obj2map (ante_obj),
-      (sub_name) => new ref_t (this, sub_name),
+      (sub_name) => this.ref (sub_name),
     )
     let ante = new ante_t (map)
-    let succ = new ref_t (this, succ_name)
+    let succ = this.ref (succ_name)
     this.define (name, new arrow_t ({ ante, succ }))
     return this
   }
@@ -98,9 +101,8 @@ class ref_t extends gs.game_t {
     return game.choose (choice)
   }
 
-  report (): this {
+  report (): object {
     let game = this.module.game (this.name)
-    game.report ()
-    return this
+    return game.report ()
   }
 }

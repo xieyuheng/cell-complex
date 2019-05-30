@@ -1,7 +1,5 @@
 import assert from "assert"
-
 import * as ut from "../util"
-
 import * as gs from "./game-semantics"
 
 export
@@ -15,7 +13,7 @@ class dot_t extends gs.choice_t {
     this.name = name
   }
 
-  repr (): string {
-    return "." + this.name
+  report (): string {
+    return this.name
   }
 }

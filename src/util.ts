@@ -101,7 +101,10 @@ function obj2map <V> (
 }
 
 export
-function mapmap <K, A, B> (map: Map <K, A>, f: (a: A) => B): Map <K, B> {
+function mapmap <K, A, B> (
+  map: Map <K, A>,
+  f: (a: A) => B,
+): Map <K, B> {
   let new_map = new Map ()
   for (let [k, a] of map.entries ()) {
     new_map.set (k, f (a))

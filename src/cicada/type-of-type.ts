@@ -1,7 +1,5 @@
 import assert from "assert"
-
 import * as ut from "../util"
-
 import * as gs from "./game-semantics"
 
 /**
@@ -23,10 +21,11 @@ class type_t extends gs.game_t {
     throw new Error ("TODO")
   }
 
-  report (): this {
-    console.log (`kind: type_t`)
-    console.log (`player: ${this.player}`)
-    // TODO
-    return this
+  report (): object {
+    return {
+      "kind": "type_t",
+      "player": this.player,
+      // TODO      
+    }
   }
 }
