@@ -24,6 +24,15 @@ class record_t extends gs.game_t {
       .map (name => (new dot_t (name)))
   }
 
+  choose (dot: dot_t): gs.game_t {
+    let game = this.map.get (dot.name)
+    if (game === undefined) {
+      throw new Error (`unknown dot.name: ${dot.name}`)
+    } else {
+      return game
+    }
+  }
+
   report (): object {
     return {
       "kind": "record_t",
@@ -31,15 +40,6 @@ class record_t extends gs.game_t {
       "player": this.player,
       "choices": this.choices.map (choice => choice.report ()),
       "end": this.end_p (),
-    }
-  }
-
-  choose (dot: dot_t): gs.game_t {
-    let game = this.map.get (dot.name)
-    if (game === undefined) {
-      throw new Error (`unknown dot.name: ${dot.name}`)
-    } else {
-      return game
     }
   }
 }

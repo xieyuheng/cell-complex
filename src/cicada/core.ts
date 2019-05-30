@@ -80,7 +80,10 @@ class ref_t extends gs.game_t {
   module: module_t
   name: string
 
-  constructor (module: module_t, name: string) {
+  constructor (
+    module: module_t,
+    name: string,
+  ) {
     super ()
     this.module = module
     this.name = name
