@@ -25,7 +25,7 @@ class field_t extends step_t {
         return next_game
       }
     } else {
-      throw new Error ("field_t step only applies to record_t")
+      throw new Error ("field_t step only forward a record_t")
     }
   }
 
@@ -42,7 +42,7 @@ class field_t extends step_t {
         throw new Error (`can not deref a non ref_t`)
       }
     } else {
-      throw new Error ("field_t step only applies to record_t")
+      throw new Error ("field_t step only deref a record_t")
     }
   }
 
@@ -78,6 +78,7 @@ class record_t extends gs.game_t {
   }
 
   choose (path: path_t): record_t {
+    console.log ("path.prefix ():", path.prefix ())
     let game: record_t = this.copy ()
     let next: gs.game_t = game
     for (let step of path.prefix ()) {

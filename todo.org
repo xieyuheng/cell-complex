@@ -1,9 +1,6 @@
 - restore arrow_t
 - use ava for test
-- `game.move` & `game.move_by`
-  - there can be other kinds of choice
-    while `move` is the optimized API for `path_t`
-- fix `game.report`
+- fix `.choices ()`
 - syntax should be plugin of the semantics ?
 ------
 - classification of regular polytope

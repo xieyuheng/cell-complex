@@ -12,7 +12,7 @@ abstract class step_t {
 
 export
 class path_t extends gs.choice_t {
-  steps: Array <step_t>
+  readonly steps: Array <step_t>
 
   constructor (
     steps: Array <step_t>
@@ -32,7 +32,7 @@ class path_t extends gs.choice_t {
     if (this.steps.length === 0) {
       throw new Error ("Can not get prefix of empty path.")
     }
-    return this.steps.splice (0, -1)
+    return this.steps.slice (0, this.steps.length - 1)
   }
 
   report (): Array <any> {

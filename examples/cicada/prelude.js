@@ -11,11 +11,6 @@ bool.game ("bool_t") .info (0)
     cc.step.member ("true_t")
   ])) .info (1)
 
-bool.game ("bool_t") .info (0)
-  .move ([
-    cc.step.member ("true_t")
-  ]) .info (1)
-
 // bool.game ("f1")
 //   .choose (cc.path ([
 //     cc.step.ante ("x"),
@@ -35,32 +30,32 @@ let nat = new cc.module_t ("nat")
   .record ("zero_t", {})
   .record ("succ_t", { "prev": "nat_t" })
 
-nat.game ("nat_t")
-  .move ([
+nat.game ("nat_t") .info (0)
+  .choose (cc.path ([
     cc.step.member ("succ_t")
-  ])
-  .move ([
+  ])) .info (1)
+  .choose (cc.path ([
     cc.step.member ("succ_t"),
     cc.step.field ("prev"),
-  ])
-  .move ([
-    cc.step.member ("succ_t"),
-    cc.step.field ("prev"),
-    cc.step.member ("succ_t"),
-  ])
-  .move ([
+  ])) .info (2)
+  .choose (cc.path ([
     cc.step.member ("succ_t"),
     cc.step.field ("prev"),
     cc.step.member ("succ_t"),
+  ])) .info (3)
+  .choose (cc.path ([
+    cc.step.member ("succ_t"),
     cc.step.field ("prev"),
-  ])
-  .move ([
+    cc.step.member ("succ_t"),
+    cc.step.field ("prev"),
+  ])) .info (4)
+  .choose (cc.path ([
     cc.step.member ("succ_t"),
     cc.step.field ("prev"),
     cc.step.member ("succ_t"),
     cc.step.field ("prev"),
     cc.step.member ("zero_t"),
-  ])
+  ])) .info (5)
 
 // let list = new cc.module_t ("list")
 //   .union ("list_t", [ "null_t", "cons_t" ], { "t": "type" })

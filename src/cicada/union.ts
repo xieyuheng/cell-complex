@@ -25,7 +25,7 @@ class member_t extends step_t {
         return next_game
       }
     } else {
-      throw new Error ("field_t step only applies to union_t")
+      throw new Error ("field_t step only forward an union_t")
     }
   }
 
@@ -42,7 +42,7 @@ class member_t extends step_t {
         throw new Error (`can not deref a non ref_t`)
       }
     } else {
-      throw new Error ("field_t step only applies to union_t")
+      throw new Error ("field_t step only deref an union_t")
     }
   }
 
