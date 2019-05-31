@@ -14,6 +14,14 @@
 - IRC -- [#cicada-language](https://kiwiirc.com/nextclient/irc.freenode.net/#cicada-language)
 - CI -- [gitlab-ci](https://gitlab.com/xieyuheng/cicada/pipelines)
 
+## Contributing
+
+- Prepare: `npm install`
+- Compile: `npx tsc`
+- Compile and watch: `npx tsc --watch`
+- Run all tests: `npx ava`
+- Run specific test file: `npx ava -sv <path to the test file>`
+
 ## Docs
 
 - [A Recursive Combinatorial Description of cell-complex](https://github.com/xieyuheng/cicada/blob/master/docs/a-recursive-combinatorial-description-of-cell-complex.md)
