@@ -1,7 +1,9 @@
-- exp.ts
-- use ava for test
+- std/nat.ts
+- std/bool.ts
+- std/list.ts
 - fix `.choices ()`
-- syntax should be plugin of the semantics ?
+- predicates for game_t -- for better tests
+- exp.ts
 ------
 - classification of regular polytope
 - holding implements until finite element method and PDE
@@ -30,6 +32,9 @@
 - game semantics for the type system
 - compile to js with runtime type information
   - { type: { field: <type> }, field: <value> }
+- syntax and semantics which is higher order module ?
+  - one syntax can be implemented by many semantics
+  - one design of semantics can be used by many syntaxes
 - reuse js syntax
   the syntax of js is almost enough
   we only need to do the following extensions

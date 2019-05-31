@@ -24,7 +24,7 @@ abstract class game_t {
   abstract copy <G extends game_t> (): game_t
   abstract report (): any
 
-  info (label: string): this {
+  info (label: any): this {
     console.group (label)
     ut.log (this.report ())
     console.groupEnd ()

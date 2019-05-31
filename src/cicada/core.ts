@@ -24,9 +24,11 @@ let step = {
 
 export
 class module_t {
+  name: string
   game_map: Map <string, gs.game_t>
 
-  constructor () {
+  constructor (name: string) {
+    this.name = name
     this.game_map = new Map ()
   }
 
