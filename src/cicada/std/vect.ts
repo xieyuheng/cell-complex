@@ -20,7 +20,9 @@ let vect = new cc.module_t ("vect")
   //     "n": "nat_t",
   //   },
   //   "t": "type",
-  //   "length": apply ("succ_t", dot ("this", "n")),
+  //   "length": apply ("succ_t", {
+  //     "prev": dot ("this", "n"),
+  //   }),
   //   "car": dot ("this", "t"),
   //   "cdr": apply ("vect_t", {
   //     "t": dot ("this", "t"),

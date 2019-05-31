@@ -7,5 +7,7 @@ let list = new cc.module_t ("list")
   // .record ("cons_t", {
   //   "t": "type",
   //   "car": dot ("this", "t"),
-  //   "cdr": apply ("list_t", { "t": dot ("this", "t") }),
+  //   "cdr": apply ("list_t", {
+  //     "t": dot ("this", "t"),
+  //   }),
   // })
