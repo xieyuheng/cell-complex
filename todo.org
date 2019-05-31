@@ -1,4 +1,5 @@
-- `module.copy ()`
+- third argument of `game.union ()`
+  .union ("list_t", [ "null_t", "cons_t" ], { "t": "type" })
 - fix `.choices ()`
 - predicates for game_t -- for better tests
 - exp.ts
