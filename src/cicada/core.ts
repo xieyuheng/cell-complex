@@ -29,10 +29,10 @@ class module_t {
 
   constructor (
     name: string,
-    game_map?: Map <string, gs.game_t>,
+    game_map: Map <string, gs.game_t> = new Map (),
   ) {
     this.name = name
-    this.game_map = game_map !== undefined ? game_map : new Map ()
+    this.game_map = game_map
   }
 
   shallow_copy (): module_t {
