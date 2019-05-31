@@ -33,7 +33,7 @@ abstract class game_t {
 
   loss_p (player: player_t): boolean {
     /**
-     * normal play -- current player loss.
+     * normal play -- the last player who has no choice loss the game.
      */
     let choices = this.choices (player)
     return choices.length === 0
