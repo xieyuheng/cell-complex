@@ -4,7 +4,7 @@ import * as gs from "./game-semantics"
 import { ref_t } from "./ref"
 import { union_t, member_t } from "./union"
 import { record_t, field_t } from "./record"
-import { arrow_t, arg_t, ret_t } from "./arrow"
+import { pi_t, arg_t, ret_t } from "./pi"
 import { path_t, step_t } from "./path"
 
 // Top level API of game semantics of cicada language.
@@ -86,7 +86,7 @@ class module_t {
     return this
   }
 
-  arrow (
+  pi (
     name: string,
     args_obj: { [key: string]: string },
     ret_name: string,
@@ -97,7 +97,7 @@ class module_t {
       (name) => this.ref (name) .deref (),
     )
     let ret = this.ref (ret_name) .deref ()
-    this.define (name, new arrow_t (args, ret))
+    this.define (name, new pi_t (args, ret))
     return this
   }
 }

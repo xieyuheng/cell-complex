@@ -56,8 +56,8 @@ class fulfill_t extends verification_t {
 }
 
 /**
- * it is fun to verify an arrow.
- * the verification of an arrow,
+ * it is fun to verify an pi.
+ * the verification of an pi,
  *   is a falsification of its ante,
  *   and a verification of its succ,
  *     with reference to the falsification of its ante.

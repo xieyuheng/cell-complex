@@ -14,16 +14,16 @@ class arg_t extends step_t {
   }
 
   forward (game: gs.game_t): gs.game_t {
-    if (game instanceof arrow_t) {
-      let arrow = game
-      let next_game = arrow.args.get (this.name)
+    if (game instanceof pi_t) {
+      let pi = game
+      let next_game = pi.args.get (this.name)
       if (next_game === undefined) {
         throw new Error (`unknown arg name: ${this.name}`)
       } else {
         return next_game
       }
     } else {
-      throw new Error ("arg_t step only forward an arrow_t")
+      throw new Error ("arg_t step only forward an pi_t")
     }
   }
 
@@ -43,11 +43,11 @@ class ret_t extends step_t {
   }
 
   forward (game: gs.game_t): gs.game_t {
-    if (game instanceof arrow_t) {
-      let arrow = game
-      return arrow.ret
+    if (game instanceof pi_t) {
+      let pi = game
+      return pi.ret
     } else {
-      throw new Error ("ret_t step only forward an arrow_t")
+      throw new Error ("ret_t step only forward an pi_t")
     }
   }
 
@@ -61,11 +61,11 @@ class ret_t extends step_t {
 }
 
 /**
- * `arrow_t` has two stages: `args` and `ret`,
+ * `pi_t` has two stages: `args` and `ret`,
  *   during `args` player's roles are reversed.
  */
 export
-class arrow_t extends gs.game_t {
+class pi_t extends gs.game_t {
   args: Map <string, gs.game_t>
   ret: gs.game_t
 
@@ -78,8 +78,8 @@ class arrow_t extends gs.game_t {
     this.ret = ret
   }
 
-  copy (): arrow_t {
-    return new arrow_t (
+  copy (): pi_t {
+    return new pi_t (
       ut.mapmap (this.args, game => game.copy ()),
       this.ret.copy (),
     )
@@ -90,8 +90,8 @@ class arrow_t extends gs.game_t {
     return []
   }
 
-  choose (path: path_t): arrow_t {
-    let game: arrow_t = this.copy ()
+  choose (path: path_t): pi_t {
+    let game: pi_t = this.copy ()
     let next: gs.game_t = game
     for (let step of path.prefix ()) {
       next = step.forward (next)
@@ -106,7 +106,7 @@ class arrow_t extends gs.game_t {
       args [name] = game.report ()
     }
     return {
-      "kind": "arrow_t",
+      "kind": "pi_t",
       "args": args,
       "ret": this.ret.report (),
       "end": this.end_p (),

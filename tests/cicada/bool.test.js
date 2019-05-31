@@ -19,7 +19,7 @@ test ("f1_t", t => {
   prelude.bool
 
     .shallow_copy ()
-    .arrow ("f1_t", { "x": "bool_t", "y": "bool_t" }, "bool_t")
+    .pi ("f1_t", { "x": "bool_t", "y": "bool_t" }, "bool_t")
 
     .game ("f1_t") .info (0)
     .choose (cc.path ([
