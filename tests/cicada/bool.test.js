@@ -16,10 +16,11 @@ test ("bool_t", t => {
 })
 
 test ("f1_t", t => {
-  let bool = prelude.bool.shallow_copy ()
+  prelude.bool
+
+    .shallow_copy ()
     .arrow ("f1_t", { "x": "bool_t", "y": "bool_t" }, "bool_t")
 
-  bool
     .game ("f1_t") .info (0)
     .choose (cc.path ([
       cc.step.arg ("x"),
