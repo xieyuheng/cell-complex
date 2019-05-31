@@ -4,7 +4,7 @@ import * as gs from "./game-semantics"
 import { ref_t } from "./ref"
 import { union_t, member_t } from "./union"
 import { record_t, field_t } from "./record"
-// import { arrow_t, ante_t } from "./arrow"
+import { arrow_t, arg_t, ret_t } from "./arrow"
 import { path_t, step_t } from "./path"
 
 // Top level API of game semantics of cicada language.
@@ -18,6 +18,8 @@ export
 let step = {
   member: (name: string) => new member_t (name),
   field: (name: string) => new field_t (name),
+  arg: (name: string) => new arg_t (name),
+  ret: () => new ret_t (),
 }
 
 export
@@ -65,19 +67,18 @@ class module_t {
     return this
   }
 
-  // arrow (
-  //   name: string,
-  //   ante_obj: { [key: string]: string },
-  //   succ_name: string,
-  // ): this {
-  //   // TODO should be obj: { [key: string]: exp_t }
-  //   let map = ut.mapmap (
-  //     ut.obj2map (ante_obj),
-  //     (sub_name) => this.ref (sub_name),
-  //   )
-  //   let ante = new ante_t (map)
-  //   let succ = this.ref (succ_name)
-  //   this.define (name, new arrow_t ({ ante, succ }))
-  //   return this
-  // }
+  arrow (
+    name: string,
+    args_obj: { [key: string]: string },
+    ret_name: string,
+  ): this {
+    // TODO should be obj: { [key: string]: exp_t }
+    let args = ut.mapmap (
+      ut.obj2map (args_obj),
+      (name) => this.ref (name) .deref (),
+    )
+    let ret = this.ref (ret_name) .deref ()
+    this.define (name, new arrow_t (args, ret))
+    return this
+  }
 }

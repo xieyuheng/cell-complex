@@ -23,6 +23,7 @@ class ref_t extends gs.game_t {
       this.name,
     )
   }
+  
   deref (): gs.game_t {
     return this.module.game (this.name)
   }

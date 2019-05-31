@@ -1,4 +1,4 @@
-- restore arrow_t
+- exp.ts
 - use ava for test
 - fix `.choices ()`
 - syntax should be plugin of the semantics ?

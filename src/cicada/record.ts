@@ -78,7 +78,6 @@ class record_t extends gs.game_t {
   }
 
   choose (path: path_t): record_t {
-    console.log ("path.prefix ():", path.prefix ())
     let game: record_t = this.copy ()
     let next: gs.game_t = game
     for (let step of path.prefix ()) {
