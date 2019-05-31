@@ -1,9 +1,12 @@
-- std/nat.ts
-- std/bool.ts
-- std/list.ts
 - fix `.choices ()`
 - predicates for game_t -- for better tests
 - exp.ts
+  - design `exp_t`, what is its relation with `game_t` ?
+    partly played game ?
+  - `ref_t` seems like a `exp_t`
+- std/nat.ts
+- std/bool.ts
+- std/list.ts
 ------
 - classification of regular polytope
 - holding implements until finite element method and PDE
