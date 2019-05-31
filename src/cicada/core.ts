@@ -27,9 +27,26 @@ class module_t {
   name: string
   game_map: Map <string, gs.game_t>
 
-  constructor (name: string) {
+  constructor (
+    name: string,
+    game_map?: Map <string, gs.game_t>,
+  ) {
     this.name = name
-    this.game_map = new Map ()
+    this.game_map = game_map !== undefined ? game_map : new Map ()
+  }
+
+  shallow_copy (): module_t {
+    return new module_t (
+      this.name,
+      new Map (this.game_map),
+    )
+  }
+
+  copy (): module_t {
+    return new module_t (
+      this.name,
+      ut.mapmap (this.game_map, game => game.copy ()),
+    )
   }
 
   define (name: string, game: gs.game_t): this {

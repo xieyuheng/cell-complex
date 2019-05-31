@@ -1,5 +1,4 @@
 - `module.copy ()`
-- use `module.copy ()` to test `arrow_t`
 - fix `.choices ()`
 - predicates for game_t -- for better tests
 - exp.ts
