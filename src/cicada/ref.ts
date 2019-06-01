@@ -5,27 +5,27 @@ import * as gs from "./game-semantics"
 
 export
 class ref_t extends gs.game_t {
-  module: module_t
+  m: module_t
   name: string
 
   constructor (
-    module: module_t,
+    m: module_t,
     name: string,
   ) {
     super ()
-    this.module = module
+    this.m = m
     this.name = name
   }
 
   copy (): ref_t {
     return new ref_t (
-      this.module,
+      this.m,
       this.name,
     )
   }
 
   deref (): gs.game_t {
-    return this.module.game (this.name)
+    return this.m.game (this.name)
   }
 
   choices (player: gs.player_t): Array <gs.choice_t> {
