@@ -70,11 +70,15 @@ class pi_t extends gs.game_t {
   ret: gs.game_t
 
   constructor (
-    args: Map <string, gs.game_t>,
+    args: Map <string, gs.game_t> | { [key: string]: gs.game_t },
     ret: gs.game_t,
   ) {
     super ()
-    this.args = args
+    if (args instanceof Map) {
+      this.args = args
+    } else {
+      this.args = ut.obj2map (args)
+    }
     this.ret = ret
   }
 

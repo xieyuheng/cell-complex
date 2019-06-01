@@ -63,38 +63,4 @@ class module_t {
   ref (name: string): ref_t {
     return new ref_t (this, name)
   }
-
-  union (name: string, array: Array <string>): this {
-    let map = new Map ()
-    for (let sub_name of array) {
-      map.set (sub_name, this.ref (sub_name))
-    }
-    this.define (name, new union_t (name, map))
-    return this
-  }
-
-  record (name: string, obj: { [key: string]: string }): this {
-    // TODO should be obj: { [key: string]: exp_t }
-    let map = ut.mapmap (
-      ut.obj2map (obj),
-      (sub_name) => this.ref (sub_name),
-    )
-    this.define (name, new record_t (name, map))
-    return this
-  }
-
-  pi (
-    name: string,
-    args_obj: { [key: string]: string },
-    ret_name: string,
-  ): this {
-    // TODO should be obj: { [key: string]: exp_t }
-    let args = ut.mapmap (
-      ut.obj2map (args_obj),
-      (name) => this.ref (name) .deref (),
-    )
-    let ret = this.ref (ret_name) .deref ()
-    this.define (name, new pi_t (args, ret))
-    return this
-  }
 }

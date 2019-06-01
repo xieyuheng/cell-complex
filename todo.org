@@ -1,12 +1,8 @@
+- term change: use pause and resume instead of ref and deref
 - dot.ts -- new type of game, like deep ref_t for record_t
-- exp.ts
-  - maybe we do not need "exp.ts"
-  - design `exp_t`, what is its relation with `game_t` ?
-    partly played game ?
-  - `ref_t` seems like a `exp_t`
+- step_t for `type-of-type.ts`
 - `module.use ()`
-- third argument of `game.union ()`
-  .union ("list_t", [ "null_t", "cons_t" ], { "t": "type" })
+- third argument of `new union_t ()`
 - fix `.choices ()`
 - predicates for game_t -- for better tests
 ------

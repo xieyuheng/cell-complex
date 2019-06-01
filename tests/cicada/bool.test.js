@@ -17,19 +17,14 @@ test ("bool_t", t => {
 })
 
 test ("f1_t", t => {
-  let bool = prelude.bool ()
+  let m = prelude.bool ()
 
-  bool
-    .pi ("f1_t", { "x": "bool_t", "y": "bool_t" }, "bool_t")
+  m.define ("f1_t", new pi_t ({
+    "x": m.ref ("bool_t") .deref (),
+    "y": m.ref ("bool_t") .deref (),
+  }, m.ref ("bool_t") .deref ()))
 
-  // bool
-  //   .define ("f1_t", new pi_t (ut.obj2map ({
-  //     "x": bool.ref ("bool_t") .deref (),
-  //     "y": bool.ref ("bool_t") .deref (),
-  //   }), bool.ref ("bool_t") .deref ()))
-
-  bool
-    .game ("f1_t") .info (0)
+  m.game ("f1_t") .info (0)
     .choose (cc.path ([
       cc.step.arg ("x"),
       cc.step.member ("true_t"),
