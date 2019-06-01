@@ -6,7 +6,7 @@ import * as ut from "../../lib/util"
 import * as prelude from "../../lib/cicada/prelude"
 
 test ("nat_t", t => {
-  prelude.nat
+  prelude.nat ()
     .game ("nat_t") .info (0)
     .choose (cc.path ([
       cc.step.member ("succ_t")

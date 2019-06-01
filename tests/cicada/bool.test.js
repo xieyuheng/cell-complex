@@ -6,7 +6,7 @@ import * as ut from "../../lib/util"
 import * as prelude from "../../lib/cicada/prelude"
 
 test ("bool_t", t => {
-  prelude.bool
+  prelude.bool ()
     .game ("bool_t") .info (0)
     .choose (cc.path ([
       cc.step.member ("true_t")
@@ -16,9 +16,7 @@ test ("bool_t", t => {
 })
 
 test ("f1_t", t => {
-  prelude.bool
-
-    .shallow_copy ()
+  prelude.bool ()
     .pi ("f1_t", { "x": "bool_t", "y": "bool_t" }, "bool_t")
 
     .game ("f1_t") .info (0)

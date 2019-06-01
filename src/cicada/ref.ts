@@ -1,7 +1,7 @@
 import assert from "assert"
 import * as ut from "../util"
 import * as gs from "./game-semantics"
-import { module_t } from "./core"
+/* MUTUAL */ import { module_t } from "./core"
 
 export
 class ref_t extends gs.game_t {
@@ -23,7 +23,7 @@ class ref_t extends gs.game_t {
       this.name,
     )
   }
-  
+
   deref (): gs.game_t {
     return this.module.game (this.name)
   }

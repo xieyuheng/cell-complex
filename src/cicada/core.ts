@@ -1,7 +1,7 @@
 import assert from "assert"
 import * as ut from "../util"
 import * as gs from "./game-semantics"
-import { ref_t } from "./ref"
+/* MUTUAL */ import { ref_t } from "./ref"
 import { union_t, member_t } from "./union"
 import { record_t, field_t } from "./record"
 import { pi_t, arg_t, ret_t } from "./pi"
@@ -35,17 +35,14 @@ class module_t {
     this.game_map = game_map
   }
 
+  /**
+   * due to the design of `ref_t`,
+   *   we can not imp deep copy here.
+   */
   shallow_copy (): module_t {
     return new module_t (
       this.name,
       new Map (this.game_map),
-    )
-  }
-
-  copy (): module_t {
-    return new module_t (
-      this.name,
-      ut.mapmap (this.game_map, game => game.copy ()),
     )
   }
 
