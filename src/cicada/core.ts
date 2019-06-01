@@ -1,7 +1,6 @@
 import assert from "assert"
 import * as ut from "../util"
 import * as gs from "./game-semantics"
-/* MUTUAL */ import { ref_t } from "./ref"
 import { union_t, member_t } from "./union"
 import { record_t, field_t } from "./record"
 import { pi_t, arg_t, ret_t } from "./pi"
@@ -58,9 +57,5 @@ class module_t {
     } else {
       throw new Error (`undefined game: ${name}`)
     }
-  }
-
-  ref (name: string): ref_t {
-    return new ref_t (this, name)
   }
 }

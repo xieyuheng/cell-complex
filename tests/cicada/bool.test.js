@@ -5,6 +5,7 @@ import * as ut from "../../lib/util"
 
 import * as prelude from "../../lib/cicada/prelude"
 import { pi_t } from "../../lib/cicada/pi"
+import { ref_t } from "../../lib/cicada/ref"
 
 test ("bool_t", t => {
   prelude.bool ()
@@ -20,9 +21,9 @@ test ("f1_t", t => {
   let m = prelude.bool ()
 
   m.define ("f1_t", new pi_t ({
-    "x": m.ref ("bool_t") .deref (),
-    "y": m.ref ("bool_t") .deref (),
-  }, m.ref ("bool_t") .deref ()))
+    "x": new ref_t (m, "bool_t") .deref (),
+    "y": new ref_t (m, "bool_t") .deref (),
+  }, new ref_t (m, "bool_t") .deref ()))
 
   m.game ("f1_t") .info (0)
     .choose (cc.path ([

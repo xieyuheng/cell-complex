@@ -1,7 +1,7 @@
 import assert from "assert"
 import * as ut from "../util"
 import * as gs from "./game-semantics"
-/* MUTUAL */ import { module_t } from "./core"
+import { module_t } from "./core"
 import { ref_t } from "./ref"
 import { record_t } from "./record"
 
