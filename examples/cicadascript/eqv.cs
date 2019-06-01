@@ -3,15 +3,9 @@ class eqv_t {
   lhs: this.t
   rhs: this.t
   /**
-   * TODO
-   * How to specify the semantics here ?
-   *  it can not be `eqv_t (this.lhs, this.rhs)` again
-
-   * Instead of a defined class `eqv_t`,
-   *   we need built-in `eqv_t`
-   *   and special syntax for the game of equality
+   * `the_same` for normalization by evaluation with neutral expressions
    */
-  this.lhs = this.rhs
+  the_same (this.lhs, this.rhs)
 }
 
 eqv_apply: (
