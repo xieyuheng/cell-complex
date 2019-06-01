@@ -1,13 +1,14 @@
-- term change: use pause and resume instead of ref and deref
+- three level of expression
   - expression >
     value (top is constructor) >
     normal form
   - game >
-    ??? >
-    ???
+    top is game constructors: record_t union_t pi_t >
+    only contain game constructors: record_t union_t pi_t
   - strategy >
     strategy with explicit next step >
     strategy with every steps
+- term change: use pause and resume instead of ref and deref
 - dot.ts -- new type of game, like deep ref_t for record_t
 - step_t for `type-of-type.ts`
 - `module.use ()`
