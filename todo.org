@@ -1,5 +1,3 @@
-- normalization by evaluation
-  http://davidchristiansen.dk/tutorials/nbe/
 - three level of expression
   - expression
     value (top is constructor)
