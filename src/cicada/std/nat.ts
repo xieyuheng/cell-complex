@@ -5,16 +5,16 @@ import { record_t } from "../record"
 
 export
 function nat (): cc.module_t {
-  let nat = new cc.module_t ("nat")
-  nat.define ("nat_t", new union_t ("nat_t", ut.obj2map ({
-    zero_t: nat.ref ("zero_t"),
-    succ_t: nat.ref ("succ_t"),
-  })))
-  nat.define ("zero_t", new record_t ("zero_t", ut.obj2map ({})))
-  nat.define ("succ_t", new record_t ("succ_t", ut.obj2map ({
-    prev: nat.ref ("nat_t"),
-  })))
-  return nat
+  let m = new cc.module_t ("nat")
+  m.define ("nat_t", new union_t ("nat_t", {
+    zero_t: m.ref ("zero_t"),
+    succ_t: m.ref ("succ_t"),
+  }))
+  m.define ("zero_t", new record_t ("zero_t", {}))
+  m.define ("succ_t", new record_t ("succ_t", {
+    prev: m.ref ("nat_t"),
+  }))
+  return m
 
   // return new cc.module_t ("nat")
   //   .union ("nat_t", [ "zero_t", "succ_t" ])

@@ -58,11 +58,15 @@ class union_t extends gs.game_t {
 
   constructor (
     name: string,
-    map: Map <string, gs.game_t>,
+    map: Map <string, gs.game_t> | { [key: string]: gs.game_t },
   ) {
     super ()
     this.name = name
-    this.map = map
+    if (map instanceof Map) {
+      this.map = map
+    } else {
+      this.map = ut.obj2map (map)
+    }
   }
 
   copy (): union_t {

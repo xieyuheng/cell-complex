@@ -1,4 +1,3 @@
-- try no `exp_t` -- game constructor also take js object
 - dot.ts -- new type of game, like deep ref_t for record_t
 - exp.ts
   - maybe we do not need "exp.ts"
