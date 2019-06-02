@@ -396,10 +396,33 @@ class definitional_equality_t {
         ) &&
         this.x.fun.fun.arg.well_typed_p (ctx, T)) {
       return true
-    } else if (
-      // TODO
-      true
-    ) {
+    } else if (this.x instanceof apply_t &&
+               this.x.arg instanceof apply_t &&
+               this.x.arg.fun.eq (new constant_t (new suc_t ())) &&
+               this.x.arg.arg.well_typed_p (ctx, new nat_t ()) &&
+               this.x.fun instanceof apply_t &&
+               this.x.fun.fun instanceof apply_t &&
+               this.x.fun.fun.fun instanceof constant_t &&
+               this.x.fun.fun.fun.c instanceof rec_t &&
+               this.y.eq (this.x.fun.fun.arg) &&
+               this.x.fun.arg.well_typed_p (
+                 ctx, new arrow_t (
+                   new nat_t (), new arrow_t (T, T)
+                 )
+               ) &&
+               this.x.fun.fun.arg.well_typed_p (ctx, T) &&
+               this.y instanceof apply_t &&
+               this.y.fun instanceof apply_t &&
+               this.y.fun.fun.eq (this.x.fun.arg) &&
+               this.y.fun.arg.eq (this.x.fun.fun.arg) &&
+               this.y.arg instanceof apply_t &&
+               this.y.arg.fun instanceof apply_t &&
+               this.y.arg.fun.fun instanceof apply_t &&
+               this.y.arg.arg.eq (this.x.arg.arg) &&
+               this.y.arg.fun.arg.eq (this.x.fun.arg) &&
+               this.y.arg.fun.fun.arg.eq (this.x.fun.fun.arg) &&
+               this.y.arg.fun.fun.fun instanceof constant_t &&
+               this.y.arg.fun.fun.fun.c instanceof rec_t) {
       return true
     } else {
       return false
