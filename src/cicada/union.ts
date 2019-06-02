@@ -1,67 +1,35 @@
 import assert from "assert"
 import * as ut from "../util"
 import * as gs from "./game-semantics"
-import { path_t, step_t } from "./path"
+import { path_t } from "./path"
 import { ref_t } from "./ref"
-
-export
-class member_t extends step_t {
-  name: string
-
-  constructor (
-    name: string
-  ) {
-    super ()
-    this.name = name
-  }
-
-  forward (game: gs.game_t): gs.game_t {
-    if (game instanceof union_t) {
-      let union = game
-      let next_game = union.map.get (this.name)
-      if (next_game === undefined) {
-        throw new Error (`unknown field name: ${this.name}`)
-      } else {
-        return next_game
-      }
-    } else {
-      throw new Error ("field_t step only forward an union_t")
-    }
-  }
-
-  deref (game: gs.game_t) {
-    if (game instanceof union_t) {
-      let union = game
-      let next_game = union.map.get (this.name)
-      if (next_game === undefined) {
-        throw new Error (`unknown field name: ${this.name}`)
-      } else if (next_game instanceof ref_t) {
-        let ref = next_game
-        union.map.set (this.name, ref.deref ())
-      } else {
-        throw new Error (`can not deref a non ref_t`)
-      }
-    } else {
-      throw new Error ("field_t step only deref an union_t")
-    }
-  }
-
-  repr (): any {
-    return this.name
-  }
-}
+import { record_t } from "./record"
 
 export
 class union_t extends gs.game_t {
   name: string
+  sub_map: Map <string, gs.game_t>
   map: Map <string, gs.game_t>
 
   constructor (
     name: string,
-    map: Map <string, gs.game_t> | { [key: string]: gs.game_t },
+    array: Array <gs.game_t>,
+    map: Map <string, gs.game_t> | { [key: string]: gs.game_t } = new Map (),
   ) {
     super ()
     this.name = name
+    this.sub_map = new Map ()
+    for (let game of array) {
+      if (game instanceof ref_t) {
+        let ref = game
+        this.sub_map.set (ref.name, ref)
+      } else if (game instanceof record_t) {
+        let record = game
+        this.sub_map.set (record.name, record)
+      } else {
+        throw new Error ("sub game of union must be a ref_t or record_t")
+      }
+    }
     if (map instanceof Map) {
       this.map = map
     } else {
@@ -72,7 +40,8 @@ class union_t extends gs.game_t {
   copy (): union_t {
     return new union_t (
       this.name,
-      ut.mapmap (this.map, game => game.copy ()),
+      Array.from (this.sub_map.values ())
+        .map (game => game.copy ()),
     )
   }
 
@@ -96,7 +65,7 @@ class union_t extends gs.game_t {
       "kind": "union_t",
       "name": this.name,
       "members": ut.map2obj (ut.mapmap (
-        this.map,
+        this.sub_map,
         game => game.report (),
       )),
       "end": this.end_p (),

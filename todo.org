@@ -1,4 +1,3 @@
-- third argument of `new union_t ()`
 - `game.start ()` -- no `record_t` in `record_t`
   - `record_t` should only be used in `module.define`
 - `module.game ()` call `game.start ()`

@@ -1,10 +1,12 @@
 import assert from "assert"
 import * as ut from "../util"
 import * as gs from "./game-semantics"
-import { union_t, member_t } from "./union"
-import { record_t, field_t } from "./record"
+import { union_t } from "./union"
+import { record_t } from "./record"
 import { pi_t, arg_t, ret_t } from "./pi"
 import { path_t, step_t } from "./path"
+import { member_t } from "./member"
+import { field_t } from "./field"
 
 // Top level API of game semantics of cicada language.
 
