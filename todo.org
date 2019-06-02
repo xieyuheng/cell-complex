@@ -1,3 +1,10 @@
+- finish nbe/simple.ts
+- normalization by evaluation
+  http://davidchristiansen.dk/tutorials/nbe/
+- finish the little typer
+- pie/core.ts
+- minitt/core.ts
+- nbe/dependent.ts
 - three level of expression
   - expression
     value (top is constructor)
