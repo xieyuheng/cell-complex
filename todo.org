@@ -1,8 +1,11 @@
+- `this`
+  - to imp `this` we need unification between games
+    game will need a ctx for bindings
+  - API of `this_t` in `record_t` and `union_t` map
+- `record_cons_t` and `union_cons_t` as `game_cons_t`
 - `game.start ()` -- no `record_t` in `record_t`
   - `record_t` should only be used in `module.define`
 - `module.game ()` call `game.start ()`
-- fields in record_t for `this`
-- `this_t` in "record.ts"
 - js Symbol for [implicit]
 - fix `.choices ()`
 - `module.use ()`
