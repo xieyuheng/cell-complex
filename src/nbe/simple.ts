@@ -444,7 +444,36 @@ class definitional_equality_t {
   }
 
   compatibility (ctx: ctx_t, T: type_t): boolean {
-    // TODO
-    return false
+    if (this.x.eq (this.y) &&
+        this.x.well_typed_p (ctx, T)) {
+      return true
+    } else if (this.x instanceof lambda_t &&
+               this.y instanceof lambda_t &&
+               T instanceof arrow_t &&
+               this.x.name === this.y.name) {
+      return new definitional_equality_t (
+        this.x.term,
+        this.y.term,
+      ) .check_same (
+        ctx.ext (this.x.name, T.arg_type),
+        T.ret_type,
+      )
+    } else if (this.x instanceof apply_t &&
+               this.y instanceof apply_t &&
+               this.x.arg_type.eq (this.y.arg_type)) {
+      return new definitional_equality_t (
+        this.x.fun,
+        this.y.fun,
+      ) .check_same (
+        ctx, new arrow_t (this.x.arg_type, T)
+      ) && new definitional_equality_t (
+        this.x.arg,
+        this.y.arg,
+      ) .check_same (
+        ctx, this.x.arg_type,
+      )
+    } else {
+      return false
+    }
   }
 }

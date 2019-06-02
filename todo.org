@@ -1,4 +1,3 @@
-- [nbe/simple.ts] definitional_equality_t.compatibility
 - [nbe/simple.ts] term_t.eval
 - normalization by evaluation
   http://davidchristiansen.dk/tutorials/nbe/
