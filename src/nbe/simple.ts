@@ -13,9 +13,13 @@ import * as ut from "../util"
  */
 
 abstract class type_t {
+  abstract eq (that: type_t): boolean
 }
 
 class nat_t extends type_t {
+  eq (that: nat_t): boolean {
+    return that instanceof nat_t
+  }
 }
 
 class arrow_t extends type_t {
@@ -30,16 +34,11 @@ class arrow_t extends type_t {
     this.arg_type = arg_type
     this.ret_type = ret_type
   }
-}
 
-function type_eq (x: type_t, y: type_t): boolean {
-  if (x instanceof nat_t && y instanceof nat_t) {
-    return true
-  } else if (x instanceof arrow_t && y instanceof arrow_t) {
-    return type_eq (x.arg_type, y.arg_type)
-      && type_eq (x.ret_type, y.ret_type)
-  } else {
-    return false
+  eq (that: nat_t): boolean {
+    return that instanceof arrow_t
+      && this.arg_type.eq (that.arg_type)
+      && this.ret_type.eq (that.ret_type)
   }
 }
 
@@ -149,7 +148,7 @@ class constant_t extends term_t {
   }
 
   well_typed_p (_ctx: ctx_t, T: type_t): boolean {
-    return type_eq (this.c.T, T)
+    return this.c.T.eq (T)
   }
 }
 
@@ -165,7 +164,7 @@ class variable_t extends term_t {
 
   well_typed_p (ctx: ctx_t, T: type_t): boolean {
     let X = ctx.map.get (name)
-    if (X !== undefined && type_eq (X, T)) {
+    if (X !== undefined && (X.eq (T))) {
       return true
     } else {
       return false

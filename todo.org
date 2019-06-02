@@ -1,3 +1,4 @@
+- [nbe/simple.ts] term_t.eq
 - finish nbe/simple.ts
 - normalization by evaluation
   http://davidchristiansen.dk/tutorials/nbe/
