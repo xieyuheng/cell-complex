@@ -299,8 +299,8 @@ class definitional_equality_t {
   }
 
   reflexivity (ctx: ctx_t, T: type_t): boolean {
-    // TODO
-    return false
+    return this.x.eq (this.y)
+      && this.x.well_typed_p (ctx, T)
   }
 
   beta_equality (ctx: ctx_t, T: type_t): boolean {

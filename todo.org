@@ -1,4 +1,3 @@
-- [nbe/simple.ts] definitional_equality_t.reflexivity
 - [nbe/simple.ts] definitional_equality_t.beta_equality
 - [nbe/simple.ts] definitional_equality_t.eta_equality
 - [nbe/simple.ts] definitional_equality_t.compatibility
