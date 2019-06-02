@@ -477,3 +477,30 @@ class definitional_equality_t {
     }
   }
 }
+
+function reflection (ctx: ctx_t, T: type_t, u: term_t): term_t {
+  if (! u.neutral_p (ctx, T)) {
+    throw new Error ("! u.neutral_p (ctx, T)")
+  }
+
+  if (T instanceof nat_t) {
+    return u
+  } else if (T instanceof arrow_t) {
+    let v: any = "TODO"
+    return reflection (
+      ctx,
+      T.ret_type,
+      new apply_t (
+        u,
+        v,
+        T.ret_type,
+      ),
+    )
+  } else {
+    throw new Error ("TODO")
+  }
+}
+
+function reification (ctx: ctx_t, T: type_t, u: term_t): term_t {
+  throw new Error ("TODO")
+}
