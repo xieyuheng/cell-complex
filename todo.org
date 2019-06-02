@@ -1,7 +1,25 @@
+- third argument of `new union_t ()`
+- `game_t.start ()`
+- `module_t.game ()` call `game_t.start ()`
+- fields in record_t for `this`
+- fix `.choices ()`
+- `module.use ()`
+- step_t for `type-of-type.ts`
+- [not yet] term change: use pause and resume instead of ref and deref
+- dot.ts -- new type of game, like deep ref_t for record_t
+- be sure about winning rule for players
+- predicates for `game_t`, such as `end_p` `loss_p` `win_p` -- for better tests
+------
+- classification of regular polytope
+- holding implements until finite element method and PDE
+- example usages of higher order incidence relation
+- graph.ts with geometry
+- geometry of convex polytope
+  - example of give geometry to topological structure
+- how to describe edge and face so they are easy to draw ?
+- a generic way to specify geometry of cell-complex
+* normalization by evaluation
 - [nbe/simple.ts] term_t.eval
-- normalization by evaluation
-  http://davidchristiansen.dk/tutorials/nbe/
-- finish the little typer
 - pie/core.ts
 - minitt/core.ts
 - nbe/dependent.ts
@@ -15,22 +33,6 @@
   - strategy
     strategy with explicit next step
     strategy with every steps (might be neutral)
-- term change: use pause and resume instead of ref and deref
-- dot.ts -- new type of game, like deep ref_t for record_t
-- step_t for `type-of-type.ts`
-- `module.use ()`
-- third argument of `new union_t ()`
-- fix `.choices ()`
-- predicates for game_t -- for better tests
-------
-- classification of regular polytope
-- holding implements until finite element method and PDE
-- example usages of higher order incidence relation
-- graph.ts with geometry
-- geometry of convex polytope
-  - example of give geometry to topological structure
-- how to describe edge and face so they are easy to draw ?
-- a generic way to specify geometry of cell-complex
 * graph
 - graph without info -- for new hackenbush
 - reuse cell_complex_t -- by `graph_t.as_cell_complex ()`

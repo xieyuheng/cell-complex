@@ -17,7 +17,6 @@ add: (
   succ_t => succ_t (add (x.prev, y))
 }
 
-
 mul: (
   x: nat_t,
   y: nat_t,
@@ -26,14 +25,12 @@ mul: (
   succ_t => add (y, (mul (x.prev, y)))
 }
 
-
 factorial: (
   x: nat_t,
 ) -> nat_t = case (x) {
   zero_t => succ_t (zero_t)
   succ_t => mul (x, (factorial (x.prev)))
 }
-
 
 even_p: (
   x: nat_t,
@@ -45,7 +42,6 @@ even_p: (
   }
 }
 
-
 union nat_even_t {
   zero_even_t
   even_plus_two_even_t
@@ -54,21 +50,20 @@ union nat_even_t {
 }
 
 class zero_even_t {
-  n: nat_t = zero_t ()
+  n: zero_t ()
 }
 
 class even_plus_two_even_t {
-  n: nat_t
+  n: succ_t (succ_t (this.m))
   m: nat_t
   prev: nat_even_t (this.m)
-  n = succ_t (succ_t (this.m))
 }
 
 two_even: nat_even_t (succ_t (succ_t (zero_t))) = {
   even_plus_two_even_t (
     n = succ_t (succ_t (zero_t))
     m = zero_t
-    prev = zero_even_t (m)
+    prev = zero_even_t (zero_t)
   )
 }
 
