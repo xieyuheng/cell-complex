@@ -75,20 +75,35 @@ class ctx_t {
  */
 abstract class const_t {
   abstract T: type_t
+  abstract eq (that: const_t): boolean
 }
 
 class zero_t extends const_t {
-  get T (): type_t {
-    return new nat_t ()
+  T: type_t
+
+  constructor () {
+    super ()
+    this.T = new nat_t ()
+  }
+
+  eq (that: const_t): boolean {
+    return that instanceof zero_t
   }
 }
 
 class suc_t extends const_t {
-  get T (): type_t {
-    return new arrow_t (
+  T: type_t
+
+  constructor () {
+    super ()
+    this.T = new arrow_t (
       new nat_t (),
       new nat_t (),
     )
+  }
+
+  eq (that: const_t): boolean {
+    return that instanceof suc_t
   }
 }
 
@@ -96,15 +111,14 @@ class suc_t extends const_t {
  * Primitive recursion into type `this.into_type`.
  */
 class rec_t extends const_t {
+  T: type_t
   into_type: type_t
 
   constructor (into_type: type_t) {
     super ()
     this.into_type = into_type
-  }
 
-  get T (): type_t {
-    return new arrow_t (
+    this.T = new arrow_t (
       this.into_type,
       new arrow_t (
         new arrow_t (
@@ -121,6 +135,11 @@ class rec_t extends const_t {
       ),
     )
   }
+
+  eq (that: const_t): boolean {
+    return that instanceof rec_t
+      && this.into_type.eq (that.into_type)
+  }
 }
 
 /**
@@ -132,7 +151,7 @@ class rec_t extends const_t {
  */
 abstract class term_t {
   abstract well_typed_p (ctx: ctx_t, T: type_t): boolean
-
+  abstract eq (that: term_t): boolean
   // abstract normal_p (ctx: ctx_t, T: type_t): boolean
   // abstract neutral_p (ctx: ctx_t, T: type_t): boolean
 }
@@ -145,6 +164,11 @@ class constant_t extends term_t {
   ) {
     super ()
     this.c = c
+  }
+
+  eq (that: term_t): boolean {
+    return that instanceof constant_t
+      && this.c.eq (that.c)
   }
 
   well_typed_p (_ctx: ctx_t, T: type_t): boolean {
@@ -160,6 +184,11 @@ class variable_t extends term_t {
   ) {
     super ()
     this.name = name
+  }
+
+  eq (that: term_t): boolean {
+    return that instanceof variable_t
+      && this.name === that.name
   }
 
   well_typed_p (ctx: ctx_t, T: type_t): boolean {
@@ -183,6 +212,12 @@ class lambda_t extends term_t {
     super ()
     this.name = name
     this.term = term
+  }
+
+  eq (that: term_t): boolean {
+    return that instanceof lambda_t
+      && this.name === that.name
+      && this.term === that.term
   }
 
   well_typed_p (ctx: ctx_t, T: type_t): boolean {
@@ -211,6 +246,13 @@ class apply_t extends term_t {
     this.fun = fun
     this.arg = arg
     this.arg_type = arg_type
+  }
+
+  eq (that: term_t): boolean {
+    return that instanceof apply_t
+      && this.fun === that.fun
+      && this.arg === that.arg
+      && this.arg_type === that.arg_type
   }
 
   well_typed_p (ctx: ctx_t, T: type_t): boolean {
@@ -250,20 +292,29 @@ class definitional_equality_t {
   }
 
   check_same_directed (ctx: ctx_t, T: type_t): boolean {
-    return this.beta_equality (ctx, T)
+    return this.reflexivity (ctx, T)
+      || this.beta_equality (ctx, T)
       || this.eta_equality (ctx, T)
       || this.compatibility (ctx, T)
   }
 
+  reflexivity (ctx: ctx_t, T: type_t): boolean {
+    // TODO
+    return false
+  }
+
   beta_equality (ctx: ctx_t, T: type_t): boolean {
+    // TODO
     return false
   }
 
   eta_equality (ctx: ctx_t, T: type_t): boolean {
+    // TODO
     return false
   }
 
   compatibility (ctx: ctx_t, T: type_t): boolean {
+    // TODO
     return false
   }
 }
