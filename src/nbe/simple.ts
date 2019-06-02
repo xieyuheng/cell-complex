@@ -152,8 +152,8 @@ class rec_t extends const_t {
 abstract class term_t {
   abstract well_typed_p (ctx: ctx_t, T: type_t): boolean
   abstract eq (that: term_t): boolean
-  // abstract normal_p (ctx: ctx_t, T: type_t): boolean
-  // abstract neutral_p (ctx: ctx_t, T: type_t): boolean
+  abstract normal_p (ctx: ctx_t, T: type_t): boolean
+  abstract neutral_p (ctx: ctx_t, T: type_t): boolean
 }
 
 class constant_t extends term_t {
@@ -173,6 +173,20 @@ class constant_t extends term_t {
 
   well_typed_p (_ctx: ctx_t, T: type_t): boolean {
     return this.c.T.eq (T)
+  }
+
+  normal_p (ctx: ctx_t, T: type_t): boolean {
+    if (this.neutral_p (ctx, T)) {
+      return true
+    } else if (this.c instanceof zero_t) {
+      return this.well_typed_p (ctx, T)
+    } else {
+      return false
+    }
+  }
+
+  neutral_p (ctx: ctx_t, T: type_t): boolean {
+    return false
   }
 }
 
@@ -198,6 +212,18 @@ class variable_t extends term_t {
     } else {
       return false
     }
+  }
+
+  normal_p (ctx: ctx_t, T: type_t): boolean {
+    if (this.neutral_p (ctx, T)) {
+      return true
+    } else {
+      return false
+    }
+  }
+
+  neutral_p (ctx: ctx_t, T: type_t): boolean {
+    return this.well_typed_p (ctx, T)
   }
 }
 
@@ -230,6 +256,23 @@ class lambda_t extends term_t {
       return false
     }
   }
+
+  normal_p (ctx: ctx_t, T: type_t): boolean {
+    if (this.neutral_p (ctx, T)) {
+      return true
+    } else if (T instanceof arrow_t) {
+      return this.term.normal_p (
+        ctx.ext (this.name, T.arg_type),
+        T.ret_type
+      )
+    } else {
+      return false
+    }
+  }
+
+  neutral_p (ctx: ctx_t, T: type_t): boolean {
+    return false
+  }
 }
 
 class apply_t extends term_t {
@@ -257,7 +300,42 @@ class apply_t extends term_t {
 
   well_typed_p (ctx: ctx_t, T: type_t): boolean {
     return this.arg.well_typed_p (ctx, this.arg_type)
-      && this.fun.well_typed_p (ctx, new arrow_t (this.arg_type, T))
+      && this.fun.well_typed_p (
+        ctx, new arrow_t (this.arg_type, T)
+      )
+  }
+
+  normal_p (ctx: ctx_t, T: type_t): boolean {
+    if (this.neutral_p (ctx, T)) {
+      return true
+    } else if (T.eq (new nat_t ()) &&
+               this.fun instanceof constant_t &&
+               this.fun.c instanceof suc_t) {
+      return this.arg.normal_p (ctx, new nat_t ())
+    } else {
+      return false
+    }
+  }
+
+  neutral_p (ctx: ctx_t, T: type_t): boolean {
+    if (this.arg.normal_p (ctx, this.arg_type) &&
+        this.fun.neutral_p (ctx, new arrow_t (this.arg_type, T))) {
+      return true
+    } else if (this.arg.neutral_p (ctx, new nat_t ()) &&
+               this.fun instanceof apply_t &&
+               this.fun.arg.normal_p (
+                 ctx, new arrow_t (
+                   new nat_t (), new arrow_t (T, T)
+                 )
+               ) &&
+               this.fun.fun instanceof apply_t &&
+               this.fun.fun.arg.normal_p (ctx, T) &&
+               this.fun.fun.fun instanceof constant_t &&
+               this.fun.fun.fun.c instanceof rec_t) {
+      return true
+    } else {
+      return false
+    }
   }
 }
 
@@ -311,10 +389,12 @@ class definitional_equality_t {
         this.x.fun.fun.fun instanceof constant_t &&
         this.x.fun.fun.fun.c instanceof rec_t &&
         this.y.eq (this.x.fun.fun.arg) &&
-        this.x.fun.fun.arg.well_typed_p (ctx, T) &&
         this.x.fun.arg.well_typed_p (
-          ctx, new arrow_t (new nat_t (), new arrow_t (T, T))
-        )) {
+          ctx, new arrow_t (
+            new nat_t (), new arrow_t (T, T)
+          )
+        ) &&
+        this.x.fun.fun.arg.well_typed_p (ctx, T)) {
       return true
     } else if (
       // TODO
