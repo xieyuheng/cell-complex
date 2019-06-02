@@ -381,6 +381,7 @@ class definitional_equality_t {
       && this.x.well_typed_p (ctx, T)
   }
 
+  // TODO handle lambda applied to arg
   beta_equality (ctx: ctx_t, T: type_t): boolean {
     if (this.x instanceof apply_t &&
         this.x.arg.eq (new constant_t (new zero_t ())) &&
