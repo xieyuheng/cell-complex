@@ -1,7 +1,10 @@
 - third argument of `new union_t ()`
-- `game_t.start ()`
-- `module_t.game ()` call `game_t.start ()`
+- `game.start ()` -- no `record_t` in `record_t`
+  - `record_t` should only be used in `module.define`
+- `module.game ()` call `game.start ()`
 - fields in record_t for `this`
+- `this_t` in "record.ts"
+- js Symbol for [implicit]
 - fix `.choices ()`
 - `module.use ()`
 - step_t for `type-of-type.ts`

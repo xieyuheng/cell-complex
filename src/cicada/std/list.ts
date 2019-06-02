@@ -19,14 +19,14 @@ function list (): cc.module_t {
 //   m.define ("cons_t", new record_t ("cons_t", {
 //     t: new type_t (),
 //     car: new dot_t (new this_t (), "t"),
-//     cdr: new record_t ("list_t", {
+//     cdr: m.game ("list_t") .choices ({
 //       t: new dot_t (new this_t (), "t"),
 //     }),
 //   }))
 //   m.define ("cons_t", new record_t ("cons_t", {
 //     t: new type_t (),
 //     car: new this_t ("t"),
-//     cdr: new record_t ("list_t", {
+//     cdr: m.game ("list_t") .choices ({
 //       t: new this_t ("t"),
 //     }),
 //   }))

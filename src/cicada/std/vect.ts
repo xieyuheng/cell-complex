@@ -21,14 +21,13 @@ function vect (): cc.module_t {
 //       n: new ref_t (m, "nat_t"),
 //     },
 //     t: new type_t (),
-//     length: new record_t ("succ_t", {
-//       prev: new dot_t ("this", "n"),
+//     length: m.game ("succ_t") .choices ({
 //       prev: new this_t ("n"),
 //     }),
-//     car: new dot_t ("this", "t"),
-//     cdr: new record_t ("vect_t", {
-//       t: new dot_t ("this", "t"),
-//       length: new dot_t ("this", "n"),
+//     car: new this_t ("t"),
+//     cdr: m.game ("vect_t") .choices ({
+//       t: new this_t ("t"),
+//       length: new this_t ("n"),
 //     }),
 //   }))
   return m
