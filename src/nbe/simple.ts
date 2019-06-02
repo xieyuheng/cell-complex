@@ -304,13 +304,40 @@ class definitional_equality_t {
   }
 
   beta_equality (ctx: ctx_t, T: type_t): boolean {
-    // TODO
-    return false
+    if (this.x instanceof apply_t &&
+        this.x.arg.eq (new constant_t (new zero_t ())) &&
+        this.x.fun instanceof apply_t &&
+        this.x.fun.fun instanceof apply_t &&
+        this.x.fun.fun.fun instanceof constant_t &&
+        this.x.fun.fun.fun.c instanceof rec_t &&
+        this.y.eq (this.x.fun.fun.arg) &&
+        this.x.fun.fun.arg.well_typed_p (ctx, T) &&
+        this.x.fun.arg.well_typed_p (
+          ctx, new arrow_t (new nat_t (), new arrow_t (T, T))
+        )) {
+      return true
+    } else if (
+      // TODO
+      true
+    ) {
+      return true
+    } else {
+      return false
+    }
   }
 
   eta_equality (ctx: ctx_t, T: type_t): boolean {
-    // TODO
-    return false
+    if (this.x instanceof lambda_t &&
+        this.x.term instanceof apply_t &&
+        this.x.term.arg instanceof variable_t &&
+        this.x.term.arg.name === this.x.name &&
+        this.x.term.fun.eq (this.y) &&
+        T instanceof arrow_t &&
+        this.y.well_typed_p (ctx, T)) {
+      return true
+    } else {
+      return false
+    }
   }
 
   compatibility (ctx: ctx_t, T: type_t): boolean {
