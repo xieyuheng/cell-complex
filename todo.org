@@ -1,6 +1,8 @@
+- `record_cons_t` and `union_cons_t` as `game_cons_t`
+- `module.game ()` call `game_cons.start ()`
 - "prelude.ts" in `std/`
-- use side-effect on game
-  how to solve unification problem with side-effect ?
+- `module.use ()`
+- how to solve unification problem with side-effect ?
   - constrains:
     - unification only happens when `this` occurs
   - when a `this` occurs, make a ref to the field,
@@ -9,12 +11,9 @@
   - to imp `this` we need unification between games
     game will need a ctx for bindings
   - API of `this_t` in `record_t` and `union_t` map
-- `record_cons_t` and `union_cons_t` as `game_cons_t`
 - `game.start ()` -- no `record_t` in `record_t`
   - `record_t` should only be used in `module.define`
-- `module.game ()` call `game.start ()`
 - fix `.choices ()`
-- `module.use ()`
 - step_t for `type-of-type.ts`
 - [not yet] term change: use pause and resume instead of ref and deref
 - dot.ts -- new type of game, like deep ref_t for record_t

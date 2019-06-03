@@ -55,7 +55,7 @@ class module_t {
   game (name: string): gs.game_t {
     let game = this.game_map.get (name)
     if (game !== undefined) {
-      return game
+      return game .copy ()
     } else {
       throw new Error (`undefined game: ${name}`)
     }

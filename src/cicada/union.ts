@@ -51,14 +51,13 @@ class union_t extends gs.game_t {
     return []
   }
 
-  choose (m: module_t, path: path_t): union_t {
-    let game: union_t = this.copy ()
-    let next: gs.game_t = game
+  choose (m: module_t, path: path_t): this {
+    let next: gs.game_t = this
     for (let step of path.prefix ()) {
       next = step.forward (next)
     }
     path.target () .deref (m, next)
-    return game
+    return this
   }
 
   report (): object {
