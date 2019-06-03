@@ -10,7 +10,9 @@ class category_t {
   compose: (
     f: this.arrow_t,
     g: this.arrow_t,
-    [implicit]: { composable: eqv_t (this.cod (f), this.dom (g)) }
+    [implicit]: {
+      composable: eqv_t (this.cod (f), this.dom (g)),
+    }
   ) -> {
     return h: this.arrow_t
     eqv_dom: eqv_t (this.dom (h), this.dom (f))
