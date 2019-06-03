@@ -3,6 +3,7 @@ import * as ut from "../util"
 import * as gs from "./game-semantics"
 import { path_t, step_t } from "./path"
 import { ref_t } from "./ref"
+import { module_t } from "./core"
 
 export
 class arg_t extends step_t {
@@ -27,7 +28,7 @@ class arg_t extends step_t {
     }
   }
 
-  deref (game: gs.game_t) {
+  deref (m: module_t, game: gs.game_t) {
     throw new Error ("can not deref arg_t")
   }
 
@@ -51,7 +52,7 @@ class ret_t extends step_t {
     }
   }
 
-  deref (game: gs.game_t) {
+  deref (m: module_t, game: gs.game_t) {
     throw new Error ("can not deref ret_t")
   }
 
@@ -94,13 +95,13 @@ class pi_t extends gs.game_t {
     return []
   }
 
-  choose (path: path_t): pi_t {
+  choose (m: module_t, path: path_t): pi_t {
     let game: pi_t = this.copy ()
     let next: gs.game_t = game
     for (let step of path.prefix ()) {
       next = step.forward (next)
     }
-    path.target () .deref (next)
+    path.target () .deref (m, next)
     return game
   }
 

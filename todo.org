@@ -1,4 +1,3 @@
-- change `ref_t` to be able to copy `module_t`
 - "prelude.ts" in `std/`
 - use side-effect on game
   how to solve unification problem with side-effect ?

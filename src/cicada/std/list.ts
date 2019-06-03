@@ -9,8 +9,8 @@ export
 function list (): cc.module_t {
   let m = new cc.module_t ("list")
   // m.define ("list_t", new union_t ("list_t", [
-  //   new ref_t (m, "null_t"),
-  //   new ref_t (m, "cons_t"),
+  //   new ref_t ("null_t"),
+  //   new ref_t ("cons_t"),
   // ]))
   // m.define ("null_t", new record_t ("null_t", {
   //   t: new type_t (),

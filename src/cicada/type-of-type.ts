@@ -1,6 +1,7 @@
 import assert from "assert"
 import * as ut from "../util"
 import * as gs from "./game-semantics"
+import { module_t } from "./core"
 
 /**
  * type of types, game of games.
@@ -15,14 +16,14 @@ class type_t extends gs.game_t {
     throw new Error ("TODO")
   }
 
-  choose (choice: gs.choice_t): gs.game_t {
+  choose (m: module_t, choice: gs.choice_t): gs.game_t {
     throw new Error ("TODO")
   }
 
   copy (): type_t {
     return new type_t ()
   }
-  
+
   report (): object {
     return {
       "kind": "type_t",

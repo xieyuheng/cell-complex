@@ -4,6 +4,7 @@ import * as gs from "./game-semantics"
 import { step_t } from "./path"
 import { ref_t } from "./ref"
 import { union_t } from "./union"
+import { module_t } from "./core"
 
 export
 class member_t extends step_t {
@@ -30,7 +31,7 @@ class member_t extends step_t {
     }
   }
 
-  deref (game: gs.game_t) {
+  deref (m: module_t, game: gs.game_t) {
     if (game instanceof union_t) {
       let union = game
       let next_game = union.sub_map.get (this.name)
@@ -38,7 +39,7 @@ class member_t extends step_t {
         throw new Error (`unknown field name: ${this.name}`)
       } else if (next_game instanceof ref_t) {
         let ref = next_game
-        union.sub_map.set (this.name, ref.deref ())
+        union.sub_map.set (this.name, ref.deref (m))
       } else {
         throw new Error (`can not deref a non ref_t`)
       }

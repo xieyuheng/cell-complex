@@ -1,11 +1,12 @@
 import assert from "assert"
 import * as ut from "../util"
 import * as gs from "./game-semantics"
+import { module_t } from "./core"
 
 export
 abstract class step_t {
   abstract forward (game: gs.game_t): gs.game_t
-  abstract deref (game: gs.game_t): void
+  abstract deref (m: module_t, game: gs.game_t): void
 
   abstract repr (): any
 }

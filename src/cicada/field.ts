@@ -5,6 +5,7 @@ import { step_t } from "./path"
 import { ref_t } from "./ref"
 import { record_t } from "./record"
 import { union_t } from "./union"
+import { module_t } from "./core"
 
 export
 class field_t extends step_t {
@@ -39,7 +40,7 @@ class field_t extends step_t {
     }
   }
 
-  deref (game: gs.game_t) {
+  deref (m: module_t, game: gs.game_t) {
     if (game instanceof record_t) {
       let record = game
       let next_game = record.map.get (this.name)
@@ -47,7 +48,7 @@ class field_t extends step_t {
         throw new Error (`unknown field name: ${this.name}`)
       } else if (next_game instanceof ref_t) {
         let ref = next_game
-        record.map.set (this.name, ref.deref ())
+        record.map.set (this.name, ref.deref (m))
       } else {
         throw new Error (`can not deref a non ref_t`)
       }
@@ -58,7 +59,7 @@ class field_t extends step_t {
         throw new Error (`unknown field name: ${this.name}`)
       } else if (next_game instanceof ref_t) {
         let ref = next_game
-        union.map.set (this.name, ref.deref ())
+        union.map.set (this.name, ref.deref (m))
       } else {
         throw new Error (`can not deref a non ref_t`)
       }

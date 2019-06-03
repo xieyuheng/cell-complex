@@ -1,5 +1,6 @@
 import assert from "assert"
 import * as ut from "../util"
+import { module_t } from "./core"
 
 /**
  * Game semantics framework for logic and type system.
@@ -19,7 +20,7 @@ import * as ut from "../util"
 export
 abstract class game_t {
   abstract choices (player: player_t): Array <choice_t>
-  abstract choose (choice: choice_t): game_t
+  abstract choose (m: module_t, choice: choice_t): game_t
 
   abstract copy <G extends game_t> (): game_t
   abstract report (): any

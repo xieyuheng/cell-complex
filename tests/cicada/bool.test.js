@@ -8,9 +8,9 @@ import { pi_t } from "../../lib/cicada/pi"
 import { ref_t } from "../../lib/cicada/ref"
 
 test ("bool_t", t => {
-  prelude.bool ()
-    .game ("bool_t") .info (0)
-    .choose (cc.path ([
+  let m = prelude.bool ()
+  m .game ("bool_t") .info (0)
+    .choose (m, cc.path ([
       cc.step.member ("true_t")
     ])) .info (1)
 
@@ -21,20 +21,20 @@ test ("f1_t", t => {
   let m = prelude.bool ()
 
   m.define ("f1_t", new pi_t ({
-    "x": new ref_t (m, "bool_t") .deref (),
-    "y": new ref_t (m, "bool_t") .deref (),
-  }, new ref_t (m, "bool_t") .deref ()))
+    "x": new ref_t ("bool_t") .deref (m),
+    "y": new ref_t ("bool_t") .deref (m),
+  }, new ref_t ("bool_t") .deref (m)))
 
   m.game ("f1_t") .info (0)
-    .choose (cc.path ([
+    .choose (m, cc.path ([
       cc.step.arg ("x"),
       cc.step.member ("true_t"),
     ])) .info (1)
-    .choose (cc.path ([
+    .choose (m, cc.path ([
       cc.step.arg ("y"),
       cc.step.member ("false_t"),
     ])) .info (2)
-    .choose (cc.path ([
+    .choose (m, cc.path ([
       cc.step.ret (),
       cc.step.member ("false_t")
     ])) .info (3)

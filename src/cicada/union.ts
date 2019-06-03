@@ -4,6 +4,7 @@ import * as gs from "./game-semantics"
 import { path_t } from "./path"
 import { ref_t } from "./ref"
 import { record_t } from "./record"
+import { module_t } from "./core"
 
 export
 class union_t extends gs.game_t {
@@ -50,13 +51,13 @@ class union_t extends gs.game_t {
     return []
   }
 
-  choose (path: path_t): union_t {
+  choose (m: module_t, path: path_t): union_t {
     let game: union_t = this.copy ()
     let next: gs.game_t = game
     for (let step of path.prefix ()) {
       next = step.forward (next)
     }
-    path.target () .deref (next)
+    path.target () .deref (m, next)
     return game
   }
 

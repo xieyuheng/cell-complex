@@ -26,7 +26,7 @@ class dot_t extends gs.game_t {
     )
   }
 
-  deref (): gs.game_t {
+  deref (m: module_t): gs.game_t {
     throw new Error ("TODO")
     //     if (this.head instanceof record_t) {
     //       let record: record_t = this.head
@@ -44,7 +44,7 @@ class dot_t extends gs.game_t {
     throw new Error ("can not play dot_t")
   }
 
-  choose (choice: gs.choice_t): gs.game_t {
+  choose (m: module_t, choice: gs.choice_t): gs.game_t {
     throw new Error ("can not play dot_t")
   }
 
