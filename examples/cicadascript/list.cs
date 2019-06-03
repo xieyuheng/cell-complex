@@ -16,7 +16,7 @@ class cons_t {
 }
 
 list_length: (
-  {{ t: type }}
+  [implicit]: { t: type }
   list: list_t (t)
 ) -> nat_t = case (list) {
   null_t => zero_t ()
@@ -24,7 +24,7 @@ list_length: (
 }
 
 list_append: (
-  {{ t: type }}
+  [implicit]: { t: type }
   ante: list_t (t),
   succ: list_t (t),
 ) -> list_t (t) = case (ante) {
@@ -33,7 +33,7 @@ list_append: (
 }
 
 list_map: (
-  {{ a: type, b: type }}
+  [implicit]: { a: type, b: type }
   fun: (a) -> b,
   list: list_t (a),
 ) -> list_t (b) = case (list) {
@@ -42,7 +42,7 @@ list_map: (
 }
 
 list_remove_first: (
-  {{ t: type }}
+  [implicit]: { t: type }
   x: t,
   list: list_t (t),
 ) -> list_t (t) = case (list) {
@@ -57,7 +57,7 @@ union list_length_t {
   zero_length_t
   succ_length_t
 } {
-  {{ t: type }}
+  [implicit]: { t: type }
   list : list_t (this.t)
   length : nat_t
 }
@@ -83,22 +83,24 @@ union list_append_t {
   zero_append_t
   succ_append_t
 } {
-  {{ t: type }}
+  [implicit]: { t: type }
   ante: list_t (this.t)
   succ: list_t (this.t)
   result: list_t (this.t)
 }
 
 class zero_append_t {
-  {{ t: type }}
+  [implicit]: { t: type }
   ante: list_t (this.t) = null_t ()
   succ: list_t (this.t)
   result: list_t (this.t) = this.succ
 }
 
 class succ_append_t {
-  {{ t: type
-     car: this.t }}
+  [implicit]: {
+    t: type
+    car: this.t
+  }
   ante: cons_t (this.t, this.car)
   succ: list_t (this.t)
   result: cons_t (this.t, this.car)

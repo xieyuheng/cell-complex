@@ -12,7 +12,7 @@ class null_vect_t {
 }
 
 class cons_vect_t {
-  {{ n: nat_t }}
+  [implicit]: { n: nat_t }
   t: type
   length: succ_t (this.n)
   car: this.t
@@ -20,7 +20,11 @@ class cons_vect_t {
 }
 
 vect_append: (
-  {{ t: type, m: nat_t, n: nat_t }}
+  [implicit]: {
+    t: type,
+    m: nat_t,
+    n: nat_t,
+  }
   ante: vect_t (t, m),
   succ: vect_t (t, n),
 ) -> vect_t (t, nat_add (m, n)) = case (ante) {
@@ -32,7 +36,11 @@ vect_append: (
 }
 
 vect_map: (
-  {{ a: type, b: type, n: nat_t }}
+  [implicit]: {
+    a: type,
+    b: type,
+    n: nat_t,
+  }
   fun: (a) -> b,
   vect: vect_t (a, n),
 ) -> vect_t (a, n) = case (vect) {

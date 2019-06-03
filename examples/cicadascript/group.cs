@@ -121,7 +121,7 @@ group_cat = category_t (
   compose: (
     f: group_hom_t,
     g: group_hom_t,
-    {{ composable: eqv_t (f.cod, g.dom) }},
+    [implicit]: { composable: eqv_t (f.cod, g.dom) },
   ) -> group_hom_t = group_hom_t (
     dom = f.dom
     cod = f.cod

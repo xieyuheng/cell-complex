@@ -1,3 +1,11 @@
+- change `ref_t` to be able to copy `module_t`
+- "prelude.ts" in `std/`
+- use side-effect on game
+  how to solve unification problem with side-effect ?
+  - constrains:
+    - unification only happens when `this` occurs
+  - when a `this` occurs, make a ref to the field,
+    and update the field by current partial game
 - `this`
   - to imp `this` we need unification between games
     game will need a ctx for bindings
@@ -6,7 +14,6 @@
 - `game.start ()` -- no `record_t` in `record_t`
   - `record_t` should only be used in `module.define`
 - `module.game ()` call `game.start ()`
-- js Symbol for [implicit]
 - fix `.choices ()`
 - `module.use ()`
 - step_t for `type-of-type.ts`
