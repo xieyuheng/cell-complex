@@ -8,27 +8,38 @@ export
 function vect (): cc.module_t {
   let m = new cc.module_t ("vect")
 //   m.use (nat ())
-//   m.define ("vect_t", new union_t ("vect_t", [
+//   m.define ("vect_t", new union_cons_t ("vect_t", [
 //     new ref_t ("vect_null_t"),
 //     new ref_t ("vect_cons_t"),
-//   ]))
-//   m.define ("vect_null_t", new record_t ("vect_null_t", {
+//   ], [
+//     "t", "length",
+//   ], root => ({
+//     t: new type_t (),
+//     length: new ref_t ("nat_t"),
+//   })))
+//   m.define ("vect_null_t", new record_cons_t ("vect_null_t", [
+//     "t", "length",
+//   ], root => ({
 //     t: new type_t (),
 //     length: new ref_t ("zero_t"),
-//   }))
-//   m.define ("vect_cons_t", new record_t ("vect_cons_t", {
+//   })))
+//   m.define ("vect_cons_t", new record_cons_t ("vect_cons_t", [
+//     "n",
+//     "t", "length",
+//     "car", "cdr",
+//   ], root => ({
 //     [implicit]: {
 //       n: new ref_t ("nat_t"),
 //     },
 //     t: new type_t (),
 //     length: m.game ("succ_t") .choices ({
-//       prev: new this_t ("n"),
+//       prev: new this_t (root, "n"),
 //     }),
-//     car: new this_t ("t"),
+//     car: new this_t (root, "t"),
 //     cdr: m.game ("vect_t") .choices ({
-//       t: new this_t ("t"),
-//       length: new this_t ("n"),
+//       t: new this_t (root, "t"),
+//       length: new this_t (root, "n"),
 //     }),
-//   }))
+//   })))
   return m
 }
