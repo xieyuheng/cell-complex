@@ -1,4 +1,3 @@
-- union_builder_t
 - becareful about `game.copy ()`
   since there might be (are there?) circle ref in game
 - specify the use of `choices` in `define`

@@ -1,7 +1,7 @@
 import * as ut from "../../util"
 import * as cc from "../core"
-import { union_t } from "../union"
-import { record_t } from "../record"
+import { union_builder_t } from "../union"
+import { record_builder_t } from "../record"
 import { type_t } from "../type-of-type"
 import { ref_t } from "../ref"
 

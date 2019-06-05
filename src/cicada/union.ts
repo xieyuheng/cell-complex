@@ -9,18 +9,20 @@ import { module_t } from "./core"
 export
 class union_t extends gs.game_t {
   name: string
+  sub_array: Array <gs.game_t>
   sub_map: Map <string, gs.game_t>
   map: Map <string, gs.game_t>
 
   constructor (
     name: string,
-    array: Array <gs.game_t>,
-    map: Map <string, gs.game_t> | { [key: string]: gs.game_t } = new Map (),
+    sub_array: Array <gs.game_t>,
+    map: ut.to_map_t <gs.game_t> = new Map (),
   ) {
     super ()
     this.name = name
+    this.sub_array = sub_array
     this.sub_map = new Map ()
-    for (let game of array) {
+    for (let game of sub_array) {
       if (game instanceof ref_t) {
         let ref = game
         this.sub_map.set (ref.name, ref)
@@ -28,21 +30,18 @@ class union_t extends gs.game_t {
         let record = game
         this.sub_map.set (record.name, record)
       } else {
-        throw new Error ("sub game of union must be a ref_t or record_t")
+        throw new Error (
+          "sub game of union must be a ref_t or record_t"
+        )
       }
     }
-    if (map instanceof Map) {
-      this.map = map
-    } else {
-      this.map = ut.obj2map (map)
-    }
+    this.map = ut.map_from (map)
   }
 
   copy (): union_t {
     return new union_t (
       this.name,
-      Array.from (this.sub_map.values ())
-        .map (game => game.copy ()),
+      this.sub_array.map (game => game.copy ()),
     )
   }
 
@@ -70,5 +69,38 @@ class union_t extends gs.game_t {
       )),
       "end": this.end_p (),
     }
+  }
+}
+
+export
+class union_builder_t extends gs.game_builder_t {
+  name: string
+  sub_array: Array <gs.game_t>
+  map_builder: (
+    root: Map <string, gs.game_t>,
+  ) => ut.to_map_t <gs.game_t>;
+
+  constructor (
+    name: string,
+    sub_array: Array <gs.game_t>,
+    map_builder: (
+      root: Map <string, gs.game_t>,
+    ) => ut.to_map_t <gs.game_t> = _map => ({}),
+  ) {
+    super ()
+    this.name = name
+    this.sub_array = sub_array
+    this.map_builder = map_builder
+  }
+
+  build (): union_t {
+    let map: Map <string, gs.game_t> = new Map ()
+    let tmp = ut.map_from (
+      this.map_builder (map)
+    )
+    for (let [name, game] of tmp.entries ()) {
+      map.set (name, game)
+    }
+    return new union_t (this.name, this.sub_array, map)
   }
 }

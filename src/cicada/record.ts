@@ -58,13 +58,13 @@ class record_builder_t extends gs.game_builder_t {
   name: string
   map_builder: (
     root: Map <string, gs.game_t>,
-  ) => ut.to_map_t <gs.game_t>
+  ) => ut.to_map_t <gs.game_t>;
 
   constructor (
     name: string,
     map_builder: (
       root: Map <string, gs.game_t>,
-    ) => ut.to_map_t <gs.game_t>,
+    ) => ut.to_map_t <gs.game_t> = _map => ({}),
   ) {
     super ()
     this.name = name
