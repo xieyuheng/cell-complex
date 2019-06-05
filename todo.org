@@ -1,15 +1,21 @@
-- becareful about `game.copy ()`
+- `this_t` and `ref_t` feels not like game
+  and they must also occur in strategy
+  - just like "three kinds of expression"
+    expression
+    value (top is constructor)
+    normal form (might be neutral)
+  - we need our rule about `neutral`
+- [TO BE SURE] becareful about `game.copy ()`
   since there might be (are there?) circle ref in game
 - API of `this_t` in `record_t` and `union_t` map
   use some callback API
   a callback whose arg is the root of current game's map
+- how to solve unification problem with side-effect ?
+  - constrains:
+    - unification only happens when `this` occurs
+  - when a `this` occurs (in playing), make a ref to the field,
+    and update the field by current partial game
 - specify the use of `choices` in `define`
-- `this`
-  - how to solve unification problem with side-effect ?
-    - constrains:
-      - unification only happens when `this` occurs
-    - when a `this` occurs, make a ref to the field,
-      and update the field by current partial game
 - `record_builder_t` and `union_builder_t` as `game_builder_t`
 - `module.game ()` call `game_builder.start ()`
 - "prelude.ts" in `std/`
@@ -36,7 +42,7 @@
 - pie/core.ts
 - minitt/core.ts
 - nbe/dependent.ts
-- three level of expression
+- three kinds of expression
   - expression
     value (top is constructor)
     normal form (might be neutral)
