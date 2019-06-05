@@ -8,7 +8,7 @@ import { pi_t } from "../../lib/cicada/pi"
 import { ref_t } from "../../lib/cicada/ref"
 
 test ("bool_t", t => {
-  let m = prelude.bool ()
+  let m = prelude.bool
   m .game ("bool_t") .info (0)
     .choose (m, cc.path ([
       cc.step.member ("true_t")
@@ -18,7 +18,7 @@ test ("bool_t", t => {
 })
 
 test ("f1_t", t => {
-  let m = prelude.bool ()
+  let m = prelude.bool.shallow_copy ()
 
   m.define ("f1_t", new pi_t ({
     "x": new ref_t ("bool_t") .deref (m),

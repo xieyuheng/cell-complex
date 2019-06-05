@@ -1,9 +1,9 @@
 - becareful about `game.copy ()`
   since there might be (are there?) circle ref in game
-- specify the use of `choices` in `define`
 - API of `this_t` in `record_t` and `union_t` map
   use some callback API
   a callback whose arg is the root of current game's map
+- specify the use of `choices` in `define`
 - `this`
   - how to solve unification problem with side-effect ?
     - constrains:
