@@ -1,19 +1,18 @@
-- `game_cons_t`
+- union_builder_t
+- becareful about `game.copy ()`
+  since there might be (are there?) circle ref in game
+- specify the use of `choices` in `define`
+- API of `this_t` in `record_t` and `union_t` map
+  use some callback API
+  a callback whose arg is the root of current game's map
 - `this`
-
   - how to solve unification problem with side-effect ?
     - constrains:
       - unification only happens when `this` occurs
     - when a `this` occurs, make a ref to the field,
       and update the field by current partial game
-  - API of `this_t` in `record_t` and `union_t` map
-    1. just use `this_t`
-       and let `game_cons_t` travel through freshly constructed game
-       and replace `this` with `this_ref`
-    2. use some callback API --- how ???
-       a callback whose arg is the root of `this_ref`
-- `record_cons_t` and `union_cons_t` as `game_cons_t`
-- `module.game ()` call `game_cons.start ()`
+- `record_builder_t` and `union_builder_t` as `game_builder_t`
+- `module.game ()` call `game_builder.start ()`
 - "prelude.ts" in `std/`
 - `module.use ()`
 - `game.start ()` -- no `record_t` in `record_t`

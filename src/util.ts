@@ -101,6 +101,20 @@ function obj2map <V> (
 }
 
 export
+type to_map_t <V> = Map <string, V> | { [key: string]: V }
+
+export
+function map_from <V> (
+  x: Map <string, V> | { [key: string]: V }
+): Map <string, V> {
+  if (x instanceof Map) {
+    return x
+  } else {
+    return obj2map (x)
+  }
+}
+
+export
 function mapmap <K, A, B> (
   map: Map <K, A>,
   f: (a: A) => B,

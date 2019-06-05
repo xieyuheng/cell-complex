@@ -12,15 +12,11 @@ class record_t extends gs.game_t {
 
   constructor (
     name: string,
-    map: Map <string, gs.game_t> | { [key: string]: gs.game_t },
+    map: ut.to_map_t <gs.game_t>,
   ) {
     super ()
     this.name = name
-    if (map instanceof Map) {
-      this.map = map
-    } else {
-      this.map = ut.obj2map (map)
-    }
+    this.map = ut.map_from (map)
   }
 
   copy (): record_t {
@@ -54,5 +50,35 @@ class record_t extends gs.game_t {
       )),
       "end": this.end_p (),
     }
+  }
+}
+
+export
+class record_builder_t extends gs.game_builder_t {
+  name: string
+  map_builder: (
+    root: Map <string, gs.game_t>,
+  ) => ut.to_map_t <gs.game_t>
+
+  constructor (
+    name: string,
+    map_builder: (
+      root: Map <string, gs.game_t>,
+    ) => ut.to_map_t <gs.game_t>,
+  ) {
+    super ()
+    this.name = name
+    this.map_builder = map_builder
+  }
+
+  build (): record_t {
+    let map: Map <string, gs.game_t> = new Map ()
+    let tmp = ut.map_from (
+      this.map_builder (map)
+    )
+    for (let [name, game] of tmp.entries ()) {
+      map.set (name, game)
+    }
+    return new record_t (this.name, map)
   }
 }

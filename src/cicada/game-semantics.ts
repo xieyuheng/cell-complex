@@ -18,6 +18,11 @@ import { module_t } from "./core"
  */
 
 export
+abstract class game_builder_t {
+  abstract build (): game_t
+}
+
+export
 abstract class game_t {
   abstract choices (player: player_t): Array <choice_t>
   abstract choose (m: module_t, choice: choice_t): game_t

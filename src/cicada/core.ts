@@ -24,16 +24,19 @@ let step = {
 }
 
 export
+type den_t = gs.game_t | gs.game_builder_t
+
+export
 class module_t {
   name: string
-  game_map: Map <string, gs.game_t>
+  den_map: Map <string, den_t>
 
   constructor (
     name: string,
-    game_map: Map <string, gs.game_t> = new Map (),
+    den_map: Map <string, den_t> = new Map (),
   ) {
     this.name = name
-    this.game_map = game_map
+    this.den_map = den_map
   }
 
   /**
@@ -43,21 +46,29 @@ class module_t {
   shallow_copy (): module_t {
     return new module_t (
       this.name,
-      new Map (this.game_map),
+      new Map (this.den_map),
     )
   }
 
-  define (name: string, game: gs.game_t): this {
-    this.game_map.set (name, game)
+  define (name: string, den: den_t): this {
+    this.den_map.set (name, den)
     return this
   }
 
   game (name: string): gs.game_t {
-    let game = this.game_map.get (name)
-    if (game !== undefined) {
-      return game .copy ()
+    let den = this.den_map.get (name)
+    if (den === undefined) {
+      throw new Error (`unknown type of den: ${typeof den}, name: ${name}`)
+    }
+
+    if (den instanceof gs.game_t) {
+      let game = den
+      return game.copy ()
+    } else if (den instanceof gs.game_builder_t) {
+      let game_builder = den
+      return game_builder.build ()
     } else {
-      throw new Error (`undefined game: ${name}`)
+      throw new Error (`unknown type of den: ${typeof den}, name: ${name}`)
     }
   }
 }

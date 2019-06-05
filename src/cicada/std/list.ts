@@ -8,26 +8,20 @@ import { ref_t } from "../ref"
 export
 function list (): cc.module_t {
   let m = new cc.module_t ("list")
-  // m.define ("list_t", new union_t ("list_t", [
+  // m.define ("list_t", new union_builder_t ("list_t", [
   //   new ref_t ("null_t"),
   //   new ref_t ("cons_t"),
-  // ]))
-  // m.define ("null_t", new record_t ("null_t", {
-  //   t: new type_t (),
-  // }))
-  // m.define ("cons_t", new record_t ("cons_t", {
-  //   t: new type_t (),
-  //   car: new this_t ("t"),
-  //   cdr: m.game ("list_t") .choices ({
-  //     t: new this_t ("t"),
+  // ], _map => ({
+  // })))
+  // m.define ("null_t", new record_builder_t ("null_t", _map => ({
+  //   "t": new type_t (),
+  // })))
+  // m.define ("cons_t", new record_builder_t ("cons_t", map => ({
+  //   "t": new type_t (),
+  //   "car": new this_t (map, "t"),
+  //   "cdr": m.game ("list_t") .choices ({
+  //     "t": new this_t (map, "t"),
   //   }),
-  // }))
-  // m.define ("cons_t", new record_t ("cons_t", {
-  //   t: new type_t (),
-  //   car: new this_t ("t"),
-  //   cdr: m.game ("list_t") .choices ({
-  //     t: new this_t ("t"),
-  //   }),
-  // }))
+  // })))
   return m
 }
