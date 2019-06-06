@@ -230,7 +230,77 @@ function freshen (
 // }
 
 /** 3.1 Normal Forms */
+
+/**
+ * equivalence relation of lambda terms.
+
+ * alpha-equivalence:
+ *   consistently renaming bound variables
+ *   doesn’t change the meaning of an expression
+
+ * beta-equivalence:
+ *   applying a lambda-expression to an argument
+ *   is equal to the result of the application
+
+ * both rules are equations, which means that
+ *   they can be applied anywhere in an expression
+ *   and that they can be read both from left to right
+ *   and from right to left.
+ */
+
+/**
+ * When we have a collection of equations over syntax,
+ * the syntax can be seen as divided into various "buckets"
+ * where each expression in a bucket
+ * is αβ-equivalent to all the others in its bucket.
+
+ * One way to check whether two expressions are in the same bucket
+ * is to assign each bucket a representative expression
+ * and provide a way to find the bucket representative
+ * for any given expression.
+
+ * Then, if two expressions are in the same bucket,
+ * they will have the same representative.
+ * This canonical representative is referred to as a `normal form`.
+ */
+
+/**
+ * Here, we adopt the convention that normal forms are those
+ * that contain no reducible expressions, or redexes,
+ * which is to say that there are no λ-expressions
+ * directly applied to an argument.
+
+ * Because α-equivalence is easier to check than β-equivalence,
+ * most people consider normal forms with respect to the β-rule only,
+ * and then use α-equivalence when comparing β-normal forms.
+ */
+
 /** 3.2 Finding Normal Forms */
+
+/**
+ * When reducing under λ,
+ * there will also be variables that
+ * do not have a value in the environment.
+ * To handle these cases,
+ * we need values that represent `neutral expressions`.
+
+ * A neutral expression is an expression that
+ * we are not yet able to reduce to a value,
+ * because information such as
+ * the value of an argument to a function is not yet known.
+
+ * In this language, there are two neutral expressions:
+ * variables that do not yet have a value,
+ * and applications where the function position is neutral.
+ */
+
+/**
+ * We implement normal from and neutral form
+ *   as predicates method on `exp_t`.
+ */
+
 /** 3.3 Example: Church Numerals */
+
 /** 4 Error handling */
+
 /** 5 Bidirectional Type Checking */

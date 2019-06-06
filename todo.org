@@ -1,5 +1,5 @@
 * pie
-- test by ava  
+- test by ava
 * cicada/core
 - `this_t` and `ref_t` feels not like game
   and they must also occur in strategy
