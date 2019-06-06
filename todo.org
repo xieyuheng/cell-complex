@@ -1,9 +1,9 @@
 - `this_t` and `ref_t` feels not like game
   and they must also occur in strategy
   - just like "three kinds of expression"
-    expression
-    value (top is constructor)
-    normal form (might be neutral)
+    1. value (top is constructor)
+    2. neutral (var or eliminator blocked by var)
+    3. normal form (might be neutral)
   - we need our rule about `neutral`
 - [TO BE SURE] becareful about `game.copy ()`
   since there might be (are there?) circle ref in game

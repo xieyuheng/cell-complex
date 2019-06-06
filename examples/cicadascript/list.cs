@@ -2,17 +2,17 @@ union list_t {
   null_t
   cons_t
 } {
-  t : type
+  t: type
 }
 
 class null_t {
-  t : type
+  t: type
 }
 
 class cons_t {
-  t : type
-  car : this.t
-  cdr : list_t (this.t)
+  t: type
+  car: this.t
+  cdr: list_t (this.t)
 }
 
 list_length: (
