@@ -1,6 +1,6 @@
 * normalization by evaluation
-- test by ava
-- [NbE/simple.ts] term_t.eval
+- use ava to test untyped-lambda-calculus.ts
+- NbE/simple.ts
 - NbE/minitt.ts
 - NbE/dependent.ts
 - NbE/pie.ts

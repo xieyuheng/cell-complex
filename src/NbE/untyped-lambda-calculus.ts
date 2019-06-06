@@ -1,3 +1,4 @@
+import assert from "assert"
 import * as ut from "../util"
 
 /**
@@ -20,6 +21,7 @@ import * as ut from "../util"
 
 /** 1.1 Values and Runtime Environments */
 
+export
 type value_t = closure_t | neutral_t
 
 /**
@@ -158,20 +160,22 @@ class apply_t extends exp_t {
   }
 }
 
-// {
-//   let exp = new lambda_t ("x", new lambda_t ("y", new var_t ("y")))
-//   let val = exp.eval (new env_t (new Map ()))
-//   console.log (val)
-// }
+// TEST
+{
+  let exp = new lambda_t ("x", new lambda_t ("y", new var_t ("y")))
+  let val = exp.eval (new env_t (new Map ()))
+  // console.log (val)
+}
 
-// {
-//   let exp = new apply_t (
-//     new lambda_t ("x", new var_t ("x")),
-//     new lambda_t ("x", new var_t ("x")),
-//   )
-//   let val = exp.eval (new env_t (new Map ()))
-//   console.log (val)
-// }
+// TEST
+{
+  let exp = new apply_t (
+    new lambda_t ("x", new var_t ("x")),
+    new lambda_t ("x", new var_t ("x")),
+  )
+  let val = exp.eval (new env_t (new Map ()))
+  // console.log (val)
+}
 
 /** 1.3 Adding Definitions */
 
@@ -196,11 +200,12 @@ class module_t {
   }
 }
 
-// {
-//   let m = new module_t (new env_t (new Map ()))
-//   m.define ("id", new lambda_t ("x", new var_t ("x")))
-//   m.run (new var_t ("id"))
-// }
+// TEST
+{
+  let m = new module_t (new env_t (new Map ()))
+  m.define ("id", new lambda_t ("x", new var_t ("x")))
+  // m.run (new var_t ("id"))
+}
 
 /** 2 Generating Fresh Names */
 
@@ -219,12 +224,14 @@ function freshen (
   return name
 }
 
-// {
-//   let x = "x"
-//   ut.log (
-//     freshen (["x", "x*"], x)
-//   )
-// }
+// TEST
+{
+  let x = "x"
+
+  assert (
+    freshen (new Set (["x", "x*"]), x) === "x**"
+  )
+}
 
 /** 3.1 Normal Forms */
 
@@ -360,6 +367,25 @@ function read_back (
     )
   }
 }
+
+{
+  let exp = read_back (
+    new Set (),
+    new apply_t (
+      new lambda_t ("x", new lambda_t ("y", new apply_t (
+        new var_t ("x"),
+        new var_t ("y"),
+      ))),
+      new lambda_t ("x", new var_t ("x")),
+    ) .eval (new env_t (new Map ())),
+  )
+
+  ut.log (exp)
+}
+
+
+// read_back '() (val '() '((λ (x) (λ (y) (x y))) (λ (x) x)))
+// '(λ (y) y)
 
 /** 3.3 Example: Church Numerals */
 
