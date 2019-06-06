@@ -344,7 +344,6 @@ function read_back (
       inner_value,
     )
     return new lambda_t (fresh_name, new_body)
-    throw new Error ("TODO")
   } else if (value instanceof neutral_var_t) {
     let neutral_var = value
     return new var_t (neutral_var.name)

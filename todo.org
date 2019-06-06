@@ -1,5 +1,20 @@
-* pie
+* normalization by evaluation
 - test by ava
+- [NbE/simple.ts] term_t.eval
+- NbE/minitt.ts
+- NbE/dependent.ts
+- NbE/pie.ts
+- NbE/system-T.ts
+* three kinds of expression
+- expression
+  value (top is constructor)
+  normal form (might be neutral)
+- game
+  top is game constructors: record_t union_t pi_t
+  only contain game constructors: record_t union_t pi_t (might be neutral)
+- strategy
+  strategy with explicit next step
+  strategy with every steps (might be neutral)
 * cicada/core
 - `this_t` and `ref_t` feels not like game
   and they must also occur in strategy
@@ -40,20 +55,6 @@
   - example of give geometry to topological structure
 - how to describe edge and face so they are easy to draw ?
 - a generic way to specify geometry of cell-complex
-* normalization by evaluation
-- [nbe/simple.ts] term_t.eval
-- minitt/core.ts
-- nbe/dependent.ts
-- three kinds of expression
-  - expression
-    value (top is constructor)
-    normal form (might be neutral)
-  - game
-    top is game constructors: record_t union_t pi_t
-    only contain game constructors: record_t union_t pi_t (might be neutral)
-  - strategy
-    strategy with explicit next step
-    strategy with every steps (might be neutral)
 * graph
 - graph without info -- for new hackenbush
 - reuse cell_complex_t -- by `graph_t.as_cell_complex ()`
