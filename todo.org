@@ -1,3 +1,6 @@
+* pie
+- test by ava  
+* cicada/core
 - `this_t` and `ref_t` feels not like game
   and they must also occur in strategy
   - just like "three kinds of expression"
@@ -39,7 +42,6 @@
 - a generic way to specify geometry of cell-complex
 * normalization by evaluation
 - [nbe/simple.ts] term_t.eval
-- pie/core.ts
 - minitt/core.ts
 - nbe/dependent.ts
 - three kinds of expression

@@ -1,3 +1,5 @@
+import * as ut from "../util"
+
 /**
  * Checking Dependent Types
  *   with Normalization by Evaluation: A Tutorial
@@ -19,6 +21,7 @@
 /** 1.1 Values and Runtime Environments */
 
 abstract class value_t {
+  // TODO
   // abstract eq
 }
 
@@ -92,6 +95,8 @@ class closure_t extends value_t {
 
 abstract class exp_t {
   abstract eval (env: env_t): value_t
+  // TODO
+  // abstract eq
 }
 
 class lambda_t extends exp_t {
@@ -156,25 +161,76 @@ class apply_t extends exp_t {
   }
 }
 
-{
-  let exp = new lambda_t ("x", new lambda_t ("y", new var_t ("y")))
-  let val = exp.eval (new env_t (new Map ()))
-  console.log (val)
+// {
+//   let exp = new lambda_t ("x", new lambda_t ("y", new var_t ("y")))
+//   let val = exp.eval (new env_t (new Map ()))
+//   console.log (val)
+// }
+
+// {
+//   let exp = new apply_t (
+//     new lambda_t ("x", new var_t ("x")),
+//     new lambda_t ("x", new var_t ("x")),
+//   )
+//   let val = exp.eval (new env_t (new Map ()))
+//   console.log (val)
+// }
+
+/** 1.3 Adding Definitions */
+
+class module_t {
+  env: env_t
+
+  constructor (
+    env: env_t
+  ) {
+    this.env = env
+  }
+
+  define (name: string, exp: exp_t): this {
+    this.env = this.env.ext (name, exp)
+    return this
+  }
+
+  run (exp: exp_t): this {
+    let value = exp.eval (this.env)
+    ut.log (value)
+    return this
+  }
 }
 
-{
-  let exp = new apply_t (
-    new lambda_t ("x", new var_t ("x")),
-    new lambda_t ("x", new var_t ("x")),
-  )
-  let val = exp.eval (new env_t (new Map ()))
-  console.log (val)
+// {
+//   let m = new module_t (new env_t (new Map ()))
+//   m.define ("id", new lambda_t ("x", new var_t ("x")))
+//   m.run (new var_t ("id"))
+// }
+
+/** 2 Generating Fresh Names */
+
+/**
+ * Normalization requires generating fresh names
+ *   to avoid conflicting variable names.
+ */
+
+function freshen (
+  used: Array <string>,
+  name: string,
+): string {
+  while (used.some (x => x === name)) {
+    name += "*"
+  }
+  return name
 }
 
-// 1.3 Adding Definitions
-// 2 Generating Fresh Names
-// 3.1 Normal Forms
-// 3.2 Finding Normal Forms
-// 3.3 Example: Church Numerals
-// 4 Error handling
-// 5 Bidirectional Type Checking
+// {
+//   let x = "x"
+//   ut.log (
+//     freshen (["x", "x*"], x)
+//   )
+// }
+
+/** 3.1 Normal Forms */
+/** 3.2 Finding Normal Forms */
+/** 3.3 Example: Church Numerals */
+/** 4 Error handling */
+/** 5 Bidirectional Type Checking */
