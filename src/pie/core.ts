@@ -20,10 +20,7 @@ import * as ut from "../util"
 
 /** 1.1 Values and Runtime Environments */
 
-abstract class value_t {
-  // TODO
-  // abstract eq
-}
+type value_t = closure_t | neutral_t
 
 /**
  * Runtime environments provide the values for each variable.
@@ -60,7 +57,7 @@ class env_t {
  *   that will be instantiated with a value,
  *   so these closures additionally have the `name` field.
  */
-class closure_t extends value_t {
+class closure_t {
   env: env_t
   name: string
   body: exp_t
@@ -70,7 +67,6 @@ class closure_t extends value_t {
     name: string,
     body: exp_t,
   ) {
-    super ()
     this.env = env
     this.name = name
     this.body = body
@@ -95,8 +91,6 @@ class closure_t extends value_t {
 
 abstract class exp_t {
   abstract eval (env: env_t): value_t
-  // TODO
-  // abstract eq
 }
 
 class lambda_t extends exp_t {
@@ -155,8 +149,11 @@ class apply_t extends exp_t {
     if (fun instanceof closure_t) {
       let closure = fun
       return closure.apply (arg)
+    } else if (fun instanceof neutral_t) {
+      let neutral_fun = fun
+      return new neutral_apply_t (neutral_fun, arg)
     } else {
-      throw new Error ("fun is not closure")
+      throw new Error ("unknown fun")
     }
   }
 }
@@ -213,10 +210,10 @@ class module_t {
  */
 
 function freshen (
-  used: Array <string>,
+  used_names: Set <string>,
   name: string,
 ): string {
-  while (used.some (x => x === name)) {
+  while (used_names.has (name)) {
     name += "*"
   }
   return name
@@ -295,9 +292,75 @@ function freshen (
  */
 
 /**
- * We implement normal from and neutral form
+ * Although normal from and neutral form are special `exp_t`,
+ *   but we implement them as different abstract classes,
+ *   and there will be no `.eval` method on them.
+
+ * We might also implement normal from and neutral form
  *   as predicates method on `exp_t`.
  */
+
+abstract class neutral_t {}
+
+class neutral_var_t extends neutral_t {
+  name: string
+
+  constructor (name: string) {
+    super ()
+    this.name = name
+  }
+}
+
+class neutral_apply_t extends neutral_t {
+  rator: neutral_t
+  rand: value_t
+
+  constructor (
+    rator: neutral_t,
+    rand: value_t,
+  ) {
+    super ()
+    this.rator = rator
+    this.rand = rand
+  }
+}
+
+function read_back (
+  used_names: Set <string>,
+  value: value_t,
+): exp_t {
+  if (value instanceof closure_t) {
+    let closure = value
+    let fresh_name = freshen (
+      used_names,
+      closure.name,
+    )
+    let neutral_var = new neutral_var_t (fresh_name)
+    let inner_value = closure.body.eval (
+      closure.env.ext (closure.name, neutral_var)
+    )
+    let new_body = read_back (
+      new Set (used_names) .add (fresh_name),
+      inner_value,
+    )
+    return new lambda_t (fresh_name, new_body)
+    throw new Error ("TODO")
+  } else if (value instanceof neutral_var_t) {
+    let neutral_var = value
+    return new var_t (neutral_var.name)
+  } else if (value instanceof neutral_apply_t) {
+    let neutral_apply = value
+    return new apply_t (
+      read_back (used_names, neutral_apply.rator),
+      read_back (used_names, neutral_apply.rand),
+    )
+  } else {
+    ut.log (value)
+    throw new Error (
+      `met unknown type of value above`
+    )
+  }
+}
 
 /** 3.3 Example: Church Numerals */
 
