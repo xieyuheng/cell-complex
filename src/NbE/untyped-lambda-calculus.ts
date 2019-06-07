@@ -301,7 +301,10 @@ function freshen (
  */
 
 export
-abstract class neutral_t {}
+abstract class neutral_t {
+  // to avoid empty class
+  _kind: "neutral_t" = "neutral_t"
+}
 
 export
 class neutral_var_t extends neutral_t {
