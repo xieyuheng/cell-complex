@@ -94,6 +94,7 @@ class closure_t {
  */
 export
 abstract class exp_t {
+  kind: "exp_t" = "exp_t"
   abstract eq (that: exp_t): boolean
   abstract eval (env: env_t): value_t
 }
@@ -302,8 +303,7 @@ function freshen (
 
 export
 abstract class neutral_t {
-  // to avoid empty class
-  _kind: "neutral_t" = "neutral_t"
+  kind: "neutral_t" = "neutral_t"
 }
 
 export
