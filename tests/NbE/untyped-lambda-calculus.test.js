@@ -27,6 +27,7 @@ test ("module.define", t => {
     let m = new cc.module_t (new cc.env_t (new Map ()))
     m.define ("id", new cc.lambda_t ("x", new cc.var_t ("x")))
     m.run (new cc.var_t ("id"))
+    m.run (new cc.lambda_t ("x", new cc.var_t ("x")))
   }
 
   t.pass ()
@@ -56,6 +57,28 @@ test ("read_back", t => {
       ))),
       new cc.lambda_t ("x", new cc.var_t ("x")),
     ) .eval (new cc.env_t (new Map ())),
+  )
+
+  t.true (
+    exp.eq (
+      new cc.lambda_t ("y", new cc.var_t ("y"))
+    )
+  )
+})
+
+test ("normalize", t => {
+  // ((λ (x) (λ (y) (x y))) (λ (x) x))
+  // (λ (y) y)
+
+  let exp = cc.normalize (
+    new cc.env_t (new Map ()),
+    new cc.apply_t (
+      new cc.lambda_t ("x", new cc.lambda_t ("y", new cc.apply_t (
+        new cc.var_t ("x"),
+        new cc.var_t ("y"),
+      ))),
+      new cc.lambda_t ("x", new cc.var_t ("x")),
+    ),
   )
 
   t.true (

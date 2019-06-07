@@ -196,13 +196,18 @@ class module_t {
   }
 
   define (name: string, exp: exp_t): this {
-    this.env = this.env.ext (name, exp)
+    // the following wrong type also compiles
+    // this.env = this.env.ext (name, exp)
+    this.env = this.env.ext (name, exp.eval (this.env))
     return this
   }
 
   run (exp: exp_t): this {
-    let value = exp.eval (this.env)
-    ut.log (value)
+    // let value = exp.eval (this.env)
+    // console.log (">>>", value)
+    ut.log (
+      normalize (this.env, exp)
+    )
     return this
   }
 }
@@ -359,9 +364,20 @@ function read_back (
   } else {
     ut.log (value)
     throw new Error (
-      `met unknown type of value above`
+      `met unknown type of value`
     )
   }
+}
+
+export
+function normalize (
+  env: env_t,
+  exp: exp_t,
+): exp_t {
+  return read_back (
+    new Set (),
+    exp.eval (env),
+  )
 }
 
 /** 3.3 Example: Church Numerals */
