@@ -87,3 +87,23 @@ test ("normalize", t => {
     )
   )
 })
+
+test ("church", t => {
+  new cc.module_t ()
+    .use (cc.church)
+    .run (cc.to_church (0))
+    .run (cc.to_church (1))
+    .run (cc.to_church (2))
+    .run (cc.to_church (3))
+    .run (
+      new cc.apply_t (
+        new cc.apply_t (
+          new cc.var_t ("church_add"),
+          cc.to_church (2),
+        ),
+        cc.to_church (2),
+      )
+    )
+
+  t.pass ()
+})

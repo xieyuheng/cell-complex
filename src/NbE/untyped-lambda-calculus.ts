@@ -45,8 +45,6 @@ class env_t {
     return new env_t (new Map (this.map))
   }
 
-
-
   ext (name: string, value: value_t): env_t {
     return new env_t (
       new Map (this.map)
@@ -403,6 +401,9 @@ function normalize (
 
 /** 3.3 Example: Church Numerals */
 
+export
+let church = new module_t ()
+
 // (define church-zero
 //  (λ (f)
 //   (λ (x)
@@ -414,8 +415,24 @@ function normalize (
 //    (λ (x)
 //     (f ((prev f) x))))))
 
-export
-let church = new module_t ()
+// (define church-add
+//  (λ (j)
+//   (λ (k)
+//    (λ (f)
+//     (λ (x)
+//      ((j f) ((k f) x)))))))
+
+// TODO
+// parser for the following js-like syntax
+
+// church_zero = (f) => (x) => x
+// church_add1 = (prev) => (f) => (x) => f (prev (f) (x))
+// church_add = (j) => (k) => (f) => (x) => j (f) (k (f) (x))
+
+// with currying
+// church_zero = (f, x) => x
+// church_add1 = (prev, f, x) => f (prev (f, x))
+// church_add = (j, k, f, x) => j (f, k (f, x))
 
 church.define (
   "church_zero", new lambda_t (
@@ -424,19 +441,6 @@ church.define (
     )
   )
 )
-
-// TODO
-// parser for the following js-like syntax
-
-// church_zero = (f) => (x) => x
-// church_add1 = (prev) => (f) => (x) => f (prev (f) (x))
-
-// church_zero = f => x => x
-// church_add1 = prev => f => x => f (prev (f) (x))
-
-// with currying
-// church_zero = (f, x) => x
-// church_add1 = (prev, f, x) => f (prev (f) (x))
 
 church.define (
   "church_add1", new lambda_t (
@@ -457,6 +461,31 @@ church.define (
   )
 )
 
+church.define (
+  "church_add", new lambda_t (
+    "j", new lambda_t (
+      "k", new lambda_t (
+        "f", new lambda_t (
+          "x", new apply_t (
+            new apply_t (
+              new var_t ("j"),
+              new var_t ("f"),
+            ),
+            new apply_t (
+              new apply_t (
+                new var_t ("k"),
+                new var_t ("f"),
+              ),
+              new var_t ("x"),
+            )
+          )
+        )
+      )
+    )
+  )
+)
+
+export
 function to_church (n: number): exp_t {
   let exp: exp_t = new var_t ("church_zero")
   while (n > 0) {
@@ -464,15 +493,6 @@ function to_church (n: number): exp_t {
     n -= 1
   }
   return exp
-}
-
-{
-  new module_t ()
-    .use (church)
-    .run (to_church (0))
-    .run (to_church (1))
-    .run (to_church (2))
-    .run (to_church (3))
 }
 
 /** 4 Error handling */
