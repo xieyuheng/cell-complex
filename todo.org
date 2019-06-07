@@ -1,5 +1,5 @@
 * normalization by evaluation
-- use ava to test untyped-lambda-calculus.ts
+- [untyped-lambda-calculus.ts] `exp.eq` `exp.eqv`
 - NbE/simple.ts
 - NbE/minitt.ts
 - NbE/dependent.ts

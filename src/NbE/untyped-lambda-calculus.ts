@@ -27,6 +27,7 @@ type value_t = closure_t | neutral_t
 /**
  * Runtime environments provide the values for each variable.
  */
+export
 class env_t {
   map: Map <string, value_t>
 
@@ -59,6 +60,7 @@ class env_t {
  *   that will be instantiated with a value,
  *   so these closures additionally have the `name` field.
  */
+export
 class closure_t {
   env: env_t
   name: string
@@ -90,11 +92,12 @@ class closure_t {
  *   for applying the value of a function
  *   to the value of its argument
  */
-
+export
 abstract class exp_t {
   abstract eval (env: env_t): value_t
 }
 
+export
 class lambda_t extends exp_t {
   name: string
   body: exp_t
@@ -113,6 +116,7 @@ class lambda_t extends exp_t {
   }
 }
 
+export
 class var_t extends exp_t {
   name: string
 
@@ -132,6 +136,7 @@ class var_t extends exp_t {
   }
 }
 
+export
 class apply_t extends exp_t {
   rator: exp_t
   rand: exp_t
@@ -160,25 +165,9 @@ class apply_t extends exp_t {
   }
 }
 
-// TEST
-{
-  let exp = new lambda_t ("x", new lambda_t ("y", new var_t ("y")))
-  let val = exp.eval (new env_t (new Map ()))
-  // console.log (val)
-}
-
-// TEST
-{
-  let exp = new apply_t (
-    new lambda_t ("x", new var_t ("x")),
-    new lambda_t ("x", new var_t ("x")),
-  )
-  let val = exp.eval (new env_t (new Map ()))
-  // console.log (val)
-}
-
 /** 1.3 Adding Definitions */
 
+export
 class module_t {
   env: env_t
 
@@ -200,13 +189,6 @@ class module_t {
   }
 }
 
-// TEST
-{
-  let m = new module_t (new env_t (new Map ()))
-  m.define ("id", new lambda_t ("x", new var_t ("x")))
-  // m.run (new var_t ("id"))
-}
-
 /** 2 Generating Fresh Names */
 
 /**
@@ -214,6 +196,7 @@ class module_t {
  *   to avoid conflicting variable names.
  */
 
+export
 function freshen (
   used_names: Set <string>,
   name: string,
@@ -222,15 +205,6 @@ function freshen (
     name += "*"
   }
   return name
-}
-
-// TEST
-{
-  let x = "x"
-
-  assert (
-    freshen (new Set (["x", "x*"]), x) === "x**"
-  )
 }
 
 /** 3.1 Normal Forms */
@@ -307,8 +281,10 @@ function freshen (
  *   as predicates method on `exp_t`.
  */
 
+export
 abstract class neutral_t {}
 
+export
 class neutral_var_t extends neutral_t {
   name: string
 
@@ -318,6 +294,7 @@ class neutral_var_t extends neutral_t {
   }
 }
 
+export
 class neutral_apply_t extends neutral_t {
   rator: neutral_t
   rand: value_t
@@ -332,6 +309,7 @@ class neutral_apply_t extends neutral_t {
   }
 }
 
+export
 function read_back (
   used_names: Set <string>,
   value: value_t,
@@ -367,25 +345,6 @@ function read_back (
     )
   }
 }
-
-{
-  let exp = read_back (
-    new Set (),
-    new apply_t (
-      new lambda_t ("x", new lambda_t ("y", new apply_t (
-        new var_t ("x"),
-        new var_t ("y"),
-      ))),
-      new lambda_t ("x", new var_t ("x")),
-    ) .eval (new env_t (new Map ())),
-  )
-
-  ut.log (exp)
-}
-
-
-// read_back '() (val '() '((λ (x) (λ (y) (x y))) (λ (x) x)))
-// '(λ (y) y)
 
 /** 3.3 Example: Church Numerals */
 
