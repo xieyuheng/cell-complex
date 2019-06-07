@@ -32,7 +32,7 @@ class env_t {
   map: Map <string, value_t>
 
   constructor (
-    map: Map <string, value_t>
+    map: Map <string, value_t> = new Map ()
   ) {
     this.map = map
   }
@@ -40,6 +40,12 @@ class env_t {
   find (name: string): value_t | undefined {
     return this.map.get (name)
   }
+
+  copy (): env_t {
+    return new env_t (new Map (this.map))
+  }
+
+
 
   ext (name: string, value: value_t): env_t {
     return new env_t (
@@ -191,9 +197,25 @@ class module_t {
   env: env_t
 
   constructor (
-    env: env_t
+    env: env_t = new env_t
   ) {
     this.env = env
+  }
+
+  copy (): module_t {
+    return new module_t (this.env.copy ())
+  }
+
+  /** `use` means "import all from" */
+  use (other: module_t): this {
+    for (let [name, value] of other.env.map.entries ()) {
+      if (this.env.find (name) === undefined) {
+        this.env.map.set (name, value)
+      } else {
+        throw new Error (`name alreay defined: ${name}`)
+      }
+    }
+    return this
   }
 
   define (name: string, exp: exp_t): this {
@@ -380,6 +402,78 @@ function normalize (
 }
 
 /** 3.3 Example: Church Numerals */
+
+// (define church-zero
+//  (λ (f)
+//   (λ (x)
+//    x)))
+
+// (define church-add1
+//  (λ (prev)
+//   (λ (f)
+//    (λ (x)
+//     (f ((prev f) x))))))
+
+export
+let church = new module_t ()
+
+church.define (
+  "church_zero", new lambda_t (
+    "f", new lambda_t (
+      "x", new var_t ("x")
+    )
+  )
+)
+
+// TODO
+// parser for the following js-like syntax
+
+// church_zero = (f) => (x) => x
+// church_add1 = (prev) => (f) => (x) => f (prev (f) (x))
+
+// church_zero = f => x => x
+// church_add1 = prev => f => x => f (prev (f) (x))
+
+// with currying
+// church_zero = (f, x) => x
+// church_add1 = (prev, f, x) => f (prev (f) (x))
+
+church.define (
+  "church_add1", new lambda_t (
+    "prev", new lambda_t (
+      "f", new lambda_t (
+        "x", new apply_t (
+          new var_t ("f"),
+          new apply_t (
+            new apply_t (
+              new var_t ("prev"),
+              new var_t ("f"),
+            ),
+            new var_t ("x"),
+          )
+        )
+      )
+    )
+  )
+)
+
+function to_church (n: number): exp_t {
+  let exp: exp_t = new var_t ("church_zero")
+  while (n > 0) {
+    exp = new apply_t (new var_t ("church_add1"), exp)
+    n -= 1
+  }
+  return exp
+}
+
+{
+  new module_t ()
+    .use (church)
+    .run (to_church (0))
+    .run (to_church (1))
+    .run (to_church (2))
+    .run (to_church (3))
+}
 
 /** 4 Error handling */
 

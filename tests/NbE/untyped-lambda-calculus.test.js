@@ -6,7 +6,7 @@ import * as ut from "../../lib/util"
 test ("exp.eval", t => {
   {
     let exp = new cc.lambda_t ("x", new cc.lambda_t ("y", new cc.var_t ("y")))
-    let val = exp.eval (new cc.env_t (new Map ()))
+    let val = exp.eval (new cc.env_t ())
     // console.log (val)
   }
 
@@ -15,7 +15,7 @@ test ("exp.eval", t => {
       new cc.lambda_t ("x", new cc.var_t ("x")),
       new cc.lambda_t ("x", new cc.var_t ("x")),
     )
-    let val = exp.eval (new cc.env_t (new Map ()))
+    let val = exp.eval (new cc.env_t ())
     // console.log (val)
   }
 
@@ -24,7 +24,7 @@ test ("exp.eval", t => {
 
 test ("module.define", t => {
   {
-    let m = new cc.module_t (new cc.env_t (new Map ()))
+    let m = new cc.module_t ()
     m.define ("id", new cc.lambda_t ("x", new cc.var_t ("x")))
     m.run (new cc.var_t ("id"))
     m.run (new cc.lambda_t ("x", new cc.var_t ("x")))
@@ -56,7 +56,7 @@ test ("read_back", t => {
         new cc.var_t ("y"),
       ))),
       new cc.lambda_t ("x", new cc.var_t ("x")),
-    ) .eval (new cc.env_t (new Map ())),
+    ) .eval (new cc.env_t ()),
   )
 
   t.true (
@@ -71,7 +71,7 @@ test ("normalize", t => {
   // (λ (y) y)
 
   let exp = cc.normalize (
-    new cc.env_t (new Map ()),
+    new cc.env_t (),
     new cc.apply_t (
       new cc.lambda_t ("x", new cc.lambda_t ("y", new cc.apply_t (
         new cc.var_t ("x"),
