@@ -58,7 +58,9 @@ test ("read_back", t => {
     ) .eval (new cc.env_t (new Map ())),
   )
 
-  ut.log (exp)
-
-  t.pass ()
+  t.true (
+    exp.eq (
+      new cc.lambda_t ("y", new cc.var_t ("y"))
+    )
+  )
 })

@@ -94,6 +94,7 @@ class closure_t {
  */
 export
 abstract class exp_t {
+  abstract eq (that: exp_t): boolean
   abstract eval (env: env_t): value_t
 }
 
@@ -111,6 +112,12 @@ class lambda_t extends exp_t {
     this.body = body
   }
 
+  eq (that: exp_t): boolean {
+    return that instanceof lambda_t
+      && this.name === that.name
+      && this.body.eq (that.body)
+  }
+
   eval (env: env_t): closure_t {
     return new closure_t (env, this.name, this.body)
   }
@@ -123,6 +130,11 @@ class var_t extends exp_t {
   constructor (name: string) {
     super ()
     this.name = name
+  }
+
+  eq (that: exp_t): boolean {
+    return that instanceof var_t
+      && this.name === that.name
   }
 
   eval (env: env_t): value_t {
@@ -148,6 +160,12 @@ class apply_t extends exp_t {
     super ()
     this.rator = rator
     this.rand = rand
+  }
+
+  eq (that: exp_t): boolean {
+    return that instanceof apply_t
+      && this.rator.eq (that.rator)
+      && this.rand.eq (that.rand)
   }
 
   eval (env: env_t): value_t {
