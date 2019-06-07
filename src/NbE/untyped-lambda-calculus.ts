@@ -1,6 +1,11 @@
 import assert from "assert"
 import * as ut from "../util"
 
+import {
+  option_t, some_t, none_t,
+  result_t, ok_t, err_t,
+} from "../prelude"
+
 /**
  * Checking Dependent Types
  *   with Normalization by Evaluation: A Tutorial
@@ -183,7 +188,9 @@ class apply_t extends exp_t {
       let neutral_fun = fun
       return new neutral_apply_t (neutral_fun, arg)
     } else {
-      throw new Error ("unknown fun")
+      throw new Error (
+        `unknown fun value: ${fun}`
+      )
     }
   }
 }
@@ -319,6 +326,14 @@ function freshen (
 
  * We might also implement normal from and neutral form
  *   as predicates method on `exp_t`.
+ */
+
+/**
+ * Note that, the follow definition of `neutral_t`
+ * is different form the mutual recersive definitions
+ * of `<norm>` and `<neu>`.
+
+ * The definition of `neutral_t` is to help implement `read_back`.
  */
 
 export
@@ -509,3 +524,60 @@ function to_church (n: number): exp_t {
 /** we need `result_t` `option_t` */
 
 /** 5 Bidirectional Type Checking */
+
+/**
+ * Bidirectional type checking is a technique
+ * for making type systems syntax-directed
+ * that adds only a minimal annotation burden.
+
+ * Typically, only the top level of an expression
+ * or any explicit redexes need to be annotated.
+
+ * Additionally, bidirectional type checking provides guidance
+ * for the appropriate places to insert checks
+ * of type equality or subsumption.
+ */
+
+/** 5.1 Types */
+
+export
+abstract class type_t {
+  kind: "type_t" = "type_t"
+  abstract eq (that: type_t): boolean
+}
+
+export
+class nat_t extends type_t {
+  constructor () {
+    super ()
+  }
+
+  eq (that: type_t): boolean {
+    return that instanceof nat_t
+  }
+}
+
+export
+class arrow_t extends type_t {
+  arg: type_t
+  ret: type_t
+
+  constructor (
+    arg: type_t,
+    ret: type_t,
+  ) {
+    super ()
+    this.arg = arg
+    this.ret = ret
+  }
+
+  eq (that: type_t): boolean {
+    return that instanceof arrow_t
+      && this.arg.eq (that.arg)
+      && this.ret.eq (that.ret)
+  }
+}
+
+/** 5.2 Checking Types */
+
+/** 6 Typed Normalization by Evaluation */
