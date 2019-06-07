@@ -497,4 +497,15 @@ function to_church (n: number): exp_t {
 
 /** 4 Error handling */
 
+/**
+ * Previously, programs that contained errors
+ * such as unbound variables or malformed syntax
+ * would simply crash the evaluator.
+ * Mismatched types, however, are not errors,
+ * they are instead useful feedback
+ * that can be used while constructing a program.
+ */
+
+/** we need `result_t` `option_t` */
+
 /** 5 Bidirectional Type Checking */
