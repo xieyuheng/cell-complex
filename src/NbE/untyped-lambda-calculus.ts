@@ -196,15 +196,11 @@ class module_t {
   }
 
   define (name: string, exp: exp_t): this {
-    // the following wrong type also compiles
-    // this.env = this.env.ext (name, exp)
     this.env = this.env.ext (name, exp.eval (this.env))
     return this
   }
 
   run (exp: exp_t): this {
-    // let value = exp.eval (this.env)
-    // console.log (">>>", value)
     ut.log (
       normalize (this.env, exp)
     )
