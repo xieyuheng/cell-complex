@@ -104,8 +104,21 @@ class closure_t {
 export
 abstract class exp_t {
   kind: "exp_t" = "exp_t"
+
   abstract eq (that: exp_t): boolean
   abstract eval (env: env_t): value_t
+
+  synth (ctx: ctx_t): option_t <type_t> {
+    throw new Error (
+      `synth is not implemented for type: ${this.constructor.name}`
+    )
+  }
+
+  check (ctx: ctx_t, t: type_t): option_t <type_t> {
+    throw new Error (
+      `check is not implemented for type: ${this.constructor.name}`
+    )
+  }
 }
 
 export
@@ -158,6 +171,13 @@ class var_t extends exp_t {
       )
     }
   }
+
+  synth (ctx: ctx_t): option_t <type_t> {
+    let t = ctx.find (this.name)
+    return t !== undefined
+      ? option_t.pure (t)
+      : new none_t ()
+  }
 }
 
 export
@@ -194,6 +214,20 @@ class apply_t extends exp_t {
         `unknown fun value: ${fun}`
       )
     }
+  }
+
+  synth (ctx: ctx_t): option_t <type_t> {
+    return this.rator.synth (ctx)
+      .bind (rator_type => {
+        if (rator_type instanceof arrow_t) {
+          return this.rand.check (ctx, rator_type.arg)
+            .bind (_ => {
+              return option_t.pure (rator_type.ret)
+            })
+        } else {
+          return new none_t ()
+        }
+      })
   }
 }
 
@@ -640,12 +674,69 @@ class the_t extends exp_t {
 
   eq (that: exp_t): boolean {
     return that instanceof the_t
-      && this.t === that.t
+      && this.t.eq (that.t)
       && this.exp.eq (that.exp)
   }
 
   eval (env: env_t): value_t {
     return this.exp.eval (env)
+  }
+
+  synth (ctx: ctx_t): option_t <type_t> {
+    return option_t.pure (this.t)
+  }
+}
+
+export
+class rec_nat_t extends exp_t {
+  t: type_t
+  target: exp_t
+  base: exp_t
+  step: exp_t
+
+  constructor (
+    t: type_t,
+    target: exp_t,
+    base: exp_t,
+    step: exp_t,
+  ) {
+    super ()
+    this.t = t
+    this.target = target
+    this.base = base
+    this.step = step
+  }
+
+  eq (that: exp_t): boolean {
+    return that instanceof rec_nat_t
+      && this.t.eq (that.t)
+      && this.target.eq (that.target)
+      && this.base.eq (that.base)
+      && this.step.eq (that.step)
+  }
+
+  eval (env: env_t): value_t {
+    return ut.TODO ()
+  }
+
+  synth (ctx: ctx_t): option_t <type_t> {
+    return this.target.synth (ctx)
+      .bind (target_type => {
+        if (target_type.eq (new nat_t ())) {
+          return this.base.check (ctx, this.t)
+            .bind (__ => {
+              return this.step.check (
+                ctx, new arrow_t (
+                  new nat_t, new arrow_t (this.t, this.t)
+                )
+              )
+            }) .bind (__ => {
+              return option_t.pure (this.t)
+            })
+        } else {
+          return new none_t ()
+        }
+      })
   }
 }
 
@@ -676,30 +767,6 @@ class ctx_t {
         .set (name, t)
     )
   }
-}
-
-export
-function type_synth (
-  ctx: ctx_t,
-  exp: exp_t,
-): option_t <type_t> {
-  if (exp instanceof the_t) {
-    let the = exp
-    return option_t.pure (the.t)
-  } else {
-    throw new Error (
-      `unknown type of exp: ${exp.constructor.name}`
-    )
-  }
-}
-
-export
-function type_check (
-  ctx: ctx_t,
-  exp: exp_t,
-  t: type_t,
-): option_t <"ok"> {
-  throw new Error ("TODO")
 }
 
 /** 6 Typed Normalization by Evaluation */

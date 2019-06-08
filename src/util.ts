@@ -1,6 +1,11 @@
 import assert from "assert"
 
 export
+function TODO (): never {
+  throw new Error ("TODO")
+}
+
+export
 function log <T> (x: T) {
   console.dir (x, { depth: null })
 }

@@ -1,10 +1,8 @@
 * normalization by evaluation
-- [NbE/pie.ts] `module.claim`
-- [NbE/pie.ts] `exp.eqv`
-- NbE/simple.ts
-- NbE/minitt.ts
-- NbE/dependent.ts
-- NbE/system-T.ts
+- [pie] `exp.check`
+- [pie] `module.claim`
+- [pie] `exp.eqv`
+- nbe/simple.ts
 * three kinds of expression
 - expression
   value (top is constructor)
