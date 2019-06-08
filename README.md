@@ -188,11 +188,6 @@ let num = require ("cicada-lang/lib/num")
 - cell-complex based low dimensional algebraic topology library
 - [`docs/a-recursive-combinatorial-description-of-cell-complex.md`](docs/a-recursive-combinatorial-description-of-cell-complex.md)
 
-### `gh` graph
-
-- [TODO]
-- graph theory -- one dimensional cell-complex
-
 ### `hl` homology
 
 - [cellular homology](https://en.wikipedia.org/wiki/Cellular_homology) of cell-complex
