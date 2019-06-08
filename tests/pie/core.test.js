@@ -27,17 +27,6 @@ test ("exp.eval", t => {
   t.pass ()
 })
 
-test ("module.define", t => {
-  {
-    let m = new cc.module_t ()
-    m.define ("id", new cc.lambda_t ("x", new cc.var_t ("x")))
-    m.run (new cc.var_t ("id"))
-    m.run (new cc.lambda_t ("x", new cc.var_t ("x")))
-  }
-
-  t.pass ()
-})
-
 test ("freshen", t => {
   let x = "x"
 
@@ -91,26 +80,6 @@ test ("normalize", t => {
       new cc.lambda_t ("y", new cc.var_t ("y"))
     )
   )
-})
-
-test ("church", t => {
-  new cc.module_t ()
-    .use (cc.church)
-    .run (cc.to_church (0))
-    .run (cc.to_church (1))
-    .run (cc.to_church (2))
-    .run (cc.to_church (3))
-    .run (
-      new cc.apply_t (
-        new cc.apply_t (
-          new cc.var_t ("church_add"),
-          cc.to_church (2),
-        ),
-        cc.to_church (2),
-      )
-    )
-
-  t.pass ()
 })
 
 test ("exp.synth", t => {
@@ -187,6 +156,90 @@ test ("exp.check", t => {
     ),
     new ok_t ("ok"),
   )
+
+  t.pass ()
+})
+
+test ("module.define", t => {
+  // ((define three
+  //   (the Nat
+  //    (add1 (add1 (add1 zero)))))
+  //  (define +
+  //   (the (-> Nat (-> Nat Nat))
+  //    (lambda (n)
+  //     (lambda (k)
+  //      (rec Nat n
+  //       k
+  //       (lambda (pred)
+  //        (lambda (almost-sum)
+  //         (add1 almost-sum))))))))
+  //  (+ three)
+  //  ((+ three) three))
+  let m = new cc.module_t ()
+
+  m.claim (
+    "three",
+    new cc.nat_t (),
+  )
+  m.define (
+    "three",
+    new cc.add1_t (
+      new cc.add1_t (
+        new cc.add1_t (
+          new cc.zero_t ()
+        )
+      )
+    )
+  )
+
+  m.claim (
+    "+",
+    new cc.arrow_t (
+      new cc.nat_t (),
+      new cc.arrow_t (
+        new cc.nat_t (),
+        new cc.nat_t (),
+      )
+    )
+  )
+  m.define (
+    "+",
+    new cc.lambda_t (
+      "n", new cc.lambda_t (
+        "k", new cc.rec_nat_t (
+          new cc.nat_t (),
+          new cc.var_t ("k"),
+          new cc.lambda_t (
+            "prev", new cc.lambda_t (
+              "almost", new cc.apply_t (
+                new cc.add1_t (new cc.var_t ("almost"))
+              )
+            )
+          )
+        )
+      )
+    )
+  )
+
+  m.synth (
+    new cc.apply_t (
+      new cc.var_t ("+"),
+      new cc.var_t ("three"),
+    )
+  )
+
+  m.synth (
+    new cc.apply_t (
+      new cc.apply_t (
+        new cc.var_t ("+"),
+        new cc.var_t ("three"),
+      ),
+      new cc.var_t ("three"),
+    )
+  )
+
+  // m.run (new cc.var_t ("id"))
+  // m.run (new cc.lambda_t ("x", new cc.var_t ("x")))
 
   t.pass ()
 })

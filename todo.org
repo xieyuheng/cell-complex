@@ -1,9 +1,8 @@
 - docs inference rules in the little typer
 * normalization by evaluation
 - better `error_msg_t` for `result_t <_, error_msg_t>`
-- [pie] `module.claim`
 - [pie] `exp.eqv`
-- nbe/simple.ts
+- [maybe] nbe/simple.ts
 * three kinds of expression
 - expression
   value (top is constructor)

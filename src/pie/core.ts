@@ -282,14 +282,51 @@ class apply_t extends exp_t {
 
 /** 1.3 Adding Definitions */
 
+/**
+ * The typing context.
+ */
+export
+class ctx_t {
+  map: Map <string, type_t>
+
+  constructor (
+    map: Map <string, type_t> = new Map ()
+  ) {
+    this.map = map
+  }
+
+  find (name: string): option_t <type_t> {
+    let value = this.map.get (name)
+    if (value !== undefined) {
+      return new some_t (value)
+    } else {
+      return new none_t ()
+    }
+  }
+
+  copy (): ctx_t {
+    return new ctx_t (new Map (this.map))
+  }
+
+  ext (name: string, t: type_t): ctx_t {
+    return new ctx_t (
+      new Map (this.map)
+        .set (name, t)
+    )
+  }
+}
+
 export
 class module_t {
   env: env_t
+  ctx: ctx_t
 
   constructor (
-    env: env_t = new env_t
+    env: env_t = new env_t (),
+    ctx: ctx_t = new ctx_t (),
   ) {
     this.env = env
+    this.ctx = ctx
   }
 
   copy (): module_t {
@@ -311,15 +348,47 @@ class module_t {
     return this
   }
 
+  claim (name: string, t: type_t): this {
+    this.ctx = this.ctx.ext (name, t)
+    return this
+  }
+
   define (name: string, exp: exp_t): this {
-    this.env = this.env.ext (name, exp.eval (this.env))
+    let t = this.ctx.find (name) .unwrap_or_throw (
+      new Error (`name: ${name} is not claimed before define`)
+    )
+    exp.check (this.ctx, t) .match ({
+      ok: _value => {},
+      err: error => {
+        new Error (
+          `type check fail for name: ${name}, error: ${error}`
+        )
+      }
+    })
+    // TODO
+    // this.env = this.env.ext (name, exp.eval (this.env))
     return this
   }
 
   run (exp: exp_t): this {
-    ut.log (
-      normalize (this.env, exp)
-    )
+    exp.synth (this.ctx) .match ({
+      ok: t => ut.log (
+        new the_t (t, normalize (this.env, exp))
+      ),
+      err: error => new Error (
+        `type synth fail for name: ${name}, error: ${error}`
+      ),
+    })
+    return this
+  }
+
+  synth (exp: exp_t): this {
+    exp.synth (this.ctx) .match ({
+      ok: t => ut.log (t),
+      err: error => new Error (
+        `type synth fail for name: ${name}, error: ${error}`
+      ),
+    })
     return this
   }
 }
@@ -509,102 +578,6 @@ function normalize (
     new Set (),
     exp.eval (env),
   )
-}
-
-/** 3.3 Example: Church Numerals */
-
-export
-let church = new module_t ()
-
-// (define church-zero
-//  (lambda (f)
-//   (lambda (x)
-//    x)))
-
-// (define church-add1
-//  (lambda (prev)
-//   (lambda (f)
-//    (lambda (x)
-//     (f ((prev f) x))))))
-
-// (define church-add
-//  (lambda (j)
-//   (lambda (k)
-//    (lambda (f)
-//     (lambda (x)
-//      ((j f) ((k f) x)))))))
-
-// TODO
-// parser for the following js-like syntax
-
-// church_zero = (f) => (x) => x
-// church_add1 = (prev) => (f) => (x) => f (prev (f) (x))
-// church_add = (j) => (k) => (f) => (x) => j (f) (k (f) (x))
-
-// with currying
-// church_zero = (f, x) => x
-// church_add1 = (prev, f, x) => f (prev (f, x))
-// church_add = (j, k, f, x) => j (f, k (f, x))
-
-church.define (
-  "church_zero", new lambda_t (
-    "f", new lambda_t (
-      "x", new var_t ("x")
-    )
-  )
-)
-
-church.define (
-  "church_add1", new lambda_t (
-    "prev", new lambda_t (
-      "f", new lambda_t (
-        "x", new apply_t (
-          new var_t ("f"),
-          new apply_t (
-            new apply_t (
-              new var_t ("prev"),
-              new var_t ("f"),
-            ),
-            new var_t ("x"),
-          )
-        )
-      )
-    )
-  )
-)
-
-church.define (
-  "church_add", new lambda_t (
-    "j", new lambda_t (
-      "k", new lambda_t (
-        "f", new lambda_t (
-          "x", new apply_t (
-            new apply_t (
-              new var_t ("j"),
-              new var_t ("f"),
-            ),
-            new apply_t (
-              new apply_t (
-                new var_t ("k"),
-                new var_t ("f"),
-              ),
-              new var_t ("x"),
-            )
-          )
-        )
-      )
-    )
-  )
-)
-
-export
-function to_church (n: number): exp_t {
-  let exp: exp_t = new var_t ("church_zero")
-  while (n > 0) {
-    exp = new apply_t (new var_t ("church_add1"), exp)
-    n -= 1
-  }
-  return exp
 }
 
 /** 4 Error handling */
@@ -878,40 +851,6 @@ class add1_t extends exp_t {
         "the type of add1_t should be nat_t"
       )
     }
-  }
-}
-
-/**
- * The typing context.
- */
-export
-class ctx_t {
-  map: Map <string, type_t>
-
-  constructor (
-    map: Map <string, type_t> = new Map ()
-  ) {
-    this.map = map
-  }
-
-  find (name: string): option_t <type_t> {
-    let value = this.map.get (name)
-    if (value !== undefined) {
-      return new some_t (value)
-    } else {
-      return new none_t ()
-    }
-  }
-
-  copy (): ctx_t {
-    return new ctx_t (new Map (this.map))
-  }
-
-  ext (name: string, t: type_t): ctx_t {
-    return new ctx_t (
-      new Map (this.map)
-        .set (name, t)
-    )
   }
 }
 
