@@ -2,7 +2,6 @@ import assert from "assert"
 import * as ut from "../util"
 
 import {
-  option_t, some_t, none_t,
   result_t, ok_t, err_t,
 } from "../prelude"
 
@@ -108,16 +107,20 @@ abstract class exp_t {
   abstract eq (that: exp_t): boolean
   abstract eval (env: env_t): value_t
 
-  synth (ctx: ctx_t): option_t <type_t> {
-    return new none_t ()
+  synth (ctx: ctx_t): result_t <type_t, string> {
+    return new err_t (
+      `synth is not implemented for type: ${this.constructor.name}`
+    )
   }
 
-  check (ctx: ctx_t, t: type_t): option_t <"ok"> {
+  check (ctx: ctx_t, t: type_t): result_t <"ok", string> {
     return this.synth (ctx) .bind (t2 => {
       if (t2.eq (t)) {
-        return option_t.pure ("ok")
+        return result_t.pure ("ok")
       } else {
-        return new none_t ()
+        return new err_t (
+          `check is not implemented for type: ${this.constructor.name}`
+        )
       }
     })
   }
@@ -147,7 +150,7 @@ class lambda_t extends exp_t {
     return new closure_t (env, this.name, this.body)
   }
 
-  check (ctx: ctx_t, t: type_t): option_t <"ok"> {
+  check (ctx: ctx_t, t: type_t): result_t <"ok", string> {
     if (t instanceof arrow_t) {
       let arrow = t
       return this.body.check (
@@ -155,7 +158,9 @@ class lambda_t extends exp_t {
         arrow.ret,
       )
     } else {
-      return new none_t ()
+      return new err_t (
+        `type of lambda is not arrow_t, bound name: ${this.name}`
+      )
     }
   }
 }
@@ -186,11 +191,13 @@ class var_t extends exp_t {
     }
   }
 
-  synth (ctx: ctx_t): option_t <type_t> {
+  synth (ctx: ctx_t): result_t <type_t, string> {
     let t = ctx.find (this.name)
     return t !== undefined
-      ? option_t.pure (t)
-      : new none_t ()
+      ? result_t.pure (t)
+      : new err_t (
+        "can not find var in ctx"
+      )
   }
 }
 
@@ -230,16 +237,18 @@ class apply_t extends exp_t {
     }
   }
 
-  synth (ctx: ctx_t): option_t <type_t> {
+  synth (ctx: ctx_t): result_t <type_t, string> {
     return this.rator.synth (ctx)
       .bind (rator_type => {
         if (rator_type instanceof arrow_t) {
           return this.rand.check (ctx, rator_type.arg)
             .bind (_ => {
-              return option_t.pure (rator_type.ret)
+              return result_t.pure (rator_type.ret)
             })
         } else {
-          return new none_t ()
+          return new err_t (
+            "rator type is not arrow_t"
+          )
         }
       })
   }
@@ -571,7 +580,7 @@ function to_church (n: number): exp_t {
  * that can be used while constructing a program.
  */
 
-/** we need `result_t` `option_t` */
+/** we need `result_t` `result_t` */
 
 /** 5 Bidirectional Type Checking */
 
@@ -696,8 +705,8 @@ class the_t extends exp_t {
     return this.exp.eval (env)
   }
 
-  synth (ctx: ctx_t): option_t <type_t> {
-    return option_t.pure (this.t)
+  synth (ctx: ctx_t): result_t <type_t, string> {
+    return result_t.pure (this.t)
   }
 }
 
@@ -733,7 +742,7 @@ class rec_nat_t extends exp_t {
     return ut.TODO ()
   }
 
-  synth (ctx: ctx_t): option_t <type_t> {
+  synth (ctx: ctx_t): result_t <type_t, string> {
     return this.target.synth (ctx)
       .bind (target_type => {
         if (target_type.eq (new nat_t ())) {
@@ -745,10 +754,12 @@ class rec_nat_t extends exp_t {
                 )
               )
             }) .bind (__ => {
-              return option_t.pure (this.t)
+              return result_t.pure (this.t)
             })
         } else {
-          return new none_t ()
+          return new err_t (
+            "target type is not nat_t"
+          )
         }
       })
   }
@@ -768,11 +779,13 @@ class zero_t extends exp_t {
     return ut.TODO ()
   }
 
-  check (ctx: ctx_t, t: type_t): option_t <"ok"> {
+  check (ctx: ctx_t, t: type_t): result_t <"ok", string> {
     if (t.eq (new nat_t ())) {
-      return option_t.pure ("ok")
+      return result_t.pure ("ok")
     } else {
-      return new none_t ()
+      return new err_t (
+        "the type of zero should be nat_t"
+      )
     }
   }
 }
@@ -795,11 +808,13 @@ class add1_t extends exp_t {
     return ut.TODO ()
   }
 
-  check (ctx: ctx_t, t: type_t): option_t <"ok"> {
+  check (ctx: ctx_t, t: type_t): result_t <"ok", string> {
     if (t.eq (new nat_t ())) {
       return this.prev.check (ctx, t)
     } else {
-      return new none_t ()
+      return new err_t (
+        "the type of add1_t should be nat_t"
+      )
     }
   }
 }
