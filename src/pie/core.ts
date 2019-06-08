@@ -12,7 +12,7 @@ import {
  * - http://davidchristiansen.dk/tutorials/nbe/
  */
 
-/** 1 Evaluating Untyped λ-Calculus */
+/** 1 Evaluating Untyped lambda-Calculus */
 
 /**
  * Writing an evaluator requires the following steps:
@@ -113,6 +113,12 @@ abstract class exp_t {
     )
   }
 
+  /*
+    ctx :- e => B
+    B == A
+    -----------------
+    ctx :- e <= A
+  */
   check (ctx: ctx_t, t: type_t): result_t <"ok", string> {
     return this.synth (ctx) .bind (t2 => {
       if (t2.eq (t)) {
@@ -149,6 +155,12 @@ class lambda_t extends exp_t {
   eval (env: env_t): closure_t {
     return new closure_t (env, this.name, this.body)
   }
+
+  /*
+    ctx.ext (x, A) :- e <= B
+    -------------------------
+    ctx :- lambda (x) { e } <= A -> B
+  */
 
   check (ctx: ctx_t, t: type_t): result_t <"ok", string> {
     if (t instanceof arrow_t) {
@@ -190,6 +202,11 @@ class var_t extends exp_t {
       )
     }
   }
+
+  /*
+    --------------------------
+    ctx.find (x, A) :- x => A
+  */
 
   synth (ctx: ctx_t): result_t <type_t, string> {
     let t = ctx.find (this.name)
@@ -236,6 +253,13 @@ class apply_t extends exp_t {
       )
     }
   }
+
+  /*
+    ctx :- e1 => A -> B
+    ctx :- e2 <= A
+    ---------------
+    ctx :- (e1 e2) => B
+  */
 
   synth (ctx: ctx_t): result_t <type_t, string> {
     return this.rator.synth (ctx)
@@ -316,6 +340,10 @@ function freshen (
 /** 3.1 Normal Forms */
 
 /**
+ * <exp> ::= <id> | (lambda (<id>) <exp>) | (<exp> <exp>)
+ */
+
+/**
  * equivalence relation of lambda terms.
 
  * alpha-equivalence:
@@ -351,7 +379,7 @@ function freshen (
 /**
  * Here, we adopt the convention that normal forms are those
  * that contain no reducible expressions, or redexes,
- * which is to say that there are no λ-expressions
+ * which is to say that there are no lambda-expressions
  * directly applied to an argument.
 
  * Because α-equivalence is easier to check than β-equivalence,
@@ -362,7 +390,7 @@ function freshen (
 /** 3.2 Finding Normal Forms */
 
 /**
- * When reducing under λ,
+ * When reducing under lambda,
  * there will also be variables that
  * do not have a value in the environment.
  * To handle these cases,
@@ -376,6 +404,11 @@ function freshen (
  * In this language, there are two neutral expressions:
  * variables that do not yet have a value,
  * and applications where the function position is neutral.
+ */
+
+/**
+ * <norm> ::= <neu> | (lambda (<id>) <norm>)
+ * <neu> ::= <id> | (<neu> <norm>)
  */
 
 /**
@@ -479,21 +512,21 @@ export
 let church = new module_t ()
 
 // (define church-zero
-//  (λ (f)
-//   (λ (x)
+//  (lambda (f)
+//   (lambda (x)
 //    x)))
 
 // (define church-add1
-//  (λ (prev)
-//   (λ (f)
-//    (λ (x)
+//  (lambda (prev)
+//   (lambda (f)
+//    (lambda (x)
 //     (f ((prev f) x))))))
 
 // (define church-add
-//  (λ (j)
-//   (λ (k)
-//    (λ (f)
-//     (λ (x)
+//  (lambda (j)
+//   (lambda (k)
+//    (lambda (f)
+//     (lambda (x)
 //      ((j f) ((k f) x)))))))
 
 // TODO
@@ -705,6 +738,11 @@ class the_t extends exp_t {
     return this.exp.eval (env)
   }
 
+  /*
+    ctx :- e <= A
+    -----------------
+    ctx :- e: A => A
+  */
   synth (ctx: ctx_t): result_t <type_t, string> {
     return result_t.pure (this.t)
   }
@@ -741,6 +779,14 @@ class rec_nat_t extends exp_t {
   eval (env: env_t): value_t {
     return ut.TODO ()
   }
+
+  /*
+    ctx :- n <= Nat
+    ctx :- b => A
+    ctx :- s => Nat -> A -> A
+    -----------------------------------
+    ctx :- rec [A] (n, b, s) => A
+  */
 
   synth (ctx: ctx_t): result_t <type_t, string> {
     return this.target.synth (ctx)
@@ -779,6 +825,11 @@ class zero_t extends exp_t {
     return ut.TODO ()
   }
 
+  /*
+    -------------------
+    ctx :- zero <= Nat
+  */
+
   check (ctx: ctx_t, t: type_t): result_t <"ok", string> {
     if (t.eq (new nat_t ())) {
       return result_t.pure ("ok")
@@ -807,6 +858,12 @@ class add1_t extends exp_t {
   eval (env: env_t): value_t {
     return ut.TODO ()
   }
+
+  /*
+    ctx :- n <= Nat
+    -------------------
+    ctx :- add1 (n) <= Nat
+  */
 
   check (ctx: ctx_t, t: type_t): result_t <"ok", string> {
     if (t.eq (new nat_t ())) {

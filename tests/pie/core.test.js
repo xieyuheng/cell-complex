@@ -50,8 +50,8 @@ test ("freshen", t => {
 })
 
 test ("read_back", t => {
-  // ((λ (x) (λ (y) (x y))) (λ (x) x))
-  // (λ (y) y)
+  // ((lambda (x) (lambda (y) (x y))) (lambda (x) x))
+  // (lambda (y) y)
 
   let exp = cc.read_back (
     new Set (),
@@ -72,8 +72,8 @@ test ("read_back", t => {
 })
 
 test ("normalize", t => {
-  // ((λ (x) (λ (y) (x y))) (λ (x) x))
-  // (λ (y) y)
+  // ((lambda (x) (lambda (y) (x y))) (lambda (x) x))
+  // (lambda (y) y)
 
   let exp = cc.normalize (
     new cc.env_t (),
@@ -154,10 +154,10 @@ test ("exp.check", t => {
     new ok_t ("ok"),
   )
 
-  // (λ (j)
-  //  (λ (k)
-  //   (rec Nat j k (λ (n-1)
-  //                 (λ (sum)
+  // (lambda (j)
+  //  (lambda (k)
+  //   (rec Nat j k (lambda (n-1)
+  //                 (lambda (sum)
   //                  (add1 sum))))))
   // (-> Nat (-> Nat Nat))
 

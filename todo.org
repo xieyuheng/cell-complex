@@ -1,5 +1,7 @@
+- [pie] use `option_t` in in `env.find` and `ctx.find`
+- docs inference rules in the little typer
 * normalization by evaluation
-- a little language (again) for inference rules -- to docs exp's method
+- better `error_msg_t` for `result_t <_, error_msg_t>`
 - [pie] `module.claim`
 - [pie] `exp.eqv`
 - nbe/simple.ts
