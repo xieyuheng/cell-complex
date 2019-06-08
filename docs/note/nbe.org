@@ -107,12 +107,6 @@
   - <norm> ::= <neu> | (lambda (<id>) <norm>)
     <neu> ::= <id> | (<neu> <norm>)
 
-  - Note that, the follow definition of `neutral_t`
-    is different form the mutual recersive definitions
-    of `<norm>` and `<neu>`.
-
-  - The definition of `neutral_t` is to help implement `read_back`.
-
 * 5 Bidirectional Type Checking
 
   - Bidirectional type checking is a technique
