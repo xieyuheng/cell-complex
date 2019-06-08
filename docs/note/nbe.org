@@ -1,6 +1,6 @@
 #+title: Normalization by Evaluation
 
-* info
+* [note] info
 
   - Checking Dependent Types
     with Normalization by Evaluation: A Tutorial
