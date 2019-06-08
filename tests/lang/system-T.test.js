@@ -1,6 +1,6 @@
 import test from "ava"
 
-import * as cc from "../../lib/pie/core"
+import * as cc from "../../lib/lang/system-T"
 import * as ut from "../../lib/util"
 
 import {
