@@ -109,15 +109,17 @@ abstract class exp_t {
   abstract eval (env: env_t): value_t
 
   synth (ctx: ctx_t): option_t <type_t> {
-    throw new Error (
-      `synth is not implemented for type: ${this.constructor.name}`
-    )
+    return new none_t ()
   }
 
-  check (ctx: ctx_t, t: type_t): option_t <type_t> {
-    throw new Error (
-      `check is not implemented for type: ${this.constructor.name}`
-    )
+  check (ctx: ctx_t, t: type_t): option_t <"ok"> {
+    return this.synth (ctx) .bind (t2 => {
+      if (t2.eq (t)) {
+        return option_t.pure ("ok")
+      } else {
+        return new none_t ()
+      }
+    })
   }
 }
 
@@ -143,6 +145,18 @@ class lambda_t extends exp_t {
 
   eval (env: env_t): closure_t {
     return new closure_t (env, this.name, this.body)
+  }
+
+  check (ctx: ctx_t, t: type_t): option_t <"ok"> {
+    if (t instanceof arrow_t) {
+      let arrow = t
+      return this.body.check (
+        ctx.ext (this.name, arrow.arg),
+        arrow.ret,
+      )
+    } else {
+      return new none_t ()
+    }
   }
 }
 
@@ -737,6 +751,56 @@ class rec_nat_t extends exp_t {
           return new none_t ()
         }
       })
+  }
+}
+
+export
+class zero_t extends exp_t {
+  constructor () {
+    super ()
+  }
+
+  eq (that: exp_t): boolean {
+    return that instanceof zero_t
+  }
+
+  eval (env: env_t): value_t {
+    return ut.TODO ()
+  }
+
+  check (ctx: ctx_t, t: type_t): option_t <"ok"> {
+    if (t.eq (new nat_t ())) {
+      return option_t.pure ("ok")
+    } else {
+      return new none_t ()
+    }
+  }
+}
+
+export
+class add1_t extends exp_t {
+  prev: exp_t
+
+  constructor (prev: exp_t) {
+    super ()
+    this.prev = prev
+  }
+
+  eq (that: exp_t): boolean {
+    return that instanceof add1_t
+      && this.prev.eq (that.prev)
+  }
+
+  eval (env: env_t): value_t {
+    return ut.TODO ()
+  }
+
+  check (ctx: ctx_t, t: type_t): option_t <"ok"> {
+    if (t.eq (new nat_t ())) {
+      return this.prev.check (ctx, t)
+    } else {
+      return new none_t ()
+    }
   }
 }
 

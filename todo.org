@@ -1,5 +1,6 @@
 * normalization by evaluation
-- [pie] `exp.check`
+- a little language (again) for inference rules
+- [pie] test `synth` and `check`
 - [pie] `module.claim`
 - [pie] `exp.eqv`
 - nbe/simple.ts
