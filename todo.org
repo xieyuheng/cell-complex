@@ -1,9 +1,9 @@
 * normalization by evaluation
-- [lambda-calculus.ts] `exp.eqv`
+- [NbE/pie.ts] `module.claim`
+- [NbE/pie.ts] `exp.eqv`
 - NbE/simple.ts
 - NbE/minitt.ts
 - NbE/dependent.ts
-- NbE/pie.ts
 - NbE/system-T.ts
 * three kinds of expression
 - expression

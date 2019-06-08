@@ -153,7 +153,9 @@ class var_t extends exp_t {
       let value = found
       return value
     } else {
-      throw new Error (`undefined name: ${this.name}`)
+      throw new Error (
+        `undefined name: ${this.name}`
+      )
     }
   }
 }
@@ -579,5 +581,125 @@ class arrow_t extends type_t {
 }
 
 /** 5.2 Checking Types */
+
+/**
+ * When writing a bidirectional type checker,
+ * the first step is to classify the expressions
+ * into introduction and elimination forms.
+
+ * The introduction forms, also called constructors,
+ * allow members of a type to be created,
+ * while the eliminators expose the information
+ * inside of the constructors to computation.
+
+ * In this section,
+ * the constructor of the `->` type is `lambda`
+ * and the constructors of `Nat` are `zero` and `add1`.
+ * The eliminators are function application and `rec`.
+ */
+
+/**
+ * Under bidirectional type checking,
+ * the type system is split into two modes:
+ * in checking mode, an expression is
+ * analyzed against a known type to see if it fits,
+ * while in synthesis mode,
+ * a type is derived directly from an expression.
+ */
+
+/**
+ * Each expression for which a type can be synthesized
+ * can be checked against a given type
+ * by performing the synthesis
+ * and then comparing the synthesized type to the desired type.
+
+ * This is where subsumption
+ * or some other nontrivial type equality check can be inserted.
+
+ * Additionally, type annotations (here, written e∈A)
+ * allow an expression that can be checked
+ * to be used where synthesis is required.
+
+ * Usually, introduction forms have checking rules,
+ * while elimination forms admit synthesis.
+ */
+
+export
+class the_t extends exp_t {
+  t: type_t
+  exp: exp_t
+
+  constructor (
+    t: type_t,
+    exp: exp_t,
+  ) {
+    super ()
+    this.t = t
+    this.exp = exp
+  }
+
+  eq (that: exp_t): boolean {
+    return that instanceof the_t
+      && this.t === that.t
+      && this.exp.eq (that.exp)
+  }
+
+  eval (env: env_t): value_t {
+    return this.exp.eval (env)
+  }
+}
+
+/**
+ * The typing context.
+ */
+export
+class ctx_t {
+  map: Map <string, type_t>
+
+  constructor (
+    map: Map <string, type_t> = new Map ()
+  ) {
+    this.map = map
+  }
+
+  find (name: string): type_t | undefined {
+    return this.map.get (name)
+  }
+
+  copy (): ctx_t {
+    return new ctx_t (new Map (this.map))
+  }
+
+  ext (name: string, t: type_t): ctx_t {
+    return new ctx_t (
+      new Map (this.map)
+        .set (name, t)
+    )
+  }
+}
+
+export
+function type_synth (
+  ctx: ctx_t,
+  exp: exp_t,
+): option_t <type_t> {
+  if (exp instanceof the_t) {
+    let the = exp
+    return option_t.pure (the.t)
+  } else {
+    throw new Error (
+      `unknown type of exp: ${exp.constructor.name}`
+    )
+  }
+}
+
+export
+function type_check (
+  ctx: ctx_t,
+  exp: exp_t,
+  t: type_t,
+): option_t <"ok"> {
+  throw new Error ("TODO")
+}
 
 /** 6 Typed Normalization by Evaluation */
