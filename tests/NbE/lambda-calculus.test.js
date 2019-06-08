@@ -1,6 +1,6 @@
 import test from "ava"
 
-import * as cc from "../../lib/NbE/untyped-lambda-calculus"
+import * as cc from "../../lib/NbE/lambda-calculus"
 import * as ut from "../../lib/util"
 
 test ("exp.eval", t => {

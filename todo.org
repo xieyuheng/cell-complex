@@ -1,5 +1,5 @@
 * normalization by evaluation
-- [untyped-lambda-calculus.ts] `exp.eqv`
+- [lambda-calculus.ts] `exp.eqv`
 - NbE/simple.ts
 - NbE/minitt.ts
 - NbE/dependent.ts
