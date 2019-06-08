@@ -2,6 +2,7 @@ import assert from "assert"
 import * as ut from "../util"
 
 import {
+  option_t, some_t, none_t,
   result_t, ok_t, err_t,
 } from "../prelude"
 
@@ -41,8 +42,13 @@ class env_t {
     this.map = map
   }
 
-  find (name: string): value_t | undefined {
-    return this.map.get (name)
+  find (name: string): option_t <value_t> {
+    let value = this.map.get (name)
+    if (value !== undefined) {
+      return new some_t (value)
+    } else {
+      return new none_t ()
+    }
   }
 
   copy (): env_t {
@@ -192,15 +198,11 @@ class var_t extends exp_t {
   }
 
   eval (env: env_t): value_t {
-    let found = env.find (this.name)
-    if (found !== undefined) {
-      let value = found
-      return value
-    } else {
-      throw new Error (
+    return env.find (this.name) .unwrap_or_throw (
+      new Error (
         `undefined name: ${this.name}`
       )
-    }
+    )
   }
 
   /*
@@ -209,12 +211,12 @@ class var_t extends exp_t {
   */
 
   synth (ctx: ctx_t): result_t <type_t, string> {
-    let t = ctx.find (this.name)
-    return t !== undefined
-      ? result_t.pure (t)
-      : new err_t (
+    return ctx.find (this.name) .match ({
+      some: t => result_t.pure (t),
+      none: () => new err_t (
         "can not find var in ctx"
-      )
+      ),
+    })
   }
 }
 
@@ -297,11 +299,14 @@ class module_t {
   /** `use` means "import all from" */
   use (other: module_t): this {
     for (let [name, value] of other.env.map.entries ()) {
-      if (this.env.find (name) === undefined) {
-        this.env.map.set (name, value)
-      } else {
-        throw new Error (`name alreay defined: ${name}`)
-      }
+      this.env.find (name) .match ({
+        some: _value => {
+          throw new Error (`name alreay defined: ${name}`)
+        },
+        none: () => {
+          this.env.map.set (name, value)
+        },
+      })
     }
     return this
   }
@@ -889,8 +894,13 @@ class ctx_t {
     this.map = map
   }
 
-  find (name: string): type_t | undefined {
-    return this.map.get (name)
+  find (name: string): option_t <type_t> {
+    let value = this.map.get (name)
+    if (value !== undefined) {
+      return new some_t (value)
+    } else {
+      return new none_t ()
+    }
   }
 
   copy (): ctx_t {

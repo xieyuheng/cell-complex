@@ -1,4 +1,3 @@
-- [pie] use `option_t` in in `env.find` and `ctx.find`
 - docs inference rules in the little typer
 * normalization by evaluation
 - better `error_msg_t` for `result_t <_, error_msg_t>`
