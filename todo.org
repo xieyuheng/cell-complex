@@ -2,10 +2,6 @@
 * normalization by evaluation
 - better error report
 - `error_msg_t` for `result_t <_, error_msg_t>`
-* syntax
-- renew parsing-tech and cicada-rs
-- scanner/
-- parsing-tech/
 * three kinds of expression
 - expression
   value (top is constructor)
@@ -290,3 +286,8 @@
 * dance
 - 3 circle dance
 - 4 circle dance
+* syntax
+- concentrate on semantics first
+- renew parsing-tech and cicada-rs
+- scanner/
+- parsing-tech/

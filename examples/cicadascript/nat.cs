@@ -6,7 +6,7 @@ union nat_t {
 class zero_t {}
 
 class succ_t {
-  prev : nat_t
+  prev: nat_t
 }
 
 add: (
@@ -46,7 +46,7 @@ union nat_even_t {
   zero_even_t
   even_plus_two_even_t
 } {
-  n : nat_t
+  n: nat_t
 }
 
 class zero_even_t {
@@ -68,9 +68,9 @@ two_even: nat_even_t (succ_t (succ_t (zero_t))) = {
 }
 
 add_assoc: (
-  x : nat_t,
-  y : nat_t,
-  z : nat_t,
+  x: nat_t,
+  y: nat_t,
+  z: nat_t,
 ) -> eqv_t (
   add (add (x, y), z),
   add (x, add (y, z)),
@@ -82,8 +82,8 @@ add_assoc: (
 }
 
 add_commu: (
-  x : nat_t,
-  y : nat_t,
+  x: nat_t,
+  y: nat_t,
 ) -> eqv_t (
   add (x, y),
   add (y, x),
@@ -96,7 +96,7 @@ add_commu: (
 }
 
 add_zero_commu: (
-  x : nat_t
+  x: nat_t
 ) -> eqv_t (
   add (zero_t, x),
   add (x, zero_t),

@@ -209,7 +209,8 @@ test ("module.define", t => {
           VAR ("k"),
           LAMBDA (
             "prev", LAMBDA (
-              "almost", ADD1 (VAR ("almost"))
+              "almost",
+              ADD1 (VAR ("almost")),
             )
           )
         )
