@@ -184,6 +184,17 @@
 
 *** 6.3 Typed Read-Back
 
+    - In untyped normalization by evaluation,
+      values were examined to determine how to read them back.
+
+      In typed NbE, however,
+      each type can specify its own notion of equality,
+      and thus the syntax of its normal forms.
+
+      Therefore, reading back is now recursive
+      on the structure of the type
+      rather than the structure of the value.
+
 * 7 A Tiny Piece of Pie
 
 *** 7.1 The Language

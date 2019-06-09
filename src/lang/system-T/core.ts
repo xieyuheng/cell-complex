@@ -347,6 +347,10 @@ class module_t {
     this.ctx = ctx
   }
 
+  get used_names (): Set <string> {
+    return new Set (this.ctx.map.keys ())
+  }
+
   copy (): module_t {
     return new module_t (this.env.copy ())
   }
@@ -389,21 +393,14 @@ class module_t {
 
   run (exp: exp_t): this {
     exp.synth (this.ctx) .match ({
-      ok: t => ut.log (
-        exp.eval (this.env)
-        // TODO
-        // new the_t (t, normalize (this.env, exp))
-      ),
-      err: error => new Error (
-        `type synth fail for name: ${name}, error: ${error}`
-      ),
-    })
-    return this
-  }
-
-  synth (exp: exp_t): this {
-    exp.synth (this.ctx) .match ({
-      ok: t => ut.log (t),
+      ok: t => {
+        let normal_exp = read_back (
+          this.used_names, t, exp.eval (this.env)
+        )
+        ut.log (
+          new the_t (t, normal_exp)
+        )
+      },
       err: error => new Error (
         `type synth fail for name: ${name}, error: ${error}`
       ),
@@ -481,49 +478,80 @@ class neutral_rec_nat_t extends neutral_t {
 export
 function read_back (
   used_names: Set <string>,
+  t: type_t,
   value: value_t,
 ): exp_t {
-  if (value instanceof closure_t) {
-    let closure = value
-    let fresh_name = freshen (
-      used_names,
-      closure.name,
-    )
-    let neutral_var = new neutral_var_t (fresh_name)
-    let inner_value = closure.body.eval (
-      closure.env.ext (closure.name, neutral_var)
-    )
-    let new_body = read_back (
-      new Set (used_names) .add (fresh_name),
-      inner_value,
-    )
-    return new lambda_t (fresh_name, new_body)
-  } else if (value instanceof neutral_var_t) {
-    let neutral_var = value
-    return new var_t (neutral_var.name)
-  } else if (value instanceof neutral_apply_t) {
-    let neutral_apply = value
-    return new apply_t (
-      read_back (used_names, neutral_apply.rator),
-      read_back (used_names, neutral_apply.rand),
+  if (t instanceof nat_t) {
+    if (value instanceof zero_value_t) {
+      return new zero_t ()
+    } else if (value instanceof add1_value_t) {
+      return new add1_t (
+        read_back (
+          used_names,
+          new nat_t (),
+          value.prev,
+        )
+      )
+    } else if (value instanceof the_neutral_t) {
+      return read_back_neutral (
+        used_names,
+        value.neutral,
+      )
+    } else {
+      throw new Error (
+        `unknown value of nat_t read_back`
+      )
+    }
+  } else if (t instanceof arrow_t) {
+    let fresh_name = freshen (used_names, "$")
+    return new lambda_t (
+      fresh_name, read_back (
+        new Set (used_names) .add (fresh_name),
+        t.ret,
+        closure_t.exe (
+          value,
+          new the_neutral_t (
+            t.arg,
+            new neutral_var_t (fresh_name),
+          )
+        )
+      )
     )
   } else {
-    ut.log (value)
     throw new Error (
-      `met unknown type of value`
+      `unknown type to read_back: ${t.constructor.name}`
     )
   }
 }
 
 export
-function normalize (
-  env: env_t,
-  exp: exp_t,
+function read_back_neutral (
+  used_names: Set <string>,
+  neutral: neutral_t,
 ): exp_t {
-  return read_back (
-    new Set (),
-    exp.eval (env),
-  )
+  if (neutral instanceof neutral_var_t) {
+    return new var_t (neutral.name)
+  } else if (neutral instanceof neutral_apply_t) {
+    let fun = neutral.rator
+    let arg = neutral.rand
+    return new apply_t (
+      read_back_neutral (used_names, fun),
+      read_back (used_names, arg.t, arg.value),
+    )
+  } else if (neutral instanceof neutral_rec_nat_t) {
+    let base = neutral.base
+    let step = neutral.step
+    return new rec_nat_t (
+      neutral.t,
+      read_back_neutral (used_names, neutral.target),
+      read_back (used_names, base.t, base.value),
+      read_back (used_names, step.t, step.value),
+    )
+  } else {
+    throw new Error (
+      `unknown neutral read_back_neutral: ${neutral.constructor.name}`
+    )
+  }
 }
 
 export

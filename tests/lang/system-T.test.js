@@ -35,50 +35,6 @@ test ("freshen", t => {
   t.pass ()
 })
 
-test ("read_back", t => {
-  // ((lambda (x) (lambda (y) (x y))) (lambda (x) x))
-  // (lambda (y) y)
-
-  let exp = cc.read_back (
-    new Set (),
-    APPLY (
-      LAMBDA ("x", LAMBDA ("y", APPLY (
-        VAR ("x"),
-        VAR ("y"),
-      ))),
-      LAMBDA ("x", VAR ("x")),
-    ) .eval (),
-  )
-
-  t.true (
-    exp.eq (
-      LAMBDA ("y", VAR ("y"))
-    )
-  )
-})
-
-test ("normalize", t => {
-  // ((lambda (x) (lambda (y) (x y))) (lambda (x) x))
-  // (lambda (y) y)
-
-  let exp = cc.normalize (
-    new cc.env_t (),
-    APPLY (
-      LAMBDA ("x", LAMBDA ("y", APPLY (
-        VAR ("x"),
-        VAR ("y"),
-      ))),
-      LAMBDA ("x", VAR ("x")),
-    ),
-  )
-
-  t.true (
-    exp.eq (
-      LAMBDA ("y", VAR ("y"))
-    )
-  )
-})
-
 test ("exp.synth", t => {
   let ctx = new cc.ctx_t ()
     .ext ("x", NAT)
@@ -181,14 +137,6 @@ test ("module.define", t => {
         )
       )
     )
-  )
-
-  m.synth (
-    APPLY (VAR ("+"), VAR ("three"))
-  )
-
-  m.synth (
-    APPLY (APPLY (VAR ("+"), VAR ("three")), VAR ("three"))
   )
 
   m.run (
