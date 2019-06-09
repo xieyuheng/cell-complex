@@ -3,10 +3,7 @@ import test from "ava"
 import * as cc from "../../lib/lang/untyped"
 import * as ut from "../../lib/util"
 
-import {
-  result_t, ok_t, err_t,
-} from "../../lib/prelude"
-
+import { result_t, ok_t, err_t } from "../../lib/result"
 
 test ("exp.eval", t => {
   {

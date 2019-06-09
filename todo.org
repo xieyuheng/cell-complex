@@ -1,5 +1,4 @@
 - docs inference rules in the little typer
-- "option.ts" and "result.ts" instead of "prelude.ts"
 * normalization by evaluation
 - use CAP syntax
 - better `error_msg_t` for `result_t <_, error_msg_t>`

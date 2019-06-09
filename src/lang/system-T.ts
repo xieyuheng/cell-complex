@@ -1,10 +1,8 @@
 import assert from "assert"
 import * as ut from "../util"
 
-import {
-  option_t, some_t, none_t,
-  result_t, ok_t, err_t,
-} from "../prelude"
+import { result_t, ok_t, err_t } from "../result"
+import { option_t, some_t, none_t } from "../option"
 
 export
 type value_t = closure_t | neutral_t
