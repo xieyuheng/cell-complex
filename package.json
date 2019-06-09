@@ -18,7 +18,7 @@
     "web": "npm run web-build; npm run web-up",
     "api-build": "typedoc src --out docs/api --mode modules --ignoreCompilerErrors",
     "api-surge": "surge docs/api api.cicada.surge.sh",
-    "api-now": "now deploy docs/api && now alias --local-config docs/api.cicada-lang.now.json",
+    "api-now": "now deploy docs/api --target production",
     "api": "npm run api-build; npm run api-surge; npm run api-now",
     "up": "git commit -m 'up'; npm run build; npm run api; npm version patch; git push; npm publish"
   },
