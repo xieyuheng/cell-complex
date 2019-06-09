@@ -180,24 +180,12 @@ test ("module.define", t => {
   )
   m.define (
     "three",
-    ADD1 (
-      ADD1 (
-        ADD1 (
-          ZERO
-        )
-      )
-    )
+    ADD1 (ADD1 (ADD1 (ZERO)))
   )
 
   m.claim (
     "+",
-    ARROW (
-      NAT,
-      ARROW (
-        NAT,
-        NAT,
-      )
-    )
+    ARROW (NAT, ARROW (NAT, NAT))
   )
   m.define (
     "+",
@@ -219,37 +207,19 @@ test ("module.define", t => {
   )
 
   m.synth (
-    APPLY (
-      VAR ("+"),
-      VAR ("three"),
-    )
+    APPLY (VAR ("+"), VAR ("three"))
   )
 
   m.synth (
-    APPLY (
-      APPLY (
-        VAR ("+"),
-        VAR ("three"),
-      ),
-      VAR ("three"),
-    )
+    APPLY (APPLY (VAR ("+"), VAR ("three")), VAR ("three"))
   )
 
   m.run (
-    APPLY (
-      VAR ("+"),
-      VAR ("three"),
-    )
+    APPLY (VAR ("+"), VAR ("three"))
   )
 
   m.run (
-    APPLY (
-      APPLY (
-        VAR ("+"),
-        VAR ("three"),
-      ),
-      VAR ("three"),
-    )
+    APPLY (APPLY (VAR ("+"), VAR ("three")), VAR ("three"))
   )
 
   t.pass ()
