@@ -390,8 +390,9 @@ class module_t {
   run (exp: exp_t): this {
     exp.synth (this.ctx) .match ({
       ok: t => ut.log (
+        exp.eval (this.env)
         // TODO
-        new the_t (t, normalize (this.env, exp))
+        // new the_t (t, normalize (this.env, exp))
       ),
       err: error => new Error (
         `type synth fail for name: ${name}, error: ${error}`

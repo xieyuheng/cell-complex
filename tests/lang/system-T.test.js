@@ -205,12 +205,11 @@ test ("module.define", t => {
       "n", LAMBDA (
         "k", REC_NAT (
           NAT,
+          VAR ("n"),
           VAR ("k"),
           LAMBDA (
             "prev", LAMBDA (
-              "almost", APPLY (
-                ADD1 (VAR ("almost"))
-              )
+              "almost", ADD1 (VAR ("almost"))
             )
           )
         )
@@ -235,22 +234,22 @@ test ("module.define", t => {
     )
   )
 
-  // m.run (
-  //   APPLY (
-  //     VAR ("+"),
-  //     VAR ("three"),
-  //   )
-  // )
+  m.run (
+    APPLY (
+      VAR ("+"),
+      VAR ("three"),
+    )
+  )
 
-  // m.run (
-  //   APPLY (
-  //     APPLY (
-  //       VAR ("+"),
-  //       VAR ("three"),
-  //     ),
-  //     VAR ("three"),
-  //   )
-  // )
+  m.run (
+    APPLY (
+      APPLY (
+        VAR ("+"),
+        VAR ("three"),
+      ),
+      VAR ("three"),
+    )
+  )
 
   t.pass ()
 })
