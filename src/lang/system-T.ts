@@ -637,3 +637,7 @@ class add1_t extends exp_t {
     }
   }
 }
+
+export let VAR = (name: string) => new var_t (name)
+export let LAMBDA = (name: string, body: exp_t) => new lambda_t (name, body)
+export let APPLY = (rator: exp_t, rand: exp_t) => new apply_t (rator, rand)

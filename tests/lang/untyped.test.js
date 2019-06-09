@@ -3,23 +3,23 @@ import test from "ava"
 import * as cc from "../../lib/lang/untyped"
 import * as ut from "../../lib/util"
 
+import {
+  VAR, LAMBDA, APPLY,
+} from "../../lib/lang/untyped"
+
 import { result_t, ok_t, err_t } from "../../lib/result"
 
 test ("exp.eval", t => {
-  {
-    let exp = new cc.lambda_t ("x", new cc.lambda_t ("y", new cc.var_t ("y")))
-    let val = exp.eval (new cc.env_t ())
-    // console.log (val)
-  }
-
-  {
-    let exp = new cc.apply_t (
-      new cc.lambda_t ("x", new cc.var_t ("x")),
-      new cc.lambda_t ("x", new cc.var_t ("x")),
+  LAMBDA (
+    "x", LAMBDA (
+      "y", VAR ("y")
     )
-    let val = exp.eval (new cc.env_t ())
-    // console.log (val)
-  }
+  ) .eval (new cc.env_t ())
+
+  APPLY (
+    LAMBDA ("x", VAR ("x")),
+    LAMBDA ("x", VAR ("x")),
+  ) .eval (new cc.env_t ())
 
   t.pass ()
 })
@@ -41,18 +41,18 @@ test ("read_back", t => {
 
   let exp = cc.read_back (
     new Set (),
-    new cc.apply_t (
-      new cc.lambda_t ("x", new cc.lambda_t ("y", new cc.apply_t (
-        new cc.var_t ("x"),
-        new cc.var_t ("y"),
+    APPLY (
+      LAMBDA ("x", LAMBDA ("y", APPLY (
+        VAR ("x"),
+        VAR ("y"),
       ))),
-      new cc.lambda_t ("x", new cc.var_t ("x")),
+      LAMBDA ("x", VAR ("x")),
     ) .eval (new cc.env_t ()),
   )
 
   t.true (
     exp.eq (
-      new cc.lambda_t ("y", new cc.var_t ("y"))
+      LAMBDA ("y", VAR ("y"))
     )
   )
 })
@@ -63,18 +63,18 @@ test ("normalize", t => {
 
   let exp = cc.normalize (
     new cc.env_t (),
-    new cc.apply_t (
-      new cc.lambda_t ("x", new cc.lambda_t ("y", new cc.apply_t (
-        new cc.var_t ("x"),
-        new cc.var_t ("y"),
+    APPLY (
+      LAMBDA ("x", LAMBDA ("y", APPLY (
+        VAR ("x"),
+        VAR ("y"),
       ))),
-      new cc.lambda_t ("x", new cc.var_t ("x")),
+      LAMBDA ("x", VAR ("x")),
     ),
   )
 
   t.true (
     exp.eq (
-      new cc.lambda_t ("y", new cc.var_t ("y"))
+      LAMBDA ("y", VAR ("y"))
     )
   )
 })
@@ -82,9 +82,9 @@ test ("normalize", t => {
 test ("module.define", t => {
   {
     let m = new cc.module_t ()
-    m.define ("id", new cc.lambda_t ("x", new cc.var_t ("x")))
-    m.run (new cc.var_t ("id"))
-    m.run (new cc.lambda_t ("x", new cc.var_t ("x")))
+    m.define ("id", LAMBDA ("x", VAR ("x")))
+    m.run (VAR ("id"))
+    m.run (LAMBDA ("x", VAR ("x")))
   }
 
   t.pass ()
@@ -98,9 +98,9 @@ test ("church", t => {
     .run (cc.to_church (2))
     .run (cc.to_church (3))
     .run (
-      new cc.apply_t (
-        new cc.apply_t (
-          new cc.var_t ("church_add"),
+      APPLY (
+        APPLY (
+          VAR ("church_add"),
           cc.to_church (2),
         ),
         cc.to_church (2),

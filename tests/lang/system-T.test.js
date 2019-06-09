@@ -5,22 +5,22 @@ import * as ut from "../../lib/util"
 
 import { result_t, ok_t, err_t } from "../../lib/result"
 
+import {
+  VAR, LAMBDA, APPLY,
+} from "../../lib/lang/system-T"
+
 
 test ("exp.eval", t => {
-  {
-    let exp = new cc.lambda_t ("x", new cc.lambda_t ("y", new cc.var_t ("y")))
-    let val = exp.eval (new cc.env_t ())
-    // console.log (val)
-  }
-
-  {
-    let exp = new cc.apply_t (
-      new cc.lambda_t ("x", new cc.var_t ("x")),
-      new cc.lambda_t ("x", new cc.var_t ("x")),
+  LAMBDA (
+    "x", LAMBDA (
+      "y", VAR ("y")
     )
-    let val = exp.eval (new cc.env_t ())
-    // console.log (val)
-  }
+  ) .eval (new cc.env_t ())
+
+  APPLY (
+    LAMBDA ("x", VAR ("x")),
+    LAMBDA ("x", VAR ("x")),
+  ) .eval (new cc.env_t ())
 
   t.pass ()
 })
@@ -42,18 +42,18 @@ test ("read_back", t => {
 
   let exp = cc.read_back (
     new Set (),
-    new cc.apply_t (
-      new cc.lambda_t ("x", new cc.lambda_t ("y", new cc.apply_t (
-        new cc.var_t ("x"),
-        new cc.var_t ("y"),
+    APPLY (
+      LAMBDA ("x", LAMBDA ("y", APPLY (
+        VAR ("x"),
+        VAR ("y"),
       ))),
-      new cc.lambda_t ("x", new cc.var_t ("x")),
+      LAMBDA ("x", VAR ("x")),
     ) .eval (new cc.env_t ()),
   )
 
   t.true (
     exp.eq (
-      new cc.lambda_t ("y", new cc.var_t ("y"))
+      LAMBDA ("y", VAR ("y"))
     )
   )
 })
@@ -64,18 +64,18 @@ test ("normalize", t => {
 
   let exp = cc.normalize (
     new cc.env_t (),
-    new cc.apply_t (
-      new cc.lambda_t ("x", new cc.lambda_t ("y", new cc.apply_t (
-        new cc.var_t ("x"),
-        new cc.var_t ("y"),
+    APPLY (
+      LAMBDA ("x", LAMBDA ("y", APPLY (
+        VAR ("x"),
+        VAR ("y"),
       ))),
-      new cc.lambda_t ("x", new cc.var_t ("x")),
+      LAMBDA ("x", VAR ("x")),
     ),
   )
 
   t.true (
     exp.eq (
-      new cc.lambda_t ("y", new cc.var_t ("y"))
+      LAMBDA ("y", VAR ("y"))
     )
   )
 })
@@ -85,7 +85,7 @@ test ("exp.synth", t => {
     .ext ("x", new cc.nat_t ())
 
   t.deepEqual (
-    new cc.var_t ("x") .synth (ctx),
+    VAR ("x") .synth (ctx),
     new ok_t (new cc.nat_t ()),
   )
 })
@@ -110,7 +110,7 @@ test ("exp.check", t => {
   )
 
   t.deepEqual (
-    new cc.lambda_t ("x", new cc.var_t ("x"))
+    LAMBDA ("x", VAR ("x"))
       .check (
         new cc.ctx_t (),
         new cc.arrow_t (
@@ -129,15 +129,15 @@ test ("exp.check", t => {
   // (-> Nat (-> Nat Nat))
 
   t.deepEqual (
-    new cc.lambda_t (
-      "j", new cc.lambda_t (
+    LAMBDA (
+      "j", LAMBDA (
         "k", new cc.rec_nat_t (
           new cc.nat_t (),
-          new cc.var_t ("j"),
-          new cc.var_t ("k"),
-          new cc.lambda_t (
-            "prev", new cc.lambda_t (
-              "sum", new cc.add1_t (new cc.var_t ("sum"))
+          VAR ("j"),
+          VAR ("k"),
+          LAMBDA (
+            "prev", LAMBDA (
+              "sum", new cc.add1_t (VAR ("sum"))
             )
           )
         )
@@ -202,15 +202,15 @@ test ("module.define", t => {
   )
   m.define (
     "+",
-    new cc.lambda_t (
-      "n", new cc.lambda_t (
+    LAMBDA (
+      "n", LAMBDA (
         "k", new cc.rec_nat_t (
           new cc.nat_t (),
-          new cc.var_t ("k"),
-          new cc.lambda_t (
-            "prev", new cc.lambda_t (
-              "almost", new cc.apply_t (
-                new cc.add1_t (new cc.var_t ("almost"))
+          VAR ("k"),
+          LAMBDA (
+            "prev", LAMBDA (
+              "almost", APPLY (
+                new cc.add1_t (VAR ("almost"))
               )
             )
           )
@@ -220,24 +220,24 @@ test ("module.define", t => {
   )
 
   m.synth (
-    new cc.apply_t (
-      new cc.var_t ("+"),
-      new cc.var_t ("three"),
+    APPLY (
+      VAR ("+"),
+      VAR ("three"),
     )
   )
 
   m.synth (
-    new cc.apply_t (
-      new cc.apply_t (
-        new cc.var_t ("+"),
-        new cc.var_t ("three"),
+    APPLY (
+      APPLY (
+        VAR ("+"),
+        VAR ("three"),
       ),
-      new cc.var_t ("three"),
+      VAR ("three"),
     )
   )
 
-  // m.run (new cc.var_t ("id"))
-  // m.run (new cc.lambda_t ("x", new cc.var_t ("x")))
+  // m.run (VAR ("id"))
+  // m.run (LAMBDA ("x", VAR ("x")))
 
   t.pass ()
 })
