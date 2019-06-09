@@ -1,6 +1,7 @@
 - docs inference rules in the little typer
 * normalization by evaluation
-- better `error_msg_t` for `result_t <_, error_msg_t>`
+- better error report
+- `error_msg_t` for `result_t <_, error_msg_t>`
 * syntax
 - renew parsing-tech and cicada-rs
 - scanner/

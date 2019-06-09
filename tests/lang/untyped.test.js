@@ -77,12 +77,10 @@ test ("normalize", t => {
 })
 
 test ("module.define", t => {
-  {
-    let m = new cc.module_t ()
-    m.define ("id", LAMBDA ("x", VAR ("x")))
-    m.run (VAR ("id"))
-    m.run (LAMBDA ("x", VAR ("x")))
-  }
+  let m = new cc.module_t ()
+  m.define ("id", LAMBDA ("x", VAR ("x")))
+  m.run (VAR ("id"))
+  m.run (LAMBDA ("x", VAR ("x")))
 
   t.pass ()
 })

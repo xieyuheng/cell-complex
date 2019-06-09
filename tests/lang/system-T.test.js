@@ -4,6 +4,8 @@ import { result_t, ok_t, err_t } from "../../lib/result"
 import * as cc from "../../lib/lang/system-T"
 import {
   VAR, LAMBDA, APPLY,
+  ZERO, ADD1, THE, REC_NAT,
+  NAT, ARROW,
 } from "../../lib/lang/system-T"
 
 test ("exp.eval", t => {
@@ -78,29 +80,29 @@ test ("normalize", t => {
 
 test ("exp.synth", t => {
   let ctx = new cc.ctx_t ()
-    .ext ("x", new cc.nat_t ())
+    .ext ("x", NAT)
 
   t.deepEqual (
     VAR ("x") .synth (ctx),
-    new ok_t (new cc.nat_t ()),
+    new ok_t (NAT),
   )
 })
 
 test ("exp.check", t => {
   t.deepEqual (
-    new cc.zero_t ()
+    ZERO
       .check (
         new cc.ctx_t (),
-        new cc.nat_t (),
+        NAT,
       ),
     new ok_t ("ok"),
   )
 
   t.deepEqual (
-    new cc.add1_t (new cc.zero_t ())
+    ADD1 (ZERO)
       .check (
         new cc.ctx_t (),
-        new cc.nat_t (),
+        NAT,
       ),
     new ok_t ("ok"),
   )
@@ -109,9 +111,9 @@ test ("exp.check", t => {
     LAMBDA ("x", VAR ("x"))
       .check (
         new cc.ctx_t (),
-        new cc.arrow_t (
-          new cc.nat_t (),
-          new cc.nat_t (),
+        ARROW (
+          NAT,
+          NAT,
         ),
       ),
     new ok_t ("ok"),
@@ -127,24 +129,24 @@ test ("exp.check", t => {
   t.deepEqual (
     LAMBDA (
       "j", LAMBDA (
-        "k", new cc.rec_nat_t (
-          new cc.nat_t (),
+        "k", REC_NAT (
+          NAT,
           VAR ("j"),
           VAR ("k"),
           LAMBDA (
             "prev", LAMBDA (
-              "sum", new cc.add1_t (VAR ("sum"))
+              "sum", ADD1 (VAR ("sum"))
             )
           )
         )
       )
     ) .check (
       new cc.ctx_t (),
-      new cc.arrow_t (
-        new cc.nat_t (),
-        new cc.arrow_t (
-          new cc.nat_t (),
-          new cc.nat_t (),
+      ARROW (
+        NAT,
+        ARROW (
+          NAT,
+          NAT,
         ),
       ),
     ),
@@ -169,18 +171,19 @@ test ("module.define", t => {
   //         (add1 almost-sum))))))))
   //  (+ three)
   //  ((+ three) three))
+
   let m = new cc.module_t ()
 
   m.claim (
     "three",
-    new cc.nat_t (),
+    NAT,
   )
   m.define (
     "three",
-    new cc.add1_t (
-      new cc.add1_t (
-        new cc.add1_t (
-          new cc.zero_t ()
+    ADD1 (
+      ADD1 (
+        ADD1 (
+          ZERO
         )
       )
     )
@@ -188,11 +191,11 @@ test ("module.define", t => {
 
   m.claim (
     "+",
-    new cc.arrow_t (
-      new cc.nat_t (),
-      new cc.arrow_t (
-        new cc.nat_t (),
-        new cc.nat_t (),
+    ARROW (
+      NAT,
+      ARROW (
+        NAT,
+        NAT,
       )
     )
   )
@@ -200,13 +203,13 @@ test ("module.define", t => {
     "+",
     LAMBDA (
       "n", LAMBDA (
-        "k", new cc.rec_nat_t (
-          new cc.nat_t (),
+        "k", REC_NAT (
+          NAT,
           VAR ("k"),
           LAMBDA (
             "prev", LAMBDA (
               "almost", APPLY (
-                new cc.add1_t (VAR ("almost"))
+                ADD1 (VAR ("almost"))
               )
             )
           )
@@ -232,8 +235,22 @@ test ("module.define", t => {
     )
   )
 
-  // m.run (VAR ("id"))
-  // m.run (LAMBDA ("x", VAR ("x")))
+  // m.run (
+  //   APPLY (
+  //     VAR ("+"),
+  //     VAR ("three"),
+  //   )
+  // )
+
+  // m.run (
+  //   APPLY (
+  //     APPLY (
+  //       VAR ("+"),
+  //       VAR ("three"),
+  //     ),
+  //     VAR ("three"),
+  //   )
+  // )
 
   t.pass ()
 })

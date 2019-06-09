@@ -5,7 +5,9 @@ import { result_t, ok_t, err_t } from "../result"
 import { option_t, some_t, none_t } from "../option"
 
 export
-type value_t = closure_t | neutral_t
+abstract class value_t {
+  value_tag: "value_t" = "value_t"
+}
 
 /**
  * Runtime environments provide the values for each variable.
@@ -42,7 +44,7 @@ class env_t {
 }
 
 export
-class closure_t {
+class closure_t extends value_t {
   env: env_t
   name: string
   body: exp_t
@@ -52,21 +54,16 @@ class closure_t {
     name: string,
     body: exp_t,
   ) {
+    super ()
     this.env = env
     this.name = name
     this.body = body
-  }
-
-  apply (arg: value_t): value_t {
-    return this.body.eval (
-      this.env.ext (this.name, arg)
-    )
   }
 }
 
 export
 abstract class exp_t {
-  kind: "exp_t" = "exp_t"
+  exp_tag: "exp_t" = "exp_t"
 
   abstract eq (that: exp_t): boolean
   abstract eval (env: env_t): value_t
@@ -143,12 +140,13 @@ class apply_t extends exp_t {
   eval (env: env_t): value_t {
     let fun = this.rator.eval (env)
     let arg = this.rand.eval (env)
+
     if (fun instanceof closure_t) {
-      let closure = fun
-      return closure.apply (arg)
+      return fun.body.eval (
+        fun.env.ext (fun.name, arg)
+      )
     } else if (fun instanceof neutral_t) {
-      let neutral_fun = fun
-      return new neutral_apply_t (neutral_fun, arg)
+      return new neutral_apply_t (fun, arg)
     } else {
       throw new Error (
         `unknown fun value: ${fun}`
@@ -211,8 +209,12 @@ function freshen (
 }
 
 export
-abstract class neutral_t {
-  kind: "neutral_t" = "neutral_t"
+abstract class neutral_t extends value_t {
+  neutral_tag: "neutral_t" = "neutral_t"
+
+  constructor () {
+    super ()
+  }
 }
 
 export
