@@ -1,6 +1,3 @@
-* normalization by evaluation
-- better error report
-- `error_msg_t` for `result_t <_, error_msg_t>`
 * three kinds of expression
 - expression
   value (top is constructor)
