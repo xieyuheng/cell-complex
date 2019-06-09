@@ -1,8 +1,8 @@
 import assert from "assert"
-import * as ut from "../util"
+import * as ut from "../../util"
 
-import { result_t, ok_t, err_t } from "../result"
-import { option_t, some_t, none_t } from "../option"
+import { result_t, ok_t, err_t } from "../../result"
+import { option_t, some_t, none_t } from "../../option"
 
 export
 abstract class value_t {
@@ -89,7 +89,7 @@ class lambda_t extends exp_t {
       && this.body.eq (that.body)
   }
 
-  eval (env: env_t): closure_t {
+  eval (env: env_t = new env_t ()): closure_t {
     return new closure_t (env, this.name, this.body)
   }
 }
@@ -108,7 +108,7 @@ class var_t extends exp_t {
       && this.name === that.name
   }
 
-  eval (env: env_t): value_t {
+  eval (env: env_t = new env_t ()): value_t {
     return env.find (this.name) .unwrap_or_throw (
       new Error (
         `undefined name: ${this.name}`
@@ -137,7 +137,7 @@ class apply_t extends exp_t {
       && this.rand.eq (that.rand)
   }
 
-  eval (env: env_t): value_t {
+  eval (env: env_t = new env_t ()): value_t {
     let fun = this.rator.eval (env)
     let arg = this.rand.eval (env)
 
@@ -385,7 +385,3 @@ function to_church (n: number): exp_t {
   }
   return exp
 }
-
-export let VAR = (name: string) => new var_t (name)
-export let LAMBDA = (name: string, body: exp_t) => new lambda_t (name, body)
-export let APPLY = (rator: exp_t, rand: exp_t) => new apply_t (rator, rand)

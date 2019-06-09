@@ -1,8 +1,8 @@
 import assert from "assert"
-import * as ut from "../util"
+import * as ut from "../../util"
 
-import { result_t, ok_t, err_t } from "../result"
-import { option_t, some_t, none_t } from "../option"
+import { result_t, ok_t, err_t } from "../../result"
+import { option_t, some_t, none_t } from "../../option"
 
 export
 abstract class value_t {
@@ -189,7 +189,7 @@ abstract class exp_t {
     -----------------
     ctx :- e <= A
   */
-  check (ctx: ctx_t, t: type_t): result_t <"ok", string> {
+  check (t: type_t, ctx: ctx_t = new ctx_t ()): result_t <"ok", string> {
     return this.synth (ctx) .bind (t2 => {
       if (t2.eq (t)) {
         return result_t.pure ("ok")
@@ -222,7 +222,7 @@ class lambda_t extends exp_t {
       && this.body.eq (that.body)
   }
 
-  eval (env: env_t): closure_t {
+  eval (env: env_t = new env_t ()): closure_t {
     return new closure_t (env, this.name, this.body)
   }
 
@@ -232,12 +232,12 @@ class lambda_t extends exp_t {
     ctx :- lambda (x) { e } <= A -> B
   */
 
-  check (ctx: ctx_t, t: type_t): result_t <"ok", string> {
+  check (t: type_t, ctx: ctx_t = new ctx_t ()): result_t <"ok", string> {
     if (t instanceof arrow_t) {
       let arrow = t
       return this.body.check (
-        ctx.ext (this.name, arrow.arg),
         arrow.ret,
+        ctx.ext (this.name, arrow.arg),
       )
     } else {
       return new err_t (
@@ -261,7 +261,7 @@ class var_t extends exp_t {
       && this.name === that.name
   }
 
-  eval (env: env_t): value_t {
+  eval (env: env_t = new env_t ()): value_t {
     return env.find (this.name) .unwrap_or_throw (
       new Error (
         `undefined name: ${this.name}`
@@ -304,7 +304,7 @@ class apply_t extends exp_t {
       && this.rand.eq (that.rand)
   }
 
-  eval (env: env_t): value_t {
+  eval (env: env_t = new env_t ()): value_t {
     return closure_t.exe (
       this.rator.eval (env),
       this.rand.eval (env))
@@ -321,7 +321,7 @@ class apply_t extends exp_t {
     return this.rator.synth (ctx)
       .bind (rator_type => {
         if (rator_type instanceof arrow_t) {
-          return this.rand.check (ctx, rator_type.arg)
+          return this.rand.check (rator_type.arg, ctx)
             .bind (_ => {
               return result_t.pure (rator_type.ret)
             })
@@ -375,7 +375,7 @@ class module_t {
     let t = this.ctx.find (name) .unwrap_or_throw (
       new Error (`name: ${name} is not claimed before define`)
     )
-    exp.check (this.ctx, t) .match ({
+    exp.check (t, this.ctx) .match ({
       ok: _value => {},
       err: error => {
         new Error (
@@ -584,7 +584,7 @@ class the_t extends exp_t {
       && this.exp.eq (that.exp)
   }
 
-  eval (env: env_t): value_t {
+  eval (env: env_t = new env_t ()): value_t {
     return this.exp.eval (env)
   }
 
@@ -670,7 +670,7 @@ class rec_nat_t extends exp_t {
     }
   }
 
-  eval (env: env_t): value_t {
+  eval (env: env_t = new env_t ()): value_t {
     return rec_nat_t.exe (
       this.t,
       this.target.eval (env),
@@ -691,12 +691,13 @@ class rec_nat_t extends exp_t {
     return this.target.synth (ctx)
       .bind (target_type => {
         if (target_type.eq (new nat_t ())) {
-          return this.base.check (ctx, this.t)
+          return this.base.check (this.t, ctx)
             .bind (__ => {
               return this.step.check (
-                ctx, new arrow_t (
+                new arrow_t (
                   new nat_t, new arrow_t (this.t, this.t)
-                )
+                ),
+                ctx,
               )
             }) .bind (__ => {
               return result_t.pure (this.t)
@@ -720,7 +721,7 @@ class zero_t extends exp_t {
     return that instanceof zero_t
   }
 
-  eval (env: env_t): value_t {
+  eval (env: env_t = new env_t ()): value_t {
     return new zero_value_t ()
   }
 
@@ -729,7 +730,7 @@ class zero_t extends exp_t {
     ctx :- zero <= Nat
   */
 
-  check (ctx: ctx_t, t: type_t): result_t <"ok", string> {
+  check (t: type_t, ctx: ctx_t = new ctx_t ()): result_t <"ok", string> {
     if (t.eq (new nat_t ())) {
       return result_t.pure ("ok")
     } else {
@@ -754,7 +755,7 @@ class add1_t extends exp_t {
       && this.prev.eq (that.prev)
   }
 
-  eval (env: env_t): value_t {
+  eval (env: env_t = new env_t ()): value_t {
     return new add1_value_t (
       this.prev.eval (env)
     )
@@ -766,9 +767,9 @@ class add1_t extends exp_t {
     ctx :- add1 (n) <= Nat
   */
 
-  check (ctx: ctx_t, t: type_t): result_t <"ok", string> {
+  check (t: type_t, ctx: ctx_t = new ctx_t ()): result_t <"ok", string> {
     if (t.eq (new nat_t ())) {
-      return this.prev.check (ctx, t)
+      return this.prev.check (t, ctx)
     } else {
       return new err_t (
         "the type of add1_t should be nat_t"
@@ -776,13 +777,3 @@ class add1_t extends exp_t {
     }
   }
 }
-
-export let VAR = (name: string) => new var_t (name)
-export let LAMBDA = (name: string, body: exp_t) => new lambda_t (name, body)
-export let APPLY = (rator: exp_t, rand: exp_t) => new apply_t (rator, rand)
-export let ZERO = new zero_t ()
-export let ADD1 = (prev: exp_t) => new add1_t (prev)
-export let THE = (t: type_t, exp: exp_t) => new the_t (t, exp)
-export let REC_NAT = (t: type_t, target: exp_t, base: exp_t, step: exp_t) => new rec_nat_t (t, target, base, step)
-export let NAT = new nat_t ()
-export let ARROW = (arg: type_t, ret: type_t) => new arrow_t (arg, ret)

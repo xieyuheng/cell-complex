@@ -1,22 +1,23 @@
 import test from "ava"
 import * as ut from "../../lib/util"
 import { result_t, ok_t, err_t } from "../../lib/result"
-import * as cc from "../../lib/lang/untyped"
+import * as cc from "../../lib/lang/untyped/core"
 import {
+  MODULE,
   VAR, LAMBDA, APPLY,
-} from "../../lib/lang/untyped"
+} from "../../lib/lang/untyped/syntax"
 
 test ("exp.eval", t => {
   LAMBDA (
     "x", LAMBDA (
       "y", VAR ("y")
     )
-  ) .eval (new cc.env_t ())
+  ) .eval ()
 
   APPLY (
     LAMBDA ("x", VAR ("x")),
     LAMBDA ("x", VAR ("x")),
-  ) .eval (new cc.env_t ())
+  ) .eval ()
 
   t.pass ()
 })
@@ -44,7 +45,7 @@ test ("read_back", t => {
         VAR ("y"),
       ))),
       LAMBDA ("x", VAR ("x")),
-    ) .eval (new cc.env_t ()),
+    ) .eval (),
   )
 
   t.true (
@@ -77,7 +78,7 @@ test ("normalize", t => {
 })
 
 test ("module.define", t => {
-  let m = new cc.module_t ()
+  let m = MODULE ()
   m.define ("id", LAMBDA ("x", VAR ("x")))
   m.run (VAR ("id"))
   m.run (LAMBDA ("x", VAR ("x")))
@@ -86,7 +87,7 @@ test ("module.define", t => {
 })
 
 test ("church", t => {
-  new cc.module_t ()
+  MODULE ()
     .use (cc.church)
     .run (cc.to_church (0))
     .run (cc.to_church (1))
