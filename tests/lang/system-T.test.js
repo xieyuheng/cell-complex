@@ -139,12 +139,16 @@ test ("module.define", t => {
     )
   )
 
-  m.run (
-    APPLY (VAR ("+"), VAR ("three"))
+  ut.log (
+    m.run (
+      APPLY (VAR ("+"), VAR ("three"))
+    )
   )
 
-  m.run (
-    APPLY (APPLY (VAR ("+"), VAR ("three")), VAR ("three"))
+  ut.log (
+    m.run (
+      APPLY (APPLY (VAR ("+"), VAR ("three")), VAR ("three"))
+    )
   )
 
   t.pass ()

@@ -87,21 +87,21 @@ test ("module.define", t => {
 })
 
 test ("church", t => {
-  MODULE ()
-    .use (cc.church)
-    .run (cc.to_church (0))
-    .run (cc.to_church (1))
-    .run (cc.to_church (2))
-    .run (cc.to_church (3))
-    .run (
+  let m = MODULE ()
+  m.use (cc.church)
+  m.run (cc.to_church (0))
+  m.run (cc.to_church (1))
+  m.run (cc.to_church (2))
+  m.run (cc.to_church (3))
+  m.run (
+    APPLY (
       APPLY (
-        APPLY (
-          VAR ("church_add"),
-          cc.to_church (2),
-        ),
+        VAR ("church_add"),
         cc.to_church (2),
-      )
+      ),
+      cc.to_church (2),
     )
+  )
 
   t.pass ()
 })

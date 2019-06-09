@@ -189,11 +189,8 @@ class module_t {
     return this
   }
 
-  run (exp: exp_t): this {
-    ut.log (
-      normalize (this.env, exp)
-    )
-    return this
+  run (exp: exp_t): exp_t {
+    return normalize (this.env, exp)
   }
 }
 

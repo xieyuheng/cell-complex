@@ -391,21 +391,22 @@ class module_t {
     return this
   }
 
-  run (exp: exp_t): this {
-    exp.synth (this.ctx) .match ({
+  run (exp: exp_t): result_t <exp_t, string> {
+    return exp.synth (this.ctx) .match ({
       ok: t => {
         let normal_exp = read_back (
           this.used_names, t, exp.eval (this.env)
         )
-        ut.log (
+        return new ok_t (
           new the_t (t, normal_exp)
         )
       },
-      err: error => new Error (
-        `type synth fail for name: ${name}, error: ${error}`
-      ),
+      err: error => {
+        return new err_t (
+          `type synth fail for name: ${name}, error: ${error}`
+        )
+      },
     })
-    return this
   }
 }
 
