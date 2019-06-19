@@ -40,10 +40,36 @@ abstract class result_t <T, E> {
     }
   }
 
+  unwrap_err (): E {
+    if (this instanceof err_t) {
+      return this.error
+    } else if (this instanceof ok_t) {
+      throw new Error (
+        `unwrap_err an ok_t`
+      )
+    } else {
+      throw new Error (
+        `unknown sub class: ${this.constructor.name}`
+      )
+    }
+  }
+
   unwrap_or_throw (error: Error): T {
     if (this instanceof ok_t) {
       return this.value
     } else if (this instanceof err_t) {
+      throw error
+    } else {
+      throw new Error (
+        `unknown sub class: ${this.constructor.name}`
+      )
+    }
+  }
+
+  unwrap_err_or_throw (error: Error): E {
+    if (this instanceof err_t) {
+      return this.error
+    } else if (this instanceof ok_t) {
       throw error
     } else {
       throw new Error (
