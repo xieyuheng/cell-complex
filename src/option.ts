@@ -48,6 +48,17 @@ abstract class option_t <T> {
     }
   }
 
+  none_or_throw (error: Error): void {
+    if (this instanceof none_t) {
+    } else if (this instanceof some_t) {
+      throw error
+    } else {
+      throw new Error (
+        `unknown sub class: ${this.constructor.name}`
+      )
+    }
+  }
+
   match <X, Y> (
     { some, none }: { some: (value: T) => X, none: () => Y }
   ): X | Y {
