@@ -54,9 +54,9 @@ class zero_even_t {
 }
 
 class even_plus_two_even_t {
-  n: succ_t (succ_t (this.m))
+  n: succ_t (succ_t (m))
   m: nat_t
-  prev: nat_even_t (this.m)
+  prev: nat_even_t (m)
 }
 
 two_even: nat_even_t (succ_t (succ_t (zero_t))) = {

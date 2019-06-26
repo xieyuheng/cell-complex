@@ -14,9 +14,9 @@ class null_vect_t {
 class cons_vect_t {
   [implicit]: { n: nat_t }
   t: type
-  length: succ_t (this.n)
-  car: this.t
-  cdr: vect_t (this.t, this.n)
+  length: succ_t (n)
+  car: t
+  cdr: vect_t (t, n)
 }
 
 vect_append: (

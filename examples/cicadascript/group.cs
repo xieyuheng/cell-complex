@@ -3,40 +3,40 @@ import { category_t } from "./category.cs"
 class monoid_t {
   element_t: type
 
-  id: this.element_t
+  id: element_t
 
-  mul: (x: this.element_t, y: this.element_t) -> this.element_t
+  mul: (x: element_t, y: element_t) -> element_t
 
   assoc: (
-    x: this.element_t,
-    y: this.element_t,
-    z: this.element_t,
+    x: element_t,
+    y: element_t,
+    z: element_t,
   ) -> eqv_t (
-    this.mul (this.mul (x, y), z),
-    this.mul (x, this.mul (y, z)),
+    mul (mul (x, y), z),
+    mul (x, mul (y, z)),
   )
 
   id_left: (
-    x: this.element_t,
-  ) -> eqv_t (this.mul (this.id, x), x)
+    x: element_t,
+  ) -> eqv_t (mul (id, x), x)
 
   id_right: (
-    x: this.element_t,
-  ) -> eqv_t (this.mul (x, this.id), x)
+    x: element_t,
+  ) -> eqv_t (mul (x, id), x)
 }
 
 class group_t extends monoid_t {
-  inv: (x: this.element_t) -> this.element_t
+  inv: (x: element_t) -> element_t
 
   id_inv: (
-    x: this.element_t,
-  ) -> eqv_t (this.mul (x, this.inv (x)), this.id)
+    x: element_t,
+  ) -> eqv_t (mul (x, inv (x)), id)
 
   div: (
-    x: this.element_t,
-    y: this.element_t,
-  ) -> this.element_t {
-    this.mul (x, this.inv (y))
+    x: element_t,
+    y: element_t,
+  ) -> element_t {
+    mul (x, inv (y))
   }
 }
 
@@ -59,8 +59,8 @@ group_product: (g: group_t, h: group_t) -> group_t = {
       y: [g.element_t, h.element_t],
       z: [g.element_t, h.element_t],
     ) -> eqv_t (
-      this.mul (this.mul (x, y), z),
-      this.mul (x, this.mul (y, z)),
+      mul (mul (x, y), z),
+      mul (x, mul (y, z)),
     ) = {
       // TODO
     }
@@ -79,14 +79,14 @@ class group_hom_t {
   dom: group_t
   cod: group_t
 
-  hom: (this.dom.element_t) -> this.cod.element_t
+  hom: (dom.element_t) -> cod.element_t
 
   hom_respect_mul: (
-    x: this.dom.element_t,
-    y: this.dom.element_t,
+    x: dom.element_t,
+    y: dom.element_t,
   ) -> eqv_t (
-    this.hom (this.dom.mul (x, y)),
-    this.cod.mul (this.hom (x), this.hom (y)),
+    hom (dom.mul (x, y)),
+    cod.mul (hom (x), hom (y)),
   )
 }
 
@@ -165,13 +165,13 @@ group_cat = category_t (
 
   id_left: (
     f: group_hom_t,
-  ) -> eqv_t (this.compose (this.id (f.dom), f), f) = {
+  ) -> eqv_t (compose (id (f.dom), f), f) = {
     // TODO
   }
 
   id_right: (
     f: group_hom_t,
-  ) -> eqv_t (this.compose (f, this.id (f.cod)), f) = {
+  ) -> eqv_t (compose (f, id (f.cod)), f) = {
     // TODO
   }
 
@@ -180,23 +180,23 @@ group_cat = category_t (
     g: group_hom_t,
     h: group_hom_t,
   ) -> eqv_t (
-    this.compose (f, this.compose (g, h)),
-    this.compose (this.compose (f, g), h),
+    compose (f, compose (g, h)),
+    compose (compose (f, g), h),
   ) = {
     // TODO
   }
 )
 
 class abelian_group_t extends group_t {
-  add = this.mul
-  sub = this.div
-  neg = this.inv
+  add = mul
+  sub = div
+  neg = inv
 
   commu: (
-    x: this.element_t,
-    y: this.element_t,
+    x: element_t,
+    y: element_t,
   ) -> eqv_t (
-    this.add (x, y),
-    this.add (y, x),
+    add (x, y),
+    add (y, x),
   )
 }

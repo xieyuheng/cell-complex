@@ -2,38 +2,38 @@ class category_t {
   object_t: type
   arrow_t: type
 
-  dom: (f: this.arrow_t) -> this.object_t
-  cod: (f: this.arrow_t) -> this.object_t
+  dom: (f: arrow_t) -> object_t
+  cod: (f: arrow_t) -> object_t
 
-  id: (x: this.object_t) -> this.arrow_t
+  id: (x: object_t) -> arrow_t
 
   compose: (
-    f: this.arrow_t,
-    g: this.arrow_t,
+    f: arrow_t,
+    g: arrow_t,
     [implicit]: {
-      composable: eqv_t (this.cod (f), this.dom (g)),
+      composable: eqv_t (cod (f), dom (g)),
     }
   ) -> {
-    return h: this.arrow_t
-    eqv_dom: eqv_t (this.dom (h), this.dom (f))
-    eqv_cod: eqv_t (this.cod (h), this.cod (g))
+    return h: arrow_t
+    eqv_dom: eqv_t (dom (h), dom (f))
+    eqv_cod: eqv_t (cod (h), cod (g))
   }
 
   id_left: (
-    f: this.arrow_t,
-  ) -> eqv_t (this.compose (this.id (f.dom), f), f)
+    f: arrow_t,
+  ) -> eqv_t (compose (id (f.dom), f), f)
 
   id_right: (
-    f: this.arrow_t,
-  ) -> eqv_t (this.compose (f, this.id (f.cod)), f)
+    f: arrow_t,
+  ) -> eqv_t (compose (f, id (f.cod)), f)
 
   assoc: (
-    f: this.arrow_t,
-    g: this.arrow_t,
-    h: this.arrow_t,
+    f: arrow_t,
+    g: arrow_t,
+    h: arrow_t,
   ) -> eqv_t (
-    this.compose (f, this.compose (g, h)),
-    this.compose (this.compose (f, g), h),
+    compose (f, compose (g, h)),
+    compose (compose (f, g), h),
   )
 }
 
@@ -50,27 +50,27 @@ class functor_t {
   lcat: category_t
   rcat: category_t
 
-  map: (x: this.lcat.object_t) -> this.rcat.object_t
+  map: (x: lcat.object_t) -> rcat.object_t
 
-  fmap: (f: this.lcat.arrow_t) -> {
-    return g: this.rcat.arrow_t
-    eqv_dom: eqv_t (this.map (this.lcat.dom (f)), this.rcat.dom (g))
-    eqv_cod: eqv_t (this.map (this.lcat.cod (f)), this.rcat.cod (g))
+  fmap: (f: lcat.arrow_t) -> {
+    return g: rcat.arrow_t
+    eqv_dom: eqv_t (map (lcat.dom (f)), rcat.dom (g))
+    eqv_cod: eqv_t (map (lcat.cod (f)), rcat.cod (g))
   }
 
   fmap_respect_compose: (
-    f: this.lcat.arrow_t,
-    g: this.lcat.arrow_t,
+    f: lcat.arrow_t,
+    g: lcat.arrow_t,
   ) -> eqv_t (
-    this.fmap (this.lcat.compose (f, g)),
-    this.rcat.compose (this.fmap (f), this.fmap (g)),
+    fmap (lcat.compose (f, g)),
+    rcat.compose (fmap (f), fmap (g)),
   )
 
   fmap_respect_id: (
-    x: this.lcat.object_t,
+    x: lcat.object_t,
   ) -> eqv_t (
-    this.fmap (this.lcat.id (x)),
-    this.rcat.id (this.map (x)),
+    fmap (lcat.id (x)),
+    rcat.id (map (x)),
   )
 }
 
@@ -78,38 +78,38 @@ class natural_transformation_t {
   lfun: functor_t
   rfun: functor_t
 
-  lcat = this.lfun.lcat
-  rcat = this.lfun.rcat
+  lcat = lfun.lcat
+  rcat = lfun.rcat
 
-  lcat = this.rfun.lcat
-  rcat = this.rfun.rcat
+  lcat = rfun.lcat
+  rcat = rfun.rcat
 
-  component: (x: this.lcat.object_t) -> {
-    return c: this.rcat.arrow_t
-    eqv_dom: eqv_t (this.rcat.dom (c), this.lfun.map (x))
-    eqv_cod: eqv_t (this.rcat.cod (c), this.rfun.map (x))
+  component: (x: lcat.object_t) -> {
+    return c: rcat.arrow_t
+    eqv_dom: eqv_t (rcat.dom (c), lfun.map (x))
+    eqv_cod: eqv_t (rcat.cod (c), rfun.map (x))
   }
 
   natural: (
-    f: this.lcat.arrow_t
+    f: lcat.arrow_t
   ) -> eqv_t (
-    this.rcat.compose (
-      this.component (this.lcat.dom (f)),
-      this.rfun.fmap (f),
+    rcat.compose (
+      component (lcat.dom (f)),
+      rfun.fmap (f),
     ),
-    this.rcat.compose (
-      this.lfun.fmap (f),
-      this.component (this.lcat.cod (f)),
+    rcat.compose (
+      lfun.fmap (f),
+      component (lcat.cod (f)),
     ),
   )
 }
 
 class groupoid_t extends category_t {
-  inv: (f: this.arrow_t) -> this.arrow_t
+  inv: (f: arrow_t) -> arrow_t
 
-  arrow_iso: (f: this.arrow_t) -> iso_t (
+  arrow_iso: (f: arrow_t) -> iso_t (
     cat = this,
     iso = f,
-    inv = this.inv (f),
+    inv = inv (f),
   )
 }

@@ -24,14 +24,14 @@ class random_variable_t (
   .mass = (state) => space.prob (var.reverse (state))
 
   .mean : () -> state_t
-  .mean = () => state_t.sum_up ((x) => x * this.mass (x))
+  .mean = () => state_t.sum_up ((x) => x * mass (x))
 
   // it assumed that state_t has `sum_up` API
   //   and element in state_t
   //   can be product with number in unit_interval_t
 
   .variance : () -> state_t
-  .variance = this.sub (this.mean ()) .power (2) .mean
+  .variance = sub (mean ()) .power (2) .mean
 
   // it assumed that
   //   one can product two elements in state_t
@@ -48,14 +48,14 @@ class random_field_t (
 ) {
   .as_random_variable_t () : random_variable_t
   .as_random_variable_t () = random_variable_c (
-    space = this.space
-    state_t = (this.index_t) -> this.state_t
-    var : (this.space.sample_t) -> (this.index_t) -> this.state_t
-    var = (sample) => (index) => this.idx (index) .var (sample)
+    space = space
+    state_t = (index_t) -> state_t
+    var : (space.sample_t) -> (index_t) -> state_t
+    var = (sample) => (index) => idx (index) .var (sample)
   )
 
   .law : (state_t) -> unit_interval_t
-  .law = this.as_random_variable_t .mass
+  .law = as_random_variable_t .mass
 }
 
 // note the use of function type here

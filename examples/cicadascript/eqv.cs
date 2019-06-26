@@ -1,11 +1,11 @@
 class eqv_t {
   [implicit]: { t: type }
-  lhs: this.t
-  rhs: this.t
+  lhs: t
+  rhs: t
   /**
    * `the_same` for normalization by evaluation with neutral expressions
    */
-  the_same (this.lhs, this.rhs)
+  the_same (lhs, rhs)
 }
 
 eqv_apply: (

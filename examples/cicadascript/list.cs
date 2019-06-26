@@ -11,8 +11,8 @@ class null_t {
 
 class cons_t {
   t: type
-  car: this.t
-  cdr: list_t (this.t)
+  car: t
+  cdr: list_t (t)
 }
 
 list_length: (
@@ -58,7 +58,7 @@ union list_length_t {
   succ_length_t
 } {
   [implicit]: { t: type }
-  list : list_t (this.t)
+  list : list_t (t)
   length : nat_t
 }
 
@@ -84,29 +84,29 @@ union list_append_t {
   succ_append_t
 } {
   [implicit]: { t: type }
-  ante: list_t (this.t)
-  succ: list_t (this.t)
-  result: list_t (this.t)
+  ante: list_t (t)
+  succ: list_t (t)
+  result: list_t (t)
 }
 
 class zero_append_t {
   [implicit]: { t: type }
-  ante: list_t (this.t) = null_t ()
-  succ: list_t (this.t)
-  result: list_t (this.t) = this.succ
+  ante: list_t (t) = null_t ()
+  succ: list_t (t)
+  result: list_t (t) = succ
 }
 
 class succ_append_t {
   [implicit]: {
     t: type
-    car: this.t
+    car: t
   }
-  ante: cons_t (this.t, this.car)
-  succ: list_t (this.t)
-  result: cons_t (this.t, this.car)
+  ante: cons_t (t, car)
+  succ: list_t (t)
+  result: cons_t (t, car)
   prev: list_append_t (
-    this.ante.cdr,
-    this.succ,
-    this.result.cdr,
+    ante.cdr,
+    succ,
+    result.cdr,
   )
 }
