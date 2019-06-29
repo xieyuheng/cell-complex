@@ -42,7 +42,6 @@
   - [combinatorial-game](#cg-combinatorial-game)
   - [cell-complex](#cx-cell-complex)
   - [homology](#hl-homology)
-  - [cicadascript](#cs-cicadascript)
 
 ### `int` int
 
@@ -314,16 +313,6 @@ let expected_report = {
      euler_characteristic: 1 }
 }
 ```
-
-### `cs` cicadascript
-
-A dependently-typed programming language
-- with javascript-like syntax
-- based on game semantics
-- for interactive theorem proving
-- and practical verification tasks
-
-[examples (preview)](https://github.com/xieyuheng/cicada/tree/master/examples/cicadascript)
 
 ## License
 

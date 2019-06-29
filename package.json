@@ -24,7 +24,7 @@
   },
   "devDependencies": {
     "@types/assert": "^1.4.2",
-    "@types/lodash": "^4.14.134",
+    "@types/lodash": "^4.14.135",
     "@types/nanoid": "^2.0.0",
     "@babel/core": "^7.4.5",
     "@babel/plugin-transform-runtime": "^7.4.4",
