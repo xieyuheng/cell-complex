@@ -1,13 +1,16 @@
 {
   "name": "cell-complex",
-  "version": "0.0.43",
+  "version": "0.0.44",
   "author": "Xie Yuheng",
   "license": "GPL-3.0-or-later",
   "repository": {
     "type": "git",
     "url": "git@github.com:xieyuheng/cell-complex.git"
   },
-  "files": [ "src", "lib" ],
+  "files": [
+    "src",
+    "lib"
+  ],
   "scripts": {
     "build": "tsc",
     "watch": "tsc --watch",
