@@ -29,7 +29,7 @@
 
 - `npm install cell-complex`
 
-- [API Docs](https://api.cell-complex.now.sh)
+- [API Docs](https://cell-complex.xieyuheng.now.sh)
 
 - Try [examples](https://github.com/xieyuheng/cell-complex/tree/master/examples)
 
