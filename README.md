@@ -10,7 +10,6 @@
 - [Style Guide](STYLE-GUIDE.md) -- observe the style of existing code and respect it
 - [Code of Conduct](CODE-OF-CONDUCT.md)
 - Source code -- [github](https://github.com/xieyuheng/cell-complex), [gitlab](https://gitlab.com/xieyuheng/cell-complex/)
-- IRC -- [#cicada-language](https://kiwiirc.com/nextclient/irc.freenode.net/#cicada-language)
 - CI -- [gitlab-ci](https://gitlab.com/xieyuheng/cell-complex/pipelines)
 
 ## Contributing
