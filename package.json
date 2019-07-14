@@ -7,6 +7,7 @@
     "type": "git",
     "url": "git@github.com:xieyuheng/cell-complex.git"
   },
+  "files": [ "src", "lib" ],
   "scripts": {
     "build": "tsc",
     "watch": "tsc --watch",
