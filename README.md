@@ -9,8 +9,8 @@
 - We enforce C4 as collaboration protocol -- [The C4 RFC](https://rfc.zeromq.org/spec:42/C4)
 - [Style Guide](STYLE-GUIDE.md) -- observe the style of existing code and respect it
 - [Code of Conduct](CODE-OF-CONDUCT.md)
-- Source code -- [github](https://github.com/xieyuheng/cell-complex), [gitlab](https://gitlab.com/xieyuheng/cell-complex/)
-- CI -- [gitlab-ci](https://gitlab.com/xieyuheng/cell-complex/pipelines)
+- Source code -- [github](https://github.com/xieyuheng/cell-complex)
+- CI -- [travis-ci](https://travis-ci.com/xieyuheng/cell-complex)
 
 ## Contributing
 
