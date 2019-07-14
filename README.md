@@ -1,4 +1,4 @@
-# Cicada
+# Cell Complex
 
 ## Aims
 
@@ -9,10 +9,9 @@
 - We enforce C4 as collaboration protocol -- [The C4 RFC](https://rfc.zeromq.org/spec:42/C4)
 - [Style Guide](STYLE-GUIDE.md) -- observe the style of existing code and respect it
 - [Code of Conduct](CODE-OF-CONDUCT.md)
-- Source code -- [github](https://github.com/xieyuheng/cicada), [gitlab](https://gitlab.com/xieyuheng/cicada/)
-- [cicada-rs](http://github.com/xieyuheng/cicada-rs) -- an old version of the same project written in rust
+- Source code -- [github](https://github.com/xieyuheng/cell-complex), [gitlab](https://gitlab.com/xieyuheng/cell-complex/)
 - IRC -- [#cicada-language](https://kiwiirc.com/nextclient/irc.freenode.net/#cicada-language)
-- CI -- [gitlab-ci](https://gitlab.com/xieyuheng/cicada/pipelines)
+- CI -- [gitlab-ci](https://gitlab.com/xieyuheng/cell-complex/pipelines)
 
 ## Contributing
 
@@ -24,16 +23,16 @@
 
 ## Docs
 
-- [A Recursive Combinatorial Description of cell-complex](https://github.com/xieyuheng/cicada/blob/master/docs/a-recursive-combinatorial-description-of-cell-complex.md)
+- [A Recursive Combinatorial Description of cell-complex](https://github.com/xieyuheng/cell-complex/blob/master/docs/a-recursive-combinatorial-description-of-cell-complex.md)
   - A paper about the definition of cell-complex in this project
 
 ## Modules
 
-- `npm install cicada-lang`
+- `npm install cell-complex`
 
-- [API Docs](https://api.cicada-lang.now.sh)
+- [API Docs](https://api.cell-complex.now.sh)
 
-- Try [examples](https://github.com/xieyuheng/cicada/tree/master/examples)
+- Try [examples](https://github.com/xieyuheng/cell-complex/tree/master/examples)
 
 - Contents:
   - [int](#int)
@@ -50,8 +49,8 @@
 ``` javascript
 let assert = require ("assert") .strict
 
-let ut = require ("cicada-lang/lib/util")
-let int = require ("cicada-lang/lib/int")
+let ut = require ("cell-complex/lib/util")
+let int = require ("cell-complex/lib/int")
 
 {
   /**
@@ -141,8 +140,8 @@ let int = require ("cicada-lang/lib/int")
 ``` javascript
 let assert = require ("assert") .strict
 
-let ut = require ("cicada-lang/lib/util")
-let num = require ("cicada-lang/lib/num")
+let ut = require ("cell-complex/lib/util")
+let num = require ("cell-complex/lib/num")
 
 {
   /**
@@ -198,9 +197,9 @@ let num = require ("cicada-lang/lib/num")
 ![Flatsurfaces.svg](https://github.com/xieyuheng/image-link/blob/master/homology/Flatsurfaces.svg)
 
 ``` javascript
-let cx = require ("cicada-lang/lib/cell-complex")
-let hl = require ("cicada-lang/lib/homology")
-let ut = require ("cicada-lang/lib/util")
+let cx = require ("cell-complex/lib/cell-complex")
+let hl = require ("cell-complex/lib/homology")
+let ut = require ("cell-complex/lib/util")
 ```
 
 ![Spherecycles1.svg](https://github.com/xieyuheng/image-link/blob/master/homology/Spherecycles1.svg)

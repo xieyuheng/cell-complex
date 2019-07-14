@@ -6,7 +6,7 @@
 - Keywords: cell-complex, data structure.
 ------
 
-- This document serves as an appendix of the paper ["A Recursive Combinatorial Description of cell-complex"](https://github.com/xieyuheng/cicada/blob/master/docs/a-recursive-combinatorial-description-of-cell-complex.md).
+- This document serves as an appendix of the paper ["A Recursive Combinatorial Description of cell-complex"](https://github.com/xieyuheng/cell-complex/blob/master/docs/a-recursive-combinatorial-description-of-cell-complex.md).
 
 My overall class definitions are:
 

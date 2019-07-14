@@ -1,41 +1,40 @@
 {
-  "name": "cicada-lang",
+  "name": "cell-complex",
   "version": "0.0.42",
   "author": "Xie Yuheng",
   "license": "GPL-3.0-or-later",
   "repository": {
     "type": "git",
-    "url": "git@github.com:xieyuheng/cicada.git"
+    "url": "git@github.com:xieyuheng/cell-complex.git"
   },
-  "main": "lib/cicada.js",
   "scripts": {
     "build": "tsc",
     "watch": "tsc --watch",
     "test": "ava 2> /dev/null",
     "web-build": "parcel build web/index.html -d web/dist",
     "web-watch": "parcel web/index.html -d web/dist",
-    "web-up": "surge web/dist cicada.surge.sh",
+    "web-up": "surge web/dist cell-complex.surge.sh",
     "web": "npm run web-build; npm run web-up",
     "api-build": "typedoc src --out docs/api --mode modules --ignoreCompilerErrors",
-    "api-surge": "surge docs/api api.cicada.surge.sh",
-    "api-now": "now switch cicada-lang; now deploy docs/api --target production",
+    "api-surge": "surge docs/api api.cell-complex.surge.sh",
+    "api-now": "now switch xieyuheng; now -n cell-complex deploy docs/api --target production",
     "api": "npm run api-build; npm run api-surge; npm run api-now",
     "up": "git commit -m 'up'; npm run build; npm run api; npm version patch; git push; npm publish"
   },
   "devDependencies": {
     "@types/assert": "^1.4.2",
-    "@types/lodash": "^4.14.135",
+    "@types/lodash": "^4.14.136",
     "@types/nanoid": "^2.0.0",
-    "@babel/core": "^7.5.0",
+    "@babel/core": "^7.5.4",
     "@babel/plugin-transform-runtime": "^7.5.0",
-    "ava": "^2.1.0",
+    "ava": "^2.2.0",
     "parcel-bundler": "^1.12.3",
     "typedoc": "^0.14.2",
-    "typescript": "^3.5.2"
+    "typescript": "^3.5.3"
   },
   "dependencies": {
-    "@babel/runtime-corejs2": "^7.5.0",
-    "lodash": "^4.17.11",
+    "@babel/runtime-corejs2": "^7.5.4",
+    "lodash": "^4.17.14",
     "nanoid": "^2.0.3"
   }
 }

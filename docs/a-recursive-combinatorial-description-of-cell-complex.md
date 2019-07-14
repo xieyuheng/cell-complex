@@ -417,7 +417,7 @@ and, layer by layer, design higher level interface functions.
 The `cell_t` is recursively defined in the same way for all dimensions, but each dimension is special.  
 And, for example, interface functions such as `attach_vertex`, `attach_face`, `attach_body` can be designed for each specific dimension.
 
-More example cell-complexes can be found at the [main project page](https://github.com/xieyuheng/cicada#hl-homology).
+More example cell-complexes can be found at the [main project page](https://github.com/xieyuheng/cell-complex#hl-homology).
 - Further documentation about programming interface is work in progress.
 
 ## Note about incidence matrix
@@ -453,7 +453,7 @@ Based on the basic construction of cell-complex, I plan to:
 
 ## Appendixes
 
-- [A Substitution Model for Class Definition](https://github.com/xieyuheng/cicada/blob/master/docs/a-substitution-model-for-class-definition.md)
+- [A Substitution Model for Class Definition](https://github.com/xieyuheng/cell-complex/blob/master/docs/a-substitution-model-for-class-definition.md)
   - Further clarify the use of class definitions in this paper 
     for people with less programming experiences.
   - Also summarize the difference between "describable" and "decidable".
