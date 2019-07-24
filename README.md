@@ -10,7 +10,7 @@
 - [Style Guide](STYLE-GUIDE.md) -- observe the style of existing code and respect it
 - [Code of Conduct](CODE-OF-CONDUCT.md)
 - Source code -- [github](https://github.com/xieyuheng/cell-complex)
-- CI -- [travis-ci](https://travis-ci.com/xieyuheng/cell-complex)
+- CI -- [travis-ci](https://travis-ci.org/xieyuheng/cell-complex)
 
 ## Contributing
 
