@@ -29,16 +29,16 @@
     "@types/assert": "^1.4.3",
     "@types/lodash": "^4.14.138",
     "@types/nanoid": "^2.0.0",
-    "@babel/core": "^7.5.5",
-    "@babel/plugin-transform-runtime": "^7.5.5",
-    "ava": "^2.3.0",
+    "@babel/core": "^7.6.0",
+    "@babel/plugin-transform-runtime": "^7.6.0",
+    "ava": "^2.4.0",
     "parcel-bundler": "^1.12.3",
     "typedoc": "^0.15.0",
-    "typescript": "^3.6.2"
+    "typescript": "^3.6.3"
   },
   "dependencies": {
-    "@babel/runtime-corejs2": "^7.5.5",
+    "@babel/runtime-corejs2": "^7.6.0",
     "lodash": "^4.17.15",
-    "nanoid": "^2.1.0"
+    "nanoid": "^2.1.1"
   }
 }
