@@ -2,23 +2,7 @@
 
 ## Aims
 
-- Libraries and tools for topological and geometric modeling
-
-## Community
-
-- We enforce C4 as collaboration protocol -- [The C4 RFC](https://rfc.zeromq.org/spec:42/C4)
-- [Style Guide](STYLE-GUIDE.md) -- observe the style of existing code and respect it
-- [Code of Conduct](CODE-OF-CONDUCT.md)
-- Source code -- [github](https://github.com/xieyuheng/cell-complex)
-- CI -- [travis-ci](https://travis-ci.org/xieyuheng/cell-complex)
-
-## Contributing
-
-- Prepare: `npm install`
-- Compile: `npx tsc`
-- Compile and watch: `npx tsc --watch`
-- Run all tests: `npx ava`
-- Run specific test file: `npx ava -sv <path to the test file>`
+Libraries and tools for topological and geometric modeling.
 
 ## Docs
 
@@ -311,6 +295,22 @@ let expected_report = {
      euler_characteristic: 1 }
 }
 ```
+
+## Community
+
+- We enforce C4 as collaboration protocol -- [The C4 RFC](https://rfc.zeromq.org/spec:42/C4)
+- [Style Guide](STYLE-GUIDE.md) -- observe the style of existing code and respect it
+- [Code of Conduct](CODE-OF-CONDUCT.md)
+- Source code -- [github](https://github.com/xieyuheng/cell-complex)
+- CI -- [travis-ci](https://travis-ci.org/xieyuheng/cell-complex)
+
+## Contributing
+
+- Prepare: `npm install`
+- Compile: `npx tsc`
+- Compile and watch: `npx tsc --watch`
+- Run all tests: `npx ava`
+- Run specific test file: `npx ava -sv <path to the test file>`
 
 ## License
 
