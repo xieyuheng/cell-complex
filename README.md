@@ -6,7 +6,7 @@ Libraries and tools for topological and geometric modeling.
 
 ## Docs
 
-- [A Recursive Combinatorial Description of cell-complex](https://github.com/xieyuheng/cell-complex/blob/master/docs/a-recursive-combinatorial-description-of-cell-complex.md)
+- [A Recursive Combinatorial Description of cell-complex](https://inner.xieyuheng.now.sh/paper/a-recursive-combinatorial-description-of-cell-complex)
   - A paper about the definition of cell-complex in this project
 
 ## Modules
@@ -167,7 +167,6 @@ let num = require ("cell-complex/lib/num")
 ### `cx` cell-complex
 
 - cell-complex based low dimensional algebraic topology library
-- [`docs/a-recursive-combinatorial-description-of-cell-complex.md`](docs/a-recursive-combinatorial-description-of-cell-complex.md)
 
 ### `hl` homology
 
