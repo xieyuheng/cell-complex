@@ -27,17 +27,17 @@
   },
   "devDependencies": {
     "@types/assert": "^1.4.3",
-    "@types/lodash": "^4.14.144",
+    "@types/lodash": "^4.14.146",
     "@types/nanoid": "^2.1.0",
-    "@babel/core": "^7.6.4",
+    "@babel/core": "^7.7.2",
     "@babel/plugin-transform-runtime": "^7.6.2",
     "ava": "^2.4.0",
     "parcel-bundler": "^1.12.4",
-    "typedoc": "^0.15.0",
-    "typescript": "^3.6.4"
+    "typedoc": "^0.15.1",
+    "typescript": "^3.7.2"
   },
   "dependencies": {
-    "@babel/runtime-corejs2": "^7.6.3",
+    "@babel/runtime-corejs2": "^7.7.2",
     "lodash": "^4.17.15",
     "nanoid": "^2.1.6"
   }
