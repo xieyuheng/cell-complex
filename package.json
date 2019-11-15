@@ -27,13 +27,13 @@
   },
   "devDependencies": {
     "@types/assert": "^1.4.3",
-    "@types/lodash": "^4.14.146",
+    "@types/lodash": "^4.14.147",
     "@types/nanoid": "^2.1.0",
     "@babel/core": "^7.7.2",
     "@babel/plugin-transform-runtime": "^7.6.2",
     "ava": "^2.4.0",
     "parcel-bundler": "^1.12.4",
-    "typedoc": "^0.15.1",
+    "typedoc": "^0.15.2",
     "typescript": "^3.7.2"
   },
   "dependencies": {
