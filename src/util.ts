@@ -130,3 +130,14 @@ function mapmap <K, A, B> (
   }
   return new_map
 }
+
+export
+function rand_nat (max: number): number {
+  return Math.floor (Math.random () * Math.floor (max))
+}
+
+export
+function rand_member <T> (array: Array <T>): T {
+  let i = rand_nat (array.length)
+  return array [i]
+}
