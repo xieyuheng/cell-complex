@@ -1,6 +1,6 @@
 import test from "ava"
 
-import * as ut from "@cicadoidea/basic"
+import * as ut from "@cicadoidea/basic/lib/util"
 import * as num from "../lib/num"
 
 test ("num.matrix", t => {

@@ -1,6 +1,6 @@
 import assert from "assert"
 
-import * as ut from "@cicadoidea/basic"
+import * as ut from "@cicadoidea/basic/lib/util"
 import { dic_t } from "./dic"
 import * as int from "./int"
 import * as cx from "./cell-complex"

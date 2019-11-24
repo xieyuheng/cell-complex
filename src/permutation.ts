@@ -1,7 +1,7 @@
 import * as _ from "lodash"
 import assert from "assert"
 
-import * as ut from "@cicadoidea/basic"
+import * as ut from "@cicadoidea/basic/lib/util"
 
 export
 class permutation_t {

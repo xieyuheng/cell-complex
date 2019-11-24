@@ -1,6 +1,6 @@
 import test from "ava"
 
-import * as ut from "@cicadoidea/basic"
+import * as ut from "@cicadoidea/basic/lib/util"
 import * as int from "../lib/int"
 import * as cx from "../lib/cell-complex"
 import * as hl from "../lib/homology"

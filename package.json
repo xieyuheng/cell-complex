@@ -1,6 +1,6 @@
 {
   "name": "cell-complex",
-  "version": "0.0.45",
+  "version": "0.0.46",
   "author": "Xie Yuheng",
   "license": "GPL-3.0-or-later",
   "repository": {
@@ -38,7 +38,7 @@
   },
   "dependencies": {
     "@babel/runtime-corejs2": "^7.7.4",
-    "@cicadoidea/basic": "0.0.2",
+    "@cicadoidea/basic": "0.0.3",
     "lodash": "^4.17.15",
     "nanoid": "^2.1.7"
   }

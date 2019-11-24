@@ -1,4 +1,4 @@
-import * as ut from "@cicadoidea/basic"
+import * as ut from "@cicadoidea/basic/lib/util"
 import * as cx from "../cell-complex"
 
 export

@@ -1,6 +1,6 @@
 import * as cg from "../../combinatorial-game"
 
-import * as ut from "@cicadoidea/basic"
+import * as ut from "@cicadoidea/basic/lib/util"
 
 export
 class random_bot_t <P, S, C> {
