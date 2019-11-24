@@ -3,7 +3,7 @@ import test from "ava"
 import * as nd from "../lib/ndarray"
 import * as eu from "../lib/euclid--naive"
 import { permutation_t } from "../lib/permutation"
-import { log } from "../lib/util"
+import { log } from "@cicadoidea/basic"
 
 test ("eu.matrix", t => {
   let x = eu.matrix ([

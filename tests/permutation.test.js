@@ -4,7 +4,7 @@ import {
   permutation_t,
 } from "../lib/permutation"
 
-import * as ut from "../lib/util"
+import * as ut from "@cicadoidea/basic"
 
 test ("new", t => {
   let x = new permutation_t ([0, 2, 3, 1])

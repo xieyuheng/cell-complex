@@ -1,7 +1,7 @@
 import assert from "assert"
 import nanoid from "nanoid"
 
-import * as ut from "./util"
+import * as ut from "@cicadoidea/basic"
 
 export
 class figure_t {

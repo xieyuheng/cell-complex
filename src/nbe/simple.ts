@@ -1,5 +1,5 @@
 import assert from "assert"
-import * as ut from "../util"
+import * as ut from "@cicadoidea/basic"
 
 /**
  * Normalization by Evaluation:

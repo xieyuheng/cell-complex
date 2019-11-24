@@ -1,6 +1,6 @@
 import assert from "assert"
 
-import * as ut from "./util"
+import * as ut from "@cicadoidea/basic"
 import * as eu from "./euclid"
 import { set_t } from "./abstract/set"
 

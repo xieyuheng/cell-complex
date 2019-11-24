@@ -1,6 +1,6 @@
 import test from "ava"
 
-import * as ut from "../lib/util"
+import * as ut from "@cicadoidea/basic"
 
 import { result_t, ok_t, err_t } from "../lib/result"
 

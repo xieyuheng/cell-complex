@@ -2,7 +2,7 @@ import test from "ava"
 
 import * as nd from "../lib/ndarray"
 import { permutation_t } from "../lib/permutation"
-import * as ut from "../lib/util"
+import * as ut from "@cicadoidea/basic"
 
 test ("shape_to_strides", t => {
   let shape = [2, 3, 4]

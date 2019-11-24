@@ -1,6 +1,6 @@
 import test from "ava"
 
-import * as ut from "../lib/util"
+import * as ut from "@cicadoidea/basic"
 import * as nd from "../lib/ndarray"
 import * as pd from "../lib/panel-data"
 

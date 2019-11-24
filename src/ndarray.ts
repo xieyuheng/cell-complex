@@ -1,7 +1,7 @@
 import * as _ from "lodash"
 import assert from "assert"
 
-import * as ut from "./util"
+import * as ut from "@cicadoidea/basic"
 
 import { permutation_t } from "./permutation"
 

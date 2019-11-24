@@ -1,6 +1,6 @@
 import test from "ava"
 
-import * as ut from "../lib/util"
+import * as ut from "@cicadoidea/basic"
 
 import { option_t, some_t, none_t } from "../lib/option"
 
