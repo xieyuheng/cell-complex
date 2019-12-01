@@ -547,7 +547,7 @@ class array_t {
       let array = lower [i]
       assert (_.isEqual (array.shape, first_shape))
       let index: proj_index_t = [i]
-      index = index.concat (ut.repeats (null, shape.length-1))
+      index = index.concat (ut.repeats (() => null, shape.length-1))
       higher.put_porj (index, array)
     }
     return higher
