@@ -29,17 +29,17 @@
     "@types/assert": "^1.4.3",
     "@types/lodash": "^4.14.149",
     "@types/nanoid": "^2.1.0",
-    "@babel/core": "^7.7.4",
-    "@babel/plugin-transform-runtime": "^7.7.4",
+    "@babel/core": "^7.7.7",
+    "@babel/plugin-transform-runtime": "^7.7.6",
     "ava": "^2.4.0",
     "parcel-bundler": "^1.12.4",
-    "typedoc": "^0.15.3",
-    "typescript": "^3.7.3"
+    "typedoc": "^0.15.6",
+    "typescript": "^3.7.4"
   },
   "dependencies": {
-    "@babel/runtime-corejs2": "^7.7.4",
-    "@cicadoidea/basic": "0.0.11",
+    "@babel/runtime-corejs2": "^7.7.7",
+    "@cicadoidea/basic": "0.0.17",
     "lodash": "^4.17.15",
-    "nanoid": "^2.1.7"
+    "nanoid": "^2.1.8"
   }
 }
