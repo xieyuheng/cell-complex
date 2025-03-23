@@ -1,4 +1,4 @@
-* row v.s. col
+* row vs. col
 - `row_trans`
   - If we view matrix as linear equations,
     `row_trans` does not change solution.
